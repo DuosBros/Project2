@@ -4,11 +4,10 @@ import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import axios from 'axios';
 
-import routes from './routes';
 import CommonReducer from './CommonReducer';
 
-import Layout from './Layout';
 import Header from './Header';
+import Home from '../pages/Home/Home';
 
 export default class AppRoutes extends React.Component {
     constructor() {
@@ -33,12 +32,15 @@ export default class AppRoutes extends React.Component {
     render() {
         return (
             <Provider store={this.store}>
-                <Switch>
-                    <Route exact path='/' component={Layout}/>
-                    {/* both /roster and /roster/:number begin with /roster */}
-                    {/* <Route path='/roster' component={Roster}/>
-                    <Route path='/schedule' component={Schedule}/> */}
-                </Switch>
+                <div>
+                    <Header />
+                    <Switch>
+                        <Route exact path='/' component={Home}/>
+                        {/* both /roster and /roster/:number begin with /roster */}
+                        {/* <Route path='/roster' component={Roster}/>
+                        <Route path='/schedule' component={Schedule}/> */}
+                    </Switch>
+                </div>
             </Provider>
         );
     }

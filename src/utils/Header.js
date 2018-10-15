@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sidebar, Menu, Segment, Icon, Input, AccordionTitle, AccordionContent, Container } from 'semantic-ui-react'
+import { Sidebar, Menu, Segment, Icon, Input, Header as HeaderSemantic, AccordionContent, Container } from 'semantic-ui-react'
 // import {browserHistory} from 'react-router';
 import _ from 'lodash';
 import { connect } from 'react-redux';
@@ -67,37 +67,94 @@ class Header extends React.Component {
 
         return (
             <div>
-            <div style={{ display: 'flex', flexDirection: 'column', flex: 1, width: "250px", position: 'fixed', top: '0px', bottom: '0px', left:'0px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', flex: 1, width: "260px", position: 'fixed', height: '100%'}}>
             
-                <Menu fluid inverted vertical borderless compact>
+                <Menu inverted fluid vertical borderless compact style={{borderRadius: '0px', height: '100%'}}>
                     <Menu.Item>
-                    {/* <Logo spaced='right' size='mini' /> */}
-                    <strong>
-                        LeanOpsConfigOverview
-                        <small>
-                        {/* <em>{version}</em> */}
-                        </small>
-                    </strong>
+                        <HeaderSemantic inverted as='h4'>LeanOpsConfigOverview</HeaderSemantic>
                     </Menu.Item>
                     <Menu.Item>
-                    <Menu.Header>Getting Started</Menu.Header>
-                    <Menu.Menu>
-                        <Menu.Item  exact to='/' activeClassName='active'>
-                        Introduction
-                        </Menu.Item>
-                        <Menu.Item  exact to='/usage' activeClassName='active'>
-                        Usage
-                        </Menu.Item>
-                        <Menu.Item  exact to='/theming' activeClassName='active'>
-                        Theming
-                        </Menu.Item>
-                        <Menu.Item  exact to='/layouts' activeClassName='active'>
-                        Layouts
-                        </Menu.Item>
-                        <Menu.Item  exact to='/prototypes' activeClassName='active'>
-                        Prototypes
-                        </Menu.Item>
-                    </Menu.Menu>
+                        <Menu.Header>Home</Menu.Header>
+                    </Menu.Item>
+                    <Menu.Item>
+                        <Menu.Header>Server</Menu.Header>
+                        <Menu.Menu>
+                            <Menu.Item  exact to='/' activeClassName='active'>
+                            PatchGroups
+                            </Menu.Item>
+                            <Menu.Item  exact to='/usage' activeClassName='active'>
+                            VirtualMachines
+                            </Menu.Item>
+                            <Menu.Item  exact to='/theming' activeClassName='active'>
+                            Statistics
+                            </Menu.Item>
+                        </Menu.Menu>
+                    </Menu.Item>
+                    <Menu.Item>
+                        <Menu.Header>Services</Menu.Header>
+                        <Menu.Menu>
+                            <Menu.Item  exact to='/' activeClassName='active'>
+                            RolloutStatus
+                            </Menu.Item>
+                            <Menu.Item  exact to='/usage' activeClassName='active'>
+                            VersionStatus
+                            </Menu.Item>
+                            <Menu.Item  exact to='/theming' activeClassName='active'>
+                            HealthChecks
+                            </Menu.Item>
+                            <Menu.Item  exact to='/theming' activeClassName='active'>
+                            Availability
+                            </Menu.Item>
+                            <Menu.Item  exact to='/theming' activeClassName='active'>
+                            Statistics
+                            </Menu.Item>
+                        </Menu.Menu>
+                    </Menu.Item>
+                    <Menu.Item>
+                        <Menu.Header>Loadbalancer Farms</Menu.Header>
+                        <Menu.Menu>
+                            <Menu.Item  exact to='/' activeClassName='active'>
+                            Consistency
+                            </Menu.Item>
+                            <Menu.Item  exact to='/usage' activeClassName='active'>
+                            Statistics
+                            </Menu.Item>
+                            <Menu.Item  exact to='/theming' activeClassName='active'>
+                            Graphs
+                            </Menu.Item>
+                        </Menu.Menu>
+                    </Menu.Item>
+                    <Menu.Item>
+                        <Menu.Header>Ip</Menu.Header>
+                    </Menu.Item>
+                    <Menu.Item>
+                        <Menu.Header>Scom</Menu.Header>
+                    </Menu.Item>
+                    <Menu.Item>
+                        <Menu.Header>BAWLogServer</Menu.Header>
+                    </Menu.Item>
+                    <Menu.Item>
+                        <Menu.Header>Config</Menu.Header>
+                        <Menu.Menu>
+                            <Menu.Item  exact to='/' activeClassName='active'>
+                            Loadbalancer
+                            </Menu.Item>
+                            <Menu.Item  exact to='/usage' activeClassName='active'>
+                            ActiveDirectory
+                            </Menu.Item>
+                            <Menu.Item  exact to='/theming' activeClassName='active'>
+                            Tags
+                            </Menu.Item>
+                        </Menu.Menu>
+                    </Menu.Item>
+                    <Menu.Item>
+                        <Menu.Header>Admin</Menu.Header>
+                    </Menu.Item>
+                    <Menu.Item>
+                        <Menu.Header>Help</Menu.Header>
+                    </Menu.Item>
+                    <Menu.Item>
+                        <Menu.Header>About</Menu.Header>
                     </Menu.Item>
                 </Menu>
                 
@@ -109,7 +166,7 @@ class Header extends React.Component {
                 {/* </div> */}
                                 
                                 {/* <div class="ui menu asd borderless" style={{borderRadius: "0 !important", border: "0", marginLeft: "250px", WebkitTransitionDuration: "0.1s"}}> */}
-                                <Menu borderless style={{borderRadius: "0 !important", border: "0", marginLeft: "250px", WebkitTransitionDuration: "0.1s"}} >
+                                <Menu inverted style={{borderRadius: "0px", border: "0", marginLeft: "250px", WebkitTransitionDuration: "0.1s"}} >
 
                                 
                                 {/* <a class="item openbtn">
