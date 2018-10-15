@@ -41,15 +41,14 @@ class Layout extends React.Component {
 
     render() {
         return (
-        <div>
-            <Header/>
-                {/* <div className="container" ></div> */}
-                <Container fluid style={{minHeight:this.state.minHeight + 'px'}}>
-                Test
-                    {this.props.children}
-                </Container>
-            {/* <Footer className="footer"/> */}
-        </div>
+            <div>
+               <Header></Header>
+                <div style={{marginLeft: "260px"}}>
+                Content and shit
+                                        {this.props.children}
+                </div>
+                
+            </div>
         );
     }
 }
