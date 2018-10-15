@@ -1,5 +1,7 @@
 import React from 'react';
-import { Sidebar, Menu, Segment, Icon, Input, Header as HeaderSemantic, AccordionContent, Container } from 'semantic-ui-react'
+import { Sidebar, Menu, Segment, Icon, Input, Header as HeaderSemantic, Dropdown, Container } from 'semantic-ui-react'
+import { Link, withRouter } from 'react-static'
+
 // import {browserHistory} from 'react-router';
 import _ from 'lodash';
 import { connect } from 'react-redux';
@@ -67,144 +69,129 @@ class Header extends React.Component {
 
         return (
             <div>
-            <div style={{ display: 'flex', flexDirection: 'column', flex: 1, width: "260px", position: 'fixed', height: '100%'}}>
-            
-                <Menu inverted fluid vertical borderless compact style={{borderRadius: '0px', height: '100%'}}>
-                    <Menu.Item>
-                        <HeaderSemantic inverted as='h4'>LeanOpsConfigOverview</HeaderSemantic>
-                    </Menu.Item>
-                    <Menu.Item>
-                        <Menu.Header>Home</Menu.Header>
-                    </Menu.Item>
-                    <Menu.Item>
-                        <Menu.Header>Server</Menu.Header>
-                        <Menu.Menu>
-                            <Menu.Item  exact to='/' activeClassName='active'>
-                            PatchGroups
-                            </Menu.Item>
-                            <Menu.Item  exact to='/usage' activeClassName='active'>
-                            VirtualMachines
-                            </Menu.Item>
-                            <Menu.Item  exact to='/theming' activeClassName='active'>
-                            Statistics
-                            </Menu.Item>
-                        </Menu.Menu>
-                    </Menu.Item>
-                    <Menu.Item>
-                        <Menu.Header>Services</Menu.Header>
-                        <Menu.Menu>
-                            <Menu.Item  exact to='/' activeClassName='active'>
-                            RolloutStatus
-                            </Menu.Item>
-                            <Menu.Item  exact to='/usage' activeClassName='active'>
-                            VersionStatus
-                            </Menu.Item>
-                            <Menu.Item  exact to='/theming' activeClassName='active'>
-                            HealthChecks
-                            </Menu.Item>
-                            <Menu.Item  exact to='/theming' activeClassName='active'>
-                            Availability
-                            </Menu.Item>
-                            <Menu.Item  exact to='/theming' activeClassName='active'>
-                            Statistics
-                            </Menu.Item>
-                        </Menu.Menu>
-                    </Menu.Item>
-                    <Menu.Item>
-                        <Menu.Header>Loadbalancer Farms</Menu.Header>
-                        <Menu.Menu>
-                            <Menu.Item  exact to='/' activeClassName='active'>
-                            Consistency
-                            </Menu.Item>
-                            <Menu.Item  exact to='/usage' activeClassName='active'>
-                            Statistics
-                            </Menu.Item>
-                            <Menu.Item  exact to='/theming' activeClassName='active'>
-                            Graphs
-                            </Menu.Item>
-                        </Menu.Menu>
-                    </Menu.Item>
-                    <Menu.Item>
-                        <Menu.Header>Ip</Menu.Header>
-                    </Menu.Item>
-                    <Menu.Item>
-                        <Menu.Header>Scom</Menu.Header>
-                    </Menu.Item>
-                    <Menu.Item>
-                        <Menu.Header>BAWLogServer</Menu.Header>
-                    </Menu.Item>
-                    <Menu.Item>
-                        <Menu.Header>Config</Menu.Header>
-                        <Menu.Menu>
-                            <Menu.Item  exact to='/' activeClassName='active'>
-                            Loadbalancer
-                            </Menu.Item>
-                            <Menu.Item  exact to='/usage' activeClassName='active'>
-                            ActiveDirectory
-                            </Menu.Item>
-                            <Menu.Item  exact to='/theming' activeClassName='active'>
-                            Tags
-                            </Menu.Item>
-                        </Menu.Menu>
-                    </Menu.Item>
-                    <Menu.Item>
-                        <Menu.Header>Admin</Menu.Header>
-                    </Menu.Item>
-                    <Menu.Item>
-                        <Menu.Header>Help</Menu.Header>
-                    </Menu.Item>
-                    <Menu.Item>
-                        <Menu.Header>About</Menu.Header>
-                    </Menu.Item>
-                </Menu>
-                
+                <div style={{ display: 'flex', flexDirection: 'column', flex: 1, width: "260px", position: 'fixed', height: '100%'}}>
+                    <Menu inverted fluid vertical borderless compact style={{borderRadius: '0px', height: '100%'}}>
+                        <Menu.Item>
+                            <HeaderSemantic inverted as='h4'>LeanOpsConfigOverview</HeaderSemantic>
+                        </Menu.Item>
+                        <Menu.Item>
+                            <Menu.Header>Home</Menu.Header>
+                        </Menu.Item>
+                        <Menu.Item>
+                            <Menu.Header>Server</Menu.Header>
+                            <Menu.Menu>
+                                <Menu.Item as={Link} exact to='/usage'>
+                                PatchGroups
+                                </Menu.Item>
+                                <Menu.Item as={Link} exact to='/usage' >
+                                VirtualMachines
+                                </Menu.Item>
+                                <Menu.Item as={Link} exact to='/theming' >
+                                Statistics
+                                </Menu.Item>
+                            </Menu.Menu>
+                        </Menu.Item>
+                        <Menu.Item>
+                            <Menu.Header>Services</Menu.Header>
+                            <Menu.Menu>
+                                <Menu.Item as={Link} exact to='/' >
+                                RolloutStatus
+                                </Menu.Item>
+                                <Menu.Item as={Link} exact to='/usage' >
+                                VersionStatus
+                                </Menu.Item>
+                                <Menu.Item as={Link} exact to='/theming' >
+                                HealthChecks
+                                </Menu.Item>
+                                <Menu.Item as={Link} exact to='/theming' >
+                                Availability
+                                </Menu.Item>
+                                <Menu.Item as={Link} exact to='/theming' >
+                                Statistics
+                                </Menu.Item>
+                            </Menu.Menu>
+                        </Menu.Item>
+                        <Menu.Item>
+                            <Menu.Header>Loadbalancer Farms</Menu.Header>
+                            <Menu.Menu>
+                                <Menu.Item as={Link} exact to='/' >
+                                Consistency
+                                </Menu.Item>
+                                <Menu.Item as={Link} exact to='/usage' >
+                                Statistics
+                                </Menu.Item>
+                                <Menu.Item as={Link} exact to='/theming' >
+                                Graphs
+                                </Menu.Item>
+                            </Menu.Menu>
+                        </Menu.Item>
+                        <Menu.Item>
+                            <Menu.Header>Ip</Menu.Header>
+                        </Menu.Item>
+                        <Menu.Item>
+                            <Menu.Header>Scom</Menu.Header>
+                        </Menu.Item>
+                        <Menu.Item>
+                            <Menu.Header>BAWLogServer</Menu.Header>
+                        </Menu.Item>
+                        <Menu.Item>
+                            <Menu.Header>Config</Menu.Header>
+                            <Menu.Menu>
+                                <Menu.Item as={Link}  exact to='/' >
+                                Loadbalancer
+                                </Menu.Item>
+                                <Menu.Item as={Link}  exact to='/usage' >
+                                ActiveDirectory
+                                </Menu.Item>
+                                <Menu.Item as={Link}  exact to='/theming' >
+                                Tags
+                                </Menu.Item>
+                            </Menu.Menu>
+                        </Menu.Item>
+                        <Menu.Item>
+                            <Menu.Header>Admin</Menu.Header>
+                        </Menu.Item>
+                        <Menu.Item>
+                            <Menu.Header>Help</Menu.Header>
+                        </Menu.Item>
+                        <Menu.Item>
+                            <Menu.Header>About</Menu.Header>
+                        </Menu.Item>
+                    </Menu>
                 </div>
-            <div>
-                
-                
-                
-                {/* </div> */}
-                                
-                                {/* <div class="ui menu asd borderless" style={{borderRadius: "0 !important", border: "0", marginLeft: "250px", WebkitTransitionDuration: "0.1s"}}> */}
-                                <Menu inverted style={{borderRadius: "0px", border: "0", marginLeft: "250px", WebkitTransitionDuration: "0.1s"}} >
 
-                                
-                                {/* <a class="item openbtn">
-                                <i class="icon content"></i>
-                                </a> */}
-                                {/* <a class="item">Messages
-                                            </a> */}
-    <Menu.Item>
-                                <Input
-                                    // fluid
-                                    // icon={{ name: 'filter', color: 'teal', inverted: true, bordered: true }}
-                                    placeholder='Search Server'
-                                    // value={query}
-                                    // onChange={this.handleSearchChange}
-                                    // onKeyDown={this.handleSearchKeyDown}
-                                />
-                                </Menu.Item>      
-                                <Menu.Item>
-                                <Input placeholder='Search ServiceShortcut' />
-                                </Menu.Item>                                      
-                                <div class="right menu">
-                                <div class="ui dropdown item">
-                                    ICEPOR\login <i class="dropdown icon"></i>
-                                    <div class="menu">
-                                    <a class="item">1</a>
-                                    <a class="item">2</a>
-                                    <a class="item">3</a>
-                                    </div>
-                                </div>
-                                {/* <div class="item">
-                                    <div class="ui primary button">Sign Up</div>
-                                </div> */}
-                                </div>
-                            
-                                </Menu>
-            
-                            
-            </div>
+                <div>
+                    <Menu inverted stackable style={{borderRadius: "0px", border: "0", marginLeft: "250px", WebkitTransitionDuration: "0.1s"}} >        
+                        <Menu.Item>
+                            <Input
+                                // fluid
+                                // icon={{ name: 'filter', color: 'teal', inverted: true, bordered: true }}
+                                placeholder='Search Server'
+                                // value={query}
+                                // onChange={this.handleSearchChange}
+                                // onKeyDown={this.handleSearchKeyDown}
+                            />
+                        </Menu.Item>      
+                        <Menu.Item>
+                            <Input placeholder='Search ServiceShortcut' />
+                        </Menu.Item>   
+                        <Menu.Menu position='right'>
+                            <Dropdown item text='ICEPOR\login'>
+                                <Dropdown.Menu>
+                                    <Dropdown.Item>
+                                        1
+                                    </Dropdown.Item>
+                                    <Dropdown.Item>
+                                        2
+                                    </Dropdown.Item>
+                                    <Dropdown.Item>
+                                        3
+                                    </Dropdown.Item>
+                                </Dropdown.Menu>
+                            </Dropdown>
+                        </Menu.Menu>                                    
+                    </Menu>
+                </div>
             </div>
         );
     }
@@ -223,4 +210,4 @@ class Header extends React.Component {
 // }
   
 // export default connect(mapStateToProps, mapDispatchToProps)(Header);
-export default Header;
+export default withRouter(Header);

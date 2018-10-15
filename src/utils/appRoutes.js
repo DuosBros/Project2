@@ -7,6 +7,7 @@ import axios from 'axios';
 import CommonReducer from './CommonReducer';
 
 import Header from './Header';
+import Footer from './Footer';
 import Home from '../pages/Home/Home';
 
 export default class AppRoutes extends React.Component {
@@ -32,14 +33,17 @@ export default class AppRoutes extends React.Component {
     render() {
         return (
             <Provider store={this.store}>
-                <div>
+                <div >
                     <Header />
-                    <Switch>
-                        <Route exact path='/' component={Home}/>
-                        {/* both /roster and /roster/:number begin with /roster */}
-                        {/* <Route path='/roster' component={Roster}/>
-                        <Route path='/schedule' component={Schedule}/> */}
-                    </Switch>
+                    <div style={{height:'75%', marginLeft: "260px"}}> 
+                        <Switch>
+                            <Route path='/' component={Home}/>
+                            {/* both /roster and /roster/:number begin with /roster */}
+                            {/* <Route path='/roster' component={Roster}/>
+                            <Route path='/schedule' component={Schedule}/> */}
+                        </Switch>
+                    </div>
+                    <Footer />
                 </div>
             </Provider>
         );
