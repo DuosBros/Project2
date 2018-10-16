@@ -8,6 +8,9 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { searchServersAction } from '../actions/HeaderActions';
+import { searchServers } from '../requests/HeaderAxios';
+
 // import {loginFailedAction} from '../pages/login/LoginAction';
 
 class Header extends React.Component {
@@ -22,8 +25,11 @@ class Header extends React.Component {
         //     currentPath = 'patients'
         // }
         this.state = {
-            query: ''
+            serverQuery: '',
+            serviceShortcutQuery: ''
         }
+
+        this.handleSearchServerChange = this.handleSearchServerChange.bind(this);
     }
 
     componentDidMount() {
@@ -36,25 +42,49 @@ class Header extends React.Component {
 
     handleDocumentKeyDown = (e) => {
         const isq = keyboardKey.getKey(e) === 'q'
-        // const isw = keyboardKey.getKey(e) === 'w' 
+        const isw = keyboardKey.getKey(e) === 'w'
         const hasModifier = e.altKey || e.ctrlKey || e.metaKey
         const bodyHasFocus = document.activeElement === document.body
 
-        if (!hasModifier && isq && bodyHasFocus) this._searchInput.focus()
+        if (!hasModifier && isq && bodyHasFocus) this._searchServerInput.focus()
+        if (!hasModifier && isw && bodyHasFocus) this._searchServiceShortcutInput.focus()
     }
 
-    handleSearchChange = (e) => {
-        // ignore first "/" on search focus
-        if (e.target.value === 'q' && e.target.value.length === 1) return
+    handleSearchServerChange = (e) => {
+        // ignore first "q" on search focus
+        if (e.target.value === 'q') return
 
         this.setState({
-            selectedItemIndex: 0,
-            query: e.target.value,
+            serverQuery: e.target.value
         })
+
+        if (e.target.value.length > 1) {
+            searchServers(e.target.value)
+                .then(res => {
+                    this.props.searchServersAction(res)
+                })
+        }
     }
 
-    handleSearchRef = (c) => {
-        this._searchInput = c && c.querySelector('input')
+    handleSearchServiceShortcutChange = (e) => {
+        // ignore first "w" on search focus
+        if (e.target.value === 'w') return
+
+        this.setState({
+            serviceShortcutQuery: e.target.value
+        })
+
+        if (e.target.value.length > 1) {
+
+        }
+    }
+
+    handleSearchServerRef = (c) => {
+        this._searchServerInput = c && c.querySelector('input')
+    }
+
+    handleSearchServiceShortcutRef = (c) => {
+        this._searchServiceShortcutInput = c && c.querySelector('input')
     }
 
     render() {
@@ -155,20 +185,30 @@ class Header extends React.Component {
 
                 <div>
                     <Menu inverted stackable style={{ borderRadius: "0px", border: "0", marginLeft: "250px", WebkitTransitionDuration: "0.1s" }} >
-                        <Menu.Item>
-                            <Ref innerRef={this.handleSearchRef}>
+                        <Menu.Item className='headerSearchInput'>
+                            <Ref innerRef={this.handleSearchServerRef}>
                                 <Input
+                                    icon='search'
+                                    // action={{ icon: 'search' }} 
                                     // fluid
                                     // icon={{ name: 'filter', color: 'teal', inverted: true, bordered: true }}
-                                    placeholder='Press "q" to search a server'
-                                    value={this.state.query}
-                                    onChange={this.handleSearchChange}
-
+                                    placeholder='Press &apos;q&apos; to search a server'
+                                    value={this.state.serverQuery}
+                                    onChange={this.handleSearchServerChange}
                                 />
                             </Ref>
                         </Menu.Item>
-                        <Menu.Item>
-                            <Input placeholder='Press "w" to search a service shortcut' />
+                        <Menu.Item className='headerSearchInput'>
+                            <Ref innerRef={this.handleSearchServiceShortcutRef}>
+                                <Input
+                                    icon='search'
+                                    // action={{ icon: 'search' }} 
+                                    placeholder='Press &apos;w&apos; to search a service shortcut'
+                                    value={this.state.serviceShortcutQuery}
+                                    onChange={this.handleSearchServiceShortcutChange}
+                                />
+                            </Ref>
+
                         </Menu.Item>
                         <Menu.Menu position='right'>
                             <Dropdown item text='ICEPOR\login'>
@@ -192,17 +232,16 @@ class Header extends React.Component {
     }
 }
 
-// function mapStateToProps(state) {
-//     return {
-//         loginPageStore: state.LoginReducer
-//     };
-//   }
+function mapStateToProps(state) {
+    return {
+        headerStore: state.HeaderReducer
+    };
+}
 
-// function mapDispatchToProps(dispatch) {
-//     return bindActionCreators({
-//         loginFailedAction : loginFailedAction
-//     }, dispatch);
-// }
+function mapDispatchToProps(dispatch) {
+    return bindActionCreators({
+        searchServersAction: searchServersAction
+    }, dispatch);
+}
 
-// export default connect(mapStateToProps, mapDispatchToProps)(Header);
-export default withRouter(Header);
+export default connect(mapStateToProps, mapDispatchToProps)(Header);
