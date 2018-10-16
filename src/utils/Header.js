@@ -188,6 +188,7 @@ class Header extends React.Component {
                         <Menu.Item className='headerSearchInput'>
                             <Ref innerRef={this.handleSearchServerRef}>
                                 <Input
+                                // list='languages'
                                     icon='search'
                                     // action={{ icon: 'search' }} 
                                     // fluid
@@ -197,10 +198,15 @@ class Header extends React.Component {
                                     onChange={this.handleSearchServerChange}
                                 />
                             </Ref>
+                            {/* <datalist id='languages'>
+      <option value='English' />
+      <option value='Chinese' />
+      <option value='Dutch' />
+    </datalist> */}
                         </Menu.Item>
                         <Menu.Item className='headerSearchInput'>
                             <Ref innerRef={this.handleSearchServiceShortcutRef}>
-                                <Input
+                                <Input 
                                     icon='search'
                                     // action={{ icon: 'search' }} 
                                     placeholder='Press &apos;w&apos; to search a service shortcut'
