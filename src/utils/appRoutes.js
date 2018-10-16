@@ -8,7 +8,7 @@ import CommonReducer from './CommonReducer';
 
 import Header from './Header';
 import Footer from './Footer';
-import Home from '../pages/Home/Home';
+import Home from '../pages/Home';
 
 export default class AppRoutes extends React.Component {
     constructor() {

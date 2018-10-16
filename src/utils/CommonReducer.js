@@ -1,8 +1,9 @@
 import { combineReducers } from 'redux';
 
+import HeaderReducer from '../reducers/HeaderReducer';
+
 const CommonReducer = combineReducers({
-    // HomeReducer, LoginReducer, TagRegistrationReducer, TagEventTypeReducer, TagReducer, TagEventReducer, PatientDetailReducer, SpinnerReducer,
-    // PatientEditReducer, GraphReducer
+    HeaderReducer
 });
 
 export default CommonReducer;

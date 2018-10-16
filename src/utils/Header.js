@@ -1,5 +1,6 @@
 import React from 'react';
-import { Sidebar, Menu, Segment, Icon, Input, Header as HeaderSemantic, Dropdown, Container } from 'semantic-ui-react'
+import keyboardKey from 'keyboard-key'
+import { Sidebar, Menu, Segment, Icon, Input, Header as HeaderSemantic, Dropdown, Ref } from 'semantic-ui-react'
 import { Link, withRouter } from 'react-static'
 
 // import {browserHistory} from 'react-router';
@@ -20,49 +21,41 @@ class Header extends React.Component {
         // if(currentPath !== 'patients' && currentPath !== 'graphs') {
         //     currentPath = 'patients'
         // }
-        // this.state = {
-        //     activeItem: currentPath
-        // }
+        this.state = {
+            query: ''
+        }
     }
 
-    // componentDidMount() {
-    //     var currentPath = browserHistory.getCurrentLocation().pathname.replace("/","");
+    componentDidMount() {
+        document.addEventListener('keydown', this.handleDocumentKeyDown)
+    }
 
-    //     if(currentPath !== 'patients' && currentPath !== 'graphs') {
-    //         currentPath = 'patients'
-    //     }
+    componentWillUnmount() {
+        document.removeEventListener('keydown', this.handleDocumentKeyDown)
+    }
 
-    //     this.setState({ activeItem: currentPath })
-    // }
+    handleDocumentKeyDown = (e) => {
+        const isq = keyboardKey.getKey(e) === 'q'
+        // const isw = keyboardKey.getKey(e) === 'w' 
+        const hasModifier = e.altKey || e.ctrlKey || e.metaKey
+        const bodyHasFocus = document.activeElement === document.body
 
-    // handleItemClick = (e, { name }) => 
-    // {
-    //     if(name !== 'FNO - Urgent') {
-    //         this.setState({ activeItem: name })
-    //     }
+        if (!hasModifier && isq && bodyHasFocus) this._searchInput.focus()
+    }
 
-    //     if(name === 'FNO - Urgent') {
-    //         browserHistory.push('/patients');
-    //         window.location.reload()
-    //     }
+    handleSearchChange = (e) => {
+        // ignore first "/" on search focus
+        if (e.target.value === 'q' && e.target.value.length === 1) return
 
-    //     if(name === 'patients') {
-    //         browserHistory.push('/patients');
-    //     }
+        this.setState({
+            selectedItemIndex: 0,
+            query: e.target.value,
+        })
+    }
 
-    //     if(name === 'graphs') {
-    //         browserHistory.push('/graphs');
-    //         window.location.reload()
-    //     }
-
-    // }
-
-    // logout() {
-    //     this.props.loginFailedAction();
-    //     this.setState({ activeItem: "" })
-    //     browserHistory.push('/logout');
-    // }
-
+    handleSearchRef = (c) => {
+        this._searchInput = c && c.querySelector('input')
+    }
 
     render() {
         // const { activeItem } = this.state
@@ -163,17 +156,19 @@ class Header extends React.Component {
                 <div>
                     <Menu inverted stackable style={{ borderRadius: "0px", border: "0", marginLeft: "250px", WebkitTransitionDuration: "0.1s" }} >
                         <Menu.Item>
-                            <Input
-                                // fluid
-                                // icon={{ name: 'filter', color: 'teal', inverted: true, bordered: true }}
-                                placeholder='Search Server'
-                            // value={query}
-                            // onChange={this.handleSearchChange}
-                            // onKeyDown={this.handleSearchKeyDown}
-                            />
+                            <Ref innerRef={this.handleSearchRef}>
+                                <Input
+                                    // fluid
+                                    // icon={{ name: 'filter', color: 'teal', inverted: true, bordered: true }}
+                                    placeholder='Press "q" to search a server'
+                                    value={this.state.query}
+                                    onChange={this.handleSearchChange}
+
+                                />
+                            </Ref>
                         </Menu.Item>
                         <Menu.Item>
-                            <Input placeholder='Search ServiceShortcut' />
+                            <Input placeholder='Press "w" to search a service shortcut' />
                         </Menu.Item>
                         <Menu.Menu position='right'>
                             <Dropdown item text='ICEPOR\login'>
