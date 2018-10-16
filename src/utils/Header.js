@@ -25,11 +25,11 @@ class Header extends React.Component {
         //     currentPath = 'patients'
         // }
         this.state = {
+            serverValue: null,
             serverQuery: '',
             serviceShortcutQuery: ''
         }
 
-        this.handleSearchServerChange = this.handleSearchServerChange.bind(this);
     }
 
     componentDidMount() {
@@ -46,14 +46,11 @@ class Header extends React.Component {
         const hasModifier = e.altKey || e.ctrlKey || e.metaKey
         const bodyHasFocus = document.activeElement === document.body
 
-        if (!hasModifier && isq && bodyHasFocus) this._searchServerInput.focus()
-        if (!hasModifier && isw && bodyHasFocus) this._searchServiceShortcutInput.focus()
+        if (!hasModifier && isq && bodyHasFocus) { this._searchServerInput.focus(); e.preventDefault(); }
+        if (!hasModifier && isw && bodyHasFocus) { this._searchServiceShortcutInput.focus(); e.preventDefault(); }
     }
 
-    handleSearchServerChange = (e) => {
-        // ignore first "q" on search focus
-        if (e.target.value === 'q') return
-
+    handleSearchServerChange = (e, x) => {
         this.setState({
             serverQuery: e.target.value
         })
@@ -61,7 +58,7 @@ class Header extends React.Component {
         if (e.target.value.length > 1) {
             searchServers(e.target.value)
                 .then(res => {
-                    this.props.searchServersAction(res)
+                    this.props.searchServersAction(res.data.map(e => ({ text: e.Name, value: e.Id })))
                 })
         }
     }
@@ -79,6 +76,10 @@ class Header extends React.Component {
         }
     }
 
+    handleSearchServerSelect = (e, {value}) => {
+        this.setState({ serverValue: value })
+    }
+
     handleSearchServerRef = (c) => {
         this._searchServerInput = c && c.querySelector('input')
     }
@@ -88,8 +89,6 @@ class Header extends React.Component {
     }
 
     render() {
-        // const { activeItem } = this.state
-
         return (
             <div>
                 <div style={{ display: 'flex', flexDirection: 'column', flex: 1, width: "260px", position: 'fixed', height: '100%' }}>
@@ -184,31 +183,29 @@ class Header extends React.Component {
                 </div>
 
                 <div>
-                    <Menu inverted stackable style={{ borderRadius: "0px", border: "0", marginLeft: "250px", WebkitTransitionDuration: "0.1s" }} >
+                    <Menu stackable style={{ borderRadius: "0px", border: "0", marginLeft: "250px", WebkitTransitionDuration: "0.1s" }} >
                         <Menu.Item className='headerSearchInput'>
                             <Ref innerRef={this.handleSearchServerRef}>
-                                <Input
-                                // list='languages'
+                                <Dropdown
                                     icon='search'
-                                    // action={{ icon: 'search' }} 
-                                    // fluid
+                                    // action={{ icon: 'search' }}
+                                    selection
+                                    onChange={this.handleSearchServerSelect}
+                                    options={this.props.headerStore.searchServerResult.slice(0,100)}
+                                    fluid
                                     // icon={{ name: 'filter', color: 'teal', inverted: true, bordered: true }}
                                     placeholder='Press &apos;q&apos; to search a server'
-                                    value={this.state.serverQuery}
-                                    onChange={this.handleSearchServerChange}
+                                    value={this.state.serverValue}
+                                    onSearchChange={this.handleSearchServerChange}
+                                    search
                                 />
                             </Ref>
-                            {/* <datalist id='languages'>
-      <option value='English' />
-      <option value='Chinese' />
-      <option value='Dutch' />
-    </datalist> */}
                         </Menu.Item>
                         <Menu.Item className='headerSearchInput'>
                             <Ref innerRef={this.handleSearchServiceShortcutRef}>
-                                <Input 
+                                <Input
                                     icon='search'
-                                    // action={{ icon: 'search' }} 
+                                    // action={{ icon: 'search' }}
                                     placeholder='Press &apos;w&apos; to search a service shortcut'
                                     value={this.state.serviceShortcutQuery}
                                     onChange={this.handleSearchServiceShortcutChange}

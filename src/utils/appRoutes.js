@@ -16,8 +16,12 @@ export default class AppRoutes extends React.Component {
         this.store = createStore(CommonReducer);
 
         axios.defaults.headers.post['Content-Type'] = 'application/json';
+        fetch("https://loco.bwin.prod/", {
+            mode: "cors",
+            credentials: "include"
+        })
     }
-    
+
     componentWillMount() {
         // var current = window.location.href
 
@@ -27,7 +31,7 @@ export default class AppRoutes extends React.Component {
         // else {
         //     browserHistory.push('/login')
         // }
-        
+
     }
 
     render() {
@@ -35,7 +39,7 @@ export default class AppRoutes extends React.Component {
             <Provider store={this.store}>
                 <div >
                     <Header />
-                    <div id="contentwrapper"> 
+                    <div id="contentwrapper">
                         <Switch>
                             <Route path='/' component={Home}/>
                             {/* both /roster and /roster/:number begin with /roster */}
