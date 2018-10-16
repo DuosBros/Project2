@@ -90,7 +90,7 @@ class Header extends React.Component {
 
     render() {
         return (
-            <div>
+            <div id="header">
                 <div style={{ display: 'flex', flexDirection: 'column', flex: 1, width: "260px", position: 'fixed', height: '100%' }}>
                     <Menu inverted fluid vertical borderless compact style={{ borderRadius: '0px', height: '100%' }}>
                         <Menu.Item>

@@ -20,3 +20,7 @@ html, body {
 .headerSearchInput {
     min-width: 23em;
 }
+
+#header i.search.icon {
+    top: 0.5em
+}
