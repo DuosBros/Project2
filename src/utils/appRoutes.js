@@ -35,7 +35,7 @@ export default class AppRoutes extends React.Component {
             <Provider store={this.store}>
                 <div >
                     <Header />
-                    <div style={{height:'75%', marginLeft: "260px"}}> 
+                    <div id="contentwrapper"> 
                         <Switch>
                             <Route path='/' component={Home}/>
                             {/* both /roster and /roster/:number begin with /roster */}
@@ -43,7 +43,7 @@ export default class AppRoutes extends React.Component {
                             <Route path='/schedule' component={Schedule}/> */}
                         </Switch>
                     </div>
-                    <Footer />
+                    <Footer id="footer"/>
                 </div>
             </Provider>
         );

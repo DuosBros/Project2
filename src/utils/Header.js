@@ -5,7 +5,7 @@ import { Link, withRouter } from 'react-static'
 // import {browserHistory} from 'react-router';
 import _ from 'lodash';
 import { connect } from 'react-redux';
-import {bindActionCreators} from 'redux';
+import { bindActionCreators } from 'redux';
 
 // import {loginFailedAction} from '../pages/login/LoginAction';
 
@@ -62,15 +62,15 @@ class Header extends React.Component {
     //     this.setState({ activeItem: "" })
     //     browserHistory.push('/logout');
     // }
-    
-    
+
+
     render() {
         // const { activeItem } = this.state
 
         return (
             <div>
-                <div style={{ display: 'flex', flexDirection: 'column', flex: 1, width: "260px", position: 'fixed', height: '100%'}}>
-                    <Menu inverted fluid vertical borderless compact style={{borderRadius: '0px', height: '100%'}}>
+                <div style={{ display: 'flex', flexDirection: 'column', flex: 1, width: "260px", position: 'fixed', height: '100%' }}>
+                    <Menu inverted fluid vertical borderless compact style={{ borderRadius: '0px', height: '100%' }}>
                         <Menu.Item>
                             <HeaderSemantic inverted as='h4'>LeanOpsConfigOverview</HeaderSemantic>
                         </Menu.Item>
@@ -81,13 +81,13 @@ class Header extends React.Component {
                             <Menu.Header>Server</Menu.Header>
                             <Menu.Menu>
                                 <Menu.Item as={Link} exact to='/usage'>
-                                PatchGroups
+                                    PatchGroups
                                 </Menu.Item>
                                 <Menu.Item as={Link} exact to='/usage' >
-                                VirtualMachines
+                                    VirtualMachines
                                 </Menu.Item>
                                 <Menu.Item as={Link} exact to='/theming' >
-                                Statistics
+                                    Statistics
                                 </Menu.Item>
                             </Menu.Menu>
                         </Menu.Item>
@@ -95,19 +95,19 @@ class Header extends React.Component {
                             <Menu.Header>Services</Menu.Header>
                             <Menu.Menu>
                                 <Menu.Item as={Link} exact to='/' >
-                                RolloutStatus
+                                    RolloutStatus
                                 </Menu.Item>
                                 <Menu.Item as={Link} exact to='/usage' >
-                                VersionStatus
+                                    VersionStatus
                                 </Menu.Item>
                                 <Menu.Item as={Link} exact to='/theming' >
-                                HealthChecks
+                                    HealthChecks
                                 </Menu.Item>
                                 <Menu.Item as={Link} exact to='/theming' >
-                                Availability
+                                    Availability
                                 </Menu.Item>
                                 <Menu.Item as={Link} exact to='/theming' >
-                                Statistics
+                                    Statistics
                                 </Menu.Item>
                             </Menu.Menu>
                         </Menu.Item>
@@ -115,13 +115,13 @@ class Header extends React.Component {
                             <Menu.Header>Loadbalancer Farms</Menu.Header>
                             <Menu.Menu>
                                 <Menu.Item as={Link} exact to='/' >
-                                Consistency
+                                    Consistency
                                 </Menu.Item>
                                 <Menu.Item as={Link} exact to='/usage' >
-                                Statistics
+                                    Statistics
                                 </Menu.Item>
                                 <Menu.Item as={Link} exact to='/theming' >
-                                Graphs
+                                    Graphs
                                 </Menu.Item>
                             </Menu.Menu>
                         </Menu.Item>
@@ -137,14 +137,14 @@ class Header extends React.Component {
                         <Menu.Item>
                             <Menu.Header>Config</Menu.Header>
                             <Menu.Menu>
-                                <Menu.Item as={Link}  exact to='/' >
-                                Loadbalancer
+                                <Menu.Item as={Link} exact to='/' >
+                                    Loadbalancer
                                 </Menu.Item>
-                                <Menu.Item as={Link}  exact to='/usage' >
-                                ActiveDirectory
+                                <Menu.Item as={Link} exact to='/usage' >
+                                    ActiveDirectory
                                 </Menu.Item>
-                                <Menu.Item as={Link}  exact to='/theming' >
-                                Tags
+                                <Menu.Item as={Link} exact to='/theming' >
+                                    Tags
                                 </Menu.Item>
                             </Menu.Menu>
                         </Menu.Item>
@@ -161,20 +161,20 @@ class Header extends React.Component {
                 </div>
 
                 <div>
-                    <Menu inverted stackable style={{borderRadius: "0px", border: "0", marginLeft: "250px", WebkitTransitionDuration: "0.1s"}} >        
+                    <Menu inverted stackable style={{ borderRadius: "0px", border: "0", marginLeft: "250px", WebkitTransitionDuration: "0.1s" }} >
                         <Menu.Item>
                             <Input
                                 // fluid
                                 // icon={{ name: 'filter', color: 'teal', inverted: true, bordered: true }}
                                 placeholder='Search Server'
-                                // value={query}
-                                // onChange={this.handleSearchChange}
-                                // onKeyDown={this.handleSearchKeyDown}
+                            // value={query}
+                            // onChange={this.handleSearchChange}
+                            // onKeyDown={this.handleSearchKeyDown}
                             />
-                        </Menu.Item>      
+                        </Menu.Item>
                         <Menu.Item>
                             <Input placeholder='Search ServiceShortcut' />
-                        </Menu.Item>   
+                        </Menu.Item>
                         <Menu.Menu position='right'>
                             <Dropdown item text='ICEPOR\login'>
                                 <Dropdown.Menu>
@@ -189,7 +189,7 @@ class Header extends React.Component {
                                     </Dropdown.Item>
                                 </Dropdown.Menu>
                             </Dropdown>
-                        </Menu.Menu>                                    
+                        </Menu.Menu>
                     </Menu>
                 </div>
             </div>
@@ -202,12 +202,12 @@ class Header extends React.Component {
 //         loginPageStore: state.LoginReducer
 //     };
 //   }
-  
+
 // function mapDispatchToProps(dispatch) {
 //     return bindActionCreators({
 //         loginFailedAction : loginFailedAction
 //     }, dispatch);
 // }
-  
+
 // export default connect(mapStateToProps, mapDispatchToProps)(Header);
 export default withRouter(Header);

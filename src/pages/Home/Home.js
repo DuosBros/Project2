@@ -4,7 +4,7 @@ export default class AppRoutes extends React.Component {
 
     render() {
         return (
-            <div style={{height:'75%'}}>
+            <div style={{ height: '75%' }}>
                 Content and shit
             </div>
         )
