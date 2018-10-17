@@ -10,17 +10,31 @@ html, body {
 }
 
 #footer {
-    padding: 1em;
+    padding-bottom: 1em;
     bottom: 1em;
     position: absolute;
     width: 100%;
     margin-left: 260px;
 }
 
-.headerSearchInput {
-    min-width: 23em;
-}
-
 #header i.search.icon {
     top: 0.5em
+}
+
+#verticalMenu {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    width: 260px;
+    position: fixed;
+    height: 100%;
+}
+
+.headerSearchInput {
+    min-width: 22em;
+}
+
+.semanticVerticalMenu {
+    height: 100%;
+    border-radius: 0px;
 }

@@ -1,31 +1,21 @@
 import React from 'react';
 import keyboardKey from 'keyboard-key'
 import { Sidebar, Menu, Segment, Icon, Input, Header as HeaderSemantic, Dropdown, Ref } from 'semantic-ui-react'
-import { Link, withRouter } from 'react-static'
+import { Link, withRouter } from 'react-static';
+import {Redirect} from 'react-router-dom';
 
-// import {browserHistory} from 'react-router';
 import _ from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { searchServersAction } from '../actions/HeaderActions';
-import { searchServers } from '../requests/HeaderAxios';
-
-// import {loginFailedAction} from '../pages/login/LoginAction';
+import { searchServersAction, searchServiceShortcutAction } from '../actions/HeaderActions';
+import { searchServers, searchServiceShortcut } from '../requests/HeaderAxios';
 
 class Header extends React.Component {
     constructor(props) {
         super(props)
 
-        // this.logout = this.logout.bind(this);
-
-        // var currentPath = browserHistory.getCurrentLocation().pathname.replace("/","");
-
-        // if(currentPath !== 'patients' && currentPath !== 'graphs') {
-        //     currentPath = 'patients'
-        // }
         this.state = {
-            serverValue: null,
             serverQuery: '',
             serviceShortcutQuery: ''
         }
@@ -50,7 +40,7 @@ class Header extends React.Component {
         if (!hasModifier && isw && bodyHasFocus) { this._searchServiceShortcutInput.focus(); e.preventDefault(); }
     }
 
-    handleSearchServerChange = (e, x) => {
+    handleSearchServerChange = (e) => {
         this.setState({
             serverQuery: e.target.value
         })
@@ -64,20 +54,28 @@ class Header extends React.Component {
     }
 
     handleSearchServiceShortcutChange = (e) => {
-        // ignore first "w" on search focus
-        if (e.target.value === 'w') return
-
         this.setState({
             serviceShortcutQuery: e.target.value
         })
 
         if (e.target.value.length > 1) {
-
+            searchServiceShortcut(e.target.value)
+                .then(res => {
+                    this.props.searchServiceShortcutAction(res.data.map(e => ({ text: e.Name, value: e.Id })))
+                })
         }
     }
 
     handleSearchServerSelect = (e, {value}) => {
-        this.setState({ serverValue: value })
+        this.setState({ serverQuery: value })
+
+        debugger;
+        var route = "/server/details" + value
+        // this.props.history.push(route)
+    }
+
+    handleSearchServiceShortcutSelect = (e, {value}) => {
+        this.setState({ serviceShortcutQuery: value })
     }
 
     handleSearchServerRef = (c) => {
@@ -91,8 +89,8 @@ class Header extends React.Component {
     render() {
         return (
             <div id="header">
-                <div style={{ display: 'flex', flexDirection: 'column', flex: 1, width: "260px", position: 'fixed', height: '100%' }}>
-                    <Menu inverted fluid vertical borderless compact style={{ borderRadius: '0px', height: '100%' }}>
+                <div id="verticalMenu">
+                    <Menu className="semanticVerticalMenu" inverted fluid vertical borderless compact >
                         <Menu.Item>
                             <HeaderSemantic inverted as='h4'>LeanOpsConfigOverview</HeaderSemantic>
                         </Menu.Item>
@@ -188,14 +186,12 @@ class Header extends React.Component {
                             <Ref innerRef={this.handleSearchServerRef}>
                                 <Dropdown
                                     icon='search'
-                                    // action={{ icon: 'search' }}
                                     selection
                                     onChange={this.handleSearchServerSelect}
-                                    options={this.props.headerStore.searchServerResult.slice(0,100)}
+                                    options={this.props.headerStore.searchServerResult.slice(0,15)}
                                     fluid
-                                    // icon={{ name: 'filter', color: 'teal', inverted: true, bordered: true }}
                                     placeholder='Press &apos;q&apos; to search a server'
-                                    value={this.state.serverValue}
+                                    value={this.state.serverQuery}
                                     onSearchChange={this.handleSearchServerChange}
                                     search
                                 />
@@ -203,18 +199,22 @@ class Header extends React.Component {
                         </Menu.Item>
                         <Menu.Item className='headerSearchInput'>
                             <Ref innerRef={this.handleSearchServiceShortcutRef}>
-                                <Input
+                                <Dropdown
                                     icon='search'
-                                    // action={{ icon: 'search' }}
+                                    selection
+                                    onChange={this.handleSearchServiceShortcutSelect}
+                                    options={this.props.headerStore.searchServiceShortcutsResult.slice(0,15)}
+                                    fluid
                                     placeholder='Press &apos;w&apos; to search a service shortcut'
                                     value={this.state.serviceShortcutQuery}
-                                    onChange={this.handleSearchServiceShortcutChange}
+                                    onSearchChange={this.handleSearchServiceShortcutChange}
+                                    search
                                 />
                             </Ref>
 
                         </Menu.Item>
                         <Menu.Menu position='right'>
-                            <Dropdown item text='ICEPOR\login'>
+                            <Dropdown item text={this.props.baseStore.currentUser.Identity}>
                                 <Dropdown.Menu>
                                     <Dropdown.Item>
                                         1
@@ -237,13 +237,15 @@ class Header extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        headerStore: state.HeaderReducer
+        headerStore: state.HeaderReducer,
+        baseStore: state.BaseReducer
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
-        searchServersAction: searchServersAction
+        searchServersAction: searchServersAction,
+        searchServiceShortcutAction: searchServiceShortcutAction
     }, dispatch);
 }
 

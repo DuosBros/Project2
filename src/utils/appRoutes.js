@@ -9,6 +9,7 @@ import CommonReducer from './CommonReducer';
 import Header from './Header';
 import Footer from './Footer';
 import Home from '../pages/Home';
+import Base from './Base';
 
 export default class AppRoutes extends React.Component {
     constructor() {
@@ -16,10 +17,11 @@ export default class AppRoutes extends React.Component {
         this.store = createStore(CommonReducer);
 
         axios.defaults.headers.post['Content-Type'] = 'application/json';
-        fetch("https://loco.bwin.prod/", {
-            mode: "cors",
-            credentials: "include"
-        })
+        // axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
+        // fetch("http://localhost:24298/api/auth/", {
+        //     mode: "cors",
+        //     credentials: "include"
+        // })
     }
 
     componentWillMount() {
@@ -37,18 +39,7 @@ export default class AppRoutes extends React.Component {
     render() {
         return (
             <Provider store={this.store}>
-                <div >
-                    <Header />
-                    <div id="contentwrapper">
-                        <Switch>
-                            <Route path='/' component={Home}/>
-                            {/* both /roster and /roster/:number begin with /roster */}
-                            {/* <Route path='/roster' component={Roster}/>
-                            <Route path='/schedule' component={Schedule}/> */}
-                        </Switch>
-                    </div>
-                    <Footer id="footer"/>
-                </div>
+                <Base />
             </Provider>
         );
     }
