@@ -1,0 +1,1 @@
+export const GET_SERVER_DETAILS = 'GET_SERVER_DETAILS';
