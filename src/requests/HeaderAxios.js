@@ -6,5 +6,5 @@ export function searchServers(query) {
 }
 
 export function searchServiceShortcut(query) {
-    return axios.get(LOCO_API + 'Search/ServiceShortcut/' + encodeURIComponent(query));
+    return axios.get(LOCO_API + 'Service/search?query=' + encodeURI(query));
 }

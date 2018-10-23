@@ -1,8 +1,8 @@
 import React from 'react';
 import keyboardKey from 'keyboard-key'
 import { Sidebar, Menu, Segment, Icon, Input, Header as HeaderSemantic, Dropdown, Ref } from 'semantic-ui-react'
-import { Link, withRouter } from 'react-static';
-import {Redirect} from 'react-router-dom';
+// import { Link, withRouter } from 'react-static';
+import {Link,withRouter} from 'react-router-dom';
 
 import _ from 'lodash';
 import { connect } from 'react-redux';
@@ -68,14 +68,20 @@ class Header extends React.Component {
 
     handleSearchServerSelect = (e, {value}) => {
         this.setState({ serverQuery: value })
+    }
 
-        debugger;
-        var route = "/server/details" + value
-        // this.props.history.push(route)
+    handleSearchServerClose = () => {
+        var route = "/server/details/" + this.state.serverQuery
+        this.props.history.push(route)
     }
 
     handleSearchServiceShortcutSelect = (e, {value}) => {
         this.setState({ serviceShortcutQuery: value })
+    }
+
+    handleSearchServiceShortcutClose = () => {
+        var route = "/service/details/" + this.state.serviceShortcutQuery
+        this.props.history.push(route)
     }
 
     handleSearchServerRef = (c) => {
@@ -180,13 +186,14 @@ class Header extends React.Component {
                     </Menu>
                 </div>
 
-                <div>
+                <div id="menuId">
                     <Menu stackable style={{ borderRadius: "0px", border: "0", marginLeft: "250px", WebkitTransitionDuration: "0.1s" }} >
                         <Menu.Item className='headerSearchInput'>
                             <Ref innerRef={this.handleSearchServerRef}>
                                 <Dropdown
                                     icon='search'
                                     selection
+                                    onClose={this.handleSearchServerClose}
                                     onChange={this.handleSearchServerSelect}
                                     options={this.props.headerStore.searchServerResult.slice(0,15)}
                                     fluid
@@ -202,6 +209,7 @@ class Header extends React.Component {
                                 <Dropdown
                                     icon='search'
                                     selection
+                                    onClose={this.handleSearchServiceShortcutClose}
                                     onChange={this.handleSearchServiceShortcutSelect}
                                     options={this.props.headerStore.searchServiceShortcutsResult.slice(0,15)}
                                     fluid
@@ -249,4 +257,4 @@ function mapDispatchToProps(dispatch) {
     }, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Header);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Header));

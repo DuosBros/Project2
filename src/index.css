@@ -32,9 +32,14 @@ html, body {
 
 .headerSearchInput {
     min-width: 22em;
+    border: 0px
 }
 
 .semanticVerticalMenu {
     height: 100%;
     border-radius: 0px;
+}
+
+#menuId .ui.menu .item:before {
+    width: 0px
 }

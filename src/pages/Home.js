@@ -5,7 +5,7 @@ export default class AppRoutes extends React.Component {
     render() {
         return (
             <div>
-                Content and shit
+                Home page shit
             </div>
         )
     }

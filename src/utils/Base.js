@@ -8,6 +8,7 @@ import Header from './Header';
 import Footer from './Footer';
 import Home from '../pages/Home';
 import ServerDetails from '../pages/ServerDetails';
+import ServiceDetails from '../pages/ServiceDetails';
 
 import { authenticateAction } from '../actions/BaseAction';
 import { authenticate } from '../requests/BaseAxios';
@@ -22,19 +23,21 @@ class Base extends React.Component {
     }
     render() {
         return (
-            <div >
-                <Header />
-                <div id="contentwrapper">
-                    <BrowserRouter>
-                        <Switch>
-                            <Route exact path='/' component={Home} />
-                            <Route path='/server/details/:id' render={props => <ServerDetails {...props} />} />
-                            {/* both /roster and /roster/:number begin with /roster */}
-                            {/* <Route path='/roster' component={Roster}/>
-                            <Route path='/schedule' component={Schedule}/> */}
-                        </Switch>
-                    </BrowserRouter>
-                </div>
+            <div>
+                <BrowserRouter>
+                    <div >
+                        <Header />
+                        <div id="contentwrapper">
+                            <Switch>
+                                <Route exact path='/' component={Home} />
+                                <Route path='/server/details/:id' render={props => <ServerDetails {...props} />} />
+                                <Route path='/service/details/:id' render={(props) => (
+                                    <ServiceDetails key={props.match.params.id} {...props} />)
+                                } />
+                            </Switch>
+                        </div>
+                    </div>
+                </BrowserRouter>
                 <Footer id="footer" />
             </div>
         )
