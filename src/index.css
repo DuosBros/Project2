@@ -1,5 +1,5 @@
 html, body {
-    background-color: rgb(238, 234, 231) !important;
+    background-color: rgb(247, 245, 243) !important;
     width: 100%;
     
 }
@@ -42,4 +42,11 @@ html, body {
 
 #menuId .ui.menu .item:before {
     width: 0px
+}
+
+.centered {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }

@@ -112,9 +112,9 @@ class Header extends React.Component {
                                 <Menu.Item as={Link} exact to='/usage' >
                                     VirtualMachines
                                 </Menu.Item>
-                                <Menu.Item as={Link} exact to='/theming' >
+                                {/* <Menu.Item as={Link} exact to='/theming' >
                                     Statistics
-                                </Menu.Item>
+                                </Menu.Item> */}
                             </Menu.Menu>
                         </Menu.Item>
                         <Menu.Item>
@@ -132,9 +132,9 @@ class Header extends React.Component {
                                 <Menu.Item as={Link} exact to='/theming' >
                                     Availability
                                 </Menu.Item>
-                                <Menu.Item as={Link} exact to='/theming' >
+                                {/* <Menu.Item as={Link} exact to='/theming' >
                                     Statistics
-                                </Menu.Item>
+                                </Menu.Item> */}
                             </Menu.Menu>
                         </Menu.Item>
                         <Menu.Item>
@@ -143,22 +143,20 @@ class Header extends React.Component {
                                 <Menu.Item as={Link} exact to='/' >
                                     Consistency
                                 </Menu.Item>
-                                <Menu.Item as={Link} exact to='/usage' >
+                                {/* <Menu.Item as={Link} exact to='/usage' >
                                     Statistics
-                                </Menu.Item>
-                                <Menu.Item as={Link} exact to='/theming' >
+                                </Menu.Item> */}
+                                {/* <Menu.Item as={Link} exact to='/theming' >
                                     Graphs
-                                </Menu.Item>
+                                </Menu.Item> */}
                             </Menu.Menu>
                         </Menu.Item>
-                        <Menu.Item>
+                        {/* TODO: add the IP in the server list  */}
+                        {/* <Menu.Item>
                             <Menu.Header>Ip</Menu.Header>
-                        </Menu.Item>
+                        </Menu.Item> */}
                         <Menu.Item>
                             <Menu.Header>Scom</Menu.Header>
-                        </Menu.Item>
-                        <Menu.Item>
-                            <Menu.Header>BAWLogServer</Menu.Header>
                         </Menu.Item>
                         <Menu.Item>
                             <Menu.Header>Config</Menu.Header>
@@ -168,9 +166,6 @@ class Header extends React.Component {
                                 </Menu.Item>
                                 <Menu.Item as={Link} exact to='/usage' >
                                     ActiveDirectory
-                                </Menu.Item>
-                                <Menu.Item as={Link} exact to='/theming' >
-                                    Tags
                                 </Menu.Item>
                             </Menu.Menu>
                         </Menu.Item>
