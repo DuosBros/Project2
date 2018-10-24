@@ -50,7 +50,7 @@ class Base extends React.Component {
                                 <div>
                                     <BrowserRouter>
                                         <div >
-                                            <div id="contentwrapper">
+                                            <div id={this.props.headerStore.showVerticalMenu ? "contentWrapper" : "extendedContentWrapper"}>
                                                 <Header />
                                                 <Switch>
                                                     <Route exact path='/' component={Home} />
@@ -83,7 +83,8 @@ class Base extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        baseStore: state.BaseReducer
+        baseStore: state.BaseReducer,
+        headerStore: state.HeaderReducer
     };
 }
 

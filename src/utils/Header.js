@@ -8,8 +8,10 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { searchServersAction, searchServiceShortcutAction } from '../actions/HeaderActions';
+import { searchServersAction, searchServiceShortcutAction, toggleVerticalMenuAction } from '../actions/HeaderActions';
 import { searchServers, searchServiceShortcut } from '../requests/HeaderAxios';
+
+import { isNum } from '../utils/HelperFunction';
 
 class Header extends React.Component {
     constructor(props) {
@@ -17,8 +19,7 @@ class Header extends React.Component {
 
         this.state = {
             serverQuery: '',
-            serviceShortcutQuery: '',
-            showVerticalMenu: true
+            serviceShortcutQuery: ''
         }
 
     }
@@ -53,6 +54,24 @@ class Header extends React.Component {
                 })
         }
     }
+    
+    handleSearchServerSelect = (e, { value }) => {
+        if (!isNum(value)) {
+            this.setState({ serverQuery: value })
+        }
+    }
+
+    handleSearchServerClose = (e, { value }) => {
+
+        this.setState({
+            serverQuery: value
+        })
+
+        if (isNum(value)) {
+            var route = "/server/details/" + this.state.serverQuery
+            this.props.history.push(route)
+        }
+    }
 
     handleSearchServiceShortcutChange = (e) => {
         this.setState({
@@ -67,22 +86,16 @@ class Header extends React.Component {
         }
     }
 
-    handleSearchServerSelect = (e, { value }) => {
-        this.setState({ serverQuery: value })
-    }
-
-    handleSearchServerClose = () => {
-        var route = "/server/details/" + this.state.serverQuery
-        this.props.history.push(route)
-    }
-
     handleSearchServiceShortcutSelect = (e, { value }) => {
         this.setState({ serviceShortcutQuery: value })
     }
 
-    handleSearchServiceShortcutClose = () => {
-        var route = "/service/details/" + this.state.serviceShortcutQuery
-        this.props.history.push(route)
+    handleSearchServiceShortcutClose = (e, { value }) => {
+        
+        if (isNum(value)) {
+            var route = "/service/details/" + this.state.serviceShortcutQuery
+            this.props.history.push(route)
+        }
     }
 
     handleSearchServerRef = (c) => {
@@ -94,113 +107,100 @@ class Header extends React.Component {
     }
 
     handleToggleSlider = () => {
-        this.setState({ showVerticalMenu: !this.state.showVerticalMenu })
+        this.props.toggleVerticalMenuAction();
     }
 
     render() {
         return (
             <div id="header">
                 {
-                    this.state.showVerticalMenu ? (
-                        <div id="verticalMenu">
-                            <Menu className="semanticVerticalMenu" inverted fluid vertical borderless compact >
-                                <Menu.Item>
-                                    <HeaderSemantic inverted as='h4'>
-                                        LeanOpsConfigOverview
-                                        <Button color="black" onClick={() => this.handleToggleSlider()} icon="content" style={{ float: 'right', margin: "0px" }} ></Button>
 
-                                    </HeaderSemantic>
-                                </Menu.Item>
-                                <Menu.Item>
-                                    <Menu.Header>Home</Menu.Header>
-                                </Menu.Item>
-                                <Menu.Item>
-                                    <Menu.Header>Server</Menu.Header>
-                                    <Menu.Menu>
-                                        <Menu.Item as={Link} exact to='/usage'>
-                                            PatchGroups
-                                </Menu.Item>
-                                        <Menu.Item as={Link} exact to='/usage' >
-                                            VirtualMachines
-                                </Menu.Item>
-                                        {/* <Menu.Item as={Link} exact to='/theming' >
-                                    Statistics
-                                </Menu.Item> */}
-                                    </Menu.Menu>
-                                </Menu.Item>
-                                <Menu.Item>
-                                    <Menu.Header>Services</Menu.Header>
-                                    <Menu.Menu>
-                                        <Menu.Item as={Link} exact to='/' >
-                                            RolloutStatus
-                                </Menu.Item>
-                                        <Menu.Item as={Link} exact to='/usage' >
-                                            VersionStatus
-                                </Menu.Item>
-                                        <Menu.Item as={Link} exact to='/theming' >
-                                            HealthChecks
-                                </Menu.Item>
-                                        <Menu.Item as={Link} exact to='/theming' >
-                                            Availability
-                                </Menu.Item>
-                                        {/* <Menu.Item as={Link} exact to='/theming' >
-                                    Statistics
-                                </Menu.Item> */}
-                                    </Menu.Menu>
-                                </Menu.Item>
-                                <Menu.Item>
-                                    <Menu.Header>Loadbalancer Farms</Menu.Header>
-                                    <Menu.Menu>
-                                        <Menu.Item as={Link} exact to='/' >
-                                            Consistency
-                                </Menu.Item>
-                                        {/* <Menu.Item as={Link} exact to='/usage' >
-                                    Statistics
-                                </Menu.Item> */}
-                                        {/* <Menu.Item as={Link} exact to='/theming' >
-                                    Graphs
-                                </Menu.Item> */}
-                                    </Menu.Menu>
-                                </Menu.Item>
-                                {/* TODO: add the IP in the server list  */}
-                                {/* <Menu.Item>
-                            <Menu.Header>Ip</Menu.Header>
-                        </Menu.Item> */}
-                                <Menu.Item>
-                                    <Menu.Header>Scom</Menu.Header>
-                                </Menu.Item>
-                                <Menu.Item>
-                                    <Menu.Header>Config</Menu.Header>
-                                    <Menu.Menu>
-                                        <Menu.Item as={Link} exact to='/' >
-                                            Loadbalancer
-                                </Menu.Item>
-                                        <Menu.Item as={Link} exact to='/usage' >
-                                            ActiveDirectory
-                                </Menu.Item>
-                                    </Menu.Menu>
-                                </Menu.Item>
-                                <Menu.Item>
-                                    <Menu.Header>Admin</Menu.Header>
-                                </Menu.Item>
-                                <Menu.Item>
-                                    <Menu.Header>Help</Menu.Header>
-                                </Menu.Item>
-                                <Menu.Item>
-                                    <Menu.Header>About</Menu.Header>
-                                </Menu.Item>
-                            </Menu>
-                        </div>
-                    ) : (
-                            <Menu id="hiddenVerticalMenu" inverted fluid vertical borderless compact >
-                                <Menu.Item>
+                    <div id={this.props.headerStore.showVerticalMenu ? "verticalMenu" : "hiddenVerticalMenu"}>
+                        <Menu className="semanticVerticalMenu" inverted fluid vertical borderless compact >
+                            <Menu.Item>
+                                <HeaderSemantic inverted as='h4'>
+                                    {this.props.headerStore.showVerticalMenu ? "LeanOpsConfigOverview" : ""}
+                                    <Button
+                                        compact={this.props.headerStore.showVerticalMenu ? false : true}
+                                        color="black"
+                                        onClick={() => this.handleToggleSlider()}
+                                        icon="content"
+                                        style={this.props.headerStore.showVerticalMenu ? { float: 'right', margin: "0px" } : { float: 'right', margin: "0px", padding: '0px' }} />
+                                </HeaderSemantic>
+                            </Menu.Item>
+                            {
+                                this.props.headerStore.showVerticalMenu ? (
+                                    <div>
+                                        <Menu.Item>
+                                            <Menu.Header>Home</Menu.Header>
+                                        </Menu.Item>
+                                        <Menu.Item>
+                                            <Menu.Header>Server</Menu.Header>
+                                            <Menu.Menu>
+                                                <Menu.Item as={Link} exact to='/usage'>
+                                                    PatchGroups
+                                                </Menu.Item>
+                                                <Menu.Item as={Link} exact to='/usage' >
+                                                    VirtualMachines
+                                                </Menu.Item>
+                                            </Menu.Menu>
+                                        </Menu.Item>
+                                        <Menu.Item>
+                                            <Menu.Header>Services</Menu.Header>
+                                            <Menu.Menu>
+                                                <Menu.Item as={Link} exact to='/' >
+                                                    RolloutStatus
+                                                </Menu.Item>
+                                                <Menu.Item as={Link} exact to='/usage' >
+                                                    VersionStatus
+                                                </Menu.Item>
+                                                <Menu.Item as={Link} exact to='/theming' >
+                                                    HealthChecks
+                                                </Menu.Item>
+                                                <Menu.Item as={Link} exact to='/theming' >
+                                                    Availability
+                                                </Menu.Item>
+                                            </Menu.Menu>
+                                        </Menu.Item>
+                                        <Menu.Item>
+                                            <Menu.Header>Loadbalancer Farms</Menu.Header>
+                                            <Menu.Menu>
+                                                <Menu.Item as={Link} exact to='/' >
+                                                    Consistency
+                                                </Menu.Item>
+                                            </Menu.Menu>
+                                        </Menu.Item>
+                                        <Menu.Item>
+                                            <Menu.Header>Scom</Menu.Header>
+                                        </Menu.Item>
+                                        <Menu.Item>
+                                            <Menu.Header>Config</Menu.Header>
+                                            <Menu.Menu>
+                                                <Menu.Item as={Link} exact to='/' >
+                                                    Loadbalancer
+                                                </Menu.Item>
+                                                <Menu.Item as={Link} exact to='/usage' >
+                                                    ActiveDirectory
+                                                </Menu.Item>
+                                            </Menu.Menu>
+                                        </Menu.Item>
+                                        <Menu.Item>
+                                            <Menu.Header>Admin</Menu.Header>
+                                        </Menu.Item>
+                                        <Menu.Item>
+                                            <Menu.Header>Help</Menu.Header>
+                                        </Menu.Item>
+                                        <Menu.Item>
+                                            <Menu.Header>About</Menu.Header>
+                                        </Menu.Item>
+                                    </div>
+                                ) : (
+                                        <div></div>
+                                    )
+                            }
+                        </Menu>
+                    </div>
 
-                                    <Button color="black" onClick={() => this.handleToggleSlider()} icon="content" style={{ float: 'right', margin: "0px" }} ></Button>
-
-
-                                </Menu.Item>
-                            </Menu>
-                        )
                 }
 
                 <div id="menuId">
@@ -270,7 +270,8 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
         searchServersAction: searchServersAction,
-        searchServiceShortcutAction: searchServiceShortcutAction
+        searchServiceShortcutAction: searchServiceShortcutAction,
+        toggleVerticalMenuAction: toggleVerticalMenuAction
     }, dispatch);
 }
 

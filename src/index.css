@@ -4,8 +4,13 @@ html, body {
     
 }
 
-#contentwrapper {
+#contentWrapper {
     margin-left: 260px;
+    /* padding: 1em; */
+}
+
+#extendedContentWrapper {
+    margin-left: 50px;
     /* padding: 1em; */
 }
 
@@ -48,12 +53,16 @@ html, body {
     height: 100%;
 }
 
+.ui.menu {
+    border-radius: 0rem;
+}
+
 #hiddenVerticalMenu {
     padding: 0em;
     display: flex;
     flex-direction: column;
     flex: 1;
-    margin-left: -260px;
+    margin-left: -50px;
     width: 50px;
     position: fixed;
     height: 100%;
