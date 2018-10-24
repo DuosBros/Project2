@@ -1,8 +1,8 @@
 import React from 'react';
 import keyboardKey from 'keyboard-key'
-import { Sidebar, Menu, Segment, Icon, Input, Header as HeaderSemantic, Dropdown, Ref } from 'semantic-ui-react'
+import { Sidebar, Menu, Segment, Icon, Button, Header as HeaderSemantic, Dropdown, Ref } from 'semantic-ui-react'
 // import { Link, withRouter } from 'react-static';
-import {Link,withRouter} from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 
 import _ from 'lodash';
 import { connect } from 'react-redux';
@@ -17,7 +17,8 @@ class Header extends React.Component {
 
         this.state = {
             serverQuery: '',
-            serviceShortcutQuery: ''
+            serviceShortcutQuery: '',
+            showVerticalMenu: true
         }
 
     }
@@ -66,7 +67,7 @@ class Header extends React.Component {
         }
     }
 
-    handleSearchServerSelect = (e, {value}) => {
+    handleSearchServerSelect = (e, { value }) => {
         this.setState({ serverQuery: value })
     }
 
@@ -75,7 +76,7 @@ class Header extends React.Component {
         this.props.history.push(route)
     }
 
-    handleSearchServiceShortcutSelect = (e, {value}) => {
+    handleSearchServiceShortcutSelect = (e, { value }) => {
         this.setState({ serviceShortcutQuery: value })
     }
 
@@ -92,97 +93,118 @@ class Header extends React.Component {
         this._searchServiceShortcutInput = c && c.querySelector('input')
     }
 
+    handleToggleSlider = () => {
+        this.setState({ showVerticalMenu: !this.state.showVerticalMenu })
+    }
+
     render() {
         return (
             <div id="header">
-                <div id="verticalMenu">
-                    <Menu className="semanticVerticalMenu" inverted fluid vertical borderless compact >
-                        <Menu.Item>
-                            <HeaderSemantic inverted as='h4'>LeanOpsConfigOverview</HeaderSemantic>
-                        </Menu.Item>
-                        <Menu.Item>
-                            <Menu.Header>Home</Menu.Header>
-                        </Menu.Item>
-                        <Menu.Item>
-                            <Menu.Header>Server</Menu.Header>
-                            <Menu.Menu>
-                                <Menu.Item as={Link} exact to='/usage'>
-                                    PatchGroups
+                {
+                    this.state.showVerticalMenu ? (
+                        <div id="verticalMenu">
+                            <Menu className="semanticVerticalMenu" inverted fluid vertical borderless compact >
+                                <Menu.Item>
+                                    <HeaderSemantic inverted as='h4'>
+                                        LeanOpsConfigOverview
+                                        <Button color="black" onClick={() => this.handleToggleSlider()} icon="content" style={{ float: 'right', margin: "0px" }} ></Button>
+
+                                    </HeaderSemantic>
                                 </Menu.Item>
-                                <Menu.Item as={Link} exact to='/usage' >
-                                    VirtualMachines
+                                <Menu.Item>
+                                    <Menu.Header>Home</Menu.Header>
                                 </Menu.Item>
-                                {/* <Menu.Item as={Link} exact to='/theming' >
+                                <Menu.Item>
+                                    <Menu.Header>Server</Menu.Header>
+                                    <Menu.Menu>
+                                        <Menu.Item as={Link} exact to='/usage'>
+                                            PatchGroups
+                                </Menu.Item>
+                                        <Menu.Item as={Link} exact to='/usage' >
+                                            VirtualMachines
+                                </Menu.Item>
+                                        {/* <Menu.Item as={Link} exact to='/theming' >
                                     Statistics
                                 </Menu.Item> */}
-                            </Menu.Menu>
-                        </Menu.Item>
-                        <Menu.Item>
-                            <Menu.Header>Services</Menu.Header>
-                            <Menu.Menu>
-                                <Menu.Item as={Link} exact to='/' >
-                                    RolloutStatus
+                                    </Menu.Menu>
                                 </Menu.Item>
-                                <Menu.Item as={Link} exact to='/usage' >
-                                    VersionStatus
+                                <Menu.Item>
+                                    <Menu.Header>Services</Menu.Header>
+                                    <Menu.Menu>
+                                        <Menu.Item as={Link} exact to='/' >
+                                            RolloutStatus
                                 </Menu.Item>
-                                <Menu.Item as={Link} exact to='/theming' >
-                                    HealthChecks
+                                        <Menu.Item as={Link} exact to='/usage' >
+                                            VersionStatus
                                 </Menu.Item>
-                                <Menu.Item as={Link} exact to='/theming' >
-                                    Availability
+                                        <Menu.Item as={Link} exact to='/theming' >
+                                            HealthChecks
                                 </Menu.Item>
-                                {/* <Menu.Item as={Link} exact to='/theming' >
+                                        <Menu.Item as={Link} exact to='/theming' >
+                                            Availability
+                                </Menu.Item>
+                                        {/* <Menu.Item as={Link} exact to='/theming' >
                                     Statistics
                                 </Menu.Item> */}
-                            </Menu.Menu>
-                        </Menu.Item>
-                        <Menu.Item>
-                            <Menu.Header>Loadbalancer Farms</Menu.Header>
-                            <Menu.Menu>
-                                <Menu.Item as={Link} exact to='/' >
-                                    Consistency
+                                    </Menu.Menu>
                                 </Menu.Item>
-                                {/* <Menu.Item as={Link} exact to='/usage' >
+                                <Menu.Item>
+                                    <Menu.Header>Loadbalancer Farms</Menu.Header>
+                                    <Menu.Menu>
+                                        <Menu.Item as={Link} exact to='/' >
+                                            Consistency
+                                </Menu.Item>
+                                        {/* <Menu.Item as={Link} exact to='/usage' >
                                     Statistics
                                 </Menu.Item> */}
-                                {/* <Menu.Item as={Link} exact to='/theming' >
+                                        {/* <Menu.Item as={Link} exact to='/theming' >
                                     Graphs
                                 </Menu.Item> */}
-                            </Menu.Menu>
-                        </Menu.Item>
-                        {/* TODO: add the IP in the server list  */}
-                        {/* <Menu.Item>
+                                    </Menu.Menu>
+                                </Menu.Item>
+                                {/* TODO: add the IP in the server list  */}
+                                {/* <Menu.Item>
                             <Menu.Header>Ip</Menu.Header>
                         </Menu.Item> */}
-                        <Menu.Item>
-                            <Menu.Header>Scom</Menu.Header>
-                        </Menu.Item>
-                        <Menu.Item>
-                            <Menu.Header>Config</Menu.Header>
-                            <Menu.Menu>
-                                <Menu.Item as={Link} exact to='/' >
-                                    Loadbalancer
+                                <Menu.Item>
+                                    <Menu.Header>Scom</Menu.Header>
                                 </Menu.Item>
-                                <Menu.Item as={Link} exact to='/usage' >
-                                    ActiveDirectory
+                                <Menu.Item>
+                                    <Menu.Header>Config</Menu.Header>
+                                    <Menu.Menu>
+                                        <Menu.Item as={Link} exact to='/' >
+                                            Loadbalancer
                                 </Menu.Item>
-                            </Menu.Menu>
-                        </Menu.Item>
-                        <Menu.Item>
-                            <Menu.Header>Admin</Menu.Header>
-                        </Menu.Item>
-                        <Menu.Item>
-                            <Menu.Header>Help</Menu.Header>
-                        </Menu.Item>
-                        <Menu.Item>
-                            <Menu.Header>About</Menu.Header>
-                        </Menu.Item>
-                    </Menu>
-                </div>
+                                        <Menu.Item as={Link} exact to='/usage' >
+                                            ActiveDirectory
+                                </Menu.Item>
+                                    </Menu.Menu>
+                                </Menu.Item>
+                                <Menu.Item>
+                                    <Menu.Header>Admin</Menu.Header>
+                                </Menu.Item>
+                                <Menu.Item>
+                                    <Menu.Header>Help</Menu.Header>
+                                </Menu.Item>
+                                <Menu.Item>
+                                    <Menu.Header>About</Menu.Header>
+                                </Menu.Item>
+                            </Menu>
+                        </div>
+                    ) : (
+                            <Menu id="hiddenVerticalMenu" inverted fluid vertical borderless compact >
+                                <Menu.Item>
+
+                                    <Button color="black" onClick={() => this.handleToggleSlider()} icon="content" style={{ float: 'right', margin: "0px" }} ></Button>
+
+
+                                </Menu.Item>
+                            </Menu>
+                        )
+                }
 
                 <div id="menuId">
-                    <Menu stackable style={{ borderRadius: "0px", border: "0", marginLeft: "250px", WebkitTransitionDuration: "0.1s" }} >
+                    <Menu stackable >
                         <Menu.Item className='headerSearchInput'>
                             <Ref innerRef={this.handleSearchServerRef}>
                                 <Dropdown
@@ -190,7 +212,7 @@ class Header extends React.Component {
                                     selection
                                     onClose={this.handleSearchServerClose}
                                     onChange={this.handleSearchServerSelect}
-                                    options={this.props.headerStore.searchServerResult.slice(0,15)}
+                                    options={this.props.headerStore.searchServerResult.slice(0, 15)}
                                     fluid
                                     placeholder='Press &apos;q&apos; to search a server'
                                     value={this.state.serverQuery}
@@ -206,7 +228,7 @@ class Header extends React.Component {
                                     selection
                                     onClose={this.handleSearchServiceShortcutClose}
                                     onChange={this.handleSearchServiceShortcutSelect}
-                                    options={this.props.headerStore.searchServiceShortcutsResult.slice(0,15)}
+                                    options={this.props.headerStore.searchServiceShortcutsResult.slice(0, 15)}
                                     fluid
                                     placeholder='Press &apos;w&apos; to search a service shortcut'
                                     value={this.state.serviceShortcutQuery}

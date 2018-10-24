@@ -33,10 +33,10 @@ class Base extends React.Component {
                 this.props.authenticateOKAction();
             })
             .catch((err) => {
-                this.setState({ authExceptionMessage: err.message ? err.message : '' , authExceptionResponse: err.response ? err.response : '' })
+                this.setState({ authExceptionMessage: err.message ? err.message : '', authExceptionResponse: err.response ? err.response : '' })
 
                 this.props.authenticationFailedAction();
-                this.props.authenticateEndedAction();  
+                this.props.authenticateEndedAction();
             })
     }
     render() {
@@ -45,13 +45,13 @@ class Base extends React.Component {
                 {
                     this.props.baseStore.authenticationDone ? (
                         this.props.baseStore.authenticationFailed ? (
-                            <Login ex={this.state}/>
+                            <Login ex={this.state} />
                         ) : (
                                 <div>
                                     <BrowserRouter>
                                         <div >
-                                            <Header />
                                             <div id="contentwrapper">
+                                                <Header />
                                                 <Switch>
                                                     <Route exact path='/' component={Home} />
                                                     <Route exact path='/login' component={Login} />
@@ -62,10 +62,11 @@ class Base extends React.Component {
                                                         <ServiceDetails key={props.match.params.id} {...props} />)
                                                     } />
                                                 </Switch>
+                                                <Footer id="footer" />
                                             </div>
+
                                         </div>
                                     </BrowserRouter>
-                                    <Footer id="footer" />
                                 </div>
                             )
                     ) : (

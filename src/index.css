@@ -6,15 +6,20 @@ html, body {
 
 #contentwrapper {
     margin-left: 260px;
-    padding: 1em;
+    /* padding: 1em; */
 }
 
 #footer {
-    padding-bottom: 1em;
+    /* margin-left: -260px; */
+    width: 100%;
+    /* padding-bottom: 1em; */
     bottom: 1em;
     position: absolute;
-    width: 100%;
-    margin-left: 260px;
+}
+
+#footer .ui.grid .column {
+    margin-left: 1em;
+    padding: 1.5em;
 }
 
 #header i.search.icon {
@@ -22,12 +27,16 @@ html, body {
 }
 
 #verticalMenu {
+    padding: 0em;
     display: flex;
     flex-direction: column;
     flex: 1;
+    margin-left: -260px;
     width: 260px;
     position: fixed;
     height: 100%;
+    border-radius: 0rem;
+    
 }
 
 .headerSearchInput {
@@ -37,11 +46,29 @@ html, body {
 
 .semanticVerticalMenu {
     height: 100%;
-    border-radius: 0px;
+}
+
+#hiddenVerticalMenu {
+    padding: 0em;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    margin-left: -260px;
+    width: 50px;
+    position: fixed;
+    height: 100%;
+    border-radius: 0rem;
 }
 
 #menuId .ui.menu .item:before {
     width: 0px
+}
+
+#menuId .menu {
+    border-Radius: 0px;
+    border: 0;
+    -webkit-transition-duration: 0.1s;
+    transition-duration: 0.1s
 }
 
 .centered {

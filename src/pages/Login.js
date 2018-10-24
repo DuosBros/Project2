@@ -5,6 +5,9 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
 
+import { sendAuthenticationData } from '../requests/LoginAxios';
+import { authenticateAction, authenticationStartedAction, authenticateEndedAction, authenticateOKAction, authenticationFailedAction } from '../actions/BaseAction';
+
 class Login extends React.Component {
     constructor(props) {
         super(props);
@@ -23,6 +26,38 @@ class Login extends React.Component {
         }
     }
 
+    auth = () => {
+
+        this.props.authenticationStartedAction();
+
+        var payload = {}
+
+        if(!this.state.username.startsWith("ICEPOR\\")) {
+            payload.Identity = "ICEPOR\\" + this.state.username
+        }
+        else {
+            payload.Identity = this.state.username;
+        }
+        
+        payload.Password = btoa(this.state.password);
+debugger;
+        sendAuthenticationData(payload)
+            .then(res => {
+                debugger;
+                this.props.authenticateAction(res.data)
+                this.props.authenticateEndedAction();
+                this.props.authenticateOKAction();
+
+                this.props.history.push('/home')
+            })
+            .catch((err) => {
+                debugger;
+                this.setState({ authExceptionMessage: err.message ? err.message : '', authExceptionResponse: err.response ? err.response : '' })
+
+                this.props.authenticationFailedAction();
+                this.props.authenticateEndedAction();
+            })
+    }
 
     handleChange = (e, { name, value }) => {
         this.setState({ [name]: value })
@@ -34,17 +69,17 @@ class Login extends React.Component {
                 <Grid.Column width='4'></Grid.Column>
                 <Grid.Column width='8'>
                     {
-                        _.isEmpty(this.props.ex.authExceptionMessage) && _.isEmpty(this.props.ex.authExceptionResponse)
+                        _.isEmpty(this.props.ex)
                             && _.isEmpty(this.state.authExceptionMessage) && _.isEmpty(this.state.authExceptionResponse) ? (<div></div>) : (
                                 <Message error floating>
-                                Failed to log in:
+                                    Failed to log in:
                                 <br />
-                                {this.props.ex.authExceptionMessage}
-                                {this.props.ex.authExceptionResponse}
-                                {this.state.authExceptionMessage}
-                                {this.state.authExceptionResponse}
-                                <br />
-                                <br />
+                                    {this.props.ex.authExceptionMessage}
+                                    {this.props.ex.authExceptionResponse}
+                                    {this.state.authExceptionMessage}
+                                    {this.state.authExceptionResponse}
+                                    <br />
+                                    <br />
                                     Issues with logging in? Contact
                                 <a href="mailto:SportsB2CLeanOpsLOB2C1@bwinparty.com" >  VIE LeanOps </a>
                                 </Message>)
@@ -89,10 +124,11 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
-        // loginStartedAction: loginStartedAction,
-        // loginEndedAction : loginEndedAction,
-        // loginFailedAction : loginFailedAction,
-        // loginSuccessAction : loginSuccessAction
+        authenticateAction: authenticateAction,
+        authenticationStartedAction: authenticationStartedAction,
+        authenticateEndedAction: authenticateEndedAction,
+        authenticateOKAction: authenticateOKAction,
+        authenticationFailedAction: authenticationFailedAction
     }, dispatch);
 }
 
