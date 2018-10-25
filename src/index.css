@@ -5,15 +5,24 @@ html, body {
 }
 
 #bodyWrapper {
-    margin: 1em
+    margin: 1em;
+    margin-left: 250px;
+    padding-left: 1em;
+}
+
+#bodyWrapper.wide {
+    margin-left: 50px;
 }
 
 #footer {
-    /* margin-left: -260px; */
+    margin-left: 250px;
     width: 100%;
-    /* padding-bottom: 1em; */
     bottom: 1em;
     position: absolute;
+}
+
+#footer.wide {
+    margin-left: 50px;
 }
 
 #footer .ui.grid .column {

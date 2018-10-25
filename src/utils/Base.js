@@ -54,13 +54,20 @@ class Base extends React.Component {
             return (<Login ex={this.state} />);
         }
 
+        var wideClass = {
+            className: ""
+        };
+        if(!this.props.headerStore.showVerticalMenu) {
+            wideClass.className = "wide"
+        }
+
         return (
             <div>
                 <BrowserRouter>
                     <div>
                         <Route path="/:entityType?/:entityId?" component={Header} />
                         <Sidebar/>
-                        <div id="bodyWrapper">
+                        <div id="bodyWrapper" {...wideClass}>
                             <Switch>
                                 <Route exact path='/' component={Home} />
                                 <Route exact path='/login' component={Login} />
@@ -70,7 +77,7 @@ class Base extends React.Component {
                                 } />
                             </Switch>
                         </div>
-                        <Footer id="footer" />
+                        <Footer id="footer" {...wideClass}/>
                     </div>
                 </BrowserRouter>
             </div>
