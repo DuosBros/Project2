@@ -5,7 +5,7 @@ import _ from 'lodash';
 import { Grid, Header, Segment } from 'semantic-ui-react';
 
 import { getServerDetailsAction } from '../actions/ServerActions';
-import { getServiceDetails } from '../requests/ServerAxios';
+import { getServerDetails } from '../requests/ServerAxios';
 
 class ServerDetails extends React.Component {
     constructor(props) {
