@@ -38,7 +38,6 @@ class Header extends React.Component {
     }
 
     handleServerSearchChange = (e) => {
-        console.log("handleServerSearchChange", e.target.value)
 
         if (e.target.value.length > 1) {
             searchServers(e.target.value)
@@ -49,17 +48,22 @@ class Header extends React.Component {
     }
 
     handleServerChange = (e, { value }) => {
-        console.log("handleServerChange", value);
+        
         if (isNum(value)) {
             var route = "/server/" + value;
             this.props.history.push(route);
         }
     }
 
-    handleSearchServiceShortcutChange = (e) => {
-        this.setState({
-            serviceShortcutQuery: e.target.value
-        })
+    handleServiceChange = (e, { value }) => {
+        
+        if (isNum(value)) {
+            var route = "/service/" + value;
+            this.props.history.push(route);
+        }
+    }
+
+    handleServiceShortcutSearchChange = (e) => {
 
         if (e.target.value.length > 1) {
             searchServiceShortcut(e.target.value)
@@ -73,24 +77,12 @@ class Header extends React.Component {
         this.setState({ serviceShortcutQuery: value })
     }
 
-    handleSearchServiceShortcutClose = (e, { value }) => {
-
-        if (isNum(value)) {
-            var route = "/service/" + this.state.serviceShortcutQuery
-            this.props.history.push(route)
-        }
-    }
-
     handleSearchServerRef = (c) => {
         this._searchServerInput = c && c.querySelector('input')
     }
 
     handleSearchServiceShortcutRef = (c) => {
         this._searchServiceShortcutInput = c && c.querySelector('input')
-    }
-
-    handleToggleSlider = () => {
-        this.props.toggleVerticalMenuAction();
     }
 
     render() {
@@ -118,13 +110,13 @@ class Header extends React.Component {
                             <Dropdown
                                 icon='search'
                                 selection
-                                onClose={this.handleSearchServiceShortcutClose}
-                                onChange={this.handleSearchServiceShortcutSelect}
-                                options={this.props.headerStore.searchServiceShortcutsResult.slice(0, 15)}
+                                onChange={this.handleServiceChange}
+                                options={this.props.headerStore.searchServiceShortcutsResult.slice(0, 10)}
                                 fluid
-                                placeholder='Press &apos;w&apos; to search a service shortcut'
-                                value={this.state.serviceShortcutQuery}
-                                onSearchChange={this.handleSearchServiceShortcutChange}
+                                selectOnNavigation={false}
+                                placeholder='Press &apos;w&apos; to search a server'
+                                value=""
+                                onSearchChange={this.handleServiceShortcutSearchChange}
                                 search
                             />
                         </Ref>
