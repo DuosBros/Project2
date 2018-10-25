@@ -1,18 +1,13 @@
 import React from 'react';
-import keyboardKey from 'keyboard-key'
-import { Menu, Button, Header as HeaderSemantic, Dropdown, Ref } from 'semantic-ui-react'
+import { Menu, Icon, Header as HeaderSemantic, Dropdown, Ref } from 'semantic-ui-react'
 // import { Link, withRouter } from 'react-static';
 import { Link } from 'react-router-dom';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { searchServersAction, searchServiceShortcutAction, toggleVerticalMenuAction } from '../actions/HeaderActions';
-import { searchServers, searchServiceShortcut } from '../requests/HeaderAxios';
+import { toggleVerticalMenuAction } from '../actions/HeaderActions';
 
-import { getServerDetailsAction } from '../actions/ServerActions';
-
-import { isNum } from '../utils/HelperFunction';
 
 class Sidebar extends React.Component {
 
@@ -22,9 +17,9 @@ class Sidebar extends React.Component {
 
     render() {
 
-        var NavMenu;
+        var collapseMenuItem, NavMenu;
 
-        if(this.props.headerStore.showVerticalMenu) {
+        if (this.props.headerStore.showVerticalMenu) {
             NavMenu = (
                 <div>
                     <Menu.Item as={Link} exact to='/home'>
@@ -91,22 +86,29 @@ class Sidebar extends React.Component {
                     </Menu.Item>
                 </div>
             );
+
+            collapseMenuItem = (
+                <Menu.Header>
+                    <Icon name='angle double left' />
+                    Collapse sidebar
+                </Menu.Header>
+            )
+        }
+        else {
+            collapseMenuItem = (
+                <Menu.Header>
+                    <Icon name='angle double right' />
+                </Menu.Header>
+            )
         }
 
         return (
             <div id={this.props.headerStore.showVerticalMenu ? "verticalMenu" : "hiddenVerticalMenu"}>
                 <Menu className="semanticVerticalMenu" inverted fluid vertical borderless compact >
-                    <Menu.Item>
-                        <HeaderSemantic inverted as='h4'>
-                            <Button
-                                compact={this.props.headerStore.showVerticalMenu ? false : true}
-                                color="black"
-                                onClick={() => this.handleToggleSlider()}
-                                icon="content"
-                                style={this.props.headerStore.showVerticalMenu ? { float: 'right', margin: "0px" } : { float: 'right', margin: "0px", padding: '0px' }} />
-                        </HeaderSemantic>
+                    <Menu.Item onClick={() => this.handleToggleSlider()}>
+                        {collapseMenuItem}
                     </Menu.Item>
-                    { NavMenu }
+                    {NavMenu}
                 </Menu>
             </div>
         );

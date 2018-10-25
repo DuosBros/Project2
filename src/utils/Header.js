@@ -89,6 +89,7 @@ class Header extends React.Component {
         return (
             <div id="header">
                 <Menu stackable >
+                    <Menu.Item header content='LeanOpsConfigurationOverview' />
                     <Menu.Item className='headerSearchInput'>
                         <Ref innerRef={this.handleSearchServerRef}>
                             <Dropdown
