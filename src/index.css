@@ -1,21 +1,11 @@
 html, body {
     background-color: rgb(247, 245, 243) !important;
     width: 100%;
-    
-}
 
-#contentWrapper {
-    margin-left: 260px;
-    /* padding: 1em; */
 }
 
 #bodyWrapper {
     margin: 1em
-}
-
-#extendedContentWrapper {
-    margin-left: 50px;
-    /* padding: 1em; */
 }
 
 #footer {
@@ -40,12 +30,11 @@ html, body {
     display: flex;
     flex-direction: column;
     flex: 1;
-    margin-left: -260px;
     width: 260px;
     position: fixed;
     height: 100%;
     border-radius: 0rem;
-    
+
 }
 
 .headerSearchInput {
@@ -66,14 +55,13 @@ html, body {
     display: flex;
     flex-direction: column;
     flex: 1;
-    margin-left: -50px;
     width: 50px;
     position: fixed;
     height: 100%;
     border-radius: 0rem;
 }
 
-#menuId .ui.menu .item:before {
+#header > .ui.menu .item:before {
     width: 0px
 }
 

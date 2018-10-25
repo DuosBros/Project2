@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import { Image } from 'semantic-ui-react';
 
 import Header from './Header';
+import Sidebar from './Sidebar';
 import Footer from './Footer';
 import Home from '../pages/Home';
 import ServerDetails from '../pages/ServerDetails';
@@ -56,8 +57,9 @@ class Base extends React.Component {
         return (
             <div>
                 <BrowserRouter>
-                    <div id={this.props.headerStore.showVerticalMenu ? "contentWrapper" : "extendedContentWrapper"}>
+                    <div>
                         <Route path="/:entityType?/:entityId?" component={Header} />
+                        <Sidebar/>
                         <div id="bodyWrapper">
                             <Switch>
                                 <Route exact path='/' component={Home} />

@@ -96,148 +96,56 @@ class Header extends React.Component {
     render() {
         return (
             <div id="header">
-                {
+                <Menu stackable >
+                    <Menu.Item className='headerSearchInput'>
+                        <Ref innerRef={this.handleSearchServerRef}>
+                            <Dropdown
+                                icon='search'
+                                selection
+                                onChange={this.handleServerChange}
+                                options={this.props.headerStore.searchServerResult.slice(0, 15)}
+                                fluid
+                                selectOnNavigation={false}
+                                placeholder='Press &apos;q&apos; to search a server'
+                                value=""
+                                onSearchChange={this.handleServerSearchChange}
+                                search
+                            />
+                        </Ref>
+                    </Menu.Item>
+                    <Menu.Item className='headerSearchInput'>
+                        <Ref innerRef={this.handleSearchServiceShortcutRef}>
+                            <Dropdown
+                                icon='search'
+                                selection
+                                onClose={this.handleSearchServiceShortcutClose}
+                                onChange={this.handleSearchServiceShortcutSelect}
+                                options={this.props.headerStore.searchServiceShortcutsResult.slice(0, 15)}
+                                fluid
+                                placeholder='Press &apos;w&apos; to search a service shortcut'
+                                value={this.state.serviceShortcutQuery}
+                                onSearchChange={this.handleSearchServiceShortcutChange}
+                                search
+                            />
+                        </Ref>
 
-                    <div id={this.props.headerStore.showVerticalMenu ? "verticalMenu" : "hiddenVerticalMenu"}>
-                        <Menu className="semanticVerticalMenu" inverted fluid vertical borderless compact >
-                            <Menu.Item>
-                                <HeaderSemantic inverted as='h4'>
-                                    {this.props.headerStore.showVerticalMenu ? "LeanOpsConfigOverview" : ""}
-                                    <Button
-                                        compact={this.props.headerStore.showVerticalMenu ? false : true}
-                                        color="black"
-                                        onClick={() => this.handleToggleSlider()}
-                                        icon="content"
-                                        style={this.props.headerStore.showVerticalMenu ? { float: 'right', margin: "0px" } : { float: 'right', margin: "0px", padding: '0px' }} />
-                                </HeaderSemantic>
-                            </Menu.Item>
-                            {
-                                this.props.headerStore.showVerticalMenu ? (
-                                    <div>
-                                        <Menu.Item as={Link} exact to='/home'>
-                                            <Menu.Header>Home</Menu.Header>
-                                        </Menu.Item>
-                                        <Menu.Item>
-                                            <Menu.Header>Server</Menu.Header>
-                                            <Menu.Menu>
-                                                <Menu.Item as={Link} exact to='/usage'>
-                                                    PatchGroups
-                                                </Menu.Item>
-                                                <Menu.Item as={Link} exact to='/usage' >
-                                                    VirtualMachines
-                                                </Menu.Item>
-                                            </Menu.Menu>
-                                        </Menu.Item>
-                                        <Menu.Item>
-                                            <Menu.Header>Services</Menu.Header>
-                                            <Menu.Menu>
-                                                <Menu.Item as={Link} exact to='/' >
-                                                    RolloutStatus
-                                                </Menu.Item>
-                                                <Menu.Item as={Link} exact to='/usage' >
-                                                    VersionStatus
-                                                </Menu.Item>
-                                                <Menu.Item as={Link} exact to='/theming' >
-                                                    HealthChecks
-                                                </Menu.Item>
-                                                <Menu.Item as={Link} exact to='/theming' >
-                                                    Availability
-                                                </Menu.Item>
-                                            </Menu.Menu>
-                                        </Menu.Item>
-                                        <Menu.Item>
-                                            <Menu.Header>Loadbalancer Farms</Menu.Header>
-                                            <Menu.Menu>
-                                                <Menu.Item as={Link} exact to='/' >
-                                                    Consistency
-                                                </Menu.Item>
-                                            </Menu.Menu>
-                                        </Menu.Item>
-                                        <Menu.Item>
-                                            <Menu.Header>Scom</Menu.Header>
-                                        </Menu.Item>
-                                        <Menu.Item>
-                                            <Menu.Header>Config</Menu.Header>
-                                            <Menu.Menu>
-                                                <Menu.Item as={Link} exact to='/' >
-                                                    Loadbalancer
-                                                </Menu.Item>
-                                                <Menu.Item as={Link} exact to='/usage' >
-                                                    ActiveDirectory
-                                                </Menu.Item>
-                                            </Menu.Menu>
-                                        </Menu.Item>
-                                        <Menu.Item>
-                                            <Menu.Header>Admin</Menu.Header>
-                                        </Menu.Item>
-                                        <Menu.Item>
-                                            <Menu.Header>Help</Menu.Header>
-                                        </Menu.Item>
-                                        <Menu.Item>
-                                            <Menu.Header>About</Menu.Header>
-                                        </Menu.Item>
-                                    </div>
-                                ) : (
-                                        <div></div>
-                                    )
-                            }
-                        </Menu>
-                    </div>
-
-                }
-
-                <div id="menuId">
-                    <Menu stackable >
-                        <Menu.Item className='headerSearchInput'>
-                            <Ref innerRef={this.handleSearchServerRef}>
-                                <Dropdown
-                                    icon='search'
-                                    selection
-                                    onChange={this.handleServerChange}
-                                    options={this.props.headerStore.searchServerResult.slice(0, 15)}
-                                    fluid
-                                    selectOnNavigation={false}
-                                    placeholder='Press &apos;q&apos; to search a server'
-                                    value=""
-                                    onSearchChange={this.handleServerSearchChange}
-                                    search
-                                />
-                            </Ref>
-                        </Menu.Item>
-                        <Menu.Item className='headerSearchInput'>
-                            <Ref innerRef={this.handleSearchServiceShortcutRef}>
-                                <Dropdown
-                                    icon='search'
-                                    selection
-                                    onClose={this.handleSearchServiceShortcutClose}
-                                    onChange={this.handleSearchServiceShortcutSelect}
-                                    options={this.props.headerStore.searchServiceShortcutsResult.slice(0, 15)}
-                                    fluid
-                                    placeholder='Press &apos;w&apos; to search a service shortcut'
-                                    value={this.state.serviceShortcutQuery}
-                                    onSearchChange={this.handleSearchServiceShortcutChange}
-                                    search
-                                />
-                            </Ref>
-
-                        </Menu.Item>
-                        <Menu.Menu position='right'>
-                            <Dropdown item text={this.props.baseStore.currentUser.Identity}>
-                                <Dropdown.Menu>
-                                    <Dropdown.Item>
-                                        1
-                                    </Dropdown.Item>
-                                    <Dropdown.Item>
-                                        2
-                                    </Dropdown.Item>
-                                    <Dropdown.Item>
-                                        3
-                                    </Dropdown.Item>
-                                </Dropdown.Menu>
-                            </Dropdown>
-                        </Menu.Menu>
-                    </Menu>
-                </div>
+                    </Menu.Item>
+                    <Menu.Menu position='right'>
+                        <Dropdown item text={this.props.baseStore.currentUser.Identity}>
+                            <Dropdown.Menu>
+                                <Dropdown.Item>
+                                    1
+                                </Dropdown.Item>
+                                <Dropdown.Item>
+                                    2
+                                </Dropdown.Item>
+                                <Dropdown.Item>
+                                    3
+                                </Dropdown.Item>
+                            </Dropdown.Menu>
+                        </Dropdown>
+                    </Menu.Menu>
+                </Menu>
             </div>
         );
     }
