@@ -39,43 +39,38 @@ class Base extends React.Component {
                 this.props.authenticateEndedAction();
             })
     }
+
     render() {
+        if(!this.props.baseStore.authenticationDone) {
+            return (
+                <div className="centered">
+                    <Image src={spinner} />
+                </div>
+            );
+        }
+
+        if(this.props.baseStore.authenticationFailed) {
+            return (<Login ex={this.state} />);
+        }
+
         return (
             <div>
-                {
-                    this.props.baseStore.authenticationDone ? (
-                        this.props.baseStore.authenticationFailed ? (
-                            <Login ex={this.state} />
-                        ) : (
-                                <div>
-                                    <BrowserRouter>
-                                        <div >
-                                            <div id={this.props.headerStore.showVerticalMenu ? "contentWrapper" : "extendedContentWrapper"}>
-                                                <Route path="/:entityType?/:entityId?" component={Header} />
-                                                <div id="bodyWrapper">
-                                                    <Switch>
-                                                        <Route exact path='/' component={Home} />
-                                                        <Route exact path='/login' component={Login} />
-                                                        <Route path='/server/:id' component={ServerDetails} />
-                                                        <Route path='/service/:id' render={(props) => (
-                                                            <ServiceDetails key={props.match.params.id} {...props} />)
-                                                        } />
-                                                    </Switch>
-                                                </div>
-                                                <Footer id="footer" />
-                                            </div>
-
-                                        </div>
-                                    </BrowserRouter>
-                                </div>
-                            )
-                    ) : (
-                            <div className="centered">
-                                <Image src={spinner} />
-                            </div>
-                        )
-                }
-
+                <BrowserRouter>
+                    <div id={this.props.headerStore.showVerticalMenu ? "contentWrapper" : "extendedContentWrapper"}>
+                        <Route path="/:entityType?/:entityId?" component={Header} />
+                        <div id="bodyWrapper">
+                            <Switch>
+                                <Route exact path='/' component={Home} />
+                                <Route exact path='/login' component={Login} />
+                                <Route path='/server/:id' component={ServerDetails} />
+                                <Route path='/service/:id' render={(props) => (
+                                    <ServiceDetails key={props.match.params.id} {...props} />)
+                                } />
+                            </Switch>
+                        </div>
+                        <Footer id="footer" />
+                    </div>
+                </BrowserRouter>
             </div>
         )
     }
