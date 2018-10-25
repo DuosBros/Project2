@@ -17,17 +17,20 @@ html, body {
 #footer {
     margin-left: 250px;
     width: 100%;
-    bottom: 1em;
-    position: absolute;
 }
 
 #footer.wide {
     margin-left: 50px;
 }
 
-#footer .ui.grid .column {
-    margin-left: 1em;
-    padding: 1.5em;
+#footer .ui.grid {
+    margin-left: 0;
+}
+
+#header {
+    position: sticky;
+    z-index: 10;
+    top: 0;
 }
 
 #header i.search.icon {
@@ -35,15 +38,10 @@ html, body {
 }
 
 #verticalMenu {
-    padding: 0em;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
     width: 250px;
     position: fixed;
     height: 100%;
-    border-radius: 0rem;
-
+    background-color: #1B1C1D;
 }
 
 .headerSearchInput {
@@ -51,23 +49,21 @@ html, body {
     border: 0px
 }
 
-.semanticVerticalMenu {
-    height: 100%;
-}
-
 .ui.menu {
     border-radius: 0rem;
 }
 
+.sidebarCollapser {
+    position: absolute;
+    bottom: 66px;
+    width: 100%;
+}
+
 #hiddenVerticalMenu {
-    padding: 0em;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
     width: 50px;
     position: fixed;
     height: 100%;
-    border-radius: 0rem;
+    background-color: #1B1C1D;
 }
 
 #header > .ui.menu .item:before {

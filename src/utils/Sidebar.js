@@ -1,6 +1,5 @@
 import React from 'react';
 import { Menu, Icon, Header as HeaderSemantic, Dropdown, Ref } from 'semantic-ui-react'
-// import { Link, withRouter } from 'react-static';
 import { Link } from 'react-router-dom';
 
 import { connect } from 'react-redux';
@@ -104,12 +103,16 @@ class Sidebar extends React.Component {
 
         return (
             <div id={this.props.headerStore.showVerticalMenu ? "verticalMenu" : "hiddenVerticalMenu"}>
-                <Menu className="semanticVerticalMenu" inverted fluid vertical borderless compact >
-                    <Menu.Item onClick={() => this.handleToggleSlider()}>
-                        {collapseMenuItem}
-                    </Menu.Item>
+                <Menu inverted fluid vertical borderless>
                     {NavMenu}
                 </Menu>
+                <div className="sidebarCollapser">
+                    <Menu inverted fluid vertical borderless>
+                        <Menu.Item onClick={() => this.handleToggleSlider()} position="right">
+                            {collapseMenuItem}
+                        </Menu.Item>
+                    </Menu>
+                </div>
             </div>
         );
     }
