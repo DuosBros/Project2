@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route, Switch, BrowserRouter } from 'react-router-dom';
-import { Provider, connect } from 'react-redux';
-import { createStore, bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { Image } from 'semantic-ui-react';
 
 import Header from './Header';
@@ -51,15 +51,13 @@ class Base extends React.Component {
                                     <BrowserRouter>
                                         <div >
                                             <div id={this.props.headerStore.showVerticalMenu ? "contentWrapper" : "extendedContentWrapper"}>
-                                                <Header />
+                                                <Route path="/:entityType?/:entityId?" component={Header} />
                                                 <div id="bodyWrapper">
                                                     <Switch>
                                                         <Route exact path='/' component={Home} />
                                                         <Route exact path='/login' component={Login} />
-                                                        <Route path='/server/details/:id' render={(props) => (
-                                                            <ServerDetails key={props.match.params.id} {...props} />)
-                                                        } />
-                                                        <Route path='/service/details/:id' render={(props) => (
+                                                        <Route path='/server/:id' component={ServerDetails} />
+                                                        <Route path='/service/:id' render={(props) => (
                                                             <ServiceDetails key={props.match.params.id} {...props} />)
                                                         } />
                                                     </Switch>

@@ -1,4 +1,7 @@
 export const isNum = (value) => {
+    if (value === null || value === undefined) {
+        return false;
+    }
     const valueString = value.toString();
 
     const length = valueString.length;

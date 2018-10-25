@@ -1,27 +1,22 @@
 import React from 'react';
 import keyboardKey from 'keyboard-key'
-import { Sidebar, Menu, Segment, Icon, Button, Header as HeaderSemantic, Dropdown, Ref } from 'semantic-ui-react'
+import { Menu, Button, Header as HeaderSemantic, Dropdown, Ref } from 'semantic-ui-react'
 // import { Link, withRouter } from 'react-static';
-import { Link, withRouter } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
-import _ from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { searchServersAction, searchServiceShortcutAction, toggleVerticalMenuAction } from '../actions/HeaderActions';
 import { searchServers, searchServiceShortcut } from '../requests/HeaderAxios';
 
+import { getServerDetailsAction } from '../actions/ServerActions';
+
 import { isNum } from '../utils/HelperFunction';
 
 class Header extends React.Component {
-    constructor(props) {
-        super(props)
-
-        this.state = {
-            serverQuery: '',
-            serviceShortcutQuery: ''
-        }
-
+    state = {
+        serviceShortcutQuery: ''
     }
 
     componentDidMount() {
@@ -42,10 +37,8 @@ class Header extends React.Component {
         if (!hasModifier && isw && bodyHasFocus) { this._searchServiceShortcutInput.focus(); e.preventDefault(); }
     }
 
-    handleSearchServerChange = (e) => {
-        this.setState({
-            serverQuery: e.target.value
-        })
+    handleServerSearchChange = (e) => {
+        console.log("handleServerSearchChange", e.target.value)
 
         if (e.target.value.length > 1) {
             searchServers(e.target.value)
@@ -54,23 +47,12 @@ class Header extends React.Component {
                 })
         }
     }
-    
-    // handleSearchServerSelect = (e, { value }) => {
-    //     if (!isNum(value)) {
-    //         this.setState({ serverQuery: value })
-    //     }
-    // }
 
-    handleSearchServerClose = (e, { value }) => {
-
-        
-        // this.setState({
-        //     serverQuery: value
-        // })
-
+    handleServerChange = (e, { value }) => {
+        console.log("handleServerChange", value);
         if (isNum(value)) {
-            var route = "/server/details/" + value
-            this.props.history.push(route)
+            var route = "/server/" + value;
+            this.props.history.push(route);
         }
     }
 
@@ -92,9 +74,9 @@ class Header extends React.Component {
     }
 
     handleSearchServiceShortcutClose = (e, { value }) => {
-        
+
         if (isNum(value)) {
-            var route = "/service/details/" + this.state.serviceShortcutQuery
+            var route = "/service/" + this.state.serviceShortcutQuery
             this.props.history.push(route)
         }
     }
@@ -211,14 +193,13 @@ class Header extends React.Component {
                                 <Dropdown
                                     icon='search'
                                     selection
-                                    onAddItem={this.handleSearchServerClose}
-                                    // onClose={this.handleSearchServerClose}
-                                    onChange={this.handleSearchServerClose}
+                                    onChange={this.handleServerChange}
                                     options={this.props.headerStore.searchServerResult.slice(0, 15)}
                                     fluid
+                                    selectOnNavigation={false}
                                     placeholder='Press &apos;q&apos; to search a server'
-                                    value={this.state.serverQuery}
-                                    onSearchChange={this.handleSearchServerChange}
+                                    value=""
+                                    onSearchChange={this.handleServerSearchChange}
                                     search
                                 />
                             </Ref>
@@ -271,10 +252,11 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
-        searchServersAction: searchServersAction,
-        searchServiceShortcutAction: searchServiceShortcutAction,
-        toggleVerticalMenuAction: toggleVerticalMenuAction
+        searchServersAction,
+        searchServiceShortcutAction,
+        toggleVerticalMenuAction,
+        getServerDetailsAction
     }, dispatch);
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Header));
+export default connect(mapStateToProps, mapDispatchToProps)(Header);
