@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Form, Grid, Message, Image, Segment } from 'semantic-ui-react';
+import { Button, Form, Grid, Message, Segment } from 'semantic-ui-react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
@@ -38,7 +38,7 @@ class Login extends React.Component {
         else {
             payload.Identity = this.state.username;
         }
-        
+
         payload.Password = btoa(this.state.password);
 
         sendAuthenticationData(payload)

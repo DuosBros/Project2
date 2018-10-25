@@ -1,14 +1,10 @@
 import React from 'react';
-import { Route, Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import axios from 'axios';
 
 import CommonReducer from './CommonReducer';
 
-import Header from './Header';
-import Footer from './Footer';
-import Home from '../pages/Home';
 import Base from './Base';
 
 export default class AppRoutes extends React.Component {
