@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
-import { Message } from 'semantic-ui-react';
+import { Grid, Header, Segment } from 'semantic-ui-react';
 
 import { getServerDetailsAction } from '../actions/ServerActions';
 import { getServiceDetails } from '../requests/ServerAxios';
@@ -23,7 +23,16 @@ class ServerDetails extends React.Component {
 
         return (
             <div>
-                Server details shit and fuck
+
+                <Grid stackable>
+                    <Grid.Column>
+                        <Header block attached='top' as='h4' content='Server Details' />
+                        <Segment attached='bottom'>
+                            argargareg
+                                                        gargaergaergaerg
+                        </Segment>
+                    </Grid.Column>
+                </Grid>
                 {console.log(this.props.serverStore.serverDetails)}
             </div>
         )

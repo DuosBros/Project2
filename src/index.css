@@ -9,6 +9,10 @@ html, body {
     /* padding: 1em; */
 }
 
+#bodyWrapper {
+    margin: 1em
+}
+
 #extendedContentWrapper {
     margin-left: 50px;
     /* padding: 1em; */

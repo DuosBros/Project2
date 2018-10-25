@@ -40,10 +40,9 @@ class Login extends React.Component {
         }
         
         payload.Password = btoa(this.state.password);
-debugger;
+
         sendAuthenticationData(payload)
             .then(res => {
-                debugger;
                 this.props.authenticateAction(res.data)
                 this.props.authenticateEndedAction();
                 this.props.authenticateOKAction();
@@ -51,7 +50,6 @@ debugger;
                 this.props.history.push('/home')
             })
             .catch((err) => {
-                debugger;
                 this.setState({ authExceptionMessage: err.message ? err.message : '', authExceptionResponse: err.response ? err.response : '' })
 
                 this.props.authenticationFailedAction();

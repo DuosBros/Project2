@@ -55,20 +55,21 @@ class Header extends React.Component {
         }
     }
     
-    handleSearchServerSelect = (e, { value }) => {
-        if (!isNum(value)) {
-            this.setState({ serverQuery: value })
-        }
-    }
+    // handleSearchServerSelect = (e, { value }) => {
+    //     if (!isNum(value)) {
+    //         this.setState({ serverQuery: value })
+    //     }
+    // }
 
     handleSearchServerClose = (e, { value }) => {
 
-        this.setState({
-            serverQuery: value
-        })
+        
+        // this.setState({
+        //     serverQuery: value
+        // })
 
         if (isNum(value)) {
-            var route = "/server/details/" + this.state.serverQuery
+            var route = "/server/details/" + value
             this.props.history.push(route)
         }
     }
@@ -131,7 +132,7 @@ class Header extends React.Component {
                             {
                                 this.props.headerStore.showVerticalMenu ? (
                                     <div>
-                                        <Menu.Item>
+                                        <Menu.Item as={Link} exact to='/home'>
                                             <Menu.Header>Home</Menu.Header>
                                         </Menu.Item>
                                         <Menu.Item>
@@ -210,8 +211,9 @@ class Header extends React.Component {
                                 <Dropdown
                                     icon='search'
                                     selection
-                                    onClose={this.handleSearchServerClose}
-                                    onChange={this.handleSearchServerSelect}
+                                    onAddItem={this.handleSearchServerClose}
+                                    // onClose={this.handleSearchServerClose}
+                                    onChange={this.handleSearchServerClose}
                                     options={this.props.headerStore.searchServerResult.slice(0, 15)}
                                     fluid
                                     placeholder='Press &apos;q&apos; to search a server'

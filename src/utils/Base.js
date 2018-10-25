@@ -52,16 +52,18 @@ class Base extends React.Component {
                                         <div >
                                             <div id={this.props.headerStore.showVerticalMenu ? "contentWrapper" : "extendedContentWrapper"}>
                                                 <Header />
-                                                <Switch>
-                                                    <Route exact path='/' component={Home} />
-                                                    <Route exact path='/login' component={Login} />
-                                                    <Route path='/server/details/:id' render={(props) => (
-                                                        <ServerDetails key={props.match.params.id} {...props} />)
-                                                    } />
-                                                    <Route path='/service/details/:id' render={(props) => (
-                                                        <ServiceDetails key={props.match.params.id} {...props} />)
-                                                    } />
-                                                </Switch>
+                                                <div id="bodyWrapper">
+                                                    <Switch>
+                                                        <Route exact path='/' component={Home} />
+                                                        <Route exact path='/login' component={Login} />
+                                                        <Route path='/server/details/:id' render={(props) => (
+                                                            <ServerDetails key={props.match.params.id} {...props} />)
+                                                        } />
+                                                        <Route path='/service/details/:id' render={(props) => (
+                                                            <ServiceDetails key={props.match.params.id} {...props} />)
+                                                        } />
+                                                    </Switch>
+                                                </div>
                                                 <Footer id="footer" />
                                             </div>
 
