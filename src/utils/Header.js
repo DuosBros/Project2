@@ -7,10 +7,8 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { searchServersAction, searchServiceShortcutAction, toggleVerticalMenuAction } from '../actions/HeaderActions';
+import { searchServersAction, searchServiceShortcutAction, toggleVerticalMenuAction, toggleUserDetailsAction } from '../actions/HeaderActions';
 import { searchServers, searchServiceShortcut } from '../requests/HeaderAxios';
-
-import { getServerDetailsAction } from '../actions/ServerActions';
 
 import { isNum } from '../utils/HelperFunction';
 
@@ -124,19 +122,7 @@ class Header extends React.Component {
 
                     </Menu.Item>
                     <Menu.Menu position='right'>
-                        <Dropdown item text={this.props.baseStore.currentUser.Identity}>
-                            <Dropdown.Menu>
-                                <Dropdown.Item>
-                                    1
-                                </Dropdown.Item>
-                                <Dropdown.Item>
-                                    2
-                                </Dropdown.Item>
-                                <Dropdown.Item>
-                                    3
-                                </Dropdown.Item>
-                            </Dropdown.Menu>
-                        </Dropdown>
+                    <Menu.Item content={this.props.baseStore.currentUser.Identity} onClick={() => this.props.toggleUserDetailsAction()} />
                     </Menu.Menu>
                 </Menu>
             </div>
@@ -156,7 +142,7 @@ function mapDispatchToProps(dispatch) {
         searchServersAction,
         searchServiceShortcutAction,
         toggleVerticalMenuAction,
-        getServerDetailsAction
+        toggleUserDetailsAction
     }, dispatch);
 }
 

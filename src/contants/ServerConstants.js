@@ -1,1 +1,3 @@
 export const GET_SERVER_DETAILS = 'GET_SERVER_DETAILS';
+
+export const GET_VM_DETAILS = 'GET_VM_DETAILS';

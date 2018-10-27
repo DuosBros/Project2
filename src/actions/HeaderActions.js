@@ -1,4 +1,4 @@
-import {SEARCH_SERVERS, SEARCH_SERVICE_SHORTCUTS, TOGGLE_VERTICAL_MENU} from '../contants/HeaderConstants';
+import {SEARCH_SERVERS, SEARCH_SERVICE_SHORTCUTS, TOGGLE_VERTICAL_MENU, TOGGLE_USER_DETAILS} from '../contants/HeaderConstants';
 
 export function searchServersAction(payload) {
     return {
@@ -17,5 +17,11 @@ export function searchServiceShortcutAction(payload) {
 export function toggleVerticalMenuAction() {
     return {
         type: TOGGLE_VERTICAL_MENU
+    }
+}
+
+export function toggleUserDetailsAction() {
+    return {
+        type: TOGGLE_USER_DETAILS
     }
 }

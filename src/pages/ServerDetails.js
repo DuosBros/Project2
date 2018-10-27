@@ -1,10 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Grid, Header, Segment, List, Icon } from 'semantic-ui-react';
+import { Grid, Header, Segment, Divider, Icon } from 'semantic-ui-react';
 
-import { getServerDetailsAction } from '../actions/ServerActions';
-import { getServerDetails } from '../requests/ServerAxios';
+import { getServerDetailsAction, getVmDetailsAction } from '../actions/ServerActions';
+import { getServerDetails, getVmDetails } from '../requests/ServerAxios';
 
 class ServerDetails extends React.Component {
 
@@ -16,6 +16,13 @@ class ServerDetails extends React.Component {
         getServerDetails(id)
             .then(res => {
                 this.props.getServerDetailsAction(res.data)
+                if (res.data.length > 0) {
+                    return getVmDetails(res.data[0].Id)
+                }
+
+            })
+            .then(res => {
+                this.props.getVmDetailsAction(res.data)
             });
     }
 
@@ -30,6 +37,7 @@ class ServerDetails extends React.Component {
 
     render() {
         console.log(this.props.serverStore.serverDetails)
+        console.log(this.props.serverStore.vmDetails)
 
         var serverDetails = this.props.serverStore.serverDetails;
 
@@ -41,11 +49,12 @@ class ServerDetails extends React.Component {
                         <Segment attached='bottom'>
                             <Grid columns={4}>
                                 <Grid.Row>
-                                    <Grid.Column>Server Name:</Grid.Column>
-                                    <Grid.Column>
+                                    <Grid.Column width={2}>Server Name:</Grid.Column>
+                                    <Grid.Column width={6}>
                                         {this.props.serverStore.serverDetails.ServerName}
                                     </Grid.Column>
-                                    <Grid.Column>
+                                    <Divider vertical section />
+                                    <Grid.Column width={2}>
                                         Stage:
                                         <br />
                                         Environment:
@@ -54,7 +63,7 @@ class ServerDetails extends React.Component {
                                         <br />
                                         Country:
                                     </Grid.Column>
-                                    <Grid.Column>
+                                    <Grid.Column width={6}>
                                         {this.props.serverStore.serverDetails.Stage}
                                         <br />
                                         {this.props.serverStore.serverDetails.Environment}
@@ -65,21 +74,21 @@ class ServerDetails extends React.Component {
                                     </Grid.Column>
                                 </Grid.Row>
                                 <Grid.Row>
-                                    <Grid.Column>
+                                    <Grid.Column width={2}>
                                         FQDN:
                                         <br />
                                         Domain:
                                     </Grid.Column>
-                                    <Grid.Column>
+                                    <Grid.Column width={6}>
                                         {this.props.serverStore.serverDetails.FQDN}
                                         <br />
                                         {this.props.serverStore.serverDetails.Domain}
                                     </Grid.Column>
-                                    <Grid.Column>Kibana:</Grid.Column>
+                                    <Grid.Column width={2}>Kibana:</Grid.Column>
                                     <Grid.Column>kibana link</Grid.Column>
                                 </Grid.Row>
                                 <Grid.Row>
-                                    <Grid.Column>
+                                    <Grid.Column width={2}>
                                         Operating System:
                                         <br />
                                         Server Owner:
@@ -90,7 +99,7 @@ class ServerDetails extends React.Component {
                                         <br />
                                         Disme:
                                     </Grid.Column>
-                                    <Grid.Column>
+                                    <Grid.Column width={6}>
                                         {this.props.serverStore.serverDetails.OperatingSystem}
                                         <br />
                                         {this.props.serverStore.serverDetails.ServerOwner}
@@ -101,9 +110,7 @@ class ServerDetails extends React.Component {
                                         <br />
                                         {this.props.serverStore.serverDetails.Disme}
                                     </Grid.Column>
-                                    <Grid.Column>
-                                        VM:
-                                        <br />
+                                    <Grid.Column width={2}>
                                         Cloud:
                                         <br />
                                         CPU:
@@ -114,23 +121,30 @@ class ServerDetails extends React.Component {
                                         <br />
                                         Availability Set:
                                     </Grid.Column>
-                                    <Grid.Column>
-                                        {this.props.serverStore.serverDetails.OperatingSystem}
+                                    <Grid.Column width={6}>
+                                        {this.props.serverStore.vmDetails.Cloud}
                                         <br />
-                                        {this.props.serverStore.serverDetails.ServerOwner}
+                                        {this.props.serverStore.vmDetails.CPUCount}
                                         <br />
-                                        {this.props.serverStore.serverDetails.PatchGroupName ? (this.props.serverStore.serverDetails.PatchGroupName) : ('Exclude ') + this.props.serverStore.serverDetails.PatchID}
+                                        {this.props.serverStore.vmDetails.Memory}
                                         <br />
-                                        {this.props.serverStore.serverDetails.State ? 'active' : 'not active'}
+                                        {this.props.serverStore.vmDetails.VMNetwork}
                                         <br />
-                                        {this.props.serverStore.serverDetails.Disme}
-                                        <br />
-                                        {this.props.serverStore.serverDetails.State ? 'active' : 'not active'}
+                                        {this.props.serverStore.vmDetails.AvailabilitySet}
                                     </Grid.Column>
                                 </Grid.Row>
 
                             </Grid>
-
+                            <Grid container>
+                                <Grid.Row columns={2}>
+                                    <Grid.Column width={2}>
+                                        AD Path:
+                                    </Grid.Column>
+                                    <Grid.Column width={14}>
+                                        {this.props.serverStore.serverDetails.ADPath}
+                                    </Grid.Column>
+                                </Grid.Row>  
+                            </Grid>
                         </Segment>
                     </Grid.Column>
                 </Grid>
@@ -146,7 +160,8 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
-        getServerDetailsAction: getServerDetailsAction
+        getServerDetailsAction,
+        getVmDetailsAction
     }, dispatch);
 }
 

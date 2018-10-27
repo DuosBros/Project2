@@ -11,6 +11,7 @@ import Home from '../pages/Home';
 import ServerDetails from '../pages/ServerDetails';
 import ServiceDetails from '../pages/ServiceDetails';
 import Login from '../pages/Login';
+import UserDetails from '../modals/UserDetails';
 
 import { authenticateAction, authenticationStartedAction, authenticateEndedAction, authenticateOKAction, authenticationFailedAction } from '../actions/BaseAction';
 import { authenticate } from '../requests/BaseAxios';
@@ -42,7 +43,7 @@ class Base extends React.Component {
     }
 
     render() {
-        if(!this.props.baseStore.authenticationDone) {
+        if (!this.props.baseStore.authenticationDone) {
             return (
                 <div className="centered">
                     <Image src={spinner} />
@@ -50,25 +51,48 @@ class Base extends React.Component {
             );
         }
 
-        if(this.props.baseStore.authenticationFailed) {
+        if (this.props.baseStore.authenticationFailed) {
             return (<Login ex={this.state} />);
         }
 
         var wideClass = {
             className: ""
         };
-        if(!this.props.headerStore.showVerticalMenu) {
+        if (!this.props.headerStore.showVerticalMenu) {
             wideClass.className = "wide"
         }
+
+        if (this.props.headerStore.showUserDetails)
+            (
+                console.log("showing details")
+            )
+        else {
+            console.log("not showing details")
+        }
+
+        var userDetailsModal
+
+        if(this.props.headerStore.showUserDetails) {
+            userDetailsModal = (<UserDetails />)
+        }
+        else {
+            <div></div>
+        }
+
 
         return (
             <div>
                 <BrowserRouter>
                     <div>
                         <Route path="/:entityType?/:entityId?" component={Header} />
-                        <Sidebar/>
+                        <Sidebar />
+
+                        {/* TODO: pass the showUserDetails to props of component */}
+
+                        {userDetailsModal}
                         <div id="bodyWrapper" {...wideClass}>
                             <Switch>
+
                                 <Route exact path='/' component={Home} />
                                 <Route exact path='/login' component={Login} />
                                 <Route path='/server/:id' component={ServerDetails} />
@@ -77,7 +101,7 @@ class Base extends React.Component {
                                 } />
                             </Switch>
                         </div>
-                        <Footer id="footer" {...wideClass}/>
+                        <Footer id="footer" {...wideClass} />
                     </div>
                 </BrowserRouter>
             </div>
