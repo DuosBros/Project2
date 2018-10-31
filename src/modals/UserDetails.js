@@ -9,11 +9,11 @@ class UserDetails extends React.Component {
 
     render() {
         
-
+        console.log(this.props.userDetails)
         return (
             <Modal
                 size='mini'
-                open={this.props.headerStore.showUserDetails}
+                open={this.props.show}
                 closeOnEscape={true}
                 closeOnDimmerClick={false}
                 closeIcon={true}
@@ -24,15 +24,15 @@ class UserDetails extends React.Component {
                 
             </Modal.Content>
             <Modal.Actions>
-              <Button onClick={() => this.props.toggleUserDetailsAction()} style=
-              {{backgroundColor: '#9a3334', color:'white'}} content='Back' />
+              {/* <Button onClick={() => this.props.toggleUserDetailsAction()} style=
+              {{backgroundColor: '#9a3334', color:'white'}} content='Back' /> */}
               <Button
-                // onClick={() => this.handleSaveTagEvent()}
+                onClick={() => this.props.toggleUserDetailsAction()}
                 positive
                 labelPosition='right'
                 icon='checkmark'
                 content='Uložit'
-                style={{backgroundColor: '#efe1ba',color:'black'}}
+                style={{backgroundColor: '#9a3334', color:'white'}}
               />
             </Modal.Actions>
           </Modal>

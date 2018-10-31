@@ -62,23 +62,12 @@ class Base extends React.Component {
             wideClass.className = "wide"
         }
 
-        if (this.props.headerStore.showUserDetails)
-            (
-                console.log("showing details")
-            )
+        if (this.props.headerStore.showUserDetails) {
+            console.log("showing details")
+        }
         else {
             console.log("not showing details")
         }
-
-        var userDetailsModal
-
-        if(this.props.headerStore.showUserDetails) {
-            userDetailsModal = (<UserDetails />)
-        }
-        else {
-            <div></div>
-        }
-
 
         return (
             <div>
@@ -86,13 +75,9 @@ class Base extends React.Component {
                     <div>
                         <Route path="/:entityType?/:entityId?" component={Header} />
                         <Sidebar />
-
-                        {/* TODO: pass the showUserDetails to props of component */}
-
-                        {userDetailsModal}
+                        <UserDetails userDetails={this.props.baseStore.currentUser} show={this.props.headerStore.showUserDetails} />
                         <div id="bodyWrapper" {...wideClass}>
                             <Switch>
-
                                 <Route exact path='/' component={Home} />
                                 <Route exact path='/login' component={Login} />
                                 <Route path='/server/:id' component={ServerDetails} />

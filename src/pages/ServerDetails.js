@@ -49,7 +49,7 @@ class ServerDetails extends React.Component {
                         <Segment attached='bottom'>
                             <Grid columns={4}>
                                 <Grid.Row>
-                                    <Grid.Column width={2}>Server Name:</Grid.Column>
+                                    <Grid.Column width={2}><b>Server Name:</b></Grid.Column>
                                     <Grid.Column width={6}>
                                         {this.props.serverStore.serverDetails.ServerName}
                                     </Grid.Column>
