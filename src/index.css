@@ -6,7 +6,7 @@ html, body {
 
 #bodyWrapper {
     margin: 1em;
-    margin-left: 250px;
+    margin-left: 200px;
     padding-left: 1em;
 }
 
@@ -15,8 +15,13 @@ html, body {
 }
 
 #footer {
-    margin-left: 250px;
+    margin-left: 200px;
     width: 100%;
+
+    padding-bottom: 1em;
+    bottom: 1em;
+    position: absolute;
+    
 }
 
 #footer.wide {
@@ -38,7 +43,7 @@ html, body {
 }
 
 #verticalMenu {
-    width: 250px;
+    width: 200px;
     position: fixed;
     height: 100%;
     background-color: #1B1C1D;

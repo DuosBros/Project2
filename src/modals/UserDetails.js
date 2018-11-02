@@ -1,15 +1,13 @@
 import React from 'react';
-import { Button, Modal, Dropdown } from 'semantic-ui-react';
-import {bindActionCreators} from 'redux';
+import { Button, Modal, List } from 'semantic-ui-react';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import {toggleUserDetailsAction} from '../actions/HeaderActions';
+import { toggleUserDetailsAction } from '../actions/HeaderActions';
 
 class UserDetails extends React.Component {
 
     render() {
-        
-        console.log(this.props.userDetails)
         return (
             <Modal
                 size='mini'
@@ -19,23 +17,45 @@ class UserDetails extends React.Component {
                 closeIcon={true}
                 onClose={() => this.props.toggleUserDetailsAction()}
             >
-            <Modal.Header>User Details</Modal.Header>
-            <Modal.Content>
-                
-            </Modal.Content>
-            <Modal.Actions>
-              {/* <Button onClick={() => this.props.toggleUserDetailsAction()} style=
-              {{backgroundColor: '#9a3334', color:'white'}} content='Back' /> */}
-              <Button
-                onClick={() => this.props.toggleUserDetailsAction()}
-                positive
-                labelPosition='right'
-                icon='checkmark'
-                content='Uložit'
-                style={{backgroundColor: '#9a3334', color:'white'}}
-              />
-            </Modal.Actions>
-          </Modal>
+                <Modal.Header>User Details</Modal.Header>
+                <Modal.Content>
+                    <List  verticalAlign='middle'>
+                        <List.Item>
+                            <List.Content floated='left'>Identity: </List.Content>
+                            <List.Content floated='right'>
+                                {this.props.userDetails.Identity}
+                            </List.Content>
+                        </List.Item>
+                        <List.Item>
+                            <List.Content floated='left'>Authenticated: </List.Content>
+                            <List.Content floated='right'>
+                                {this.props.userDetails.IsAuthenticated ? 'true' : 'false'}
+                            </List.Content>
+                        </List.Item>
+                        <List.Item>
+                            <List.Content floated='left'>Loco User: </List.Content>
+                            <List.Content floated='right'>
+                                {this.props.userDetails.IsLocoUser ? 'true' : 'false'}
+                            </List.Content>
+                        </List.Item>
+                        <List.Item>
+                            <List.Content floated='left'>Loco Admin: </List.Content>
+                            <List.Content floated='right'>
+                                {this.props.userDetails.IsLocoAdmin ? 'true' : 'false'}
+                            </List.Content>
+                        </List.Item>
+                    </List>
+                </Modal.Content>
+                <Modal.Actions>
+                    <Button
+                        onClick={() => this.props.toggleUserDetailsAction()}
+                        positive
+                        labelPosition='right'
+                        icon='checkmark'
+                        content='Close'
+                    />
+                </Modal.Actions>
+            </Modal>
         )
     }
 }
@@ -44,8 +64,8 @@ function mapStateToProps(state) {
     return {
         headerStore: state.HeaderReducer
     };
-  }
-  
+}
+
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
         toggleUserDetailsAction

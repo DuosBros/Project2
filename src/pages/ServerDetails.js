@@ -1,10 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Grid, Header, Segment, Divider, Icon } from 'semantic-ui-react';
+import { Grid, Header, Segment, Divider, Icon, List } from 'semantic-ui-react';
+import _ from 'lodash';
 
 import { getServerDetailsAction, getVmDetailsAction } from '../actions/ServerActions';
 import { getServerDetails, getVmDetails } from '../requests/ServerAxios';
+
+import { KIBANA_WINLOGBEAT_SERVER_URL, KIBANA_SERVER_URL_PLACEHOLDER, KIBANA_PERFCOUNTER_SERVER_URL } from '../appConfig';
+import { getServerState } from '../utils/HelperFunction';
 
 class ServerDetails extends React.Component {
 
@@ -36,90 +40,105 @@ class ServerDetails extends React.Component {
     }
 
     render() {
-        console.log(this.props.serverStore.serverDetails)
-        console.log(this.props.serverStore.vmDetails)
 
         var serverDetails = this.props.serverStore.serverDetails;
+        var OSIcon
 
+        if (!_.isEmpty(serverDetails.OperatingSystem)) {
+            if (serverDetails.OperatingSystem.toLowerCase().indexOf("windows") >= 0) {
+                OSIcon = (<Icon circular name='windows' />)
+            }
+
+            if (serverDetails.OperatingSystem.toLowerCase().indexOf("linux") >= 0) {
+                OSIcon = (<Icon circular name='linux' />)
+            }
+        }
+
+        console.log(serverDetails)
         return (
             <div>
                 <Grid stackable>
                     <Grid.Column>
                         <Header block attached='top' as='h4' content='Server Info' />
-                        <Segment attached='bottom'>
+                        <Segment attached>
                             <Grid columns={4}>
                                 <Grid.Row>
                                     <Grid.Column width={2}><b>Server Name:</b></Grid.Column>
                                     <Grid.Column width={6}>
-                                        {this.props.serverStore.serverDetails.ServerName}
+                                        {serverDetails.ServerName}
                                     </Grid.Column>
                                     <Divider vertical section />
                                     <Grid.Column width={2}>
-                                        Stage:
+                                        <b>Stage:</b>
                                         <br />
-                                        Environment:
+                                        <b>Environment:</b>
                                         <br />
-                                        Datacenter:
+                                        <b>Datacenter:</b>
                                         <br />
-                                        Country:
+                                        <b>Country:</b>
                                     </Grid.Column>
                                     <Grid.Column width={6}>
-                                        {this.props.serverStore.serverDetails.Stage}
+                                        {serverDetails.Stage}
                                         <br />
-                                        {this.props.serverStore.serverDetails.Environment}
+                                        {serverDetails.Environment}
                                         <br />
-                                        {this.props.serverStore.serverDetails.DataCenter}
+                                        {serverDetails.DataCenter}
                                         <br />
-                                        {this.props.serverStore.serverDetails.CountryName}
+                                        {serverDetails.CountryName}
                                     </Grid.Column>
                                 </Grid.Row>
                                 <Grid.Row>
                                     <Grid.Column width={2}>
-                                        FQDN:
+                                        <b>FQDN:</b>
                                         <br />
-                                        Domain:
+                                        <b>Domain:</b>
                                     </Grid.Column>
                                     <Grid.Column width={6}>
-                                        {this.props.serverStore.serverDetails.FQDN}
+                                        {serverDetails.FQDN}
                                         <br />
-                                        {this.props.serverStore.serverDetails.Domain}
+                                        {serverDetails.Domain}
                                     </Grid.Column>
-                                    <Grid.Column width={2}>Kibana:</Grid.Column>
-                                    <Grid.Column>kibana link</Grid.Column>
+                                    <Grid.Column width={2}><b>Kibana:</b></Grid.Column>
+                                    <Grid.Column>
+
+                                        <a target="_blank" href={_.replace(KIBANA_WINLOGBEAT_SERVER_URL, new RegExp(KIBANA_SERVER_URL_PLACEHOLDER, "g"), serverDetails.ServerName)}>Eventlog </a> <br />
+                                        <a target="_blank" href={_.replace(KIBANA_PERFCOUNTER_SERVER_URL, new RegExp(KIBANA_SERVER_URL_PLACEHOLDER, "g"), serverDetails.ServerName)}>PerfCounter </a>
+                                    </Grid.Column>
                                 </Grid.Row>
                                 <Grid.Row>
                                     <Grid.Column width={2}>
-                                        Operating System:
+                                        <b>OS:</b>
                                         <br />
-                                        Server Owner:
+                                        <b>Server Owner:</b>
                                         <br />
-                                        PatchGroup:
+                                        <b>PatchGroup:</b>
                                         <br />
-                                        State:
+                                        <b>State:</b>
                                         <br />
-                                        Disme:
+                                        <b>Disme:</b>
                                     </Grid.Column>
                                     <Grid.Column width={6}>
-                                        {this.props.serverStore.serverDetails.OperatingSystem}
+                                        {OSIcon}
+                                        {serverDetails.OperatingSystem}
                                         <br />
-                                        {this.props.serverStore.serverDetails.ServerOwner}
+                                        {serverDetails.ServerOwner}
                                         <br />
-                                        {this.props.serverStore.serverDetails.PatchGroupName ? (this.props.serverStore.serverDetails.PatchGroupName) : ('Exclude ') + this.props.serverStore.serverDetails.PatchID}
+                                        {serverDetails.PatchGroupName ? (serverDetails.PatchGroupName) : ('Exclude ') + serverDetails.PatchID}
                                         <br />
-                                        {this.props.serverStore.serverDetails.State ? 'active' : 'not active'}
+                                        {getServerState(serverDetails.ServerStateID)}
                                         <br />
-                                        {this.props.serverStore.serverDetails.Disme}
+                                        {serverDetails.Disme ? 'active' : 'not active'}
                                     </Grid.Column>
                                     <Grid.Column width={2}>
-                                        Cloud:
+                                        <b>Cloud:</b>
                                         <br />
-                                        CPU:
+                                        <b>CPU:</b>
                                         <br />
-                                        Memory:
+                                        <b>Memory:</b>
                                         <br />
-                                        Network:
+                                        <b>Network:</b>
                                         <br />
-                                        Availability Set:
+                                        <b>Availability Set:</b>
                                     </Grid.Column>
                                     <Grid.Column width={6}>
                                         {this.props.serverStore.vmDetails.Cloud}
@@ -135,16 +154,28 @@ class ServerDetails extends React.Component {
                                 </Grid.Row>
 
                             </Grid>
-                            <Grid container>
-                                <Grid.Row columns={2}>
+                            <Grid>
+                                <Grid.Row>
                                     <Grid.Column width={2}>
-                                        AD Path:
+                                        <b>AD Path:</b>
                                     </Grid.Column>
                                     <Grid.Column width={14}>
-                                        {this.props.serverStore.serverDetails.ADPath}
+                                        {serverDetails.ADPath}
                                     </Grid.Column>
-                                </Grid.Row>  
+                                </Grid.Row>
                             </Grid>
+                        </Segment>
+                        <Header attached>
+                            <List>
+                                <List.Item>
+                                    <List.Content floated='left'>Last Update: </List.Content>
+                                    <List.Content floated='right'>Created: </List.Content>
+                                </List.Item>
+                            </List>
+                        </Header>
+
+                        <Header block attached='top' as='h4' content='Disme Services' />
+                        <Segment attached='bottom'>
                         </Segment>
                     </Grid.Column>
                 </Grid>

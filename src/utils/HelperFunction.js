@@ -14,3 +14,18 @@ export const isNum = (value) => {
         return false;
     }
 }
+
+export const getServerState = (id) => {
+    switch(id) {
+        case 1:
+            return "SUCCESS";
+        case 2:
+            return "DANGER";
+        case 3:
+            return "DEFAULT";
+        case 4:
+            return "WARNING";
+        default:
+            return ""
+    }
+}

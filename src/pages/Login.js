@@ -15,8 +15,8 @@ class Login extends React.Component {
         this.state = {
             username: "",
             password: "",
-            authExceptionMessage: "",
-            authExceptionResponse: ""
+            authExceptionMessage: this.props.ex.authExceptionMessage,
+            authExceptionResponse: this.props.ex.authExceptionResponse
         }
 
         this.props.history.push('/login')
@@ -32,7 +32,7 @@ class Login extends React.Component {
 
         var payload = {}
 
-        if(!this.state.username.startsWith("ICEPOR\\")) {
+        if (!this.state.username.startsWith("ICEPOR\\")) {
             payload.Identity = "ICEPOR\\" + this.state.username
         }
         else {
@@ -72,8 +72,6 @@ class Login extends React.Component {
                                 <Message error floating>
                                     Failed to log in:
                                 <br />
-                                    {this.props.ex.authExceptionMessage}
-                                    {this.props.ex.authExceptionResponse}
                                     {this.state.authExceptionMessage}
                                     {this.state.authExceptionResponse}
                                     <br />
