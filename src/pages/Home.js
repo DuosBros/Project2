@@ -1,5 +1,7 @@
 import React from 'react';
-import { Grid, List, Image, Input } from 'semantic-ui-react';
+import { Grid, List, Image, Input, Button } from 'semantic-ui-react';
+import keyboardKey from 'keyboard-key'
+import _ from 'lodash'
 
 import GVC from '../assets/GVC.png'
 import beholder from '../assets/beholder.png'
@@ -11,12 +13,41 @@ import RU from '../assets/RU.png'
 import GI from '../assets/GI.png'
 import GG from '../assets/GG.png'
 
+import {INCIDENT_PLACEHOLDER, SN_INC_SEARCH_URL} from '../appConfig';
+
 export default class Home extends React.Component {
 
-    openUrlInNewTab = (url) => {
-        var win = window.open(url, '_blank');
-        win.focus();
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            incident: "",
+            version1: ""
+
+        }
     }
+
+    handleChange = (e, { name, value }) => {
+        this.setState({ [name]: value })
+    }
+
+    handleKeyPressIncident = (e) => {
+        const isEnter = keyboardKey.getKey(e) === 'Enter'
+
+        if(isEnter) {
+            var url = _.replace(SN_INC_SEARCH_URL, new RegExp(INCIDENT_PLACEHOLDER, "g"), this.state.incident)
+            var win = window.open(url, '_blank');
+            win.focus();
+
+        }
+
+    }
+
+    // TODO version 1 link
+    handleKeyPressVersion1 = (e) => {
+        const isEnter = keyboardKey.getKey(e) === 'enter'
+    }
+
     render() {
         return (
             <div>
@@ -130,8 +161,10 @@ export default class Home extends React.Component {
                         column3
                     </Grid.Column>
                     <Grid.Column>
-                        <Input placeholder='INCxxxxxx'></Input>
-                        <Input placeholder='B-xxxxxxx'></Input>
+                        <Input onKeyPress={this.handleKeyPressIncident} onChange={this.handleChange} name="incident" placeholder='INCxxxxxx'></Input>
+                        {this.state.incident !== "" ? <Button circular icon="arrow right" id="homeSecondIcon" /> : <span></span>}
+                        <Input onKeyPress={this.handleKeyPressVersion1} onChange={this.handleChange} name="version1" placeholder='B-xxxxxxx'></Input>
+                        {this.state.version1 !== "" ? <Button circular icon="arrow right" id="homeSecondIcon" /> : <span></span>}
                     </Grid.Column>
                 </Grid>
             </div>

@@ -22,7 +22,7 @@ class Login extends React.Component {
         this.props.history.push('/login')
 
         if (this.props.baseStore.authenticationDone && !this.props.baseStore.authenticationFailed) {
-            this.props.history.push('/home')
+            this.props.history.push('/')
         }
     }
 
@@ -47,7 +47,7 @@ class Login extends React.Component {
                 this.props.authenticateEndedAction();
                 this.props.authenticateOKAction();
 
-                this.props.history.push('/home')
+                this.props.history.push('/')
             })
             .catch((err) => {
                 this.setState({ authExceptionMessage: err.message ? err.message : '', authExceptionResponse: err.response ? err.response : '' })

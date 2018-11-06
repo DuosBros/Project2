@@ -21,7 +21,7 @@ class Sidebar extends React.Component {
         if (this.props.headerStore.showVerticalMenu) {
             NavMenu = (
                 <div>
-                    <Menu.Item as={Link} exact to='/home'>
+                    <Menu.Item as={Link} exact to='/'>
                         <Menu.Header>Home</Menu.Header>
                     </Menu.Item>
                     <Menu.Item>
