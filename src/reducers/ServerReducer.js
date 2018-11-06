@@ -2,7 +2,7 @@ import { GET_SERVER_DETAILS, GET_VM_DETAILS } from '../contants/ServerConstants'
 
 const serverInitialState = {
     serverDetails: {},
-    vmDetails: {}
+    vmDetails: {},
 }
 
 const ServerReducer = (state = serverInitialState, action) => {

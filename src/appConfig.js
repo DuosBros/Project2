@@ -8,3 +8,6 @@ export const KIBANA_PERFCOUNTER_SERVER_URL = "https://kibana.prod.env.works/app/
 
 export const INCIDENT_PLACEHOLDER = "#INCIDENT_PLACEHOLDER"
 export const SN_INC_SEARCH_URL = "https://gvcgroup.service-now.com/textsearch.do?sysparm_tsgroups=&sysparm_view=text_search&sysparm_search=#INCIDENT_PLACEHOLDER"
+
+export const VERSION1_PLACEHOLDER = "#VERSION1_PLACEHOLDER"
+export const VERSION1_SEARCH_URL = "https://www52.v1host.com/GVCGroup/Search.mvc/Advanced?q=#VERSION1_PLACEHOLDER"

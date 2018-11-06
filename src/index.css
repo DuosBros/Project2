@@ -97,3 +97,8 @@ html, body {
 #homeSecondIcon {
     margin-left: 0.5em
 }
+
+#servicesSegment {
+    width: 50%;
+    margin-top: 1em
+}
