@@ -15,8 +15,8 @@ class Login extends React.Component {
         this.state = {
             username: "",
             password: "",
-            authExceptionMessage: this.props.ex.authExceptionMessage,
-            authExceptionResponse: this.props.ex.authExceptionResponse
+            authExceptionMessage: this.props.ex ? this.props.ex.authExceptionMessage : "",
+            authExceptionResponse: this.props.ex ? this.props.ex.authExceptionResponse : ""
         }
 
         this.props.history.push('/login')

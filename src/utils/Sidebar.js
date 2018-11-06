@@ -1,5 +1,5 @@
 import React from 'react';
-import { Menu, Icon, Header as HeaderSemantic, Dropdown, Ref } from 'semantic-ui-react'
+import { Menu, Icon } from 'semantic-ui-react'
 import { Link } from 'react-router-dom';
 
 import { connect } from 'react-redux';

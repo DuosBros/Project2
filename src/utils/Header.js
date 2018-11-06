@@ -1,8 +1,6 @@
 import React from 'react';
 import keyboardKey from 'keyboard-key'
-import { Menu, Button, Header as HeaderSemantic, Dropdown, Ref } from 'semantic-ui-react'
-// import { Link, withRouter } from 'react-static';
-import { Link } from 'react-router-dom';
+import { Menu, Dropdown, Ref } from 'semantic-ui-react'
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';

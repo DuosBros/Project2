@@ -23,8 +23,11 @@ class Base extends React.Component {
 
         this.state = {
             authExceptionMessage: "",
-            authExceptionResponse: ""
+            authExceptionResponse: "",
+            width: window.innerWidth
         }
+
+        window.addEventListener('resize', this.handleWindowSizeChange)
 
         props.authenticationStartedAction();
 
@@ -42,7 +45,14 @@ class Base extends React.Component {
             })
     }
 
+    handleWindowSizeChange = () => {
+        this.setState({ width: window.innerWidth });
+    };
+
     render() {
+
+        const isMobile = this.state.width <= 766;
+
         if (!this.props.baseStore.authenticationDone) {
             return (
                 <div className="centered">
