@@ -13,7 +13,7 @@ import RU from '../assets/RU.png'
 import GI from '../assets/GI.png'
 import GG from '../assets/GG.png'
 
-import {INCIDENT_PLACEHOLDER, SN_INC_SEARCH_URL} from '../appConfig';
+import {INCIDENT_PLACEHOLDER, SN_INC_SEARCH_URL, VERSION1_SEARCH_URL, VERSION1_PLACEHOLDER} from '../appConfig';
 
 export default class Home extends React.Component {
 
@@ -45,7 +45,14 @@ export default class Home extends React.Component {
 
     // TODO version 1 link
     handleKeyPressVersion1 = (e) => {
-        const isEnter = keyboardKey.getKey(e) === 'enter'
+        const isEnter = keyboardKey.getKey(e) === 'Enter'
+
+        if(isEnter) {
+            var url = _.replace(VERSION1_SEARCH_URL, new RegExp(VERSION1_PLACEHOLDER, "g"), this.state.version1)
+            var win = window.open(url, '_blank');
+            win.focus();
+
+        }
     }
 
     render() {

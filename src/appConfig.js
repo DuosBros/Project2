@@ -11,3 +11,6 @@ export const SN_INC_SEARCH_URL = "https://gvcgroup.service-now.com/textsearch.do
 
 export const VERSION1_PLACEHOLDER = "#VERSION1_PLACEHOLDER"
 export const VERSION1_SEARCH_URL = "https://www52.v1host.com/GVCGroup/Search.mvc/Advanced?q=#VERSION1_PLACEHOLDER"
+
+export const DISME_SERVICE_PLACEHOLDER = "#DISME_SERVICE_PLACEHOLDER"
+export const DISME_SERVICE_URL = "https://disme.bwin.corp/out/out.ServiceMgr.php?serviceid=#DISME_SERVICE_PLACEHOLDER"

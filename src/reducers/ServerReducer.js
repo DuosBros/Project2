@@ -8,7 +8,7 @@ const serverInitialState = {
 const ServerReducer = (state = serverInitialState, action) => {
     switch (action.type) {
         case GET_SERVER_DETAILS:
-            return Object.assign({}, state, { serverDetails: action.payload[0] })
+            return Object.assign({}, state, { serverDetails: action.payload })
         case GET_VM_DETAILS:
             return Object.assign({}, state, { vmDetails: action.payload })
         default:

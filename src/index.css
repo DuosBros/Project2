@@ -17,10 +17,10 @@ html, body {
 #footer {
     margin-left: 200px;
     width: 100%;
-
+    padding-top: 1em;
     padding-bottom: 1em;
     bottom: 1em;
-    position: absolute;
+    position: relative;
     
 }
 
@@ -102,3 +102,7 @@ html, body {
     width: 50%;
     margin-top: 1em
 }
+
+/* .simpleTable {
+    text-Align: center
+} */

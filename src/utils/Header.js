@@ -8,12 +8,22 @@ import { bindActionCreators } from 'redux';
 import { searchServersAction, searchServiceShortcutAction, toggleVerticalMenuAction, toggleUserDetailsAction } from '../actions/HeaderActions';
 import { searchServers, searchServiceShortcut } from '../requests/HeaderAxios';
 
-import { isNum } from '../utils/HelperFunction';
+import { isNum, debounce } from '../utils/HelperFunction';
 
 class Header extends React.Component {
+
+    constructor(props) {
+        super(props);
+
+        this.handleSearchServers = this.handleSearchServers.bind(this);
+        this.handleSearchServers = debounce(this.handleSearchServers, 250);
+    }
+
     state = {
         serviceShortcutQuery: ''
     }
+
+
 
     componentDidMount() {
         document.addEventListener('keydown', this.handleDocumentKeyDown)
@@ -33,18 +43,21 @@ class Header extends React.Component {
         if (!hasModifier && isw && bodyHasFocus) { this._searchServiceShortcutInput.focus(); e.preventDefault(); }
     }
 
-    handleServerSearchChange = (e) => {
+    handleSearchServers(value) {
+        searchServers(value)
+            .then(res => {
+                this.props.searchServersAction(res.data.map(e => ({ text: e.Name, value: e.Id })))
+            })
+    }
 
+    handleServerSearchChange = (e) => {
         if (e.target.value.length > 1) {
-            searchServers(e.target.value)
-                .then(res => {
-                    this.props.searchServersAction(res.data.map(e => ({ text: e.Name, value: e.Id })))
-                })
+            this.handleSearchServers(e.target.value)
         }
     }
 
     handleServerChange = (e, { value }) => {
-        
+
         if (isNum(value)) {
             var route = "/server/" + value;
             this.props.history.push(route);
@@ -52,7 +65,7 @@ class Header extends React.Component {
     }
 
     handleServiceChange = (e, { value }) => {
-        
+
         if (isNum(value)) {
             var route = "/service/" + value;
             this.props.history.push(route);
@@ -85,7 +98,7 @@ class Header extends React.Component {
         return (
             <div id="header">
                 <Menu stackable >
-                    <Menu.Item header content='LeanOpsConfigurationOverview' onClick={() => this.props.history.push('/')}/>
+                    <Menu.Item header content='LeanOpsConfigurationOverview' onClick={() => this.props.history.push('/')} />
                     <Menu.Item className='headerSearchInput'>
                         <Ref innerRef={this.handleSearchServerRef}>
                             <Dropdown
@@ -120,7 +133,7 @@ class Header extends React.Component {
 
                     </Menu.Item>
                     <Menu.Menu position='right'>
-                    <Menu.Item content={this.props.baseStore.currentUser.Identity} onClick={() => this.props.toggleUserDetailsAction()} />
+                        <Menu.Item content={this.props.baseStore.currentUser.Identity} onClick={() => this.props.toggleUserDetailsAction()} />
                     </Menu.Menu>
                 </Menu>
             </div>

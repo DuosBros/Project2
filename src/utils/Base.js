@@ -16,6 +16,7 @@ import UserDetails from '../modals/UserDetails';
 import { authenticateAction, authenticationStartedAction, authenticateEndedAction, authenticateOKAction, authenticationFailedAction } from '../actions/BaseAction';
 import { authenticate } from '../requests/BaseAxios';
 import spinner from '../assets/Spinner.svg';
+import { debounce } from '../utils/HelperFunction';
 
 class Base extends React.Component {
     constructor(props) {
@@ -27,7 +28,11 @@ class Base extends React.Component {
             width: window.innerWidth
         }
 
-        window.addEventListener('resize', this.handleWindowSizeChange)
+        this.handleWindowSizeChange = this.handleWindowSizeChange.bind(this)
+
+        var debounceResize = debounce(this.handleWindowSizeChange, 250);
+
+        window.addEventListener('resize', debounceResize)
 
         props.authenticationStartedAction();
 
@@ -45,12 +50,15 @@ class Base extends React.Component {
             })
     }
 
-    handleWindowSizeChange = () => {
+
+
+    handleWindowSizeChange() {
         this.setState({ width: window.innerWidth });
     };
 
     render() {
 
+        // will use this, do not remove
         const isMobile = this.state.width <= 766;
 
         if (!this.props.baseStore.authenticationDone) {
