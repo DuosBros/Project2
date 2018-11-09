@@ -15,7 +15,8 @@
     "react-static": "^5.9.12",
     "redux": "^4.0.0",
     "semantic-ui": "^2.4.0",
-    "semantic-ui-react": "^0.82.5"
+    "semantic-ui-react": "^0.82.5",
+    "semantic-ui-react-button-pagination": "^1.0.3"
   },
   "scripts": {
     "start": "react-scripts start",

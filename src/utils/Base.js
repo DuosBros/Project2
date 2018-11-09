@@ -18,6 +18,8 @@ import { authenticate } from '../requests/BaseAxios';
 import spinner from '../assets/Spinner.svg';
 import { debounce } from '../utils/HelperFunction';
 
+import {LOCO_API} from '../appConfig';
+
 class Base extends React.Component {
     constructor(props) {
         super(props)
@@ -43,7 +45,13 @@ class Base extends React.Component {
                 this.props.authenticateOKAction();
             })
             .catch((err) => {
-                this.setState({ authExceptionMessage: err.message ? err.message : '', authExceptionResponse: err.response ? err.response : '' })
+
+                if(err.response) {
+                    this.setState({ authExceptionMessage: err.message ? err.message : '', authExceptionResponse: err.response ? err.response : '' })
+                }
+                else {
+                    this.setState({ authExceptionMessage: ("Could not connect to " + LOCO_API) })
+                }
 
                 this.props.authenticationFailedAction();
                 this.props.authenticateEndedAction();

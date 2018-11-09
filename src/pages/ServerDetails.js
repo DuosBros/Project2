@@ -6,31 +6,43 @@ import _ from 'lodash';
 import moment from 'moment'
 
 import SimpleTable from '../components/SimpleTable';
-import { getServerDetailsAction, getVmDetailsAction } from '../actions/ServerActions';
-import { getServerDetails, getVmDetails } from '../requests/ServerAxios';
+import { getServerDetailsAction, getVmDetailsAction, getServerScomAlertsAction } from '../actions/ServerActions';
+import { getServerDetails, getVmDetails, getServerScomAlerts } from '../requests/ServerAxios';
 
-import { KIBANA_WINLOGBEAT_SERVER_URL, KIBANA_SERVER_URL_PLACEHOLDER, KIBANA_PERFCOUNTER_SERVER_URL, DISME_SERVICE_PLACEHOLDER, DISME_SERVICE_URL } from '../appConfig';
+import { KIBANA_WINLOGBEAT_SERVER_URL, KIBANA_SERVER_URL_PLACEHOLDER, KIBANA_PERFCOUNTER_SERVER_URL, DISME_SERVICE_PLACEHOLDER, DISME_SERVICE_URL, warningColor, errorColor } from '../appConfig';
 import { getServerState } from '../utils/HelperFunction';
 
 import spinner from '../assets/Spinner.svg';
 import SortableTable from '../components/SortableTable';
+import SCOMSegment from '../components/SCOMSegment';
 
 class ServerDetails extends React.Component {
 
     componentDidMount() {
         this.updateServer(this.props.match.params.id);
     }
-    addEventListener
+
     updateServer(id) {
         getServerDetails(id)
             .then(res => {
                 this.props.getServerDetailsAction(res.data)
 
                 if (!_.isEmpty(res.data)) {
-                    return getVmDetails(res.data.Id)
+                    return getServerScomAlerts(res.data.ServerName)
                 }
             })
+            .catch(err => {
+                return
+            })
             .then(res => {
+                if (!_.isEmpty(res)) {
+                    console.log('scom:' + res.data)
+                    this.props.getServerScomAlertsAction(res.data)
+                }
+                
+                return getVmDetails(id)
+            })
+            .then((res) => {
                 this.props.getVmDetailsAction(res.data)
             });
     }
@@ -46,8 +58,10 @@ class ServerDetails extends React.Component {
 
     render() {
         var serverDetails = this.props.serverStore.serverDetails;
-        var OSIcon, serverDetailsTempComponent, servicesTableRows, serviceTableColumnProperties, websitesTableRows, websitesTableColumnProperties, loadBalancerFarmsTableColumnProperties;
-
+        var scomAlerts = this.props.serverStore.scomAlerts;
+        var OSIcon, serverDetailsTempComponent, servicesTableRows, serviceTableColumnProperties, websitesTableRows, websitesTableColumnProperties, windowsServicesTableColumnProperties,
+        windowsServicesTableRows;
+        
         console.log(serverDetails)
         if (!_.isEmpty(serverDetails)) {
             if (serverDetails.OperatingSystem.toLowerCase().indexOf("windows") >= 0) {
@@ -137,37 +151,39 @@ class ServerDetails extends React.Component {
                 )
             })
 
-            loadBalancerFarmsTableColumnProperties = [
+            windowsServicesTableColumnProperties = [
                 {
-                    name: "Name",
+                    name: "Service Name",
                     width: 3,
                 },
                 {
-                    name: "Pool",
+                    name: "Display Name",
                     width: 1,
                 },
                 {
-                    name: "Port",
-                    width: 3,
-                },
-                {
-                    name: "IpAddress",
+                    name: "Startup Type",
                     width: 2,
                 },
                 {
-                    name: "LoadBalancer Farm",
-                    width: 3,
+                    name: "State",
+                    width: 2,
+                },
+                {
+                    name: "User",
+                    width: 4,
                 }
-            ];
+            ]
 
-            var loadBalancerFarmsTableRows = serverDetails.LoadBalancerFarms.map(lbfarm => {
+            windowsServicesTableRows = serverDetails.WindowsServices.map(service => {
                 return (
-                    <Table.Row key={lbfarm.Id}>
-                        <Table.Cell>{lbfarm.Name}</Table.Cell>
-                        <Table.Cell>{lbfarm.Pool}</Table.Cell>
-                        <Table.Cell>{lbfarm.Port}</Table.Cell>
-                        <Table.Cell>{lbfarm.IpAddress}</Table.Cell>
-                        <Table.Cell>{lbfarm.LbName}</Table.Cell>
+                    <Table.Row key={service.Id}>
+                        <Table.Cell >{service.ServiceName}</Table.Cell>
+                        <Table.Cell >{service.DisplayName}</Table.Cell>
+                        <Table.Cell>
+                            {service.StartupType}
+                        </Table.Cell>
+                        <Table.Cell >{service.State}</Table.Cell>
+                        <Table.Cell >{service.User}</Table.Cell>
                     </Table.Row>
                 )
             })
@@ -281,7 +297,7 @@ class ServerDetails extends React.Component {
                                         <Grid.Column width={3}>
                                             <b>AD Path:</b>
                                         </Grid.Column>
-                                        <Grid.Column width={14} style={{ fontSize: 'smaller' }} >
+                                        <Grid.Column width={14} style={{ wordWrap: 'break-word' }} >
                                             {serverDetails.ADPath}
                                         </Grid.Column>
                                     </Grid.Row>
@@ -298,25 +314,25 @@ class ServerDetails extends React.Component {
 
                         </Grid.Column>
                     </Grid.Row>
-                    <Grid.Row columns='equal'>
-                        <Grid.Column>
+                    <Grid.Row>
+                        <Grid.Column width={6}>
                             <Header block attached='top' as='h4' content='Disme Services' />
+                            <Header block attached='top' as='h4' floated="right" content='Disme Services' />
                             <Segment attached='bottom'>
                                 <SimpleTable columnProperties={serviceTableColumnProperties} body={servicesTableRows} />
                             </Segment>
                         </Grid.Column>
-                        <Grid.Column>
-                            <Header block attached='top' as='h4' content='Placeholder for another segment' />
+                        <Grid.Column width={10}>
+                            <Header 
+                                block 
+                                attached='top' 
+                                as='h4'
+                                style={scomAlerts.length > 0 ? {backgroundColor: errorColor} : {}}>
+                            SCOM Alerts
+                            {scomAlerts.length > 0 ? (<Icon name="warning" />) : (<span></span>)}
+                            </Header>
                             <Segment attached='bottom'>
-                                <br></br>
-                                <br></br>
-                                <br></br>
-                                <br></br>
-                                <br></br>
-                                <br></br>
-                                <br></br>
-                                <br></br>
-                                <br></br>
+                                <SCOMSegment data={scomAlerts}/>
                             </Segment>
                         </Grid.Column>
                     </Grid.Row>
@@ -334,6 +350,14 @@ class ServerDetails extends React.Component {
                             <Segment attached='bottom'>
                                 <SortableTable data={serverDetails.LoadBalancerFarms} />
                                 {/* <SimpleTable columnProperties={loadBalancerFarmsTableColumnProperties} body={loadBalancerFarmsTableRows} /> */}
+                            </Segment>
+                        </Grid.Column>
+                    </Grid.Row>
+                    <Grid.Row>
+                        <Grid.Column>
+                            <Header block attached='top' as='h4' content='Windows Services' />
+                            <Segment attached='bottom'>
+                                <SimpleTable columnProperties={windowsServicesTableColumnProperties} body={windowsServicesTableRows} />
                             </Segment>
                         </Grid.Column>
                     </Grid.Row>
@@ -364,7 +388,8 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
         getServerDetailsAction,
-        getVmDetailsAction
+        getVmDetailsAction,
+        getServerScomAlertsAction
     }, dispatch);
 }
 

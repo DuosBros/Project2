@@ -106,3 +106,39 @@ html, body {
 /* .simpleTable {
     text-Align: center
 } */
+
+/* next 4 media block are an ugly hack to force semantic ui to our will! MUHAHAHAAHAHAHAHAH */
+@media only screen and (max-width: 767px) {
+    .ui.table:not(.unstackable) tbody, .ui.table:not(.unstackable) tr, .ui.table:not(.unstackable) tr > th, .ui.table:not(.unstackable) tr > td {
+        width: inherit !important;
+        display: inherit !important;
+    }
+}
+
+
+@media only screen and (max-width: 1140px) {
+    .ui.table:not(.unstackable) tbody, .ui.table:not(.unstackable) tr, .ui.table:not(.unstackable) tr > th, .ui.table:not(.unstackable) tr > td {
+        width: auto !important;
+        display: block !important;
+    }
+}
+
+@media only screen and (max-width: 767px) {
+    .ui.table:not(.unstackable) tr > th, .ui.table:not(.unstackable) tr > td {
+        background: inherit;
+        border: inherit !important;
+        padding: inherit !important;
+        -webkit-box-shadow: inherit !important;
+        box-shadow: inherit !important;
+    }
+}
+
+@media only screen and (max-width: 1140px) {
+    .ui.table:not(.unstackable) tr > th, .ui.table:not(.unstackable) tr > td {
+        background: none;
+        border: none !important;
+        padding: 0.25em 0.75em !important;
+        -webkit-box-shadow: none !important;
+        box-shadow: none !important;
+    }
+}

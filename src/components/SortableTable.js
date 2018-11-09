@@ -1,22 +1,19 @@
 import _ from 'lodash'
 import React, { Component } from 'react'
-import { Table } from 'semantic-ui-react'
-
-const tableData = [
-    { name: 'John', age: 15, gender: 'Male' },
-    { name: 'Amber', age: 40, gender: 'Female' },
-    { name: 'Leslie', age: 25, gender: 'Female' },
-    { name: 'Ben', age: 70, gender: 'Male' },
-]
+import { Table, Input } from 'semantic-ui-react'
+import Pagination from 'semantic-ui-react-button-pagination';
+import { filterInArrayOfObjects } from '../utils/HelperFunction';
 
 export default class SortableTable extends Component {
-
-    
 
     state = {
         column: null,
         data: this.props.data,
         direction: null,
+        showAll: false,
+        offset: 0,
+        defaultLimit: 15,
+        multiSearchInput: ""
     }
 
     handleSort = clickedColumn => () => {
@@ -38,11 +35,82 @@ export default class SortableTable extends Component {
         })
     }
 
+    handleClick(offset) {
+        this.setState({ offset });
+    }
+
+    handleChange = (e, { name, value }) => {
+        this.setState({ [name]: value })
+    }
+
     render() {
-        const { column, data, direction } = this.state
+
+
+        const { column, data, direction, multiSearchInput, defaultLimit } = this.state
+
+        var renderData, tableFooter, filteredData;
+
+        if (multiSearchInput !== "") {
+            var fuckoff = data.map(pic => {
+                return (
+                    {
+                        Name: pic.Name,
+                        Pool: pic.Pool,
+                        Port: pic.Port,
+                        IpAddress: pic.IpAddress,
+                        LbName: pic.LbName
+                    }
+                    
+                )
+            })
+
+            filteredData = filterInArrayOfObjects(multiSearchInput, fuckoff)
+        }
+        else {
+            filteredData = data
+        }
+
+        if (filteredData.length > defaultLimit) {
+            renderData = filteredData.slice(this.state.offset, this.state.offset + defaultLimit)
+            tableFooter = (
+                <Table.Footer fullWidth>
+                    <Table.Row>
+                        <Table.HeaderCell colSpan='5'>
+                            <Pagination
+                                compact
+                                reduced
+                                size="small"
+                                floated="right"
+                                offset={this.state.offset}
+                                limit={defaultLimit}
+                                total={filteredData.length}
+                                onClick={(e, props, offset) => this.handleClick(offset)}
+                            />
+                        </Table.HeaderCell>
+                    </Table.Row>
+                </Table.Footer>
+            )
+        }
+        else {
+            renderData = filteredData
+            tableFooter = (
+                <Table.Row></Table.Row>
+            )
+        }
+
 
         return (
-            <Table sortable celled fixed basic='very'>
+            <Table striped sortable celled basic='very'>
+                <Table.Header>
+                    <Table.Row>
+                        <Table.HeaderCell colSpan={2} textAlign="left">
+                            <Input placeholder="Type to search..." name="multiSearchInput" onChange={this.handleChange} ></Input>
+                        </Table.HeaderCell>
+                        <Table.HeaderCell colSpan={3} textAlign="right">
+                            Showing {this.state.offset + 1} to {filteredData.length < defaultLimit ? filteredData.length : this.state.offset + 15} of {filteredData.length} entries
+                        </Table.HeaderCell>
+                    </Table.Row>
+                </Table.Header>
                 <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell
@@ -58,14 +126,12 @@ export default class SortableTable extends Component {
                             content='Pool'
                         />
                         <Table.HeaderCell
-                            collapsing
                             width={1}
                             sorted={column === 'port' ? direction : null}
                             onClick={this.handleSort('port')}
                             content='Port'
                         />
                         <Table.HeaderCell
-                            collapsing
                             width={2}
                             sorted={column === 'ipaddress' ? direction : null}
                             onClick={this.handleSort('ipaddress')}
@@ -80,7 +146,7 @@ export default class SortableTable extends Component {
                     </Table.Row>
                 </Table.Header>
                 <Table.Body>
-                    {_.map(data, ({ Id, Name, Pool, Port, IpAddress, LbName }) => (
+                    {_.map(renderData, ({ Id, Name, Pool, Port, IpAddress, LbName }) => (
                         <Table.Row key={Id}>
                             <Table.Cell>{Name}</Table.Cell>
                             <Table.Cell>{Pool}</Table.Cell>
@@ -90,6 +156,7 @@ export default class SortableTable extends Component {
                         </Table.Row>
                     ))}
                 </Table.Body>
+                {tableFooter}
             </Table>
         )
     }
