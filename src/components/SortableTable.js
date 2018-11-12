@@ -2,18 +2,24 @@ import _ from 'lodash'
 import React, { Component } from 'react'
 import { Table, Input } from 'semantic-ui-react'
 import Pagination from 'semantic-ui-react-button-pagination';
-import { filterInArrayOfObjects } from '../utils/HelperFunction';
+import { filterInArrayOfObjects, debounce } from '../utils/HelperFunction';
 
 export default class SortableTable extends Component {
 
-    state = {
-        column: null,
-        data: this.props.data,
-        direction: null,
-        showAll: false,
-        offset: 0,
-        defaultLimit: 15,
-        multiSearchInput: ""
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            column: null,
+            direction: null,
+            showAll: false,
+            offset: 0,
+            defaultLimit: 15,
+            multiSearchInput: ""
+        }
+
+        this.handleChange = debounce(this.handleChange, 400);
+        this.handleChange = this.handleChange.bind(this)
     }
 
     handleSort = clickedColumn => () => {
@@ -39,14 +45,14 @@ export default class SortableTable extends Component {
         this.setState({ offset });
     }
 
-    handleChange = (e, { name, value }) => {
+    handleChange(e, { name, value }) {
         this.setState({ [name]: value })
     }
 
     render() {
 
-
-        const { column, data, direction, multiSearchInput, defaultLimit } = this.state
+        const { column, direction, multiSearchInput, defaultLimit } = this.state
+        var data = this.props.data.LoadBalancerFarms
 
         var renderData, tableFooter, filteredData;
 
@@ -54,13 +60,14 @@ export default class SortableTable extends Component {
             var fuckoff = data.map(pic => {
                 return (
                     {
+                        Id: pic.Id,
                         Name: pic.Name,
                         Pool: pic.Pool,
                         Port: pic.Port,
                         IpAddress: pic.IpAddress,
                         LbName: pic.LbName
                     }
-                    
+
                 )
             })
 

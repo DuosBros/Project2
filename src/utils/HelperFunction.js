@@ -71,7 +71,7 @@ export const filterInArrayOfObjects = (toSearch, array) => {
                 continue
             }
             else {
-                if (array[i][key].indexOf(toSearch) != -1) {
+                if (array[i][key].toLowerCase().indexOf(toSearch.toLowerCase()) != -1) {
                     if (!itemExists(results, array[i])) results.push(array[i]);
                 }
             }

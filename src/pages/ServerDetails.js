@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Grid, Header, Segment, Divider, Icon, List, Image, Table, Button } from 'semantic-ui-react';
+import { Grid, Header, Segment, Divider, Icon, List, Image, Table, Button, Label } from 'semantic-ui-react';
 import _ from 'lodash';
 import moment from 'moment'
 
@@ -39,7 +39,7 @@ class ServerDetails extends React.Component {
                     console.log('scom:' + res.data)
                     this.props.getServerScomAlertsAction(res.data)
                 }
-                
+
                 return getVmDetails(id)
             })
             .then((res) => {
@@ -60,8 +60,8 @@ class ServerDetails extends React.Component {
         var serverDetails = this.props.serverStore.serverDetails;
         var scomAlerts = this.props.serverStore.scomAlerts;
         var OSIcon, serverDetailsTempComponent, servicesTableRows, serviceTableColumnProperties, websitesTableRows, websitesTableColumnProperties, windowsServicesTableColumnProperties,
-        windowsServicesTableRows;
-        
+            windowsServicesTableRows, serverStatus, serverStatusComponent;
+
         console.log(serverDetails)
         if (!_.isEmpty(serverDetails)) {
             if (serverDetails.OperatingSystem.toLowerCase().indexOf("windows") >= 0) {
@@ -188,6 +188,24 @@ class ServerDetails extends React.Component {
                 )
             })
 
+            serverStatus = getServerState(serverDetails.ServerStateID)
+
+            if (serverStatus.toLowerCase() === "success") {
+                serverStatusComponent = (
+                    <Icon.Group size='large'>
+                        <Icon color="green" loading size='big' name='circle notch' />
+                        <Icon name='check' />
+                    </Icon.Group>
+                )
+            }
+            else {
+                serverStatusComponent = (
+                    <Icon.Group size='large'>
+                        <Icon color="red" loading size='big' name='circle notch' />
+                        <Icon name='close' />
+                    </Icon.Group>
+                )
+            }
             serverDetailsTempComponent = (
                 <Grid stackable>
                     <Grid.Row>
@@ -263,9 +281,17 @@ class ServerDetails extends React.Component {
                                             <br />
                                             {serverDetails.PatchGroupName ? (serverDetails.PatchGroupName) : ('Exclude ') + serverDetails.PatchID}
                                             <br />
-                                            {getServerState(serverDetails.ServerStateID)}
+                                            {serverStatusComponent}
                                             <br />
-                                            {serverDetails.Disme ? 'active' : 'not active'}
+                                            {serverDetails.Disme ? (
+                                                <Label color='green' horizontal>
+                                                    active
+                                              </Label>
+                                            ) : (
+                                                    <Label color='red' horizontal>
+                                                        not active
+                                                    </Label>
+                                                )}
                                         </Grid.Column>
                                         <Grid.Column width={3}>
                                             <b>Cloud:</b>
@@ -323,16 +349,19 @@ class ServerDetails extends React.Component {
                             </Segment>
                         </Grid.Column>
                         <Grid.Column width={10}>
-                            <Header 
-                                block 
-                                attached='top' 
+                            <Header
+                                block
+                                attached='top'
                                 as='h4'
-                                style={scomAlerts.length > 0 ? {backgroundColor: errorColor} : {}}>
-                            SCOM Alerts
-                            {scomAlerts.length > 0 ? (<Icon name="warning" />) : (<span></span>)}
+                                style={scomAlerts.length > 0 ? { backgroundColor: errorColor } : {}}>
+                                SCOM Alerts
+                                {scomAlerts.length > 0 ? (
+                                    <Icon name="warning" />
+                                ) : (<span></span>)}
                             </Header>
+
                             <Segment attached='bottom'>
-                                <SCOMSegment data={scomAlerts}/>
+                                <SCOMSegment data={scomAlerts} />
                             </Segment>
                         </Grid.Column>
                     </Grid.Row>
@@ -348,7 +377,7 @@ class ServerDetails extends React.Component {
                         <Grid.Column>
                             <Header block attached='top' as='h4' content='LoadBalancer Farms' />
                             <Segment attached='bottom'>
-                                <SortableTable data={serverDetails.LoadBalancerFarms} />
+                                <SortableTable data={serverDetails} />
                                 {/* <SimpleTable columnProperties={loadBalancerFarmsTableColumnProperties} body={loadBalancerFarmsTableRows} /> */}
                             </Segment>
                         </Grid.Column>
