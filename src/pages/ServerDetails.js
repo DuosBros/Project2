@@ -1,20 +1,22 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Grid, Header, Segment, Divider, Icon, List, Image, Table, Button, Label } from 'semantic-ui-react';
+import { Grid, Header, Segment, Divider, Icon, List, Image, Table, Button } from 'semantic-ui-react';
 import _ from 'lodash';
 import moment from 'moment'
 
 import SimpleTable from '../components/SimpleTable';
+import ServerStatus from '../components/ServerStatus';
+
 import { getServerDetailsAction, getVmDetailsAction, getServerScomAlertsAction } from '../actions/ServerActions';
 import { getServerDetails, getServerScomAlerts } from '../requests/ServerAxios';
 
 import { KIBANA_WINLOGBEAT_SERVER_URL, KIBANA_SERVER_URL_PLACEHOLDER, KIBANA_PERFCOUNTER_SERVER_URL, DISME_SERVICE_PLACEHOLDER, DISME_SERVICE_URL, errorColor } from '../appConfig';
-import { getServerState } from '../utils/HelperFunction';
 
 import spinner from '../assets/Spinner.svg';
 import BuffedTable from '../components/BuffedTable';
 import SCOMSegment from '../components/SCOMSegment';
+import DismeStatus from '../components/DismeStatus';
 
 class ServerDetails extends React.Component {
 
@@ -98,7 +100,7 @@ class ServerDetails extends React.Component {
         var serverDetails = this.props.serverStore.serverDetails;
         var scomAlerts = this.props.serverStore.scomAlerts;
         var OSIcon, serverDetailsBody, servicesTableRows, serviceTableColumnProperties, websitesTableRows, websitesTableColumnProperties, windowsServicesTableColumnProperties,
-            windowsServicesTableRows, serverStatus, serverStatusComponent, webChecksTableColumnProperties, webChecksTableRows;
+            windowsServicesTableRows, webChecksTableColumnProperties, webChecksTableRows;
 
         const { showAllSegments, webchecks, dismeservices, loadbalancerfarms, windowsservices, websites } = this.state;
 
@@ -266,24 +268,13 @@ class ServerDetails extends React.Component {
                 )
             })
 
-            serverStatus = getServerState(serverDetails.ServerStateID)
+            // serverStatus = getServerState(serverDetails.ServerStateID)
 
-            if (serverStatus.toLowerCase() === "success") {
-                serverStatusComponent = (
-                    <Icon.Group size='large'>
-                        <Icon color="green" size='big' name='circle outline' />
-                        <Icon name='check' />
-                    </Icon.Group>
-                )
-            }
-            else {
-                serverStatusComponent = (
-                    <Icon.Group size='large'>
-                        <Icon color="red" size='big' name='circle outline' />
-                        <Icon name='close' />
-                    </Icon.Group>
-                )
-            }
+            // serverStatusComponent = (
+            //     <Label color={serverStatus === "online" ? 'green' : 'red'} horizontal>
+            //         {serverStatus}
+            //     </Label>
+            // )
 
             serverDetailsBody = (
                 <Grid stackable>
@@ -369,17 +360,10 @@ class ServerDetails extends React.Component {
                                             <br />
                                             {serverDetails.PatchGroupName ? (serverDetails.PatchGroupName) : ('Exclude ') + serverDetails.PatchID}
                                             <br />
-                                            {serverStatusComponent}
+                                            {/* {serverStatusComponent} */}
+                                            <ServerStatus serverStateId={serverDetails.ServerStateID} />
                                             <br />
-                                            {serverDetails.Disme ? (
-                                                <Label color='green' horizontal>
-                                                    active
-                                              </Label>
-                                            ) : (
-                                                    <Label color='red' horizontal>
-                                                        not active
-                                                    </Label>
-                                                )}
+                                            <DismeStatus dismeStatus={serverDetails.Disme} />
                                         </Grid.Column>
                                         <Grid.Column width={3}>
                                             <b>Cloud:</b>

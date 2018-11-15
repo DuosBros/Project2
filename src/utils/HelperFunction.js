@@ -20,15 +20,24 @@ export const isNum = (value) => {
 export const getServerState = (id) => {
     switch (id) {
         case 1:
-            return "SUCCESS";
+            return "online";
         case 2:
-            return "DANGER";
+            return "offline";
         case 3:
-            return "DEFAULT";
+            return "unknown";
         case 4:
-            return "WARNING";
+            return "not reachable";
         default:
             return ""
+    }
+}
+
+export const getDismeState = (state) => {
+    if(state) {
+        return "active"
+    }
+    else {
+        return "not active"
     }
 }
 

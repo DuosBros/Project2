@@ -96,41 +96,31 @@ export default class BuffedTable extends Component {
 
         if(!_.isEmpty(filterLBFarmIpAddress)) {
             filteredData = filteredData.filter(data => {
-                if (data.IpAddress.search(new RegExp(filterLBFarmIpAddress, "i")) >= 0) {
-                    return data
-                }
+                return data.IpAddress.search(new RegExp(filterLBFarmIpAddress, "i")) >= 0
             })
         }
 
         if(!_.isEmpty(filterLBFarmLBName)) {
             filteredData = filteredData.filter(data => {
-                if (data.LbName.search(new RegExp(filterLBFarmLBName, "i")) >= 0) {
-                    return data
-                }
+                return data.LbName.search(new RegExp(filterLBFarmLBName, "i")) >= 0
             })
         }
 
         if(!_.isEmpty(filterLBFarmName)) {
             filteredData = filteredData.filter(data => {
-                if (data.Name.search(new RegExp(filterLBFarmName, "i")) >= 0) {
-                    return data
-                }
+                return data.Name.search(new RegExp(filterLBFarmName, "i")) >= 0
             })
         }
 
         if(!_.isEmpty(filterLBFarmPool)) {
             filteredData = filteredData.filter(data => {
-                if (data.Pool.search(new RegExp(filterLBFarmPool, "i")) >= 0) {
-                    return data
-                }
+                return data.Pool.search(new RegExp(filterLBFarmPool, "i")) >= 0
             })
         }
 
         if(!_.isEmpty(filterLBFarmPort)) {
             filteredData = filteredData.filter(data => {
-                if(data.Port.toString().indexOf(filterLBFarmPort) >= 0) {
-                    return data
-                }
+                return data.Port.search(new RegExp(filterLBFarmPort, "i")) >= 0
             })
         }
 
