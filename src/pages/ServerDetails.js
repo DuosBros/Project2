@@ -13,7 +13,7 @@ import { KIBANA_WINLOGBEAT_SERVER_URL, KIBANA_SERVER_URL_PLACEHOLDER, KIBANA_PER
 import { getServerState } from '../utils/HelperFunction';
 
 import spinner from '../assets/Spinner.svg';
-import SortableTable from '../components/SortableTable';
+import BuffedTable from '../components/BuffedTable';
 import SCOMSegment from '../components/SCOMSegment';
 
 class ServerDetails extends React.Component {
@@ -49,7 +49,6 @@ class ServerDetails extends React.Component {
             })
             .then(res => {
                 if (!_.isEmpty(res)) {
-                    console.log('scom:' + res.data)
                     this.props.getServerScomAlertsAction(res.data)
                 }
             })
@@ -70,8 +69,8 @@ class ServerDetails extends React.Component {
 
     handleToggleShowAllSegments = () => {
 
-        if(this.state.showAllSegments) {
-            this.setState({ 
+        if (this.state.showAllSegments) {
+            this.setState({
                 showAllSegments: false,
                 websites: false,
                 dismeservices: false,
@@ -79,10 +78,10 @@ class ServerDetails extends React.Component {
                 loadbalancerfarms: false,
                 windowsservices: false,
                 webchecks: false
-             });
+            });
         }
         else {
-            this.setState({ 
+            this.setState({
                 showAllSegments: true,
                 websites: true,
                 dismeservices: true,
@@ -90,28 +89,28 @@ class ServerDetails extends React.Component {
                 loadbalancerfarms: true,
                 windowsservices: true,
                 webchecks: true
-             });
+            });
         }
-        
+
     }
 
     render() {
         var serverDetails = this.props.serverStore.serverDetails;
         var scomAlerts = this.props.serverStore.scomAlerts;
-        var OSIcon, serverDetailsTempComponent, servicesTableRows, serviceTableColumnProperties, websitesTableRows, websitesTableColumnProperties, windowsServicesTableColumnProperties,
+        var OSIcon, serverDetailsBody, servicesTableRows, serviceTableColumnProperties, websitesTableRows, websitesTableColumnProperties, windowsServicesTableColumnProperties,
             windowsServicesTableRows, serverStatus, serverStatusComponent, webChecksTableColumnProperties, webChecksTableRows;
 
-        const { showAllSegments } = this.state;
+        const { showAllSegments, webchecks, dismeservices, loadbalancerfarms, windowsservices, websites } = this.state;
 
         console.log(serverDetails)
         if (!_.isEmpty(serverDetails)) {
 
-            if(!_.isEmpty(serverDetails.OperatingSystem)) {
-                if (serverDetails.OperatingSystem.toLowerCase().indexOf("windows") >= 0) {
+            if (!_.isEmpty(serverDetails.OperatingSystem)) {
+                if (serverDetails.OperatingSystem.search(new RegExp("windows", "i")) >= 0) {
                     OSIcon = (<Icon circular name='windows' />)
                 }
-    
-                if (serverDetails.OperatingSystem.toLowerCase().indexOf("linux") >= 0) {
+
+                if (serverDetails.OperatingSystem.search(new RegExp("linux", "i")) >= 0) {
                     OSIcon = (<Icon circular name='linux' />)
                 }
             }
@@ -285,7 +284,8 @@ class ServerDetails extends React.Component {
                     </Icon.Group>
                 )
             }
-            serverDetailsTempComponent = (
+
+            serverDetailsBody = (
                 <Grid stackable>
                     <Grid.Row>
                         <Grid.Column>
@@ -297,9 +297,8 @@ class ServerDetails extends React.Component {
                                     content={showAllSegments ? 'Hide All Segments' : 'Show All Segments'}
                                     icon='content'
                                     labelPosition='right'
-                                    style={{fontSize: 'medium', padding: '0.3em', bottom: '0.1em'}} />
+                                    style={{ fontSize: 'medium', padding: '0.3em', bottom: '0.1em' }} />
                             </Header>
-                           
                             <Segment attached>
                                 <Grid columns={4}>
                                     <Grid.Row>
@@ -436,7 +435,7 @@ class ServerDetails extends React.Component {
                                 <Button onClick={() => this.handleToggleShowingContent("webchecks")} floated='right' icon='content' />
                             </Header>
                             {
-                                this.state.webchecks ? (
+                                webchecks ? (
                                     <Segment attached='bottom'>
                                         <SimpleTable columnProperties={webChecksTableColumnProperties} body={webChecksTableRows} />
                                     </Segment>
@@ -444,7 +443,6 @@ class ServerDetails extends React.Component {
                                         <div></div>
                                     )
                             }
-
                         </Grid.Column>
                     </Grid.Row>
                     <Grid.Row>
@@ -454,7 +452,7 @@ class ServerDetails extends React.Component {
                                 <Button onClick={() => this.handleToggleShowingContent("dismeservices")} floated='right' icon='content' />
                             </Header>
                             {
-                                this.state.dismeservices ? (
+                                dismeservices ? (
                                     <Segment attached='bottom'>
                                         <SimpleTable columnProperties={serviceTableColumnProperties} body={servicesTableRows} />
                                     </Segment>
@@ -462,9 +460,7 @@ class ServerDetails extends React.Component {
                                         <div></div>
                                     )
                             }
-
                         </Grid.Column>
-
                         {scomAlerts.length > 0 ? (
                             <Grid.Column width={10}>
                                 <Header
@@ -475,16 +471,9 @@ class ServerDetails extends React.Component {
                                     SCOM Alerts
                                     <Button onClick={() => this.handleToggleShowingContent("scomalerts")} floated='right' icon='content' />
                                 </Header>
-                                {
-                                    this.state.scomalerts ? (
-                                        <Segment attached='bottom'>
-                                            <SCOMSegment data={scomAlerts} />
-                                        </Segment>
-                                    ) : (
-                                            <div></div>
-                                        )
-                                }
-
+                                <Segment attached='bottom'>
+                                    <SCOMSegment data={scomAlerts} />
+                                </Segment>
                             </Grid.Column>
                         ) : (
                                 <Grid.Column width={5}>
@@ -504,7 +493,7 @@ class ServerDetails extends React.Component {
                                 <Button onClick={() => this.handleToggleShowingContent("websites")} floated='right' icon='content' />
                             </Header>
                             {
-                                this.state.websites ? (
+                                websites ? (
                                     <Segment attached='bottom'>
                                         <SimpleTable columnProperties={websitesTableColumnProperties} body={websitesTableRows} />
                                     </Segment>
@@ -522,9 +511,9 @@ class ServerDetails extends React.Component {
                                 <Button onClick={() => this.handleToggleShowingContent("loadbalancerfarms")} floated='right' icon='content' />
                             </Header>
                             {
-                                this.state.loadbalancerfarms ? (
+                                loadbalancerfarms ? (
                                     <Segment attached='bottom'>
-                                        <SortableTable data={serverDetails} />
+                                        <BuffedTable data={serverDetails} />
                                     </Segment>
                                 ) : (
                                         <div></div>
@@ -540,7 +529,7 @@ class ServerDetails extends React.Component {
                                 <Button onClick={() => this.handleToggleShowingContent("windowsservices")} floated='right' icon='content' />
                             </Header>
                             {
-                                this.state.windowsservices ? (
+                                windowsservices ? (
                                     <Segment attached='bottom'>
                                         <SimpleTable columnProperties={windowsServicesTableColumnProperties} body={windowsServicesTableRows} />
                                     </Segment>
@@ -555,7 +544,7 @@ class ServerDetails extends React.Component {
             )
         }
         else {
-            serverDetailsTempComponent = (
+            serverDetailsBody = (
                 <div className="centered">
                     <Image src={spinner} />
                 </div>
@@ -564,7 +553,7 @@ class ServerDetails extends React.Component {
 
         return (
             <div>
-                {serverDetailsTempComponent}
+                {serverDetailsBody}
             </div>
         )
     }

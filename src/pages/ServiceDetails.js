@@ -10,22 +10,37 @@ class ServiceDetails extends React.Component {
     constructor(props) {
         super(props);
 
-        if (_.isEmpty(props.serviceStore.serviceDetails)) {
-            getServiceDetails(props.location.pathname.substring(props.location.pathname.lastIndexOf('/') + 1))
-                .then(res => {
-                    props.getServiceDetailsAction(res.data)
-                })
-        }
-    }
-
-    componentWillReceiveProps(newProps) {
         
     }
 
+    componentDidMount() {
+        this.updateService(this.props.match.params.id);
+    }
+
+    updateService(id) {
+        getServiceDetails(id)
+        .then(res => {
+            this.props.getServiceDetailsAction(res.data)
+        })
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (this.props.match && this.props.match.params) {
+            const params = this.props.match.params;
+            if (params.id && params.id !== prevProps.match.params.id) {
+                this.updateService(this.props.match.params.id);
+            }
+        }
+    }
+
     render() {
+        console.log(this.props.serviceStore.serviceDetails)
+
+        var serviceDetails = this.props.serviceStore.serviceDetails;
+
         return (
             <div>
-                Service details: {this.props.location.pathname.substring(this.props.location.pathname.lastIndexOf('/') + 1)}
+                Service details: {JSON.stringify(this.props.serviceStore.serviceDetails)}
             </div>
         )
     }
