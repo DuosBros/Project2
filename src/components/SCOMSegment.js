@@ -102,7 +102,7 @@ export default class SCOMSegment extends Component {
                                             data.Services.map(service => {
                                                 return (
                                                     // href={_.replace(KIBANA_WINLOGBEAT_SERVER_URL, new RegExp(KIBANA_SERVER_URL_PLACEHOLDER, "g"), serverDetails.ServerName)}
-                                                    <a target="_blank" rel="noopener noreferrer" >{service}</a>
+                                                    <a target="_blank" rel="noopener noreferrer" href="http://pica.com" >{service}</a>
                                                 )
                                             })
                                         }

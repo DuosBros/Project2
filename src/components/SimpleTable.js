@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React from 'react';
 import { Table } from 'semantic-ui-react';
 
 const SimpleTable = (props) => (

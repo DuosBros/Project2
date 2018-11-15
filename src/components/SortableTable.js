@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { Component } from 'react'
-import { Table, Input } from 'semantic-ui-react'
+import { Table, Input, Button } from 'semantic-ui-react'
 import Pagination from 'semantic-ui-react-button-pagination';
 import { filterInArrayOfObjects, debounce } from '../utils/HelperFunction';
 
@@ -15,7 +15,13 @@ export default class SortableTable extends Component {
             showAll: false,
             offset: 0,
             defaultLimit: 15,
-            multiSearchInput: ""
+            multiSearchInput: "",
+            showColumnFilters: false,
+            filterLBFarmName: "",
+            filterLBFarmPool: "",
+            filterLBFarmPort: "",
+            filterLBFarmIpAddress: "",
+            filterLBFarmLBName: "",
         }
 
         this.handleChange = debounce(this.handleChange, 400);
@@ -49,12 +55,24 @@ export default class SortableTable extends Component {
         this.setState({ [name]: value })
     }
 
+    handleToggleColumnFilters = () => {
+        this.setState({ 
+            showColumnFilters: !this.state.showColumnFilters,
+            filterLBFarmName: "",
+            filterLBFarmPool: "",
+            filterLBFarmPort: "",
+            filterLBFarmIpAddress: "",
+            filterLBFarmLBName: ""
+         });
+    }
+
     render() {
 
-        const { column, direction, multiSearchInput, defaultLimit } = this.state
+        const { column, direction, multiSearchInput, defaultLimit, showColumnFilters,
+        filterLBFarmIpAddress, filterLBFarmLBName, filterLBFarmName, filterLBFarmPool, filterLBFarmPort } = this.state
         var data = this.props.data.LoadBalancerFarms
 
-        var renderData, tableFooter, filteredData;
+        var renderData, tableFooter, filteredData, filterColumnsRow;
 
         if (multiSearchInput !== "") {
             var fuckoff = data.map(pic => {
@@ -67,7 +85,6 @@ export default class SortableTable extends Component {
                         IpAddress: pic.IpAddress,
                         LbName: pic.LbName
                     }
-
                 )
             })
 
@@ -75,6 +92,48 @@ export default class SortableTable extends Component {
         }
         else {
             filteredData = data
+        }
+
+        if(!_.isEmpty(filterLBFarmIpAddress)) {
+            filteredData = filteredData.filter(data => {
+                if (data.IpAddress.search(new RegExp(filterLBFarmIpAddress, "i")) >= 0) {
+                    return data
+                }
+            })
+        }
+
+        if(!_.isEmpty(filterLBFarmLBName)) {
+            filteredData = filteredData.filter(data => {
+                if (data.LbName.search(new RegExp(filterLBFarmLBName, "i")) >= 0) {
+                    return data
+                }
+            })
+        }
+
+        if(!_.isEmpty(filterLBFarmName)) {
+            
+
+            filteredData = filteredData.filter(data => {
+                if (data.Name.search(new RegExp(filterLBFarmName, "i")) >= 0) {
+                    return data
+                }
+            })
+        }
+
+        if(!_.isEmpty(filterLBFarmPool)) {
+            filteredData = filteredData.filter(data => {
+                if (data.Pool.search(new RegExp(filterLBFarmPool, "i")) >= 0) {
+                    return data
+                }
+            })
+        }
+
+        if(!_.isEmpty(filterLBFarmPort)) {
+            filteredData = filteredData.filter(data => {
+                if(data.Port.toString().indexOf(filterLBFarmPort) >= 0) {
+                    return data
+                }
+            })
         }
 
         if (filteredData.length > defaultLimit) {
@@ -101,11 +160,36 @@ export default class SortableTable extends Component {
         else {
             renderData = filteredData
             tableFooter = (
-                <Table.Row></Table.Row>
+                <Table.Footer></Table.Footer>
             )
         }
 
-
+        if (showColumnFilters) {
+            filterColumnsRow = (
+                <Table.Header>
+                    <Table.Row>
+                        <Table.HeaderCell width={3}>
+                            <Input fluid name='filterLBFarmName' onChange={this.handleChange} />
+                        </Table.HeaderCell>
+                        <Table.HeaderCell width={3}>
+                            <Input fluid name='filterLBFarmPool' onChange={this.handleChange} />
+                        </Table.HeaderCell>
+                        <Table.HeaderCell width={1}>
+                            <Input fluid name='filterLBFarmPort' onChange={this.handleChange} />
+                        </Table.HeaderCell>
+                        <Table.HeaderCell width={2}>
+                            <Input fluid name='filterLBFarmIpAddress' onChange={this.handleChange} />
+                        </Table.HeaderCell>
+                        <Table.HeaderCell width={3}>
+                            <Input fluid name='filterLBFarmLBName' onChange={this.handleChange} />
+                        </Table.HeaderCell>
+                    </Table.Row>
+                </Table.Header>
+            )
+        }
+        else {
+            filterColumnsRow = <Table.Header></Table.Header>
+        }
         return (
             <Table striped sortable celled basic='very'>
                 <Table.Header>
@@ -115,6 +199,17 @@ export default class SortableTable extends Component {
                         </Table.HeaderCell>
                         <Table.HeaderCell colSpan={3} textAlign="right">
                             Showing {this.state.offset + 1} to {filteredData.length < defaultLimit ? filteredData.length : this.state.offset + 15} of {filteredData.length} entries
+                            <br />
+                            <Button
+                                
+                                size="small"
+                                onClick={() => this.handleToggleColumnFilters()}
+                                compact
+                                content={showColumnFilters ? 'Hide Column Filters' : 'Show Column Filters'}
+                                style={{ padding: '0.3em', marginTop: '0.5em' }}
+                                id="secondaryButton"
+                                icon={showColumnFilters ? 'eye slash' : 'eye'}
+                                labelPosition='left' />
                         </Table.HeaderCell>
                     </Table.Row>
                 </Table.Header>
@@ -146,12 +241,13 @@ export default class SortableTable extends Component {
                         />
                         <Table.HeaderCell
                             width={3}
-                            sorted={column === 'loadbalancerfarms' ? direction : null}
-                            onClick={this.handleSort('loadbalancerfarms')}
-                            content='LoadBalancer Farm'
+                            sorted={column === 'lbname' ? direction : null}
+                            onClick={this.handleSort('lbname')}
+                            content='LoadBalancer Name'
                         />
                     </Table.Row>
                 </Table.Header>
+                {filterColumnsRow}
                 <Table.Body>
                     {_.map(renderData, ({ Id, Name, Pool, Port, IpAddress, LbName }) => (
                         <Table.Row key={Id}>

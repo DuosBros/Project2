@@ -45,15 +45,15 @@ export const debounce = (fn, time) => {
 
 function trimString(s) {
     var l = 0, r = s.length - 1;
-    while (l < s.length && s[l] == ' ') l++;
-    while (r > l && s[r] == ' ') r -= 1;
+    while (l < s.length && s[l] === ' ') l++;
+    while (r > l && s[r] === ' ') r -= 1;
     return s.substring(l, r + 1);
 }
 
 function compareObjects(o1, o2) {
     var k = '';
-    for (k in o1) if (o1[k] != o2[k]) return false;
-    for (k in o2) if (o1[k] != o2[k]) return false;
+    for (k in o1) if (o1[k] !== o2[k]) return false;
+    for (k in o2) if (o1[k] !== o2[k]) return false;
     return true;
 }
 
@@ -71,7 +71,7 @@ export const filterInArrayOfObjects = (toSearch, array) => {
                 continue
             }
             else {
-                if (array[i][key].toLowerCase().indexOf(toSearch.toLowerCase()) != -1) {
+                if (array[i][key].toLowerCase().indexOf(toSearch.toLowerCase()) !== -1) {
                     if (!itemExists(results, array[i])) results.push(array[i]);
                 }
             }

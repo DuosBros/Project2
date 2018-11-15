@@ -7,9 +7,9 @@ import moment from 'moment'
 
 import SimpleTable from '../components/SimpleTable';
 import { getServerDetailsAction, getVmDetailsAction, getServerScomAlertsAction } from '../actions/ServerActions';
-import { getServerDetails, getVmDetails, getServerScomAlerts } from '../requests/ServerAxios';
+import { getServerDetails, getServerScomAlerts } from '../requests/ServerAxios';
 
-import { KIBANA_WINLOGBEAT_SERVER_URL, KIBANA_SERVER_URL_PLACEHOLDER, KIBANA_PERFCOUNTER_SERVER_URL, DISME_SERVICE_PLACEHOLDER, DISME_SERVICE_URL, warningColor, errorColor } from '../appConfig';
+import { KIBANA_WINLOGBEAT_SERVER_URL, KIBANA_SERVER_URL_PLACEHOLDER, KIBANA_PERFCOUNTER_SERVER_URL, DISME_SERVICE_PLACEHOLDER, DISME_SERVICE_URL, errorColor } from '../appConfig';
 import { getServerState } from '../utils/HelperFunction';
 
 import spinner from '../assets/Spinner.svg';
@@ -18,6 +18,19 @@ import SCOMSegment from '../components/SCOMSegment';
 
 class ServerDetails extends React.Component {
 
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            websites: true,
+            dismeservices: true,
+            scomalerts: true,
+            loadbalancerfarms: true,
+            windowsservices: true,
+            webchecks: true,
+            showAllSegments: true
+        }
+    }
     componentDidMount() {
         this.updateServer(this.props.match.params.id);
     }
@@ -39,12 +52,7 @@ class ServerDetails extends React.Component {
                     console.log('scom:' + res.data)
                     this.props.getServerScomAlertsAction(res.data)
                 }
-
-                return getVmDetails(id)
             })
-            .then((res) => {
-                this.props.getVmDetailsAction(res.data)
-            });
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -56,21 +64,94 @@ class ServerDetails extends React.Component {
         }
     }
 
+    handleToggleShowingContent = (segment) => {
+        this.setState({ [segment]: !this.state[segment] });
+    }
+
+    handleToggleShowAllSegments = () => {
+
+        if(this.state.showAllSegments) {
+            this.setState({ 
+                showAllSegments: false,
+                websites: false,
+                dismeservices: false,
+                scomalerts: false,
+                loadbalancerfarms: false,
+                windowsservices: false,
+                webchecks: false
+             });
+        }
+        else {
+            this.setState({ 
+                showAllSegments: true,
+                websites: true,
+                dismeservices: true,
+                scomalerts: true,
+                loadbalancerfarms: true,
+                windowsservices: true,
+                webchecks: true
+             });
+        }
+        
+    }
+
     render() {
         var serverDetails = this.props.serverStore.serverDetails;
         var scomAlerts = this.props.serverStore.scomAlerts;
         var OSIcon, serverDetailsTempComponent, servicesTableRows, serviceTableColumnProperties, websitesTableRows, websitesTableColumnProperties, windowsServicesTableColumnProperties,
-            windowsServicesTableRows, serverStatus, serverStatusComponent;
+            windowsServicesTableRows, serverStatus, serverStatusComponent, webChecksTableColumnProperties, webChecksTableRows;
+
+        const { showAllSegments } = this.state;
 
         console.log(serverDetails)
         if (!_.isEmpty(serverDetails)) {
-            if (serverDetails.OperatingSystem.toLowerCase().indexOf("windows") >= 0) {
-                OSIcon = (<Icon circular name='windows' />)
+
+            if(!_.isEmpty(serverDetails.OperatingSystem)) {
+                if (serverDetails.OperatingSystem.toLowerCase().indexOf("windows") >= 0) {
+                    OSIcon = (<Icon circular name='windows' />)
+                }
+    
+                if (serverDetails.OperatingSystem.toLowerCase().indexOf("linux") >= 0) {
+                    OSIcon = (<Icon circular name='linux' />)
+                }
             }
 
-            if (serverDetails.OperatingSystem.toLowerCase().indexOf("linux") >= 0) {
-                OSIcon = (<Icon circular name='linux' />)
-            }
+            webChecksTableColumnProperties = [
+                {
+                    name: "Name",
+                    width: 4,
+                },
+                {
+                    name: "Url",
+                    width: 8,
+                },
+                {
+                    name: "Expected Text",
+                    width: 3,
+                },
+                {
+                    name: "KB article",
+                    width: 1,
+                }
+            ];
+
+            webChecksTableRows = serverDetails.WebChecks.map(webcheck => {
+                return (
+                    <Table.Row key={webcheck.Id}>
+                        <Table.Cell >{webcheck.Title}</Table.Cell>
+                        <Table.Cell >{webcheck.Url}</Table.Cell>
+                        <Table.Cell >{webcheck.ExpectedText}</Table.Cell>
+                        <Table.Cell>
+                            <Button
+                                onClick={() =>
+                                    window.open(webcheck.Knowledgebasearticle)}
+                                style={{ padding: '0.3em' }}
+                                size='medium'
+                                icon='external' />
+                        </Table.Cell>
+                    </Table.Row>
+                )
+            })
 
             servicesTableRows = serverDetails.ServicesFull.map(service => {
                 return (
@@ -106,8 +187,6 @@ class ServerDetails extends React.Component {
                     width: 1,
                 }
             ];
-
-
 
             websitesTableRows = serverDetails.Websites.map(website => {
                 return (
@@ -193,7 +272,7 @@ class ServerDetails extends React.Component {
             if (serverStatus.toLowerCase() === "success") {
                 serverStatusComponent = (
                     <Icon.Group size='large'>
-                        <Icon color="green" loading size='big' name='circle notch' />
+                        <Icon color="green" size='big' name='circle outline' />
                         <Icon name='check' />
                     </Icon.Group>
                 )
@@ -201,7 +280,7 @@ class ServerDetails extends React.Component {
             else {
                 serverStatusComponent = (
                     <Icon.Group size='large'>
-                        <Icon color="red" loading size='big' name='circle notch' />
+                        <Icon color="red" size='big' name='circle outline' />
                         <Icon name='close' />
                     </Icon.Group>
                 )
@@ -210,7 +289,17 @@ class ServerDetails extends React.Component {
                 <Grid stackable>
                     <Grid.Row>
                         <Grid.Column>
-                            <Header block attached='top' as='h4' content='Server Info' />
+                            <Header block attached='top' as='h4'>
+                                Server Info
+                                <Button
+                                    floated='right'
+                                    onClick={() => this.handleToggleShowAllSegments()}
+                                    content={showAllSegments ? 'Hide All Segments' : 'Show All Segments'}
+                                    icon='content'
+                                    labelPosition='right'
+                                    style={{fontSize: 'large'}} />
+                            </Header>
+                           
                             <Segment attached>
                                 <Grid columns={4}>
                                     <Grid.Row>
@@ -305,15 +394,15 @@ class ServerDetails extends React.Component {
                                             <b>Availability Set:</b>
                                         </Grid.Column>
                                         <Grid.Column width={5}>
-                                            {this.props.serverStore.vmDetails.Cloud}
+                                            {serverDetails.VM ? serverDetails.VM.Cloud : ""}
                                             <br />
-                                            {this.props.serverStore.vmDetails.CPUCount}
+                                            {serverDetails.VM ? serverDetails.VM.CPUCount : ""}
                                             <br />
-                                            {this.props.serverStore.vmDetails.Memory}
+                                            {serverDetails.VM ? serverDetails.VM.Memory : ""}
                                             <br />
-                                            {this.props.serverStore.vmDetails.VMNetwork}
+                                            {serverDetails.VM ? serverDetails.VM.VMNetwork : ""}
                                             <br />
-                                            {this.props.serverStore.vmDetails.AvailabilitySet}
+                                            {serverDetails.VM ? serverDetails.VM.AvailabilitySet : ""}
                                         </Grid.Column>
                                     </Grid.Row>
 
@@ -341,53 +430,125 @@ class ServerDetails extends React.Component {
                         </Grid.Column>
                     </Grid.Row>
                     <Grid.Row>
-                        <Grid.Column width={6}>
-                            <Header block attached='top' as='h4' content='Disme Services' />
-                            <Header block attached='top' as='h4' floated="right" content='Disme Services' />
-                            <Segment attached='bottom'>
-                                <SimpleTable columnProperties={serviceTableColumnProperties} body={servicesTableRows} />
-                            </Segment>
-                        </Grid.Column>
-                        <Grid.Column width={10}>
-                            <Header
-                                block
-                                attached='top'
-                                as='h4'
-                                style={scomAlerts.length > 0 ? { backgroundColor: errorColor } : {}}>
-                                SCOM Alerts
-                                {scomAlerts.length > 0 ? (
-                                    <Icon name="warning" />
-                                ) : (<span></span>)}
+                        <Grid.Column>
+                            <Header block attached='top' as='h4'>
+                                WebChecks
+                                <Button onClick={() => this.handleToggleShowingContent("webchecks")} floated='right' icon='content' />
                             </Header>
+                            {
+                                this.state.webchecks ? (
+                                    <Segment attached='bottom'>
+                                        <SimpleTable columnProperties={webChecksTableColumnProperties} body={webChecksTableRows} />
+                                    </Segment>
+                                ) : (
+                                        <div></div>
+                                    )
+                            }
 
-                            <Segment attached='bottom'>
-                                <SCOMSegment data={scomAlerts} />
-                            </Segment>
+                        </Grid.Column>
+                    </Grid.Row>
+                    <Grid.Row>
+                        <Grid.Column width={scomAlerts.length > 0 ? 6 : 11}>
+                            <Header block attached='top' as='h4'>
+                                Disme Services
+                                <Button onClick={() => this.handleToggleShowingContent("dismeservices")} floated='right' icon='content' />
+                            </Header>
+                            {
+                                this.state.dismeservices ? (
+                                    <Segment attached='bottom'>
+                                        <SimpleTable columnProperties={serviceTableColumnProperties} body={servicesTableRows} />
+                                    </Segment>
+                                ) : (
+                                        <div></div>
+                                    )
+                            }
+
+                        </Grid.Column>
+
+                        {scomAlerts.length > 0 ? (
+                            <Grid.Column width={10}>
+                                <Header
+                                    block
+                                    attached='top'
+                                    as='h4'
+                                    style={{ backgroundColor: errorColor }}>
+                                    SCOM Alerts
+                                    <Button onClick={() => this.handleToggleShowingContent("scomalerts")} floated='right' icon='content' />
+                                </Header>
+                                {
+                                    this.state.scomalerts ? (
+                                        <Segment attached='bottom'>
+                                            <SCOMSegment data={scomAlerts} />
+                                        </Segment>
+                                    ) : (
+                                            <div></div>
+                                        )
+                                }
+
+                            </Grid.Column>
+                        ) : (
+                                <Grid.Column width={5}>
+                                    <Header block attached='top' as='h4'>
+                                        SCOM Alerts
+                                        <Button onClick={() => this.handleToggleShowingContent("scomalerts")} floated='right' icon='content' />
+                                    </Header>
+                                </Grid.Column>
+                            )}
+
+
+                    </Grid.Row>
+                    <Grid.Row>
+                        <Grid.Column>
+                            <Header block attached='top' as='h4'>
+                                Websites
+                                <Button onClick={() => this.handleToggleShowingContent("websites")} floated='right' icon='content' />
+                            </Header>
+                            {
+                                this.state.websites ? (
+                                    <Segment attached='bottom'>
+                                        <SimpleTable columnProperties={websitesTableColumnProperties} body={websitesTableRows} />
+                                    </Segment>
+                                ) : (
+                                        <div></div>
+                                    )
+                            }
+
                         </Grid.Column>
                     </Grid.Row>
                     <Grid.Row>
                         <Grid.Column>
-                            <Header block attached='top' as='h4' content='Websites' />
-                            <Segment attached='bottom'>
-                                <SimpleTable columnProperties={websitesTableColumnProperties} body={websitesTableRows} />
-                            </Segment>
+                            <Header block attached='top' as='h4'>
+                                LoadBalancer Farms
+                                <Button onClick={() => this.handleToggleShowingContent("loadbalancerfarms")} floated='right' icon='content' />
+                            </Header>
+                            {
+                                this.state.loadbalancerfarms ? (
+                                    <Segment attached='bottom'>
+                                        <SortableTable data={serverDetails} />
+                                    </Segment>
+                                ) : (
+                                        <div></div>
+                                    )
+                            }
+
                         </Grid.Column>
                     </Grid.Row>
                     <Grid.Row>
                         <Grid.Column>
-                            <Header block attached='top' as='h4' content='LoadBalancer Farms' />
-                            <Segment attached='bottom'>
-                                <SortableTable data={serverDetails} />
-                                {/* <SimpleTable columnProperties={loadBalancerFarmsTableColumnProperties} body={loadBalancerFarmsTableRows} /> */}
-                            </Segment>
-                        </Grid.Column>
-                    </Grid.Row>
-                    <Grid.Row>
-                        <Grid.Column>
-                            <Header block attached='top' as='h4' content='Windows Services' />
-                            <Segment attached='bottom'>
-                                <SimpleTable columnProperties={windowsServicesTableColumnProperties} body={windowsServicesTableRows} />
-                            </Segment>
+                            <Header block attached='top' as='h4'>
+                                Windows Services
+                                <Button onClick={() => this.handleToggleShowingContent("windowsservices")} floated='right' icon='content' />
+                            </Header>
+                            {
+                                this.state.windowsservices ? (
+                                    <Segment attached='bottom'>
+                                        <SimpleTable columnProperties={windowsServicesTableColumnProperties} body={windowsServicesTableRows} />
+                                    </Segment>
+                                ) : (
+                                        <div></div>
+                                    )
+                            }
+
                         </Grid.Column>
                     </Grid.Row>
                 </Grid>
