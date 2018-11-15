@@ -297,7 +297,7 @@ class ServerDetails extends React.Component {
                                     content={showAllSegments ? 'Hide All Segments' : 'Show All Segments'}
                                     icon='content'
                                     labelPosition='right'
-                                    style={{fontSize: 'large'}} />
+                                    style={{fontSize: 'medium', padding: '0.3em', bottom: '0.1em'}} />
                             </Header>
                            
                             <Segment attached>

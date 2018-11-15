@@ -103,6 +103,12 @@ html, body {
     margin-top: 1em
 }
 
+#allSegmentsButton {
+    font-size: medium;
+    padding: '0.3em';
+    bottom: '0.1em';
+}
+
 /* .simpleTable {
     text-Align: center
 } */
