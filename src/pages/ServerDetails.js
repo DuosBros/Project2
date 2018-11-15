@@ -26,7 +26,7 @@ class ServerDetails extends React.Component {
         this.state = {
             websites: true,
             dismeservices: true,
-            scomalerts: true,
+            scomalerts: this.props.serverStore.scomAlerts > 0 ? true : false,
             loadbalancerfarms: true,
             windowsservices: true,
             webchecks: true,
@@ -71,7 +71,7 @@ class ServerDetails extends React.Component {
 
     handleToggleShowAllSegments = () => {
 
-        if (this.state.showAllSegments) {
+        if (this.state.showAllSegments && (this.state.scomalerts || this.state.webchecks || this.state.dismeservices || this.state.loadbalancerfarms || this.state.windowsservices || this.state.websites)) {
             this.setState({
                 showAllSegments: false,
                 websites: false,
@@ -93,16 +93,15 @@ class ServerDetails extends React.Component {
                 webchecks: true
             });
         }
-
     }
 
     render() {
         var serverDetails = this.props.serverStore.serverDetails;
         var scomAlerts = this.props.serverStore.scomAlerts;
         var OSIcon, serverDetailsBody, servicesTableRows, serviceTableColumnProperties, websitesTableRows, websitesTableColumnProperties, windowsServicesTableColumnProperties,
-            windowsServicesTableRows, webChecksTableColumnProperties, webChecksTableRows;
+            windowsServicesTableRows, webChecksTableColumnProperties, webChecksTableRows, lbfarmColumnPropertis;
 
-        const { showAllSegments, webchecks, dismeservices, loadbalancerfarms, windowsservices, websites } = this.state;
+        const { showAllSegments, webchecks, dismeservices, loadbalancerfarms, windowsservices, websites, scomalerts } = this.state;
 
         console.log(serverDetails)
         if (!_.isEmpty(serverDetails)) {
@@ -116,6 +115,34 @@ class ServerDetails extends React.Component {
                     OSIcon = (<Icon circular name='linux' />)
                 }
             }
+
+            lbfarmColumnPropertis = [
+                {
+                    name: "name",
+                    displayName: "Name",
+                    width: 4,
+                },
+                {
+                    name: "pool",
+                    displayName: "Pool",
+                    width: 4,
+                },
+                {
+                    name: "port",
+                    displayName: "Port",
+                    width: 1,
+                },
+                {
+                    name: "ipaddress",
+                    displayName: "IpAddress",
+                    width: 3,
+                },
+                {
+                    name: "lbname",
+                    displayName: "LoadBalancer Name",
+                    width: 4,
+                }
+            ]
 
             webChecksTableColumnProperties = [
                 {
@@ -267,15 +294,7 @@ class ServerDetails extends React.Component {
                     </Table.Row>
                 )
             })
-
-            // serverStatus = getServerState(serverDetails.ServerStateID)
-
-            // serverStatusComponent = (
-            //     <Label color={serverStatus === "online" ? 'green' : 'red'} horizontal>
-            //         {serverStatus}
-            //     </Label>
-            // )
-
+            
             serverDetailsBody = (
                 <Grid stackable>
                     <Grid.Row>
@@ -285,7 +304,7 @@ class ServerDetails extends React.Component {
                                 <Button
                                     floated='right'
                                     onClick={() => this.handleToggleShowAllSegments()}
-                                    content={showAllSegments ? 'Hide All Segments' : 'Show All Segments'}
+                                    content={showAllSegments && (scomalerts || webchecks || dismeservices || loadbalancerfarms || windowsservices || websites)  ? 'Hide All Segments' : 'Show All Segments'}
                                     icon='content'
                                     labelPosition='right'
                                     style={{ fontSize: 'medium', padding: '0.3em', bottom: '0.1em' }} />
@@ -463,7 +482,6 @@ class ServerDetails extends React.Component {
                                 <Grid.Column width={5}>
                                     <Header block attached='top' as='h4'>
                                         SCOM Alerts
-                                        <Button onClick={() => this.handleToggleShowingContent("scomalerts")} floated='right' icon='content' />
                                     </Header>
                                 </Grid.Column>
                             )}

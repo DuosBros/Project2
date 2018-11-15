@@ -9,6 +9,7 @@ import { getServiceDetailsAction } from '../actions/ServiceActions';
 import { getServiceDetails } from '../requests/ServiceAxios';
 import spinner from '../assets/Spinner.svg';
 import SimpleTable from '../components/SimpleTable';
+import ServerBuffedTable from '../components/ServerBuffedTable';
 
 class ServiceDetails extends React.Component {
     constructor(props) {
@@ -17,7 +18,9 @@ class ServiceDetails extends React.Component {
         this.state = {
             showAllSegments: true,
             assignedLoadBalancerFarms: true,
-            servers: true
+            servers: true,
+            websites: true,
+
         }
 
     }
@@ -29,6 +32,7 @@ class ServiceDetails extends React.Component {
     updateService(id) {
         getServiceDetails(id)
             .then(res => {
+
                 this.props.getServiceDetailsAction(res.data)
             })
     }
@@ -46,13 +50,36 @@ class ServiceDetails extends React.Component {
         this.setState({ [segment]: !this.state[segment] });
     }
 
+    handleToggleShowAllSegments = () => {
+
+        if (this.state.showAllSegments) {
+            this.setState({
+                showAllSegments: false,
+                assignedLoadBalancerFarms: false,
+                servers: false,
+                websites: false,
+
+            });
+        }
+        else {
+            this.setState({
+                showAllSegments: true,
+                assignedLoadBalancerFarms: true,
+                servers: true,
+                websites: true,
+
+            });
+        }
+
+    }
+
     render() {
         console.log(this.props.serviceStore.serviceDetails)
 
         var serviceDetails = this.props.serviceStore.serviceDetails;
         var serviceDetailsBody, assignedLoadBalancerFarmsTableColumnProperties,
             serversTableColumnProperties, serversTableRows, assignedLoadBalancerFarmsTableRows;
-        const { showAllSegments, assignedLoadBalancerFarms, servers } = this.state;
+        const { showAllSegments, assignedLoadBalancerFarms, servers, websites } = this.state;
 
         if (!_.isEmpty(serviceDetails)) {
             assignedLoadBalancerFarmsTableColumnProperties = [
@@ -81,7 +108,7 @@ class ServiceDetails extends React.Component {
                     width: 1,
                 }
             ]
-    
+
             if (_.isEmpty(serviceDetails.Service[0].LbFarms)) {
                 assignedLoadBalancerFarmsTableRows = (
                     <Table.Row></Table.Row>
@@ -100,35 +127,7 @@ class ServiceDetails extends React.Component {
                     )
                 })
             }
-    
-            serversTableColumnProperties = [
-                {
-                    name: "ServerName",
-                    width: 4,
-                },
-                {
-                    name: "ServerOwner",
-                    width: 4,
-                },
-                {
-                    name: "Env",
-                    width: 3,
-                },
-                {
-                    name: "DC",
-                    width: 2,
-                },
-                {
-                    name: "State",
-                    width: 2,
-                },
-                {
-                    name: "Disme",
-                    width: 1,
-                }
-            ]
-    
-    
+
             serviceDetailsBody = (
                 <Grid stackable>
                     <Grid.Row>
@@ -138,7 +137,7 @@ class ServiceDetails extends React.Component {
                                     <Button
                                     floated='right'
                                     onClick={() => this.handleToggleShowAllSegments()}
-                                    content={showAllSegments ? 'Hide All Segments' : 'Show All Segments'}
+                                    content={showAllSegments && (assignedLoadBalancerFarms || servers) ? 'Hide All Segments' : 'Show All Segments'}
                                     icon='content'
                                     labelPosition='right'
                                     style={{ fontSize: 'medium', padding: '0.3em', bottom: '0.1em' }} />
@@ -157,7 +156,7 @@ class ServiceDetails extends React.Component {
                         <Grid.Column>
                             <Header block attached='top' as='h4'>
                                 Assigned LoadBalancer Farms
-                                <Button onClick={() => this.handleToggleShowingContent("assignedloadbalancerfarms")} floated='right' icon='content' />
+                                <Button onClick={() => this.handleToggleShowingContent("assignedLoadBalancerFarms")} floated='right' icon='content' />
                             </Header>
                             {
                                 assignedLoadBalancerFarms ? (
@@ -179,7 +178,7 @@ class ServiceDetails extends React.Component {
                             {
                                 servers ? (
                                     <Segment attached='bottom'>
-                                        <SimpleTable columnProperties={serversTableColumnProperties} body={serversTableRows} />
+                                        <ServerBuffedTable data={serviceDetails.Servers} />
                                     </Segment>
                                 ) : (
                                         <div></div>

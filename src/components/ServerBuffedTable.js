@@ -3,8 +3,10 @@ import React, { Component } from 'react'
 import { Table, Input, Button } from 'semantic-ui-react'
 import Pagination from 'semantic-ui-react-button-pagination';
 import { filterInArrayOfObjects, debounce } from '../utils/HelperFunction';
+import ServerStatus from './ServerStatus';
+import DismeStatus from './DismeStatus';
 
-export default class BuffedTable extends Component {
+export default class ServerBuffedTable extends Component {
 
     constructor(props) {
         super(props);
@@ -17,12 +19,13 @@ export default class BuffedTable extends Component {
             defaultLimit: 15,
             multiSearchInput: "",
             showColumnFilters: false,
-            filterLBFarmName: "",
-            filterLBFarmPool: "",
-            filterLBFarmPort: "",
-            filterLBFarmIpAddress: "",
-            filterLBFarmLBName: "",
-            data: this.props.data.LoadBalancerFarms
+            filterServerName: "",
+            filterServerOwner: "",
+            filterEnv: "",
+            filterDC: "",
+            filterOS: "",
+            filterCountry: "",
+            data: this.props.data
         }
 
         this.handleChange = debounce(this.handleChange, 400);
@@ -57,71 +60,86 @@ export default class BuffedTable extends Component {
     }
 
     handleToggleColumnFilters = () => {
-        this.setState({ 
+        this.setState({
             showColumnFilters: !this.state.showColumnFilters,
-            filterLBFarmName: "",
-            filterLBFarmPool: "",
-            filterLBFarmPort: "",
-            filterLBFarmIpAddress: "",
-            filterLBFarmLBName: ""
-         });
+            filterServerName: "",
+            filterServerOwner: "",
+            filterEnv: "",
+            filterDC: "",
+            filterOS: "",
+            filterCountry: ""
+        });
     }
 
     render() {
 
         const { column, direction, multiSearchInput, defaultLimit, showColumnFilters,
-        filterLBFarmIpAddress, filterLBFarmLBName, filterLBFarmName, filterLBFarmPool, filterLBFarmPort, data } = this.state
-        // var data = this.props.data.LoadBalancerFarms
+            filterServerName, filterServerOwner, filterEnv, filterDC, filterOS, filterCountry, data } = this.state
 
         var renderData, tableFooter, filteredData, filterColumnsRow;
 
         if (multiSearchInput !== "") {
-            var fuckoff = data.map(pic => {
+            var mappedServers = data.map(server => {
                 return (
                     {
-                        Id: pic.Id,
-                        Name: pic.Name,
-                        Pool: pic.Pool,
-                        Port: pic.Port,
-                        IpAddress: pic.IpAddress,
-                        LbName: pic.LbName
+                        Id: server.Id,
+                        ServerName: server.ServerName,
+                        ServerStateID: server.ServerStateID,
+                        Disme: server.Disme,
+                        ServerOwner: server.ServerOwner,
+                        Environment: server.Environment,
+                        DataCenter: server.DataCenter,
+                        CountryName: server.CountryName,
+                        OperatingSystem: server.OperatingSystem
                     }
                 )
             })
 
-            filteredData = filterInArrayOfObjects(multiSearchInput, fuckoff)
+            filteredData = filterInArrayOfObjects(multiSearchInput, mappedServers)
         }
         else {
             filteredData = data
         }
 
-        if(!_.isEmpty(filterLBFarmIpAddress)) {
+        if (!_.isEmpty(filterServerName)) {
             filteredData = filteredData.filter(data => {
-                return data.IpAddress.search(new RegExp(filterLBFarmIpAddress, "i")) >= 0
+                return data.ServerName.search(new RegExp(filterServerName, "i")) >= 0
             })
         }
 
-        if(!_.isEmpty(filterLBFarmLBName)) {
+        if (!_.isEmpty(filterServerOwner)) {
             filteredData = filteredData.filter(data => {
-                return data.LbName.search(new RegExp(filterLBFarmLBName, "i")) >= 0
+                if (data.ServerOwner) {
+                    return data.ServerOwner.search(new RegExp(filterServerOwner, "i")) >= 0
+                }
             })
         }
 
-        if(!_.isEmpty(filterLBFarmName)) {
+        if (!_.isEmpty(filterEnv)) {
             filteredData = filteredData.filter(data => {
-                return data.Name.search(new RegExp(filterLBFarmName, "i")) >= 0
+                return data.Environment.search(new RegExp(filterEnv, "i")) >= 0
             })
         }
 
-        if(!_.isEmpty(filterLBFarmPool)) {
+        if (!_.isEmpty(filterDC)) {
             filteredData = filteredData.filter(data => {
-                return data.Pool.search(new RegExp(filterLBFarmPool, "i")) >= 0
+                if (data.DataCenter) {
+                    return data.DataCenter.search(new RegExp(filterDC, "i")) >= 0
+                }
             })
         }
 
-        if(!_.isEmpty(filterLBFarmPort)) {
+        if (!_.isEmpty(filterOS)) {
             filteredData = filteredData.filter(data => {
-                return data.Port.search(new RegExp(filterLBFarmPort, "i")) >= 0
+                if (data.OperatingSystem) {
+                    return data.OperatingSystem.search(new RegExp(filterOS, "i")) >= 0
+                }
+            })
+        }
+
+        if (!_.isEmpty(filterCountry)) {
+            filteredData = filteredData.filter(data => {
+                return data.CountryName.search(new RegExp(filterCountry, "i")) >= 0
             })
         }
 
@@ -158,19 +176,24 @@ export default class BuffedTable extends Component {
                 <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell width={3}>
-                            <Input fluid name='filterLBFarmName' onChange={this.handleChange} />
-                        </Table.HeaderCell>
-                        <Table.HeaderCell width={3}>
-                            <Input fluid name='filterLBFarmPool' onChange={this.handleChange} />
-                        </Table.HeaderCell>
-                        <Table.HeaderCell width={1}>
-                            <Input fluid name='filterLBFarmPort' onChange={this.handleChange} />
+                            <Input fluid name='filterServerName' onChange={this.handleChange} />
                         </Table.HeaderCell>
                         <Table.HeaderCell width={2}>
-                            <Input fluid name='filterLBFarmIpAddress' onChange={this.handleChange} />
+                        </Table.HeaderCell>
+                        <Table.HeaderCell width={1}>
+                            <Input fluid name='filterServerOwner' onChange={this.handleChange} />
                         </Table.HeaderCell>
                         <Table.HeaderCell width={3}>
-                            <Input fluid name='filterLBFarmLBName' onChange={this.handleChange} />
+                            <Input fluid name='filterEnv' onChange={this.handleChange} />
+                        </Table.HeaderCell>
+                        <Table.HeaderCell width={1}>
+                            <Input fluid name='filterDC' onChange={this.handleChange} />
+                        </Table.HeaderCell>
+                        <Table.HeaderCell width={2}>
+                            <Input fluid name='filterCountry' onChange={this.handleChange} />
+                        </Table.HeaderCell>
+                        <Table.HeaderCell width={4}>
+                            <Input fluid name='filterOS' onChange={this.handleChange} />
                         </Table.HeaderCell>
                     </Table.Row>
                 </Table.Header>
@@ -183,14 +206,13 @@ export default class BuffedTable extends Component {
             <Table striped sortable celled basic='very'>
                 <Table.Header>
                     <Table.Row>
-                        <Table.HeaderCell colSpan={2} textAlign="left">
+                        <Table.HeaderCell colSpan={1} textAlign="left">
                             <Input placeholder="Type to search..." name="multiSearchInput" onChange={this.handleChange} ></Input>
                         </Table.HeaderCell>
-                        <Table.HeaderCell colSpan={3} textAlign="right">
+                        <Table.HeaderCell colSpan={6} textAlign="right">
                             Showing {this.state.offset + 1} to {filteredData.length < defaultLimit ? filteredData.length : this.state.offset + 15} of {filteredData.length} entries
                             <br />
                             <Button
-                                
                                 size="small"
                                 onClick={() => this.handleToggleColumnFilters()}
                                 compact
@@ -206,47 +228,69 @@ export default class BuffedTable extends Component {
                     <Table.Row>
                         <Table.HeaderCell
                             width={3}
-                            sorted={column === 'name' ? direction : null}
-                            onClick={this.handleSort('Name')}
-                            content='Name'
+                            sorted={column === 'ServerName' ? direction : null}
+                            onClick={this.handleSort('ServerName')}
+                            content='ServerName'
                         />
                         <Table.HeaderCell
-                            width={3}
-                            sorted={column === 'pool' ? direction : null}
-                            onClick={this.handleSort('Pool')}
-                            content='Pool'
+                        disabled
+                            width={2}
+                            // sorted={column === 'ServerName' ? direction : null}
+                            // onClick={this.handleSort('ServerName')}
+                            content='Status | Disme'
                         />
                         <Table.HeaderCell
                             width={1}
-                            sorted={column === 'port' ? direction : null}
-                            onClick={this.handleSort('Port')}
-                            content='Port'
-                        />
-                        <Table.HeaderCell
-                            width={2}
-                            sorted={column === 'ipaddress' ? direction : null}
-                            onClick={this.handleSort('IpAddress')}
-                            content='IpAddress'
+                            sorted={column === 'ServerOwner' ? direction : null}
+                            onClick={this.handleSort('ServerOwner')}
+                            content='ServerOwner'
                         />
                         <Table.HeaderCell
                             width={3}
-                            sorted={column === 'lbname' ? direction : null}
-                            onClick={this.handleSort('LbName')}
-                            content='LoadBalancer Name'
+                            sorted={column === 'Environment' ? direction : null}
+                            onClick={this.handleSort('Environment')}
+                            content='Env'
+                        />
+                        <Table.HeaderCell
+                            width={1}
+                            sorted={column === 'DataCenter' ? direction : null}
+                            onClick={this.handleSort('DataCenter')}
+                            content='DC'
+                        />
+                        <Table.HeaderCell
+                            width={2}
+                            sorted={column === 'CountryName' ? direction : null}
+                            onClick={this.handleSort('CountryName')}
+                            content='Country'
+                        />
+                        <Table.HeaderCell
+                            width={4}
+                            sorted={column === 'OperatingSystem' ? direction : null}
+                            onClick={this.handleSort('OperatingSystem')}
+                            content='OS'
                         />
                     </Table.Row>
                 </Table.Header>
                 {filterColumnsRow}
                 <Table.Body>
-                    {_.map(renderData, ({ Id, Name, Pool, Port, IpAddress, LbName }) => (
-                        <Table.Row key={Id}>
-                            <Table.Cell>{Name}</Table.Cell>
-                            <Table.Cell>{Pool}</Table.Cell>
-                            <Table.Cell>{Port}</Table.Cell>
-                            <Table.Cell>{IpAddress}</Table.Cell>
-                            <Table.Cell>{LbName}</Table.Cell>
-                        </Table.Row>
-                    ))}
+                    {renderData.map(data => {
+                        return (
+                            <Table.Row key={data.Id}>
+                                <Table.Cell>{data.ServerName}</Table.Cell>
+                                <Table.Cell>
+                                    {<ServerStatus size='small' serverStateId={data.ServerStateID} />}
+                                    {<DismeStatus size='small' dismeStatus={data.Disme} />}
+                                </Table.Cell>
+                                <Table.Cell>{data.ServerOwner}</Table.Cell>
+                                <Table.Cell>{data.Environment}</Table.Cell>
+                                <Table.Cell>{data.DataCenter}</Table.Cell>
+                                <Table.Cell>{data.CountryName}</Table.Cell>
+                                <Table.Cell>{data.OperatingSystem}</Table.Cell>
+                            </Table.Row>
+                        )
+                    })
+
+                    }
                 </Table.Body>
                 {tableFooter}
             </Table>

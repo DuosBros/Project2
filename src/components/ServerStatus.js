@@ -8,7 +8,7 @@ export default class ServerStatus extends Component {
     render() {
         var state = getServerState(this.props.serverStateId);
         return (
-            <Label color={state === "online" ? 'green' : 'red'} horizontal>
+            <Label size={this.props.size} color={state === "online" ? 'green' : 'red'} horizontal>
                 {state}
             </Label>
         )

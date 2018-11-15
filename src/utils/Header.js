@@ -16,7 +16,9 @@ class Header extends React.Component {
         super(props);
 
         this.handleSearchServers = this.handleSearchServers.bind(this);
+        this.handleSearchServiceShortcut = this.handleSearchServiceShortcut.bind(this);
         this.handleSearchServers = debounce(this.handleSearchServers, 250);
+        this.handleSearchServiceShortcut = debounce(this.handleSearchServiceShortcut, 250);
     }
 
     state = {
@@ -65,20 +67,22 @@ class Header extends React.Component {
     }
 
     handleServiceChange = (e, { value }) => {
-
         if (isNum(value)) {
             var route = "/service/" + value;
             this.props.history.push(route);
         }
     }
 
-    handleServiceShortcutSearchChange = (e) => {
+    handleSearchServiceShortcut(value) {
+        searchServiceShortcut(value)
+            .then(res => {
+                this.props.searchServiceShortcutAction(res.data.map(e => ({ text: e.Name, value: e.Id })))
+            })
+    }
 
+    handleServiceShortcutSearchChange = (e) => {
         if (e.target.value.length > 1) {
-            searchServiceShortcut(e.target.value)
-                .then(res => {
-                    this.props.searchServiceShortcutAction(res.data.map(e => ({ text: e.Name, value: e.Id })))
-                })
+            this.handleSearchServiceShortcut(e.target.value)
         }
     }
 
