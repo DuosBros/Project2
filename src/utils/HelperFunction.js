@@ -1,5 +1,16 @@
 import _ from 'lodash';
 
+export const groupBy = (items, key) => items.reduce(
+    (result, item) => ({
+      ...result,
+      [item[key]]: [
+        ...(result[item[key]] || []),
+        item,
+      ],
+    }), 
+    {},
+  );
+
 export const isNum = (value) => {
     if (value === null || value === undefined) {
         return false;
@@ -33,7 +44,7 @@ export const getServerState = (id) => {
 }
 
 export const getDismeState = (state) => {
-    if(state) {
+    if (state) {
         return "active"
     }
     else {
@@ -76,7 +87,7 @@ export const filterInArrayOfObjects = (toSearch, array) => {
     toSearch = trimString(toSearch); // trim it
     for (var i = 0; i < array.length; i++) {
         for (var key in array[i]) {
-            if(_.isEmpty(array[i][key])) {
+            if (_.isEmpty(array[i][key])) {
                 continue
             }
             else {
@@ -84,7 +95,7 @@ export const filterInArrayOfObjects = (toSearch, array) => {
                     if (!itemExists(results, array[i])) results.push(array[i]);
                 }
             }
-            
+
         }
     }
     return results;

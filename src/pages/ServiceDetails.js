@@ -10,6 +10,7 @@ import { getServiceDetails } from '../requests/ServiceAxios';
 import spinner from '../assets/Spinner.svg';
 import SimpleTable from '../components/SimpleTable';
 import ServerBuffedTable from '../components/ServerBuffedTable';
+import WebsitesBuffedTable from '../components/WebsitesBuffedTable';
 
 class ServiceDetails extends React.Component {
     constructor(props) {
@@ -52,7 +53,7 @@ class ServiceDetails extends React.Component {
 
     handleToggleShowAllSegments = () => {
 
-        if (this.state.showAllSegments) {
+        if (this.state.showAllSegments && (this.state.assignedLoadBalancerFarms || this.state.servers || this.state.websites) ) {
             this.setState({
                 showAllSegments: false,
                 assignedLoadBalancerFarms: false,
@@ -137,7 +138,7 @@ class ServiceDetails extends React.Component {
                                     <Button
                                     floated='right'
                                     onClick={() => this.handleToggleShowAllSegments()}
-                                    content={showAllSegments && (assignedLoadBalancerFarms || servers) ? 'Hide All Segments' : 'Show All Segments'}
+                                    content={showAllSegments && (assignedLoadBalancerFarms || servers || websites) ? 'Hide All Segments' : 'Show All Segments'}
                                     icon='content'
                                     labelPosition='right'
                                     style={{ fontSize: 'medium', padding: '0.3em', bottom: '0.1em' }} />
@@ -179,6 +180,23 @@ class ServiceDetails extends React.Component {
                                 servers ? (
                                     <Segment attached='bottom'>
                                         <ServerBuffedTable data={serviceDetails.Servers} />
+                                    </Segment>
+                                ) : (
+                                        <div></div>
+                                    )
+                            }
+                        </Grid.Column>
+                    </Grid.Row>
+                    <Grid.Row>
+                        <Grid.Column>
+                            <Header block attached='top' as='h4'>
+                                Websites
+                                <Button onClick={() => this.handleToggleShowingContent("websites")} floated='right' icon='content' />
+                            </Header>
+                            {
+                                websites ? (
+                                    <Segment attached='bottom' id="websitesBuffedTable">
+                                        <WebsitesBuffedTable data={serviceDetails} />
                                     </Segment>
                                 ) : (
                                         <div></div>

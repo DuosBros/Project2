@@ -8,7 +8,7 @@ const SimpleTable = (props) => (
             {
                 props.columnProperties.map(property => {
                     return (
-                        <Table.HeaderCell width={property.width} content={property.name} />
+                        <Table.HeaderCell key={property.name} width={property.width} content={property.name} />
                     )
                 })
             }

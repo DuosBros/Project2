@@ -109,6 +109,9 @@ html, body {
     bottom: '0.1em';
 }
 
+#websitesBuffedTable {
+    overflow-x: scroll;
+}
 /* .simpleTable {
     text-Align: center
 } */

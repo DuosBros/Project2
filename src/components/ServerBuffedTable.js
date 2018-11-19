@@ -233,7 +233,7 @@ export default class ServerBuffedTable extends Component {
                             content='ServerName'
                         />
                         <Table.HeaderCell
-                        disabled
+                            disabled
                             width={2}
                             // sorted={column === 'ServerName' ? direction : null}
                             // onClick={this.handleSort('ServerName')}
