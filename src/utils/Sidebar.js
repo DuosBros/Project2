@@ -21,16 +21,16 @@ class Sidebar extends React.Component {
         if (this.props.headerStore.showVerticalMenu) {
             NavMenu = (
                 <div>
-                    <Menu.Item as={Link} exact to='/'>
+                    <Menu.Item as={Link} to='/'>
                         <Menu.Header>Home</Menu.Header>
                     </Menu.Item>
                     <Menu.Item>
                         <Menu.Header>Server</Menu.Header>
                         <Menu.Menu>
-                            <Menu.Item as={Link} exact to='/usage'>
+                            <Menu.Item as={Link} to='/usage'>
                                 PatchGroups
                             </Menu.Item>
-                            <Menu.Item as={Link} exact to='/usage' >
+                            <Menu.Item as={Link} to='/usage' >
                                 VirtualMachines
                             </Menu.Item>
                         </Menu.Menu>
@@ -38,16 +38,16 @@ class Sidebar extends React.Component {
                     <Menu.Item>
                         <Menu.Header>Services</Menu.Header>
                         <Menu.Menu>
-                            <Menu.Item as={Link} exact to='/' >
+                            <Menu.Item as={Link} to='/' >
                                 RolloutStatus
                             </Menu.Item>
-                            <Menu.Item as={Link} exact to='/usage' >
+                            <Menu.Item as={Link} to='/usage' >
                                 VersionStatus
                             </Menu.Item>
-                            <Menu.Item as={Link} exact to='/theming' >
+                            <Menu.Item as={Link} to='/theming' >
                                 HealthChecks
                             </Menu.Item>
-                            <Menu.Item as={Link} exact to='/theming' >
+                            <Menu.Item as={Link} to='/theming' >
                                 Availability
                             </Menu.Item>
                         </Menu.Menu>
@@ -55,7 +55,7 @@ class Sidebar extends React.Component {
                     <Menu.Item>
                         <Menu.Header>Loadbalancer Farms</Menu.Header>
                         <Menu.Menu>
-                            <Menu.Item as={Link} exact to='/' >
+                            <Menu.Item as={Link} to='/' >
                                 Consistency
                             </Menu.Item>
                         </Menu.Menu>
@@ -66,10 +66,10 @@ class Sidebar extends React.Component {
                     <Menu.Item>
                         <Menu.Header>Config</Menu.Header>
                         <Menu.Menu>
-                            <Menu.Item as={Link} exact to='/' >
+                            <Menu.Item as={Link} to='/' >
                                 Loadbalancer
                             </Menu.Item>
-                            <Menu.Item as={Link} exact to='/usage' >
+                            <Menu.Item as={Link} to='/usage' >
                                 ActiveDirectory
                             </Menu.Item>
                         </Menu.Menu>
@@ -103,7 +103,7 @@ class Sidebar extends React.Component {
 
         return (
             <div id={this.props.headerStore.showVerticalMenu ? "verticalMenu" : "hiddenVerticalMenu"}>
-                <Menu inverted fluid vertical borderless>
+                <Menu  inverted fluid vertical borderless>
                     {NavMenu}
                 </Menu>
                 <div className="sidebarCollapser">

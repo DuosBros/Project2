@@ -100,11 +100,11 @@ export default class WebsitesBuffedTable extends Component {
 
         var renderData, tableFooter, filteredData, filterColumnsRow;
 
-            console.log("this.state.data:" + JSON.stringify(data))
+        var devFramework = this.props.data.Service[0].DevFramework
         var mappedWebsites = this.props.data.Websites.map(website => {
             return (
                 {
-                    Id: website.Id,
+                    // Id: website.Id,
                     ServerName: website.ServerName,
                     Environment: website.Environment,
                     SiteId: website.SiteId,
@@ -114,7 +114,7 @@ export default class WebsitesBuffedTable extends Component {
                             binding.IpAddress + ":" + binding.Port + ":" + binding.Binding
                         )
                     }),
-                    FrameWork: website.AppPool.FrameWork,
+                    FrameWork: devFramework ? devFramework : website.AppPool.FrameWork,
                     AutoStart: website.AppPool.AutoStart.toString(),
                     User: website.AppPool.User,
                     State: website.AppPool.State,
@@ -123,6 +123,7 @@ export default class WebsitesBuffedTable extends Component {
                 }
             )
         })
+
         if (multiSearchInput !== "") {
             filteredData = filterInArrayOfObjects(multiSearchInput, mappedWebsites)
         }
@@ -296,11 +297,11 @@ export default class WebsitesBuffedTable extends Component {
             filterColumnsRow = <Table.Header></Table.Header>
         }
 
-        var kokot = groupBy(renderData, "Environment")
+        var groupedData = groupBy(renderData, "Environment")
 
 
-        var pica = (
-            Object.keys(kokot).map((key, index) => {
+        var tableRows = (
+            Object.keys(groupedData).map((key, index) => {
                 return (
                     <React.Fragment key={index}>
                         <Table.Row key={key}>
@@ -308,9 +309,9 @@ export default class WebsitesBuffedTable extends Component {
 
                         </Table.Row>
                         {
-                            kokot[key].map(d => {
+                            groupedData[key].map((d, dindex) => {
                                 return (
-                                    <Table.Row key={d.Id}>
+                                    <Table.Row key={dindex}>
                                         <Table.Cell>{d.ServerName}</Table.Cell>
                                         {/* <Table.Cell>{d.Environment}</Table.Cell> */}
                                         <Table.Cell>{d.SiteId}</Table.Cell>
@@ -430,7 +431,7 @@ export default class WebsitesBuffedTable extends Component {
                 </Table.Header>
                 {filterColumnsRow}
                 <Table.Body>
-                    {pica
+                    {tableRows
                     }
                 </Table.Body>
                 {tableFooter}

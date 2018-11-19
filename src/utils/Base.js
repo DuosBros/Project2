@@ -19,6 +19,8 @@ import spinner from '../assets/Spinner.svg';
 import { debounce } from '../utils/HelperFunction';
 
 import {LOCO_API} from '../appConfig';
+import NotAuthorized from '../modals/NotAuthorized';
+import LoadBalancerFarmsTasks from '../modals/LoadBalancerFarmsTasks';
 
 class Base extends React.Component {
     constructor(props) {
@@ -84,15 +86,9 @@ class Base extends React.Component {
         var wideClass = {
             className: ""
         };
+        
         if (!this.props.headerStore.showVerticalMenu) {
             wideClass.className = "wide"
-        }
-
-        if (this.props.headerStore.showUserDetails) {
-            console.log("showing details")
-        }
-        else {
-            console.log("not showing details")
         }
 
         return (
@@ -101,7 +97,9 @@ class Base extends React.Component {
                     <div>
                         <Route path="/:entityType?/:entityId?" component={Header} />
                         <Sidebar />
+                        <LoadBalancerFarmsTasks show={this.props.serviceStore.showLoadBalancerFarmsTasksModal} />
                         <UserDetails userDetails={this.props.baseStore.currentUser} show={this.props.headerStore.showUserDetails} />
+                        {/* <NotAuthorized userDetails={this.props.baseStore.currentUser} show={this.props.baseStore.showNotAuthorizedModal} /> */}
                         <div id="bodyWrapper" {...wideClass}>
                             <Switch>
                                 <Route exact path='/' component={Home} />
@@ -123,7 +121,8 @@ class Base extends React.Component {
 function mapStateToProps(state) {
     return {
         baseStore: state.BaseReducer,
-        headerStore: state.HeaderReducer
+        headerStore: state.HeaderReducer,
+        serviceStore: state.ServiceReducer
     };
 }
 

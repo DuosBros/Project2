@@ -86,17 +86,21 @@ export const filterInArrayOfObjects = (toSearch, array) => {
     var results = [];
     toSearch = trimString(toSearch); // trim it
     for (var i = 0; i < array.length; i++) {
-        for (var key in array[i]) {
-            if (_.isEmpty(array[i][key])) {
-                continue
-            }
-            else {
-                if (array[i][key].toLowerCase().indexOf(toSearch.toLowerCase()) !== -1) {
+        Object.keys(array[i]).map((key, index) => {
+            if (array[i][key]) { // fuken lodash returning isEmpty true for numbers
+                if (array[i][key].toString().toLowerCase().indexOf(toSearch.toString().toLowerCase()) !== -1) {
                     if (!itemExists(results, array[i])) results.push(array[i]);
                 }
             }
-
-        }
+        })
     }
     return results;
+}
+
+export const isAdmin = (user) => {
+    if(user.IsLocoAdmin === true) {
+        return true
+    }
+
+    return false;
 }

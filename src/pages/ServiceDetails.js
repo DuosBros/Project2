@@ -5,12 +5,13 @@ import _ from 'lodash';
 import { Grid, Header, Segment, Divider, Icon, List, Image, Table, Button, Label } from 'semantic-ui-react';
 import moment from 'moment';
 
-import { getServiceDetailsAction } from '../actions/ServiceActions';
+import { getServiceDetailsAction, toggleLoadBalancerFarmsTasksModalAction } from '../actions/ServiceActions';
 import { getServiceDetails } from '../requests/ServiceAxios';
 import spinner from '../assets/Spinner.svg';
 import SimpleTable from '../components/SimpleTable';
 import ServerBuffedTable from '../components/ServerBuffedTable';
 import WebsitesBuffedTable from '../components/WebsitesBuffedTable';
+import { isAdmin } from '../utils/HelperFunction';
 
 class ServiceDetails extends React.Component {
     constructor(props) {
@@ -53,7 +54,7 @@ class ServiceDetails extends React.Component {
 
     handleToggleShowAllSegments = () => {
 
-        if (this.state.showAllSegments && (this.state.assignedLoadBalancerFarms || this.state.servers || this.state.websites) ) {
+        if (this.state.showAllSegments && (this.state.assignedLoadBalancerFarms || this.state.servers || this.state.websites)) {
             this.setState({
                 showAllSegments: false,
                 assignedLoadBalancerFarms: false,
@@ -143,6 +144,9 @@ class ServiceDetails extends React.Component {
                                     labelPosition='right'
                                     style={{ fontSize: 'medium', padding: '0.3em', bottom: '0.1em' }} />
                             </Header>
+                            <Segment attached="bottom">
+                                TODO: Ferdinand pleaze
+                            </Segment>
                             <Header attached>
                                 <List>
                                     <List.Item>
@@ -157,7 +161,19 @@ class ServiceDetails extends React.Component {
                         <Grid.Column>
                             <Header block attached='top' as='h4'>
                                 Assigned LoadBalancer Farms
-                                <Button onClick={() => this.handleToggleShowingContent("assignedLoadBalancerFarms")} floated='right' icon='content' />
+                                <Button
+                                    style={{ padding: '0em', marginRight: '0.5em' }}
+                                    onClick={() => this.handleToggleShowingContent("assignedLoadBalancerFarms")}
+                                    floated='right'
+                                    icon='content' />
+                                <Button
+                                    disabled={!isAdmin(this.props.baseStore.currentUser)}
+                                    onClick={() => this.props.toggleLoadBalancerFarmsTasksModalAction()}
+                                    style={{ padding: '0.3em', bottom: '0.1em' }}
+                                    size="small"
+                                    primary
+                                    floated='right'
+                                >Add or Remove LoadBalancerFarms</Button>
                             </Header>
                             {
                                 assignedLoadBalancerFarms ? (
@@ -224,13 +240,15 @@ class ServiceDetails extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        serviceStore: state.ServiceReducer
+        serviceStore: state.ServiceReducer,
+        baseStore: state.BaseReducer
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
-        getServiceDetailsAction: getServiceDetailsAction
+        getServiceDetailsAction,
+        toggleLoadBalancerFarmsTasksModalAction
     }, dispatch);
 }
 
