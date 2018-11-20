@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { Label } from 'semantic-ui-react';
 
-import { getServerState } from '../utils/HelperFunction';
-
 export default class ServerStatus extends Component {
 
     getColor = (state) => {

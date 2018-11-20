@@ -2,14 +2,14 @@ import _ from 'lodash';
 
 export const groupBy = (items, key) => items.reduce(
     (result, item) => ({
-      ...result,
-      [item[key]]: [
-        ...(result[item[key]] || []),
-        item,
-      ],
-    }), 
+        ...result,
+        [item[key]]: [
+            ...(result[item[key]] || []),
+            item,
+        ],
+    }),
     {},
-  );
+);
 
 export const isNum = (value) => {
     if (value === null || value === undefined) {
@@ -51,6 +51,46 @@ export const getDismeState = (state) => {
         return "not active"
     }
 }
+
+export const getAvailabiltyAndEnabledState = (availabilityState, enabledState) => {
+    switch (availabilityState) {
+        case "available":
+            switch (enabledState) {
+                case "disabled":
+                    return "red";
+                case "disabled-by-parent":
+                    return "red";
+                case "enabled":
+                    return "green";
+                default:
+                    return "grey"
+            }
+        case "offline":
+            switch (enabledState) {
+                case "disabled":
+                    return "red"
+                case "disabled-by-parent":
+                    return "red";
+                case "enabled":
+                    return "red"
+                default:
+                    return "grey"
+            }
+        case "unknown":
+            switch (enabledState) {
+                case "disabled":
+                    return "red"
+                case "enabled":
+                    return "blue"
+                default:
+                    return "grey"
+            }
+        default:
+            return "grey"
+    }
+}
+
+
 
 export const debounce = (fn, time) => {
     let timeout;
@@ -98,9 +138,10 @@ export const filterInArrayOfObjects = (toSearch, array) => {
 }
 
 export const isAdmin = (user) => {
-    if(user.IsLocoAdmin === true) {
+    if (user.IsLocoAdmin === true) {
         return true
     }
 
     return false;
 }
+
