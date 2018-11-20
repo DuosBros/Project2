@@ -5,10 +5,23 @@ import { getServerState } from '../utils/HelperFunction';
 
 export default class ServerStatus extends Component {
 
+    getColor = (state) => {
+        if(state === 'online') {
+            return 'green'
+        }
+        else if(state === 'not reachable') {
+            return 'grey'
+        }
+        else {
+            return 'red'
+        }
+    
+    }
+
     render() {
-        var state = getServerState(this.props.serverStateId);
+        var state = this.props.serverState
         return (
-            <Label size={this.props.size} color={state === "online" ? 'green' : 'red'} horizontal>
+            <Label size={this.props.size} color={this.getColor(state)} horizontal>
                 {state}
             </Label>
         )

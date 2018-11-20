@@ -22,9 +22,7 @@ class ServiceDetails extends React.Component {
             assignedLoadBalancerFarms: true,
             servers: true,
             websites: true,
-
         }
-
     }
 
     componentDidMount() {
@@ -34,7 +32,6 @@ class ServiceDetails extends React.Component {
     updateService(id) {
         getServiceDetails(id)
             .then(res => {
-
                 this.props.getServiceDetailsAction(res.data)
             })
     }
@@ -111,17 +108,18 @@ class ServiceDetails extends React.Component {
                 }
             ]
 
-            if (_.isEmpty(serviceDetails.Service[0].LbFarms)) {
+            if (_.isEmpty(serviceDetails.LbFarms)) {
                 assignedLoadBalancerFarmsTableRows = (
                     <Table.Row></Table.Row>
                 )
             }
             else {
-                assignedLoadBalancerFarmsTableRows = serviceDetails.Service.LbFarms.map(lbfarm => {
+                assignedLoadBalancerFarmsTableRows = serviceDetails.LbFarms.map(lbfarm => {
                     return (
                         <Table.Row key={lbfarm.Id}>
                             <Table.Cell>{lbfarm.Name}</Table.Cell>
                             <Table.Cell>{lbfarm.Pool}</Table.Cell>
+                            <Table.Cell>{lbfarm.Port}</Table.Cell>
                             <Table.Cell>{lbfarm.IpAddress}</Table.Cell>
                             <Table.Cell>{lbfarm.LbName}</Table.Cell>
                             <Table.Cell>{lbfarm.LbId}</Table.Cell>
@@ -135,7 +133,7 @@ class ServiceDetails extends React.Component {
                     <Grid.Row>
                         <Grid.Column>
                             <Header block attached='top' as='h4'>
-                                Service Info
+                                Service Info - {serviceDetails.Service[0].Shortcut}
                                     <Button
                                     floated='right'
                                     onClick={() => this.handleToggleShowAllSegments()}

@@ -6,7 +6,7 @@ import { getDismeState } from '../utils/HelperFunction';
 export default class DismeStatus extends Component {
 
     render() {
-        var state = getDismeState(this.props.dismeStatus );
+        var state = this.props.dismeStatus
         return (
             <Label size={this.props.size} color={state === 'active' ? 'green' : 'red'} horizontal>
                 {state}

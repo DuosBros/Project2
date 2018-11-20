@@ -4,7 +4,7 @@ import { Table, Input, Button } from 'semantic-ui-react'
 import Pagination from 'semantic-ui-react-button-pagination';
 import { filterInArrayOfObjects, debounce } from '../utils/HelperFunction';
 
-export default class BuffedTable extends Component {
+export default class LoadBalancerFarmsBuffedTable extends Component {
 
     constructor(props) {
         super(props);

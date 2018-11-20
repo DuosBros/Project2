@@ -17,8 +17,8 @@ class Header extends React.Component {
 
         this.handleSearchServers = this.handleSearchServers.bind(this);
         this.handleSearchServiceShortcut = this.handleSearchServiceShortcut.bind(this);
-        this.handleSearchServers = debounce(this.handleSearchServers, 250);
-        this.handleSearchServiceShortcut = debounce(this.handleSearchServiceShortcut, 250);
+        this.handleSearchServers = debounce(this.handleSearchServers, 150);
+        this.handleSearchServiceShortcut = debounce(this.handleSearchServiceShortcut, 150);
     }
 
     state = {
@@ -128,7 +128,7 @@ class Header extends React.Component {
                                 options={this.props.headerStore.searchServiceShortcutsResult.slice(0, 10)}
                                 fluid
                                 selectOnNavigation={false}
-                                placeholder='Press &apos;w&apos; to search a server'
+                                placeholder='Press &apos;w&apos; to search a service'
                                 value=""
                                 onSearchChange={this.handleServiceShortcutSearchChange}
                                 search

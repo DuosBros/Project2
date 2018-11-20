@@ -41,6 +41,10 @@ export default class WebsitesBuffedTable extends Component {
         this.handleChange = this.handleChange.bind(this)
     }
 
+    componentWillReceiveProps(nextProps) {
+        this.setState({ data: nextProps.data  });
+    }
+
     handleSort = clickedColumn => () => {
         const { column, data, direction } = this.state
 
@@ -314,9 +318,11 @@ export default class WebsitesBuffedTable extends Component {
                             groupedData[key].map((d, dindex) => {
                                 return (
                                     <Table.Row key={dindex}>
-                                        <Link to={'/server/' + d.ServerId} target="_blank">
-                                            {d.ServerName}
-                                        </Link>
+                                        <Table.Cell>
+                                            <Link to={'/server/' + d.ServerId} target="_blank">
+                                                {d.ServerName}
+                                            </Link>
+                                        </Table.Cell>
                                         {/* <Table.Cell>{d.ServerName}</Table.Cell> */}
                                         {/* <Table.Cell>{d.Environment}</Table.Cell> */}
                                         <Table.Cell>{d.SiteId}</Table.Cell>
@@ -342,7 +348,7 @@ export default class WebsitesBuffedTable extends Component {
         )
 
         return (
-            <Table sortable celled basic='very'>
+            <Table selectable sortable celled basic='very'>
                 <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell colSpan={1} textAlign="left">

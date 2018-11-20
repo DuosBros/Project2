@@ -14,7 +14,7 @@ import { getServerDetails, getServerScomAlerts } from '../requests/ServerAxios';
 import { KIBANA_WINLOGBEAT_SERVER_URL, KIBANA_SERVER_URL_PLACEHOLDER, KIBANA_PERFCOUNTER_SERVER_URL, DISME_SERVICE_PLACEHOLDER, DISME_SERVICE_URL, errorColor } from '../appConfig';
 
 import spinner from '../assets/Spinner.svg';
-import BuffedTable from '../components/BuffedTable';
+import LoadBalancerFarmsBuffedTable from '../components/LoadBalancerFarmsBuffedTable';
 import SCOMSegment from '../components/SCOMSegment';
 import DismeStatus from '../components/DismeStatus';
 import { Link } from 'react-router-dom';
@@ -100,7 +100,7 @@ class ServerDetails extends React.Component {
         var serverDetails = this.props.serverStore.serverDetails;
         var scomAlerts = this.props.serverStore.scomAlerts;
         var OSIcon, serverDetailsBody, servicesTableRows, serviceTableColumnProperties, websitesTableRows, websitesTableColumnProperties, windowsServicesTableColumnProperties,
-            windowsServicesTableRows, webChecksTableColumnProperties, webChecksTableRows, lbfarmColumnPropertis;
+            windowsServicesTableRows, webChecksTableColumnProperties, webChecksTableRows;
 
         const { showAllSegments, webchecks, dismeservices, loadbalancerfarms, windowsservices, websites, scomalerts } = this.state;
 
@@ -116,34 +116,6 @@ class ServerDetails extends React.Component {
                     OSIcon = (<Icon circular name='linux' />)
                 }
             }
-
-            lbfarmColumnPropertis = [
-                {
-                    name: "name",
-                    displayName: "Name",
-                    width: 4,
-                },
-                {
-                    name: "pool",
-                    displayName: "Pool",
-                    width: 4,
-                },
-                {
-                    name: "port",
-                    displayName: "Port",
-                    width: 1,
-                },
-                {
-                    name: "ipaddress",
-                    displayName: "IpAddress",
-                    width: 3,
-                },
-                {
-                    name: "lbname",
-                    displayName: "LoadBalancer Name",
-                    width: 4,
-                }
-            ]
 
             webChecksTableColumnProperties = [
                 {
@@ -302,7 +274,7 @@ class ServerDetails extends React.Component {
                     <Grid.Row>
                         <Grid.Column>
                             <Header block attached='top' as='h4'>
-                                Server Info
+                                Server Info - {serverDetails.ServerName}
                                 <Button
                                     floated='right'
                                     onClick={() => this.handleToggleShowAllSegments()}
@@ -517,7 +489,7 @@ class ServerDetails extends React.Component {
                             {
                                 loadbalancerfarms ? (
                                     <Segment attached='bottom'>
-                                        <BuffedTable data={serverDetails} />
+                                        <LoadBalancerFarmsBuffedTable data={serverDetails} />
                                     </Segment>
                                 ) : (
                                         <div></div>

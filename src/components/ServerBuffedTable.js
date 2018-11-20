@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, { Component } from 'react'
 import { Table, Input, Button } from 'semantic-ui-react'
 import Pagination from 'semantic-ui-react-button-pagination';
-import { filterInArrayOfObjects, debounce } from '../utils/HelperFunction';
+import { filterInArrayOfObjects, debounce, getServerState } from '../utils/HelperFunction';
 import ServerStatus from './ServerStatus';
 import DismeStatus from './DismeStatus';
 import { Link } from 'react-router-dom';
@@ -31,6 +31,10 @@ export default class ServerBuffedTable extends Component {
 
         this.handleChange = debounce(this.handleChange, 400);
         this.handleChange = this.handleChange.bind(this)
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.setState({ data: nextProps.data  });
     }
 
     handleSort = clickedColumn => () => {
@@ -85,7 +89,7 @@ export default class ServerBuffedTable extends Component {
                     {
                         Id: server.Id,
                         ServerName: server.ServerName,
-                        ServerStateID: server.ServerStateID,
+                        ServerState: server.ServerState,
                         Disme: server.Disme,
                         ServerOwner: server.ServerOwner,
                         Environment: server.Environment,
@@ -204,13 +208,13 @@ export default class ServerBuffedTable extends Component {
             filterColumnsRow = <Table.Header></Table.Header>
         }
         return (
-            <Table striped sortable celled basic='very'>
+            <Table selectable sortable celled basic='very'>
                 <Table.Header>
                     <Table.Row>
-                        <Table.HeaderCell colSpan={1} textAlign="left">
+                        <Table.HeaderCell disabled colSpan={1} textAlign="left">
                             <Input placeholder="Type to search..." name="multiSearchInput" onChange={this.handleChange} ></Input>
                         </Table.HeaderCell>
-                        <Table.HeaderCell colSpan={6} textAlign="right">
+                        <Table.HeaderCell disabled colSpan={6} textAlign="right">
                             Showing {this.state.offset + 1} to {filteredData.length < defaultLimit ? filteredData.length : this.state.offset + 15} of {filteredData.length} entries
                             <br />
                             <Button
@@ -283,7 +287,7 @@ export default class ServerBuffedTable extends Component {
                                     </Link>
                                 </Table.Cell>
                                 <Table.Cell>
-                                    {<ServerStatus size='small' serverStateId={data.ServerStateID} />}
+                                    {<ServerStatus size='small' serverState={data.ServerState} />}
                                     {<DismeStatus size='small' dismeStatus={data.Disme} />}
                                 </Table.Cell>
                                 <Table.Cell>{data.ServerOwner}</Table.Cell>
