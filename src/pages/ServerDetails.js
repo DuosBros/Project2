@@ -71,29 +71,16 @@ class ServerDetails extends React.Component {
     }
 
     handleToggleShowAllSegments = () => {
-
-        if (this.state.showAllSegments && (this.state.scomalerts || this.state.webchecks || this.state.dismeservices || this.state.loadbalancerfarms || this.state.windowsservices || this.state.websites)) {
-            this.setState({
-                showAllSegments: false,
-                websites: false,
-                dismeservices: false,
-                scomalerts: false,
-                loadbalancerfarms: false,
-                windowsservices: false,
-                webchecks: false
-            });
-        }
-        else {
-            this.setState({
-                showAllSegments: true,
-                websites: true,
-                dismeservices: true,
-                scomalerts: true,
-                loadbalancerfarms: true,
-                windowsservices: true,
-                webchecks: true
-            });
-        }
+        var visible = !(this.state.showAllSegments && (this.state.scomalerts || this.state.webchecks || this.state.dismeservices || this.state.loadbalancerfarms || this.state.windowsservices || this.state.websites));
+        this.setState({
+            showAllSegments: visible,
+            websites: visible,
+            dismeservices: visible,
+            scomalerts: visible,
+            loadbalancerfarms: visible,
+            windowsservices: visible,
+            webchecks: visible
+        });
     }
 
     render() {
@@ -140,7 +127,7 @@ class ServerDetails extends React.Component {
                 return (
                     <Table.Row key={webcheck.Id}>
                         <Table.Cell >{webcheck.Title}</Table.Cell>
-                        <Table.Cell >{webcheck.Url}</Table.Cell>
+                        <Table.Cell ><a href={webcheck.Url} target="_blank">{webcheck.Url}</a></Table.Cell>
                         <Table.Cell >{webcheck.ExpectedText}</Table.Cell>
                         <Table.Cell>
                             <Button
@@ -278,7 +265,7 @@ class ServerDetails extends React.Component {
                                 <Button
                                     floated='right'
                                     onClick={() => this.handleToggleShowAllSegments()}
-                                    content={showAllSegments && (scomalerts || webchecks || dismeservices || loadbalancerfarms || windowsservices || websites) ? 'Hide All Segments' : 'Show All Segments'}
+                                    content={ (scomalerts || webchecks || dismeservices || loadbalancerfarms || windowsservices || websites) ? 'Hide All Segments' : 'Show All Segments'}
                                     icon='content'
                                     labelPosition='right'
                                     style={{ fontSize: 'medium', padding: '0.3em', bottom: '0.1em' }} />
