@@ -4,6 +4,7 @@ import { Table, Button, Modal, Tab } from 'semantic-ui-react'
 import moment from 'moment';
 
 import { DISME_SERVICE_PLACEHOLDER, DISME_SERVICE_URL } from '../appConfig';
+import { Link } from 'react-router-dom';
 
 export default class SCOMSegment extends Component {
 
@@ -20,7 +21,7 @@ export default class SCOMSegment extends Component {
     render() {
 
         var data = this.props.data;
-        var mappedData, tableHeader, tableBody, scomModal;
+        var mappedData, tableHeader, tableBody, scomModal, href;
         console.log(data)
 
         if (this.state.showScomModal) {
@@ -101,8 +102,7 @@ export default class SCOMSegment extends Component {
                                         {
                                             data.Services.map(service => {
                                                 return (
-                                                    // href={_.replace(KIBANA_WINLOGBEAT_SERVER_URL, new RegExp(KIBANA_SERVER_URL_PLACEHOLDER, "g"), serverDetails.ServerName)}
-                                                    <a target="_blank" rel="noopener noreferrer" href="http://pica.com" >{service}</a>
+                                                    <Link to={'/service/' + service.Id} target="_blank" />
                                                 )
                                             })
                                         }

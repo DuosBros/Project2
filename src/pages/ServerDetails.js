@@ -17,6 +17,7 @@ import spinner from '../assets/Spinner.svg';
 import BuffedTable from '../components/BuffedTable';
 import SCOMSegment from '../components/SCOMSegment';
 import DismeStatus from '../components/DismeStatus';
+import { Link } from 'react-router-dom';
 
 class ServerDetails extends React.Component {
 
@@ -184,9 +185,10 @@ class ServerDetails extends React.Component {
             servicesTableRows = serverDetails.ServicesFull.map(service => {
                 return (
                     <Table.Row key={service.Id}>
-                        <Table.Cell >{service.Name}</Table.Cell>
-                        {/* TODO: link this to service details */}
-                        <Table.Cell >{service.Shortcut}</Table.Cell>
+                        <Table.Cell>{service.Name}</Table.Cell>
+                        <Table.Cell>
+                            <Link to={'/service/' + service.Id} target="_blank">{service.Shortcut}</Link>
+                        </Table.Cell>
                         <Table.Cell>
                             <Button
                                 onClick={() =>
@@ -294,7 +296,7 @@ class ServerDetails extends React.Component {
                     </Table.Row>
                 )
             })
-            
+
             serverDetailsBody = (
                 <Grid stackable>
                     <Grid.Row>
@@ -304,7 +306,7 @@ class ServerDetails extends React.Component {
                                 <Button
                                     floated='right'
                                     onClick={() => this.handleToggleShowAllSegments()}
-                                    content={showAllSegments && (scomalerts || webchecks || dismeservices || loadbalancerfarms || windowsservices || websites)  ? 'Hide All Segments' : 'Show All Segments'}
+                                    content={showAllSegments && (scomalerts || webchecks || dismeservices || loadbalancerfarms || windowsservices || websites) ? 'Hide All Segments' : 'Show All Segments'}
                                     icon='content'
                                     labelPosition='right'
                                     style={{ fontSize: 'medium', padding: '0.3em', bottom: '0.1em' }} />

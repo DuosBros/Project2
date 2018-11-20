@@ -80,7 +80,7 @@ class LoadBalancerFarmsTasks extends React.Component {
                         )
                     })
                 }
-                
+
                 var modalBody = (
                     <React.Fragment>
                         <Modal.Header>Add or Remove LoadBalancerFarm</Modal.Header>
@@ -91,7 +91,7 @@ class LoadBalancerFarmsTasks extends React.Component {
                                     <Grid.Column>
                                         <Header block attached='top' as='h4'>
                                             Assigned LoadBalancer Farms
-                                </Header>
+                                        </Header>
                                         <Segment attached='bottom'>
                                             <SimpleTable columnProperties={assignedLoadBalancerFarmsTableColumnProperties} body={assignedLoadBalancerFarmsTableRows} />
                                         </Segment>
@@ -99,7 +99,6 @@ class LoadBalancerFarmsTasks extends React.Component {
                                 </Grid.Row>
                             </Grid>
                         </Modal.Content>
-    
                     </React.Fragment>
                 )
             }

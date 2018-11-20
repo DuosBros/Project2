@@ -5,6 +5,7 @@ import Pagination from 'semantic-ui-react-button-pagination';
 import { filterInArrayOfObjects, debounce } from '../utils/HelperFunction';
 import ServerStatus from './ServerStatus';
 import DismeStatus from './DismeStatus';
+import { Link } from 'react-router-dom';
 
 export default class ServerBuffedTable extends Component {
 
@@ -276,7 +277,11 @@ export default class ServerBuffedTable extends Component {
                     {renderData.map(data => {
                         return (
                             <Table.Row key={data.Id}>
-                                <Table.Cell>{data.ServerName}</Table.Cell>
+                                <Table.Cell>
+                                    <Link to={'/server/' + data.Id} target="_blank">
+                                        {data.ServerName}
+                                    </Link>
+                                </Table.Cell>
                                 <Table.Cell>
                                     {<ServerStatus size='small' serverStateId={data.ServerStateID} />}
                                     {<DismeStatus size='small' dismeStatus={data.Disme} />}

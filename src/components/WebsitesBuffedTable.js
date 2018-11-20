@@ -8,6 +8,7 @@ import { groupBy } from '../utils/HelperFunction';
 import ServerStatus from './ServerStatus';
 import DismeStatus from './DismeStatus';
 import { arrayOf } from 'prop-types';
+import { Link } from 'react-router-dom';
 
 export default class WebsitesBuffedTable extends Component {
 
@@ -105,6 +106,7 @@ export default class WebsitesBuffedTable extends Component {
             return (
                 {
                     // Id: website.Id,
+                    ServerId: website.ServerId,
                     ServerName: website.ServerName,
                     Environment: website.Environment,
                     SiteId: website.SiteId,
@@ -182,8 +184,8 @@ export default class WebsitesBuffedTable extends Component {
         if (!_.isEmpty(filterBindings)) {
             filteredData = filteredData.filter(data => {
                 if (data.Bindings.length > 0) {
-                    for(var binding of data.Bindings) {
-                        if(binding.search(new RegExp(filterBindings, "i")) >= 0) {
+                    for (var binding of data.Bindings) {
+                        if (binding.search(new RegExp(filterBindings, "i")) >= 0) {
                             return data
                         }
                     }
@@ -305,14 +307,17 @@ export default class WebsitesBuffedTable extends Component {
                 return (
                     <React.Fragment key={index}>
                         <Table.Row key={key}>
-                            <Table.HeaderCell style={{backgroundColor: '#f2f2f2'}} colSpan='11'>{key}</Table.HeaderCell>
+                            <Table.HeaderCell style={{ backgroundColor: '#f2f2f2' }} colSpan='11'>{key}</Table.HeaderCell>
 
                         </Table.Row>
                         {
                             groupedData[key].map((d, dindex) => {
                                 return (
                                     <Table.Row key={dindex}>
-                                        <Table.Cell>{d.ServerName}</Table.Cell>
+                                        <Link to={'/server/' + d.ServerId} target="_blank">
+                                            {d.ServerName}
+                                        </Link>
+                                        {/* <Table.Cell>{d.ServerName}</Table.Cell> */}
                                         {/* <Table.Cell>{d.Environment}</Table.Cell> */}
                                         <Table.Cell>{d.SiteId}</Table.Cell>
                                         <Table.Cell>{d.AppPoolName}</Table.Cell>
@@ -431,8 +436,7 @@ export default class WebsitesBuffedTable extends Component {
                 </Table.Header>
                 {filterColumnsRow}
                 <Table.Body>
-                    {tableRows
-                    }
+                    {tableRows}
                 </Table.Body>
                 {tableFooter}
             </Table>
