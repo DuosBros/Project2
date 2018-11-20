@@ -1,8 +1,36 @@
 import _ from 'lodash'
 import React, { Component } from 'react'
-import { Table, Input, Button } from 'semantic-ui-react'
+import { Table, Grid, Input, Button } from 'semantic-ui-react'
 import Pagination from 'semantic-ui-react-button-pagination';
 import { filterInArrayOfObjects, debounce } from '../utils/HelperFunction';
+
+const COLUMNS = [
+    {
+        name: "Name",
+        prop: "Name",
+        width: 3
+    },
+    {
+        name: "Pool",
+        prop: "Pool",
+        width: 3
+    },
+    {
+        name: "Port",
+        prop: "Port",
+        width: 1
+    },
+    {
+        name: "IpAddress",
+        prop: "IpAddress",
+        width: 2
+    },
+    {
+        name: "LoadBalancer Name",
+        prop: "LbName",
+        width: 3
+    },
+]
 
 export default class LoadBalancerFarmsBuffedTable extends Component {
 
@@ -17,16 +45,25 @@ export default class LoadBalancerFarmsBuffedTable extends Component {
             defaultLimit: 15,
             multiSearchInput: "",
             showColumnFilters: false,
-            filterLBFarmName: "",
-            filterLBFarmPool: "",
-            filterLBFarmPort: "",
-            filterLBFarmIpAddress: "",
-            filterLBFarmLBName: "",
+            filterInputs: {
+                IpAddress: "",
+                LbName: "",
+                Name: "",
+                Pool: "",
+                Port: "",
+            },
+            filters: {
+                IpAddress: "",
+                LbName: "",
+                Name: "",
+                Pool: "",
+                Port: "",
+            },
             data: this.props.data.LoadBalancerFarms
         }
 
-        this.handleChange = debounce(this.handleChange, 400);
-        this.handleChange = this.handleChange.bind(this)
+        this.updateFilters = debounce(this.updateFilters, 400);
+        this.handleChangeMultisearch = debounce(this.handleChangeMultisearch, 400);
     }
 
     handleSort = clickedColumn => () => {
@@ -35,7 +72,7 @@ export default class LoadBalancerFarmsBuffedTable extends Component {
         if (column !== clickedColumn) {
             this.setState({
                 column: clickedColumn,
-                data: _.sortBy(data, [clickedColumn]),
+                data: _.sortBy(data, [element => element[clickedColumn].toLowerCase()]),
                 direction: 'ascending',
             })
 
@@ -52,18 +89,23 @@ export default class LoadBalancerFarmsBuffedTable extends Component {
         this.setState({ offset });
     }
 
-    handleChange(e, { name, value }) {
-        this.setState({ [name]: value })
+    handleChange = (e, { name, value }) => {
+        let filterInputs = Object.assign({}, this.state.filterInputs, { [name]: value })
+        this.setState({ filterInputs });
+        this.updateFilters();
+    }
+
+    updateFilters = () => {
+        this.setState((prev) => ({ filters: prev.filterInputs }));
+    }
+
+    handleChangeMultisearch = (e, { name, value }) => {
+        this.setState({ multiSearchInput: value });
     }
 
     handleToggleColumnFilters = () => {
-        this.setState({ 
-            showColumnFilters: !this.state.showColumnFilters,
-            filterLBFarmName: "",
-            filterLBFarmPool: "",
-            filterLBFarmPort: "",
-            filterLBFarmIpAddress: "",
-            filterLBFarmLBName: ""
+        this.setState({
+            showColumnFilters: !this.state.showColumnFilters
          });
     }
 
@@ -95,34 +137,14 @@ export default class LoadBalancerFarmsBuffedTable extends Component {
             filteredData = data
         }
 
-        if(!_.isEmpty(filterLBFarmIpAddress)) {
-            filteredData = filteredData.filter(data => {
-                return data.IpAddress.search(new RegExp(filterLBFarmIpAddress, "i")) >= 0
-            })
-        }
-
-        if(!_.isEmpty(filterLBFarmLBName)) {
-            filteredData = filteredData.filter(data => {
-                return data.LbName.search(new RegExp(filterLBFarmLBName, "i")) >= 0
-            })
-        }
-
-        if(!_.isEmpty(filterLBFarmName)) {
-            filteredData = filteredData.filter(data => {
-                return data.Name.search(new RegExp(filterLBFarmName, "i")) >= 0
-            })
-        }
-
-        if(!_.isEmpty(filterLBFarmPool)) {
-            filteredData = filteredData.filter(data => {
-                return data.Pool.search(new RegExp(filterLBFarmPool, "i")) >= 0
-            })
-        }
-
-        if(!_.isEmpty(filterLBFarmPort)) {
-            filteredData = filteredData.filter(data => {
-                return data.Port.search(new RegExp(filterLBFarmPort, "i")) >= 0
-            })
+        if(this.state.showColumnFilters) {
+            for(let col of Object.getOwnPropertyNames(this.state.filters)) {
+                if(!_.isEmpty(this.state.filters[col])) {
+                    filteredData = filteredData.filter(data => {
+                        return data[col].search(new RegExp(this.state.filters[col], "i")) >= 0
+                    })
+                }
+            }
         }
 
         if (filteredData.length > defaultLimit) {
@@ -154,87 +176,51 @@ export default class LoadBalancerFarmsBuffedTable extends Component {
         }
 
         if (showColumnFilters) {
+            let headerFilterCells = COLUMNS.map(c => (
+                <Table.HeaderCell width={c.width} key={c.prop}>
+                    <Input fluid name={c.name} onChange={this.handleChange} value={this.state.filterInputs[c.prop]} />
+                </Table.HeaderCell>
+            ))
             filterColumnsRow = (
                 <Table.Header>
-                    <Table.Row>
-                        <Table.HeaderCell width={3}>
-                            <Input fluid name='filterLBFarmName' onChange={this.handleChange} />
-                        </Table.HeaderCell>
-                        <Table.HeaderCell width={3}>
-                            <Input fluid name='filterLBFarmPool' onChange={this.handleChange} />
-                        </Table.HeaderCell>
-                        <Table.HeaderCell width={1}>
-                            <Input fluid name='filterLBFarmPort' onChange={this.handleChange} />
-                        </Table.HeaderCell>
-                        <Table.HeaderCell width={2}>
-                            <Input fluid name='filterLBFarmIpAddress' onChange={this.handleChange} />
-                        </Table.HeaderCell>
-                        <Table.HeaderCell width={3}>
-                            <Input fluid name='filterLBFarmLBName' onChange={this.handleChange} />
-                        </Table.HeaderCell>
-                    </Table.Row>
+                    <Table.Row>{headerFilterCells}</Table.Row>
                 </Table.Header>
             )
         }
         else {
-            filterColumnsRow = <Table.Header></Table.Header>
+            filterColumnsRow = null
         }
+        let headerCells = COLUMNS.map(c => (
+            <Table.HeaderCell
+                width={c.width}
+                sorted={column === c.prop ? direction : null}
+                onClick={this.handleSort(c.prop)}
+                content={c.name}
+            />
+        ))
         return (
+            <>
+            <Grid>
+                <Grid.Column floated='left' width={8}>
+                    <Input placeholder="Type to search..." name="multiSearchInput" onChange={this.handleChangeMultisearch} ></Input>
+                </Grid.Column>
+                <Grid.Column floated='right' width={8} textAlign="right">
+                    Showing {this.state.offset + 1} to {filteredData.length < defaultLimit ? filteredData.length : this.state.offset + 15} of {filteredData.length} entries
+                    <br />
+                    <Button
+                        size="small"
+                        onClick={() => this.handleToggleColumnFilters()}
+                        compact
+                        content={showColumnFilters ? 'Hide Column Filters' : 'Show Column Filters'}
+                        style={{ padding: '0.3em', marginTop: '0.5em' }}
+                        id="secondaryButton"
+                        icon={showColumnFilters ? 'eye slash' : 'eye'}
+                        labelPosition='left' />
+                </Grid.Column>
+            </Grid>
             <Table striped sortable celled basic='very'>
                 <Table.Header>
-                    <Table.Row>
-                        <Table.HeaderCell colSpan={2} textAlign="left">
-                            <Input placeholder="Type to search..." name="multiSearchInput" onChange={this.handleChange} ></Input>
-                        </Table.HeaderCell>
-                        <Table.HeaderCell colSpan={3} textAlign="right">
-                            Showing {this.state.offset + 1} to {filteredData.length < defaultLimit ? filteredData.length : this.state.offset + 15} of {filteredData.length} entries
-                            <br />
-                            <Button
-                                
-                                size="small"
-                                onClick={() => this.handleToggleColumnFilters()}
-                                compact
-                                content={showColumnFilters ? 'Hide Column Filters' : 'Show Column Filters'}
-                                style={{ padding: '0.3em', marginTop: '0.5em' }}
-                                id="secondaryButton"
-                                icon={showColumnFilters ? 'eye slash' : 'eye'}
-                                labelPosition='left' />
-                        </Table.HeaderCell>
-                    </Table.Row>
-                </Table.Header>
-                <Table.Header>
-                    <Table.Row>
-                        <Table.HeaderCell
-                            width={3}
-                            sorted={column === 'name' ? direction : null}
-                            onClick={this.handleSort('Name')}
-                            content='Name'
-                        />
-                        <Table.HeaderCell
-                            width={3}
-                            sorted={column === 'pool' ? direction : null}
-                            onClick={this.handleSort('Pool')}
-                            content='Pool'
-                        />
-                        <Table.HeaderCell
-                            width={1}
-                            sorted={column === 'port' ? direction : null}
-                            onClick={this.handleSort('Port')}
-                            content='Port'
-                        />
-                        <Table.HeaderCell
-                            width={2}
-                            sorted={column === 'ipaddress' ? direction : null}
-                            onClick={this.handleSort('IpAddress')}
-                            content='IpAddress'
-                        />
-                        <Table.HeaderCell
-                            width={3}
-                            sorted={column === 'lbname' ? direction : null}
-                            onClick={this.handleSort('LbName')}
-                            content='LoadBalancer Name'
-                        />
-                    </Table.Row>
+                    <Table.Row>{headerCells}</Table.Row>
                 </Table.Header>
                 {filterColumnsRow}
                 <Table.Body>
@@ -250,6 +236,7 @@ export default class LoadBalancerFarmsBuffedTable extends Component {
                 </Table.Body>
                 {tableFooter}
             </Table>
+            </>
         )
     }
 }
