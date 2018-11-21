@@ -26,102 +26,101 @@ export default class SCOMSegment extends Component {
 
         if (this.state.showScomModal) {
 
-            var counter = 0;
-            var panes = data.map(alert => {
-                counter++
+            var panes = data.map((alert, index) => {
                 return ({
-                    menuItem: counter + ". SCOM Alert",
-                    render: () => <Tab.Pane attached={false} key={counter}>
-                        <Table>
-                            <Table.Header>
-                                <Table.Row>
-                                    <Table.HeaderCell width={2} content='Property' />
-                                    <Table.HeaderCell width={5} content='Value' />
-                                </Table.Row>
-                            </Table.Header>
-                            <Table.Body>
-                                <Table.Row>
-                                    <Table.Cell content='Alert Guid' />
-                                    <Table.Cell >{data.AlertGuid}</Table.Cell>
-                                </Table.Row>
-                                <Table.Row>
-                                    <Table.Cell content='Alert Description' />
-                                    <Table.Cell >{data.AlertDescription}</Table.Cell>
-                                </Table.Row>
-                                <Table.Row>
-                                    <Table.Cell content='Alert Object' />
-                                    <Table.Cell >{data.AlertObject}</Table.Cell>
-                                </Table.Row>
-                                <Table.Row>
-                                    <Table.Cell content='Category' />
-                                    <Table.Cell >{data.Category}</Table.Cell>
-                                </Table.Row>
+                    menuItem: (index + 1) + ". SCOM Alert",
+                    render: () =>
+                        <Tab.Pane attached={false} key={index}>
+                            <Table>
+                                <Table.Header>
+                                    <Table.Row>
+                                        <Table.HeaderCell width={2} content='Property' />
+                                        <Table.HeaderCell width={5} content='Value' />
+                                    </Table.Row>
+                                </Table.Header>
+                                <Table.Body>
+                                    <Table.Row>
+                                        <Table.Cell content='Alert Guid' />
+                                        <Table.Cell >{alert.AlertGuid}</Table.Cell>
+                                    </Table.Row>
+                                    <Table.Row>
+                                        <Table.Cell content='Alert Description' />
+                                        <Table.Cell >{alert.AlertDescription}</Table.Cell>
+                                    </Table.Row>
+                                    <Table.Row>
+                                        <Table.Cell content='Alert Object' />
+                                        <Table.Cell >{alert.AlertObject}</Table.Cell>
+                                    </Table.Row>
+                                    <Table.Row>
+                                        <Table.Cell content='Category' />
+                                        <Table.Cell >{alert.Category}</Table.Cell>
+                                    </Table.Row>
 
-                                <Table.Row>
-                                    <Table.Cell content='Disme IDs' />
-                                    <Table.Cell >
-                                        {
-                                            data.DismeIds.map(dismeId => {
-                                                return (
-                                                    <Button
-                                                        onClick={() =>
-                                                            window.open(
-                                                                _.replace(DISME_SERVICE_URL, new RegExp(DISME_SERVICE_PLACEHOLDER, "g"),
-                                                                    dismeId))}
-                                                        style={{ padding: '0.3em' }}
-                                                        size='medium'
-                                                        icon='external' />
-                                                )
-                                            })
-                                        }
-                                    </Table.Cell>
-                                </Table.Row>
-                                <Table.Row>
-                                    <Table.Cell content='Display Name' />
-                                    <Table.Cell >{data.DisplayName}</Table.Cell>
-                                </Table.Row>
-                                <Table.Row>
-                                    <Table.Cell content='Environment' />
-                                    <Table.Cell >{data.Environment}</Table.Cell>
-                                </Table.Row>
-                                <Table.Row>
-                                    <Table.Cell content='Hostname' />
-                                    <Table.Cell >{data.Hostname}</Table.Cell>
-                                </Table.Row>
-                                <Table.Row>
-                                    <Table.Cell content='Raised DateTime' />
-                                    <Table.Cell >{moment(data.RaisedDateTime).local().format("HH:mm:ss DD.MM.YYYY")}</Table.Cell>
-                                </Table.Row>
-                                <Table.Row>
-                                    <Table.Cell content='Hostname' />
-                                    <Table.Cell >{data.Hostname}</Table.Cell>
-                                </Table.Row>
-                                <Table.Row>
-                                    <Table.Cell content='Services' />
-                                    <Table.Cell >
-                                        {
-                                            data.Services.map(service => {
-                                                return (
-                                                    <Link to={'/service/' + service.Id} target="_blank" />
-                                                )
-                                            })
-                                        }
-                                    </Table.Cell>
-                                </Table.Row>
-                                <Table.Row>
-                                    <Table.Cell content='StateSetDateTime' />
-                                    <Table.Cell >{data.StateSetDateTime}</Table.Cell>
-                                </Table.Row>
-                                <Table.Row>
-                                    <Table.Cell content='Note' />
-                                    <Table.Cell >{data.TicketId}</Table.Cell>
-                                </Table.Row>
-                                
-                            </Table.Body>
-                        </Table>
-                    </Tab.Pane>
-                }
-                )
+                                    <Table.Row>
+                                        <Table.Cell content='Disme IDs' />
+                                        <Table.Cell >
+                                            {
+                                                alert.DismeIds.map(dismeId => {
+                                                    return (
+                                                        <Button
+                                                            key={dismeId}
+                                                            onClick={() =>
+                                                                window.open(
+                                                                    _.replace(DISME_SERVICE_URL, new RegExp(DISME_SERVICE_PLACEHOLDER, "g"),
+                                                                        dismeId))}
+                                                            style={{ padding: '0.3em' }}
+                                                            size='medium'
+                                                            icon='external' />
+                                                    )
+                                                })
+                                            }
+                                        </Table.Cell>
+                                    </Table.Row>
+                                    <Table.Row>
+                                        <Table.Cell content='Display Name' />
+                                        <Table.Cell >{alert.DisplayName}</Table.Cell>
+                                    </Table.Row>
+                                    <Table.Row>
+                                        <Table.Cell content='Environment' />
+                                        <Table.Cell >{alert.Environment}</Table.Cell>
+                                    </Table.Row>
+                                    <Table.Row>
+                                        <Table.Cell content='Hostname' />
+                                        <Table.Cell >{alert.Hostname}</Table.Cell>
+                                    </Table.Row>
+                                    <Table.Row>
+                                        <Table.Cell content='Raised DateTime' />
+                                        <Table.Cell >{moment(alert.RaisedDateTime).local().format("HH:mm:ss DD.MM.YYYY")}</Table.Cell>
+                                    </Table.Row>
+                                    <Table.Row>
+                                        <Table.Cell content='Hostname' />
+                                        <Table.Cell >{alert.Hostname}</Table.Cell>
+                                    </Table.Row>
+                                    <Table.Row>
+                                        <Table.Cell content='Services' />
+                                        <Table.Cell >
+                                            {
+                                                alert.Services.map((service, index) => {
+                                                    return (
+                                                        <Link key={index} to={'/service/' + service.Id} target="_blank" />
+                                                    )
+                                                })
+                                            }
+                                        </Table.Cell>
+                                    </Table.Row>
+                                    <Table.Row>
+                                        <Table.Cell content='StateSetDateTime' />
+                                        <Table.Cell >{alert.StateSetDateTime}</Table.Cell>
+                                    </Table.Row>
+                                    <Table.Row>
+                                        <Table.Cell content='Note' />
+                                        <Table.Cell >{alert.TicketId}</Table.Cell>
+                                    </Table.Row>
+
+                                </Table.Body>
+                            </Table>
+                        </Tab.Pane>
+                })
             })
 
             scomModal = (
@@ -179,7 +178,15 @@ export default class SCOMSegment extends Component {
         }
         else {
             if (_.isEmpty(data)) {
-
+                tableBody = (
+                    <Table.Body>
+                        <Table.Row colSpan={2}>
+                            <Table.Cell>
+                                No SCOM Alerts
+                            </Table.Cell>
+                        </Table.Row>
+                    </Table.Body>
+                )
             }
             else {
                 data = data[0]
@@ -224,13 +231,17 @@ export default class SCOMSegment extends Component {
                 {scomModal}
                 {tableHeader}
                 {tableBody}
-                <Table.Footer fullWidth>
-                    <Table.Row>
-                        <Table.HeaderCell colSpan='5'>
-                            <Button onClick={() => this.handleOpenScomAlerts(data)} floated="right">Show More</Button>
-                        </Table.HeaderCell>
-                    </Table.Row>
-                </Table.Footer>
+                {
+                    _.isEmpty(data) ? (null) : (
+                        <Table.Footer fullWidth>
+                            <Table.Row>
+                                <Table.HeaderCell colSpan='5'>
+                                    <Button onClick={() => this.handleOpenScomAlerts(data)} floated="right">Show More</Button>
+                                </Table.HeaderCell>
+                            </Table.Row>
+                        </Table.Footer>)
+                }
+
             </Table>
         )
     }

@@ -11,7 +11,10 @@ import spinner from '../assets/Spinner.svg';
 import SimpleTable from '../components/SimpleTable';
 import ServerBuffedTable from '../components/ServerBuffedTable';
 import WebsitesBuffedTable from '../components/WebsitesBuffedTable';
+import LBPoolStatus from '../components/LBPoolStatus';
+import VsStatus from '../components/VsStatus';
 import { isAdmin } from '../utils/HelperFunction';
+import LoadBalancerFarmsBuffedTable from '../components/LoadBalancerFarmsBuffedTable';
 
 class ServiceDetails extends React.Component {
     constructor(props) {
@@ -76,57 +79,10 @@ class ServiceDetails extends React.Component {
         console.log(this.props.serviceStore.serviceDetails)
 
         var serviceDetails = this.props.serviceStore.serviceDetails;
-        var serviceDetailsBody, assignedLoadBalancerFarmsTableColumnProperties,
-            serversTableColumnProperties, serversTableRows, assignedLoadBalancerFarmsTableRows;
+        var serviceDetailsBody ;
         const { showAllSegments, assignedLoadBalancerFarms, servers, websites } = this.state;
 
         if (!_.isEmpty(serviceDetails)) {
-            assignedLoadBalancerFarmsTableColumnProperties = [
-                {
-                    name: "Name",
-                    width: 4,
-                },
-                {
-                    name: "Pool",
-                    width: 4,
-                },
-                {
-                    name: "Port",
-                    width: 1,
-                },
-                {
-                    name: "IpAddress",
-                    width: 2,
-                },
-                {
-                    name: "LoadBalancer",
-                    width: 2,
-                },
-                {
-                    name: "LBId",
-                    width: 1,
-                }
-            ]
-
-            if (_.isEmpty(serviceDetails.LbFarms)) {
-                assignedLoadBalancerFarmsTableRows = (
-                    <Table.Row></Table.Row>
-                )
-            }
-            else {
-                assignedLoadBalancerFarmsTableRows = serviceDetails.LbFarms.map(lbfarm => {
-                    return (
-                        <Table.Row key={lbfarm.Id}>
-                            <Table.Cell>{lbfarm.Name}</Table.Cell>
-                            <Table.Cell>{lbfarm.Pool}</Table.Cell>
-                            <Table.Cell>{lbfarm.Port}</Table.Cell>
-                            <Table.Cell>{lbfarm.IpAddress}</Table.Cell>
-                            <Table.Cell>{lbfarm.LbName}</Table.Cell>
-                            <Table.Cell>{lbfarm.LbId}</Table.Cell>
-                        </Table.Row>
-                    )
-                })
-            }
 
             serviceDetailsBody = (
                 <Grid stackable>
@@ -134,7 +90,7 @@ class ServiceDetails extends React.Component {
                         <Grid.Column>
                             <Header block attached='top' as='h4'>
                                 Service Info - {serviceDetails.Service[0].Shortcut}
-                                    <Button
+                                <Button
                                     floated='right'
                                     onClick={() => this.handleToggleShowAllSegments()}
                                     content={showAllSegments && (assignedLoadBalancerFarms || servers || websites) ? 'Hide All Segments' : 'Show All Segments'}
@@ -176,7 +132,7 @@ class ServiceDetails extends React.Component {
                             {
                                 assignedLoadBalancerFarms ? (
                                     <Segment attached='bottom'>
-                                        <SimpleTable columnProperties={assignedLoadBalancerFarmsTableColumnProperties} body={assignedLoadBalancerFarmsTableRows} />
+                                        <LoadBalancerFarmsBuffedTable data={serviceDetails.LbFarms} />
                                     </Segment>
                                 ) : (
                                         <div></div>

@@ -59,7 +59,7 @@ export default class LoadBalancerFarmsBuffedTable extends Component {
                 Pool: "",
                 Port: "",
             },
-            data: this.props.data.LoadBalancerFarms
+            data: this.props.data
         }
 
         this.updateFilters = debounce(this.updateFilters, 400);
@@ -192,6 +192,7 @@ export default class LoadBalancerFarmsBuffedTable extends Component {
         }
         let headerCells = COLUMNS.map(c => (
             <Table.HeaderCell
+                key={c.prop}
                 width={c.width}
                 sorted={column === c.prop ? direction : null}
                 onClick={this.handleSort(c.prop)}

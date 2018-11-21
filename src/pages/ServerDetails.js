@@ -27,7 +27,7 @@ class ServerDetails extends React.Component {
         this.state = {
             websites: true,
             dismeservices: true,
-            scomalerts: this.props.serverStore.scomAlerts > 0 ? true : false,
+            scomalerts: this.props.serverStore.scomAlerts.length > 0 ? true : false,
             loadbalancerfarms: true,
             windowsservices: true,
             webchecks: true,
@@ -265,7 +265,7 @@ class ServerDetails extends React.Component {
                                 <Button
                                     floated='right'
                                     onClick={() => this.handleToggleShowAllSegments()}
-                                    content={ (scomalerts || webchecks || dismeservices || loadbalancerfarms || windowsservices || websites) ? 'Hide All Segments' : 'Show All Segments'}
+                                    content={(scomalerts || webchecks || dismeservices || loadbalancerfarms || windowsservices || websites) ? 'Hide All Segments' : 'Show All Segments'}
                                     icon='content'
                                     labelPosition='right'
                                     style={{ fontSize: 'medium', padding: '0.3em', bottom: '0.1em' }} />
@@ -341,7 +341,7 @@ class ServerDetails extends React.Component {
                                             {serverDetails.PatchGroupName ? (serverDetails.PatchGroupName) : ('Exclude ') + serverDetails.PatchID}
                                             <br />
                                             {/* {serverStatusComponent} */}
-                                            <ServerStatus serverStateId={serverDetails.ServerStateID} />
+                                            <ServerStatus serverState={serverDetails.ServerState} />
                                             <br />
                                             <DismeStatus dismeStatus={serverDetails.Disme} />
                                         </Grid.Column>
@@ -425,29 +425,26 @@ class ServerDetails extends React.Component {
                                     )
                             }
                         </Grid.Column>
-                        {scomAlerts.length > 0 ? (
-                            <Grid.Column width={10}>
-                                <Header
-                                    block
-                                    attached='top'
-                                    as='h4'
-                                    style={{ backgroundColor: errorColor }}>
-                                    SCOM Alerts
+                        <Grid.Column width={scomAlerts.length > 0 ? 10 : 5}>
+                            <Header
+                                block
+                                attached='top'
+                                as='h4'
+                                style={{ backgroundColor: scomAlerts.length > 0  ? errorColor : {}}}>
+                                SCOM Alerts
                                     <Button onClick={() => this.handleToggleShowingContent("scomalerts")} floated='right' icon='content' />
-                                </Header>
-                                <Segment attached='bottom'>
-                                    <SCOMSegment data={scomAlerts} />
-                                </Segment>
-                            </Grid.Column>
-                        ) : (
-                                <Grid.Column width={5}>
-                                    <Header block attached='top' as='h4'>
-                                        SCOM Alerts
-                                    </Header>
-                                </Grid.Column>
-                            )}
+                            </Header>
+                            {
+                                scomalerts ? (
+                                    <Segment attached='bottom'>
+                                        <SCOMSegment data={scomAlerts} />
+                                    </Segment>
 
-
+                                ) : (
+                                    <div></div>
+                                )
+                            }
+                        </Grid.Column>
                     </Grid.Row>
                     <Grid.Row>
                         <Grid.Column>
@@ -476,7 +473,7 @@ class ServerDetails extends React.Component {
                             {
                                 loadbalancerfarms ? (
                                     <Segment attached='bottom'>
-                                        <LoadBalancerFarmsBuffedTable data={serverDetails} />
+                                        <LoadBalancerFarmsBuffedTable data={serverDetails.LoadBalancerFarms} />
                                     </Segment>
                                 ) : (
                                         <div></div>
