@@ -12,7 +12,7 @@ export default class VsStatus extends Component {
                 size={this.props.size} 
                 color={getAvailabiltyAndEnabledState(state.VsAvailabilityState, state.VsEnabledState)} 
                 horizontal>
-                {state.VsAvailabilityState | state.VsEnabledState}
+                {state.VsAvailabilityState ? state.VsAvailabilityState : "no data"} <br/> {state.VsEnabledState ? state.VsEnabledState : "no data"}
             </Label>
         )
     }

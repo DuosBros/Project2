@@ -11,7 +11,7 @@ export default class LBPoolStatus extends Component {
                 size={this.props.size} 
                 color={getAvailabiltyAndEnabledState(state.PoolAvailabilityState, state.PoolEnabledState)} 
                 horizontal>
-                {state.PoolAvailabilityState | state.PoolEnabledState}
+                {state.PoolAvailabilityState ? state.PoolAvailabilityState : "no data"} <br /> {state.PoolEnabledState ? state.PoolEnabledState : "no data"}
             </Label>
         )
     }

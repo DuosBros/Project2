@@ -3,17 +3,29 @@ import React, { Component } from 'react'
 import { Table, Grid, Input, Button } from 'semantic-ui-react'
 import Pagination from 'semantic-ui-react-button-pagination';
 import { filterInArrayOfObjects, debounce } from '../utils/HelperFunction';
+import VsStatus from './VsStatus';
+import LBPoolStatus from './LBPoolStatus';
 
 const COLUMNS = [
     {
         name: "Name",
         prop: "Name",
-        width: 3
+        width: 2
     },
     {
         name: "Pool",
         prop: "Pool",
-        width: 3
+        width: 2
+    },
+    {
+        name: "VsStatus",
+        prop: "VsStatus",
+        width: 1
+    },
+    {
+        name: "PoolStatus",
+        prop: "PoolStatus",
+        width: 1
     },
     {
         name: "Port",
@@ -50,6 +62,8 @@ export default class LoadBalancerFarmsBuffedTable extends Component {
                 LbName: "",
                 Name: "",
                 Pool: "",
+                PoolStatus: "",
+                VsStatus: "",
                 Port: "",
             },
             filters: {
@@ -57,8 +71,11 @@ export default class LoadBalancerFarmsBuffedTable extends Component {
                 LbName: "",
                 Name: "",
                 Pool: "",
+                PoolStatus: "",
+                VsStatus: "",
                 Port: "",
             },
+
             data: this.props.data
         }
 
@@ -111,9 +128,7 @@ export default class LoadBalancerFarmsBuffedTable extends Component {
 
     render() {
 
-        const { column, direction, multiSearchInput, defaultLimit, showColumnFilters,
-        filterLBFarmIpAddress, filterLBFarmLBName, filterLBFarmName, filterLBFarmPool, filterLBFarmPort, data } = this.state
-        // var data = this.props.data.LoadBalancerFarms
+        const { column, direction, multiSearchInput, defaultLimit, showColumnFilters, data, filters, offset } = this.state
 
         var renderData, tableFooter, filteredData, filterColumnsRow;
 
@@ -137,18 +152,18 @@ export default class LoadBalancerFarmsBuffedTable extends Component {
             filteredData = data
         }
 
-        if(this.state.showColumnFilters) {
-            for(let col of Object.getOwnPropertyNames(this.state.filters)) {
-                if(!_.isEmpty(this.state.filters[col])) {
+        if(showColumnFilters) {
+            for(let col of Object.getOwnPropertyNames(filters)) {
+                if(!_.isEmpty(filters[col])) {
                     filteredData = filteredData.filter(data => {
-                        return data[col].search(new RegExp(this.state.filters[col], "i")) >= 0
+                        return data[col].search(new RegExp(filters[col], "i")) >= 0
                     })
                 }
             }
         }
 
         if (filteredData.length > defaultLimit) {
-            renderData = filteredData.slice(this.state.offset, this.state.offset + defaultLimit)
+            renderData = filteredData.slice(offset, offset + defaultLimit)
             tableFooter = (
                 <Table.Footer fullWidth>
                     <Table.Row>
@@ -158,10 +173,10 @@ export default class LoadBalancerFarmsBuffedTable extends Component {
                                 reduced
                                 size="small"
                                 floated="right"
-                                offset={this.state.offset}
+                                offset={offset}
                                 limit={defaultLimit}
                                 total={filteredData.length}
-                                onClick={(e, props, offset) => this.handleClick(offset)}
+                                onClick={(e, props, o) => this.handleClick(o)}
                             />
                         </Table.HeaderCell>
                     </Table.Row>
@@ -171,7 +186,7 @@ export default class LoadBalancerFarmsBuffedTable extends Component {
         else {
             renderData = filteredData
             tableFooter = (
-                <Table.Footer></Table.Footer>
+                null
             )
         }
 
@@ -219,19 +234,25 @@ export default class LoadBalancerFarmsBuffedTable extends Component {
                         labelPosition='left' />
                 </Grid.Column>
             </Grid>
-            <Table striped sortable celled basic='very'>
+            <Table selectable sortable celled basic='very'>
                 <Table.Header>
                     <Table.Row>{headerCells}</Table.Row>
                 </Table.Header>
                 {filterColumnsRow}
                 <Table.Body>
-                    {_.map(renderData, ({ Id, Name, Pool, Port, IpAddress, LbName }) => (
-                        <Table.Row key={Id}>
-                            <Table.Cell>{Name}</Table.Cell>
-                            <Table.Cell>{Pool}</Table.Cell>
-                            <Table.Cell>{Port}</Table.Cell>
-                            <Table.Cell>{IpAddress}</Table.Cell>
-                            <Table.Cell>{LbName}</Table.Cell>
+                    {renderData.map(data => (
+                        <Table.Row key={data.Id}>
+                            <Table.Cell>{data.Name}</Table.Cell>
+                            <Table.Cell>{data.Pool}</Table.Cell>
+                            <Table.Cell>
+                                <VsStatus state={data}/>
+                            </Table.Cell>
+                            <Table.Cell>
+                                <LBPoolStatus state={data}/>
+                            </Table.Cell>
+                            <Table.Cell>{data.Port}</Table.Cell>
+                            <Table.Cell>{data.IpAddress}</Table.Cell>
+                            <Table.Cell>{data.LbName}</Table.Cell>
                         </Table.Row>
                     ))}
                 </Table.Body>
