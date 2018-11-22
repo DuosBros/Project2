@@ -111,6 +111,7 @@ class Header extends React.Component {
                                 onChange={this.handleServerChange}
                                 options={this.props.headerStore.searchServerResult.slice(0, 15)}
                                 fluid
+                                selectOnBlur={false}
                                 selectOnNavigation={false}
                                 placeholder='Press &apos;q&apos; to search a server'
                                 value=""
@@ -127,6 +128,7 @@ class Header extends React.Component {
                                 onChange={this.handleServiceChange}
                                 options={this.props.headerStore.searchServiceShortcutsResult.slice(0, 10)}
                                 fluid
+                                selectOnBlur={false}
                                 selectOnNavigation={false}
                                 placeholder='Press &apos;w&apos; to search a service'
                                 value=""
