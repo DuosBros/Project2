@@ -271,112 +271,79 @@ class ServerDetails extends React.Component {
                                     style={{ fontSize: 'medium', padding: '0.3em', bottom: '0.1em' }} />
                             </Header>
                             <Segment attached>
-                                <Grid columns={4}>
-                                    <Grid.Row>
-                                        <Grid.Column width={3}>
-                                            <b>Server Name:</b>
-                                            <br />
-                                            <b>IP:</b>
-                                        </Grid.Column>
-                                        <Grid.Column width={5}>
-                                            {serverDetails.ServerName}
-                                            <br />
-                                            {ips}
-                                        </Grid.Column>
-                                        <Divider vertical section />
-                                        <Grid.Column width={3}>
-                                            <b>Stage:</b>
-                                            <br />
-                                            <b>Environment:</b>
-                                            <br />
-                                            <b>Datacenter:</b>
-                                            <br />
-                                            <b>Country:</b>
-                                        </Grid.Column>
-                                        <Grid.Column width={5}>
-                                            {serverDetails.Stage}
-                                            <br />
-                                            {serverDetails.Environment}
-                                            <br />
-                                            {serverDetails.DataCenter}
-                                            <br />
-                                            {serverDetails.CountryName}
-                                        </Grid.Column>
-                                    </Grid.Row>
-                                    <Grid.Row>
-                                        <Grid.Column width={3}>
-                                            <b>FQDN:</b>
-                                            <br />
-                                            <b>Domain:</b>
-                                        </Grid.Column>
-                                        <Grid.Column width={5}>
-                                            {serverDetails.FQDN}
-                                            <br />
-                                            {serverDetails.Domain}
-                                        </Grid.Column>
-                                        <Grid.Column width={3}><b>Kibana:</b></Grid.Column>
-                                        <Grid.Column>
-                                            <a target="_blank" rel="noopener noreferrer" href={_.replace(KIBANA_WINLOGBEAT_SERVER_URL, new RegExp(KIBANA_SERVER_URL_PLACEHOLDER, "g"), serverDetails.ServerName)}>Eventlog </a> <br />
-                                            <a target="_blank" rel="noopener noreferrer" href={_.replace(KIBANA_PERFCOUNTER_SERVER_URL, new RegExp(KIBANA_SERVER_URL_PLACEHOLDER, "g"), serverDetails.ServerName)}>PerfCounter </a>
-                                        </Grid.Column>
-                                    </Grid.Row>
-                                    <Grid.Row>
-                                        <Grid.Column width={3}>
-                                            <b>OS:</b>
-                                            <br />
-                                            <b>Server Owner:</b>
-                                            <br />
-                                            <b>PatchGroup:</b>
-                                            <br />
-                                            <b>State:</b>
-                                            <br />
-                                            <b>Disme:</b>
-                                        </Grid.Column>
-                                        <Grid.Column width={5}>
-                                            {OSIcon}
-                                            {serverDetails.OperatingSystem}
-                                            <br />
-                                            {serverDetails.ServerOwner}
-                                            <br />
-                                            {serverDetails.PatchGroupName ? (serverDetails.PatchGroupName) : ('Exclude ') + serverDetails.PatchID}
-                                            <br />
-                                            {/* {serverStatusComponent} */}
-                                            <ServerStatus serverState={serverDetails.ServerState} />
-                                            <br />
-                                            <DismeStatus dismeStatus={serverDetails.Disme} />
-                                        </Grid.Column>
-                                        <Grid.Column width={3}>
-                                            <b>Cloud:</b>
-                                            <br />
-                                            <b>CPU:</b>
-                                            <br />
-                                            <b>Memory:</b>
-                                            <br />
-                                            <b>Network:</b>
-                                            <br />
-                                            <b>Availability Set:</b>
-                                        </Grid.Column>
-                                        <Grid.Column width={5}>
-                                            {serverDetails.VM ? serverDetails.VM.Cloud : ""}
-                                            <br />
-                                            {serverDetails.VM ? serverDetails.VM.CPUCount : ""}
-                                            <br />
-                                            {serverDetails.VM ? serverDetails.VM.Memory : ""}
-                                            <br />
-                                            {serverDetails.VM ? serverDetails.VM.VMNetwork : ""}
-                                            <br />
-                                            {serverDetails.VM ? serverDetails.VM.AvailabilitySet : ""}
-                                        </Grid.Column>
-                                    </Grid.Row>
-
-                                </Grid>
                                 <Grid stackable>
                                     <Grid.Row>
-                                        <Grid.Column width={3}>
-                                            <b>AD Path:</b>
+                                        <Grid.Column width={8}>
+                                            <dl class="dl-horizontal">
+                                                <dt>Server Name:</dt>
+                                                <dd>{serverDetails.ServerName}</dd>
+                                            </dl>
+                                            <dl class="dl-horizontal">
+                                                <dt>IP:</dt>
+                                                <dd>{ips}</dd>
+                                            </dl>
+
+                                            <dl class="dl-horizontal">
+                                                <dt>Stage:</dt>
+                                                <dd>{serverDetails.Stage}</dd>
+                                                <dt>Environment:</dt>
+                                                <dd>{serverDetails.Environment}</dd>
+                                                <dt>Datacenter:</dt>
+                                                <dd>{serverDetails.DataCenter}</dd>
+                                                <dt>Country:</dt>
+                                                <dd>{serverDetails.CountryName}</dd>
+                                            </dl>
+
+                                            <dl class="dl-horizontal">
+                                                <dt>FQDN:</dt>
+                                                <dd>{serverDetails.FQDN}</dd>
+                                                <dt>Domain:</dt>
+                                                <dd>{serverDetails.Domain}</dd>
+                                            </dl>
+
+                                            <dl class="dl-horizontal">
+                                                <dt>OS:</dt>
+                                                <dd>{OSIcon} {serverDetails.OperatingSystem}</dd>
+                                            </dl>
                                         </Grid.Column>
-                                        <Grid.Column width={14} style={{ wordWrap: 'break-word' }} >
-                                            {serverDetails.ADPath}
+                                        <Grid.Column width={8}>
+                                            <dl class="dl-horizontal">
+                                                <dt>Server Owner:</dt>
+                                                <dd>{serverDetails.ServerOwner}</dd>
+                                                <dt>PatchGroup:</dt>
+                                                <dd>{serverDetails.PatchGroupName ? (serverDetails.PatchGroupName) : ('Exclude ') + serverDetails.PatchID}</dd>
+                                                <dt>State:</dt>
+                                                <dd><ServerStatus serverState={serverDetails.ServerState} /></dd>
+                                                <dt>Disme:</dt>
+                                                <dd><DismeStatus dismeStatus={serverDetails.Disme} /></dd>
+                                            </dl>
+
+                                            <dl class="dl-horizontal">
+                                                <dt>Cloud:</dt>
+                                                <dd>{serverDetails.VM ? serverDetails.VM.Cloud : ""}</dd>
+                                                <dt>CPU:</dt>
+                                                <dd>{serverDetails.VM ? serverDetails.VM.CPUCount : ""}</dd>
+                                                <dt>Memory:</dt>
+                                                <dd>{serverDetails.VM ? serverDetails.VM.Memory : ""}</dd>
+                                                <dt>Network:</dt>
+                                                <dd>{serverDetails.VM ? serverDetails.VM.VMNetwork : ""}</dd>
+                                                <dt>Availability Set:</dt>
+                                                <dd>{serverDetails.VM ? serverDetails.VM.AvailabilitySet : ""}</dd>
+                                            </dl>
+
+                                            <dl class="dl-horizontal">
+                                                <dt>Kibana:</dt>
+                                                <dd>
+                                                    <a target="_blank" rel="noopener noreferrer" href={_.replace(KIBANA_WINLOGBEAT_SERVER_URL, new RegExp(KIBANA_SERVER_URL_PLACEHOLDER, "g"), serverDetails.ServerName)}>Eventlog</a><br />
+                                                    <a target="_blank" rel="noopener noreferrer" href={_.replace(KIBANA_PERFCOUNTER_SERVER_URL, new RegExp(KIBANA_SERVER_URL_PLACEHOLDER, "g"), serverDetails.ServerName)}>PerfCounter</a>
+                                                </dd>
+                                            </dl>
+                                        </Grid.Column>
+                                        <Grid.Column width={16}>
+                                            <dl class="dl-horizontal">
+                                                <dt>AD Path:</dt>
+                                                <dd style={{ wordWrap: 'break-word' }}>{serverDetails.ADPath}</dd>
+                                            </dl>
                                         </Grid.Column>
                                     </Grid.Row>
                                 </Grid>
