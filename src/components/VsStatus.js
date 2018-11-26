@@ -6,14 +6,22 @@ import { getAvailabiltyAndEnabledState } from '../utils/HelperFunction';
 export default class VsStatus extends Component {
 
     render() {
-        var state = this.props.state
+        var { availabilityState, enabledState } = this.props
         return (
-            <Label 
-                size={this.props.size} 
-                color={getAvailabiltyAndEnabledState(state.VsAvailabilityState, state.VsEnabledState)} 
-                horizontal>
-                {state.VsAvailabilityState ? state.VsAvailabilityState : "no data"} <br/> {state.VsEnabledState ? state.VsEnabledState : "no data"}
-            </Label>
+            <React.Fragment>
+                <Label
+                    size={this.props.size}
+                    color={getAvailabiltyAndEnabledState(availabilityState, enabledState)}
+                    horizontal>
+                    {availabilityState ? availabilityState : "no data"}
+                </Label>
+                <Label
+                    size={this.props.size}
+                    color={getAvailabiltyAndEnabledState(availabilityState, enabledState)}
+                    horizontal>
+                    {enabledState ? enabledState : "no data"}
+                </Label>
+            </React.Fragment>
         )
     }
 }

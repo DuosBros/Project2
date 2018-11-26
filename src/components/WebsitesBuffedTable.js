@@ -352,7 +352,7 @@ export default class WebsitesBuffedTable extends Component {
                 <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell colSpan={1} textAlign="left">
-                            <Input placeholder="Type to search..." name="multiSearchInput" onChange={this.handleChange} ></Input>
+                            <Input label='filter:' placeholder="Type to search..." name="multiSearchInput" onChange={this.handleChange} ></Input>
                         </Table.HeaderCell>
                         <Table.HeaderCell colSpan={10} textAlign="right">
                             Showing {this.state.offset + 1} to {filteredData.length < defaultLimit ? filteredData.length : this.state.offset + 15} of {filteredData.length} entries

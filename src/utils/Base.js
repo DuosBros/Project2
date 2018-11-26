@@ -2,7 +2,7 @@ import React from 'react';
 import { Route, Switch, BrowserRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Image } from 'semantic-ui-react';
+import { Image, Icon, Message } from 'semantic-ui-react';
 
 import Header from './Header';
 import Sidebar from './Sidebar';
@@ -18,7 +18,7 @@ import { authenticate } from '../requests/BaseAxios';
 import spinner from '../assets/Spinner.svg';
 import { debounce } from '../utils/HelperFunction';
 
-import {LOCO_API} from '../appConfig';
+import { LOCO_API } from '../appConfig';
 import NotAuthorized from '../modals/NotAuthorized';
 import LoadBalancerFarmsTasks from '../modals/LoadBalancerFarmsTasks';
 
@@ -48,7 +48,7 @@ class Base extends React.Component {
             })
             .catch((err) => {
 
-                if(err.response) {
+                if (err.response) {
                     this.setState({ authExceptionMessage: err.message ? err.message : '', authExceptionResponse: err.response ? err.response : '' })
                 }
                 else {
@@ -74,7 +74,13 @@ class Base extends React.Component {
         if (!this.props.baseStore.authenticationDone) {
             return (
                 <div className="centered">
-                    <Image src={spinner} />
+                    <Message info icon >
+                        <Icon name='circle notched' loading />
+                        <Message.Content content={
+                            <Message.Header>Authentication...</Message.Header>
+                        }>
+                        </Message.Content>
+                    </Message>
                 </div>
             );
         }
@@ -86,7 +92,7 @@ class Base extends React.Component {
         var wideClass = {
             className: ""
         };
-        
+
         if (!this.props.headerStore.showVerticalMenu) {
             wideClass.className = "wide"
         }

@@ -6,94 +6,107 @@ import _ from 'lodash';
 
 import { toggleLoadBalancerFarmsTasksModalAction } from '../actions/ServiceActions';
 import { toggleNotAuthorizedModalAction } from '../actions/BaseAction'
+import { getAllLoadBalancerFarmsAction } from '../actions/LoadBalancerFarmsTasksAction'
 
 import { isAdmin } from '../utils/HelperFunction';
 import NotAuthorized from './NotAuthorized';
-import SimpleTable from '../components/SimpleTable';
+import LoadBalancerFarmsBuffedTable from '../components/LoadBalancerFarmsBuffedTable';
+import { getAllLoadBalancerFarms } from '../requests/LoadBalancerFarmsTasksAxios';
 
 class LoadBalancerFarmsTasks extends React.Component {
 
-    // constructor(props) {
-    //     super(props)
+    constructor(props) {
+        super(props);
 
-    //     this.state = {
-    //         isAdmin: false
-    //     }
+        this.state = {
+            loadBalancerFarmsToAdd: [],
+            loadBalancerFarmsToRemove: []
+        }
+    }
 
-    //     if(isAdmin(this.props.baseStore.currentUser)) {
-    //         this.setState({ isAdmin: true });
-    //     }
-    //     else {
-    //         this.setState({isAdmin: false})
-    //     }
+    componentWillReceiveProps(next) {
+        if (this.props.show !== next.show) {
+            getAllLoadBalancerFarms()
+                .then(res => {
+                    this.props.getAllLoadBalancerFarmsAction(res.data)
+                })
+        }
+    }
 
-    // }
+    handleAdd = (id) => {
+        if (this.state.loadBalancerFarmsToAdd.indexOf(id) > -1) {
+            this.setState({
+                loadBalancerFarmsToAdd: this.state.loadBalancerFarmsToAdd.filter(x => {
+                    return x !== id
+                })
+            });
+        }
+        else {
+            this.setState(prevState => ({
+                loadBalancerFarmsToAdd: [...prevState.loadBalancerFarmsToAdd, id]
+            }))
+        }
+    }
+
+    handleRemove = (id) => {
+        if (this.state.loadBalancerFarmsToRemove.indexOf(id) > -1) {
+            this.setState({
+                loadBalancerFarmsToRemove: this.state.loadBalancerFarmsToRemove.filter(x => {
+                    return x !== id
+                })
+            });
+        }
+        else {
+            this.setState(prevState => ({
+                loadBalancerFarmsToRemove: [...prevState.loadBalancerFarmsToRemove, id]
+            }))
+        }
+    }
+
     render() {
+        console.log(this.props.loadBalancerFarmsTasksStore.loadBalancerFarms)
         if (isAdmin(this.props.baseStore.currentUser)) {
 
             var serviceDetails = this.props.serviceStore.serviceDetails;
-            var assignedLoadBalancerFarmsTableColumnProperties, assignedLoadBalancerFarmsTableRows;
-
-            assignedLoadBalancerFarmsTableColumnProperties = [
-                {
-                    name: "Name",
-                    width: 4,
-                },
-                {
-                    name: "Pool",
-                    width: 4,
-                },
-                {
-                    name: "Port",
-                    width: 1,
-                },
-                {
-                    name: "IpAddress",
-                    width: 2,
-                },
-                {
-                    name: "LoadBalancer",
-                    width: 2,
-                },
-                {
-                    name: "LBId",
-                    width: 1,
-                }
-            ]
 
             if (!_.isEmpty(serviceDetails)) {
-                if (_.isEmpty(serviceDetails.Service[0].LbFarms)) {
-                    assignedLoadBalancerFarmsTableRows = (
-                        <Table.Row></Table.Row>
-                    )
-                }
-                else {
-                    assignedLoadBalancerFarmsTableRows = serviceDetails.Service.LbFarms.map(lbfarm => {
-                        return (
-                            <Table.Row key={lbfarm.Id}>
-                                <Table.Cell>{lbfarm.Name}</Table.Cell>
-                                <Table.Cell>{lbfarm.Pool}</Table.Cell>
-                                <Table.Cell>{lbfarm.IpAddress}</Table.Cell>
-                                <Table.Cell>{lbfarm.LbName}</Table.Cell>
-                                <Table.Cell>{lbfarm.LbId}</Table.Cell>
-                            </Table.Row>
-                        )
-                    })
-                }
 
                 var modalBody = (
                     <React.Fragment>
-                        <Modal.Header>Add or Remove LoadBalancerFarm</Modal.Header>
-                        <Modal.Description>{this.props.serviceStore.serviceDetails.Service[0].Shortcut}</Modal.Description>
+                        <Modal.Header>Add or Remove LoadBalancerFarm - {serviceDetails.Service[0].Shortcut}</Modal.Header>
                         <Modal.Content>
                             <Grid>
+                                <Grid.Row>
+                                    <Grid.Column>
+                                        <Header block attached='top' as='h4'>
+                                            Assign LoadBalancerFarms to Service
+                                        </Header>
+                                        <Segment attached='bottom'>
+                                            <LoadBalancerFarmsBuffedTable
+                                                isEdit={{
+                                                    isAdd: true
+                                                }}
+                                                data={this.props.loadBalancerFarmsTasksStore.loadBalancerFarms}
+                                                multiSearchInput={serviceDetails.Service[0].Name}
+                                                handleAdd={this.handleAdd}
+                                                handleRemove={this.handleRemove}
+                                                parentState={this.state} />
+                                        </Segment>
+                                    </Grid.Column>
+                                </Grid.Row>
                                 <Grid.Row>
                                     <Grid.Column>
                                         <Header block attached='top' as='h4'>
                                             Assigned LoadBalancer Farms
                                         </Header>
                                         <Segment attached='bottom'>
-                                            <SimpleTable columnProperties={assignedLoadBalancerFarmsTableColumnProperties} body={assignedLoadBalancerFarmsTableRows} />
+                                            <LoadBalancerFarmsBuffedTable data={serviceDetails.LbFarms}
+                                                isEdit={{
+                                                    isAdd: false
+                                                }}
+                                                handleAdd={this.handleAdd}
+                                                handleRemove={this.handleRemove}
+                                                parentState={this.state} />
                                         </Segment>
                                     </Grid.Column>
                                 </Grid.Row>
@@ -103,11 +116,9 @@ class LoadBalancerFarmsTasks extends React.Component {
                 )
             }
 
-           
-
             return (
                 <Modal
-                    size='large'
+                    size='fullscreen'
                     open={this.props.show}
                     closeOnEscape={true}
                     closeOnDimmerClick={false}
@@ -118,13 +129,28 @@ class LoadBalancerFarmsTasks extends React.Component {
                     {modalBody}
 
                     <Modal.Actions>
-                        <Button
-                            onClick={() => this.props.toggleLoadBalancerFarmsTasksModalAction()}
-                            positive
-                            labelPosition='right'
-                            icon='checkmark'
-                            content='Close'
-                        />
+
+                        {
+                            this.state.loadBalancerFarmsToAdd.length > 0 || this.state.loadBalancerFarmsToRemove.length > 0 ?
+                                (<>
+                                    <Button
+                                        positive
+                                        content={'Save (' + (this.state.loadBalancerFarmsToAdd.length + this.state.loadBalancerFarmsToRemove.length) + ') changes'}>
+                                    </Button>
+                                    <Button
+                                        onClick={() => this.props.toggleLoadBalancerFarmsTasksModalAction()}
+                                        labelPosition='right'
+                                        icon='checkmark'
+                                        content='Close'
+                                    />
+                                </>) : (<Button
+                                    onClick={() => this.props.toggleLoadBalancerFarmsTasksModalAction()}
+                                    positive
+                                    labelPosition='right'
+                                    icon='checkmark'
+                                    content='Close'
+                                />)
+                        }
                     </Modal.Actions>
                 </Modal>
             )
@@ -143,14 +169,16 @@ class LoadBalancerFarmsTasks extends React.Component {
 function mapStateToProps(state) {
     return {
         baseStore: state.BaseReducer,
-        serviceStore: state.ServiceReducer
+        serviceStore: state.ServiceReducer,
+        loadBalancerFarmsTasksStore: state.LoadBalancerFarmsTasksReducer
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
         toggleLoadBalancerFarmsTasksModalAction,
-        toggleNotAuthorizedModalAction
+        toggleNotAuthorizedModalAction,
+        getAllLoadBalancerFarmsAction
     }, dispatch);
 }
 

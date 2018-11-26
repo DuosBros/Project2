@@ -38,54 +38,74 @@
                     "section": "F5",
                     "links": [
                         {
+                            "name": "GTM DNS",
+                            "url": "https://10.130.255.20/tmui/login.jsp",
+                            "type": "image",
+                            "env": "EXT",
+                            "NameInDB": "ixi3-gtm1.is.icepor.com"
+                        },
+                        {
                             "name": "IXI EXT",
                             "url": "https://10.130.128.10/tmui/login.jsp",
-                            "type": "image"
+                            "type": "image",
+                            "env": "EXT",
+                            "NameInDB": "ixi-lb3-1.baw.local"
                         },
                         {
                             "name": "TSI EXT",
                             "url": "https://10.140.128.10/tmui/login.jsp",
-                            "type": "image"
+                            "type": "image",
+                            "env": "EXT",
+                            "NameInDB": "tsi-lb3-2.baw.local"
                         },
                         {
                             "name": "IXI INT",
                             "url": "https://10.130.0.6/tmui/login.jsp",
-                            "type": "image"
+                            "type": "image",
+                            "env": "INT",
+                            "NameInDB": "ixi-lb2-1.icepor.com"
                         },
                         {
                             "name": "TSI INT",
                             "url": "https://10.140.0.9/tmui/login.jsp",
-                            "type": "image"
+                            "type": "image",
+                            "env": "INT",
+                            "NameInDB": "tsi-lb2-1.baw.local"
                         },
                         {
                             "name": "oos-lb1-2",
                             "url": "https://10.164.128.10/tmui/login.jsp",
-                            "type": "image"
+                            "type": "image",
+                            "env": "EXT",
+                            "NameInDB": "be-bru1-lb1-1.icepor.com"
                         },
                         {
                             "name": "par-lb1-1",
                             "url": "https://10.165.128.10/tmui/login.jsp",
-                            "type": "image"
+                            "type": "image",
+                            "env": "EXT",
+                            "NameInDB": "par-lb1-1.icepor.com"
                         },
                         {
                             "name": "mos-lb1-2",
                             "url": "https://10.162.128.10/tmui/login.jsp",
-                            "type": "image"
+                            "type": "image",
+                            "env": "EXT",
+                            "NameInDB": "mos-lb1-1.icepor.com"
                         },
                         {
                             "name": "gib2-lb2-2",
                             "url": "https://10.166.222.56/tmui/login.jsp",
-                            "type": "image"
+                            "type": "image",
+                            "env": "EXT",
+                            "NameInDB": ""
                         },
                         {
                             "name": "gci2-lb2-2",
                             "url": "https://10.169.222.56/tmui/login.jsp",
-                            "type": "image"
-                        },
-                        {
-                            "name": "TSI EXT",
-                            "url": "https://10.140.128.10/tmui/login.jsp",
-                            "type": "image"
+                            "type": "image",
+                            "env": "EXT",
+                            "NameInDB": ""
                         }
                     ]
                 }

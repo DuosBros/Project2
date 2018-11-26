@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { Component } from 'react'
-import { Table, Input, Button } from 'semantic-ui-react'
+import { Table, Input, Button, Grid } from 'semantic-ui-react'
 import Pagination from 'semantic-ui-react-button-pagination';
 import { filterInArrayOfObjects, debounce, getServerState } from '../utils/HelperFunction';
 import ServerStatus from './ServerStatus';
@@ -34,7 +34,7 @@ export default class ServerBuffedTable extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        this.setState({ data: nextProps.data  });
+        this.setState({ data: nextProps.data });
     }
 
     handleSort = clickedColumn => () => {
@@ -208,101 +208,106 @@ export default class ServerBuffedTable extends Component {
             filterColumnsRow = <Table.Header></Table.Header>
         }
         return (
-            <Table selectable sortable celled basic='very'>
-                <Table.Header>
-                    <Table.Row>
-                        <Table.HeaderCell disabled colSpan={1} textAlign="left">
-                            <Input placeholder="Type to search..." name="multiSearchInput" onChange={this.handleChange} ></Input>
-                        </Table.HeaderCell>
-                        <Table.HeaderCell disabled colSpan={6} textAlign="right">
-                            Showing {this.state.offset + 1} to {filteredData.length < defaultLimit ? filteredData.length : this.state.offset + 15} of {filteredData.length} entries
-                            <br />
-                            <Button
-                                size="small"
-                                onClick={() => this.handleToggleColumnFilters()}
-                                compact
-                                content={showColumnFilters ? 'Hide Column Filters' : 'Show Column Filters'}
-                                style={{ padding: '0.3em', marginTop: '0.5em' }}
-                                id="secondaryButton"
-                                icon={showColumnFilters ? 'eye slash' : 'eye'}
-                                labelPosition='left' />
-                        </Table.HeaderCell>
-                    </Table.Row>
-                </Table.Header>
-                <Table.Header>
-                    <Table.Row>
-                        <Table.HeaderCell
-                            width={3}
-                            sorted={column === 'ServerName' ? direction : null}
-                            onClick={this.handleSort('ServerName')}
-                            content='ServerName'
-                        />
-                        <Table.HeaderCell
-                            disabled
-                            width={2}
-                            // sorted={column === 'ServerName' ? direction : null}
-                            // onClick={this.handleSort('ServerName')}
-                            content='Status | Disme'
-                        />
-                        <Table.HeaderCell
-                            width={1}
-                            sorted={column === 'ServerOwner' ? direction : null}
-                            onClick={this.handleSort('ServerOwner')}
-                            content='ServerOwner'
-                        />
-                        <Table.HeaderCell
-                            width={3}
-                            sorted={column === 'Environment' ? direction : null}
-                            onClick={this.handleSort('Environment')}
-                            content='Env'
-                        />
-                        <Table.HeaderCell
-                            width={1}
-                            sorted={column === 'DataCenter' ? direction : null}
-                            onClick={this.handleSort('DataCenter')}
-                            content='DC'
-                        />
-                        <Table.HeaderCell
-                            width={2}
-                            sorted={column === 'CountryName' ? direction : null}
-                            onClick={this.handleSort('CountryName')}
-                            content='Country'
-                        />
-                        <Table.HeaderCell
-                            width={4}
-                            sorted={column === 'OperatingSystem' ? direction : null}
-                            onClick={this.handleSort('OperatingSystem')}
-                            content='OS'
-                        />
-                    </Table.Row>
-                </Table.Header>
-                {filterColumnsRow}
-                <Table.Body>
-                    {renderData.map(data => {
-                        return (
-                            <Table.Row key={data.Id}>
-                                <Table.Cell>
-                                    <Link to={'/server/' + data.Id} target="_blank">
-                                        {data.ServerName}
-                                    </Link>
-                                </Table.Cell>
-                                <Table.Cell>
-                                    {<ServerStatus size='small' serverState={data.ServerState} />}
-                                    {<DismeStatus size='small' dismeStatus={data.Disme} />}
-                                </Table.Cell>
-                                <Table.Cell>{data.ServerOwner}</Table.Cell>
-                                <Table.Cell>{data.Environment}</Table.Cell>
-                                <Table.Cell>{data.DataCenter}</Table.Cell>
-                                <Table.Cell>{data.CountryName}</Table.Cell>
-                                <Table.Cell>{data.OperatingSystem}</Table.Cell>
-                            </Table.Row>
-                        )
-                    })
+            <>
+                <Grid>
+                    <Grid.Column floated='left' width={4}>
+                        <div id="multiSearchFilterInBuffedTable">
 
-                    }
-                </Table.Body>
-                {tableFooter}
-            </Table>
+                            <Input label='filter:' placeholder="Type to search..." name="multiSearchInput" onChange={this.handleChange} ></Input>
+                        </div>
+                    </Grid.Column>
+                    <Grid.Column width={10} >
+
+                    </Grid.Column>
+                    <Grid.Column floated='right' width={2} textAlign="right">
+                        Showing {this.state.offset + 1} to {filteredData.length < defaultLimit ? filteredData.length : this.state.offset + 15} of {filteredData.length} entries
+                            <br />
+                        <Button
+                            size="small"
+                            onClick={() => this.handleToggleColumnFilters()}
+                            compact
+                            content={showColumnFilters ? 'Hide Column Filters' : 'Show Column Filters'}
+                            style={{ padding: '0.3em', marginTop: '0.5em' }}
+                            id="secondaryButton"
+                            icon={showColumnFilters ? 'eye slash' : 'eye'}
+                            labelPosition='left' />
+                    </Grid.Column>
+                </Grid>
+                <Table selectable sortable celled basic='very'>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell
+                                width={3}
+                                sorted={column === 'ServerName' ? direction : null}
+                                onClick={this.handleSort('ServerName')}
+                                content='ServerName'
+                            />
+                            <Table.HeaderCell
+                                disabled
+                                width={2}
+                                // sorted={column === 'ServerName' ? direction : null}
+                                // onClick={this.handleSort('ServerName')}
+                                content='Status | Disme'
+                            />
+                            <Table.HeaderCell
+                                width={1}
+                                sorted={column === 'ServerOwner' ? direction : null}
+                                onClick={this.handleSort('ServerOwner')}
+                                content='ServerOwner'
+                            />
+                            <Table.HeaderCell
+                                width={3}
+                                sorted={column === 'Environment' ? direction : null}
+                                onClick={this.handleSort('Environment')}
+                                content='Env'
+                            />
+                            <Table.HeaderCell
+                                width={1}
+                                sorted={column === 'DataCenter' ? direction : null}
+                                onClick={this.handleSort('DataCenter')}
+                                content='DC'
+                            />
+                            <Table.HeaderCell
+                                width={2}
+                                sorted={column === 'CountryName' ? direction : null}
+                                onClick={this.handleSort('CountryName')}
+                                content='Country'
+                            />
+                            <Table.HeaderCell
+                                width={4}
+                                sorted={column === 'OperatingSystem' ? direction : null}
+                                onClick={this.handleSort('OperatingSystem')}
+                                content='OS'
+                            />
+                        </Table.Row>
+                    </Table.Header>
+                    {filterColumnsRow}
+                    <Table.Body>
+                        {renderData.map(data => {
+                            return (
+                                <Table.Row key={data.Id}>
+                                    <Table.Cell>
+                                        <Link to={'/server/' + data.Id} target="_blank">
+                                            {data.ServerName}
+                                        </Link>
+                                    </Table.Cell>
+                                    <Table.Cell>
+                                        {<ServerStatus size='small' serverState={data.ServerState} />}
+                                        {<DismeStatus size='small' dismeStatus={data.Disme} />}
+                                    </Table.Cell>
+                                    <Table.Cell>{data.ServerOwner}</Table.Cell>
+                                    <Table.Cell>{data.Environment}</Table.Cell>
+                                    <Table.Cell>{data.DataCenter}</Table.Cell>
+                                    <Table.Cell>{data.CountryName}</Table.Cell>
+                                    <Table.Cell>{data.OperatingSystem}</Table.Cell>
+                                </Table.Row>
+                            )
+                        })
+                        }
+                    </Table.Body>
+                    {tableFooter}
+                </Table>
+            </>
         )
     }
 }

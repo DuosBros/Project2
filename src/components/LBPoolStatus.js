@@ -5,14 +5,22 @@ import { getAvailabiltyAndEnabledState } from '../utils/HelperFunction';
 export default class LBPoolStatus extends Component {
 
     render() {
-        var state = this.props.state
+        var { availabilityState, enabledState } = this.props
         return (
-            <Label 
-                size={this.props.size} 
-                color={getAvailabiltyAndEnabledState(state.PoolAvailabilityState, state.PoolEnabledState)} 
-                horizontal>
-                {state.PoolAvailabilityState ? state.PoolAvailabilityState : "no data"} <br /> {state.PoolEnabledState ? state.PoolEnabledState : "no data"}
-            </Label>
+            <React.Fragment>
+                <Label
+                    size={this.props.size}
+                    color={getAvailabiltyAndEnabledState(availabilityState, enabledState)}
+                    horizontal>
+                    {availabilityState ? availabilityState : "no data"}
+                </Label>
+                <Label
+                    size={this.props.size}
+                    color={getAvailabiltyAndEnabledState(availabilityState, enabledState)}
+                    horizontal>
+                    {enabledState ? enabledState : "no data"}
+                </Label>
+            </React.Fragment>
         )
     }
 }

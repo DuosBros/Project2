@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Grid, Header, Segment, Divider, Icon, List, Image, Table, Button } from 'semantic-ui-react';
+import { Grid, Header, Segment, Divider, Icon, List, Image, Table, Button, Message } from 'semantic-ui-react';
 import _ from 'lodash';
 import moment from 'moment'
 
@@ -274,16 +274,23 @@ class ServerDetails extends React.Component {
                                 <Grid stackable>
                                     <Grid.Row>
                                         <Grid.Column width={8}>
-                                            <dl class="dl-horizontal">
+                                            <dl className="dl-horizontal">
                                                 <dt>Server Name:</dt>
                                                 <dd>{serverDetails.ServerName}</dd>
+
                                             </dl>
-                                            <dl class="dl-horizontal">
+                                            <dl className="dl-horizontal">
+                                                <dt>State:</dt>
+                                                <dd><ServerStatus serverState={serverDetails.ServerState} /></dd>
+                                                <dt>Disme:</dt>
+                                                <dd><DismeStatus dismeStatus={serverDetails.Disme} /></dd>
+                                            </dl>
+                                            <dl className="dl-horizontal">
                                                 <dt>IP:</dt>
                                                 <dd>{ips}</dd>
                                             </dl>
 
-                                            <dl class="dl-horizontal">
+                                            <dl className="dl-horizontal">
                                                 <dt>Stage:</dt>
                                                 <dd>{serverDetails.Stage}</dd>
                                                 <dt>Environment:</dt>
@@ -294,31 +301,26 @@ class ServerDetails extends React.Component {
                                                 <dd>{serverDetails.CountryName}</dd>
                                             </dl>
 
-                                            <dl class="dl-horizontal">
+                                            <dl className="dl-horizontal">
                                                 <dt>FQDN:</dt>
                                                 <dd>{serverDetails.FQDN}</dd>
                                                 <dt>Domain:</dt>
                                                 <dd>{serverDetails.Domain}</dd>
                                             </dl>
-
-                                            <dl class="dl-horizontal">
+                                        </Grid.Column>
+                                        <Grid.Column width={8}>
+                                            <dl className="dl-horizontal">
                                                 <dt>OS:</dt>
                                                 <dd>{OSIcon} {serverDetails.OperatingSystem}</dd>
                                             </dl>
-                                        </Grid.Column>
-                                        <Grid.Column width={8}>
-                                            <dl class="dl-horizontal">
+                                            <dl className="dl-horizontal">
                                                 <dt>Server Owner:</dt>
                                                 <dd>{serverDetails.ServerOwner}</dd>
                                                 <dt>PatchGroup:</dt>
                                                 <dd>{serverDetails.PatchGroupName ? (serverDetails.PatchGroupName) : ('Exclude ') + serverDetails.PatchID}</dd>
-                                                <dt>State:</dt>
-                                                <dd><ServerStatus serverState={serverDetails.ServerState} /></dd>
-                                                <dt>Disme:</dt>
-                                                <dd><DismeStatus dismeStatus={serverDetails.Disme} /></dd>
                                             </dl>
 
-                                            <dl class="dl-horizontal">
+                                            <dl className="dl-horizontal">
                                                 <dt>Cloud:</dt>
                                                 <dd>{serverDetails.VM ? serverDetails.VM.Cloud : ""}</dd>
                                                 <dt>CPU:</dt>
@@ -331,7 +333,7 @@ class ServerDetails extends React.Component {
                                                 <dd>{serverDetails.VM ? serverDetails.VM.AvailabilitySet : ""}</dd>
                                             </dl>
 
-                                            <dl class="dl-horizontal">
+                                            <dl className="dl-horizontal">
                                                 <dt>Kibana:</dt>
                                                 <dd>
                                                     <a target="_blank" rel="noopener noreferrer" href={_.replace(KIBANA_WINLOGBEAT_SERVER_URL, new RegExp(KIBANA_SERVER_URL_PLACEHOLDER, "g"), serverDetails.ServerName)}>Eventlog</a><br />
@@ -340,7 +342,7 @@ class ServerDetails extends React.Component {
                                             </dl>
                                         </Grid.Column>
                                         <Grid.Column width={16}>
-                                            <dl class="dl-horizontal">
+                                            <dl className="dl-horizontal">
                                                 <dt>AD Path:</dt>
                                                 <dd style={{ wordWrap: 'break-word' }}>{serverDetails.ADPath}</dd>
                                             </dl>
@@ -397,7 +399,7 @@ class ServerDetails extends React.Component {
                                 block
                                 attached='top'
                                 as='h4'
-                                style={{ backgroundColor: scomAlerts.length > 0  ? errorColor : {}}}>
+                                style={{ backgroundColor: scomAlerts.length > 0 ? errorColor : {} }}>
                                 SCOM Alerts
                                     <Button onClick={() => this.handleToggleShowingContent("scomalerts")} floated='right' icon='content' />
                             </Header>
@@ -408,8 +410,8 @@ class ServerDetails extends React.Component {
                                     </Segment>
 
                                 ) : (
-                                    <div></div>
-                                )
+                                        <div></div>
+                                    )
                             }
                         </Grid.Column>
                     </Grid.Row>
@@ -473,7 +475,12 @@ class ServerDetails extends React.Component {
         else {
             serverDetailsBody = (
                 <div className="centered">
-                    <Image src={spinner} />
+                    <Message info icon>
+                        <Icon name='circle notched' loading />
+                        <Message.Content>
+                            <Message.Header>Fetching server details</Message.Header>
+                        </Message.Content>
+                    </Message>
                 </div>
             )
         }
