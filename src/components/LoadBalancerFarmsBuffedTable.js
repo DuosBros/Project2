@@ -5,50 +5,7 @@ import Pagination from 'semantic-ui-react-button-pagination';
 import { filterInArrayOfObjects, debounce } from '../utils/HelperFunction';
 import VsStatus from './VsStatus';
 import LBPoolStatus from './LBPoolStatus';
-var COLUMNS = [
-    {
-        name: "Name",
-        prop: "Name",
-        width: 3,
-        collapsing: false
-    },
-    {
-        name: "Pool",
-        prop: "Pool",
-        width: 3,
-        collapsing: false
-    },
-    {
-        name: "VsStatus",
-        prop: "VsStatus",
-        width: 2,
-        collapsing: true
-    },
-    {
-        name: "PoolStatus",
-        prop: "PoolStatus",
-        width: 1,
-        collapsing: true
-    },
-    {
-        name: "Port",
-        prop: "Port",
-        width: 1,
-        collapsing: true
-    },
-    {
-        name: "IpAddress",
-        prop: "IpAddress",
-        width: 2,
-        collapsing: true
-    },
-    {
-        name: "LoadBalancer Name",
-        prop: "LbName",
-        width: 2,
-        collapsing: false
-    }
-]
+
 
 export default class LoadBalancerFarmsBuffedTable extends Component {
 
@@ -82,7 +39,51 @@ export default class LoadBalancerFarmsBuffedTable extends Component {
                 Port: "",
             },
             data: this.props.data,
-            showBETAPools: false
+            showBETAPools: false,
+            COLUMNS: [
+                {
+                    name: "Name",
+                    prop: "Name",
+                    width: 3,
+                    collapsing: false
+                },
+                {
+                    name: "Pool",
+                    prop: "Pool",
+                    width: 3,
+                    collapsing: false
+                },
+                {
+                    name: "VsStatus",
+                    prop: "VsStatus",
+                    width: 2,
+                    collapsing: true
+                },
+                {
+                    name: "PoolStatus",
+                    prop: "PoolStatus",
+                    width: 1,
+                    collapsing: true
+                },
+                {
+                    name: "Port",
+                    prop: "Port",
+                    width: 1,
+                    collapsing: true
+                },
+                {
+                    name: "IpAddress",
+                    prop: "IpAddress",
+                    width: 2,
+                    collapsing: true
+                },
+                {
+                    name: "LoadBalancer Name",
+                    prop: "LbName",
+                    width: 2,
+                    collapsing: false
+                }
+            ]
         }
 
         this.updateFilters = debounce(this.updateFilters, 400);
@@ -90,11 +91,10 @@ export default class LoadBalancerFarmsBuffedTable extends Component {
     }
 
     componentDidMount() {
-        console.log("callsed componentdidmount")
         if (this.props.isEdit) {
-            var isAddedAlready = COLUMNS.filter(x => x.name === "Actions")
+            var isAddedAlready = this.state.COLUMNS.filter(x => x.name === "Actions")
             if (isAddedAlready.length === 0) {
-                COLUMNS.push(
+                this.state.COLUMNS.push(
                     {
                         name: "Actions",
                         prop: "a",
@@ -104,6 +104,7 @@ export default class LoadBalancerFarmsBuffedTable extends Component {
             }
         }
     }
+
     componentWillReceiveProps(nextProps) {
         this.setState({ data: nextProps.data });
     }
@@ -156,16 +157,17 @@ export default class LoadBalancerFarmsBuffedTable extends Component {
         const { column, direction, multiSearchInput, defaultLimit,
             showColumnFilters, data, filters, offset, showBETAPools } = this.state
 
-        var renderData, tableFooter, filteredData, filterColumnsRow, isEdit, loadBalancerFarmsBuffedTableComponent, loadBalancerFarmsToAdd, loadBalancerFarmsToRemove;
+        var renderData, tableFooter, filteredData, filterColumnsRow, isEdit, isAdd, loadBalancerFarmsBuffedTableComponent, loadBalancerFarmsToAdd, loadBalancerFarmsToRemove;
 
         isEdit = this.props.isEdit;
+        isAdd = this.props.isAdd;
 
-        if(isEdit) {
+        if (isEdit) {
             loadBalancerFarmsToAdd = this.props.parentState.loadBalancerFarmsToAdd;
             loadBalancerFarmsToRemove = this.props.parentState.loadBalancerFarmsToRemove;
         }
 
-        let headerCells = COLUMNS.map(c => (
+        let headerCells = this.state.COLUMNS.map(c => (
             <Table.HeaderCell
                 collapsing={c.collapsing}
                 key={c.prop}
@@ -245,7 +247,7 @@ export default class LoadBalancerFarmsBuffedTable extends Component {
         }
 
         if (showColumnFilters) {
-            let headerFilterCells = COLUMNS.map(c => (
+            let headerFilterCells = this.state.COLUMNS.map(c => (
                 <Table.HeaderCell collapsing={c.collapsing} width={c.collapsing ? null : c.width} key={c.prop}>
                     <Input fluid name={c.prop} onChange={this.handleChange} value={this.state.filterInputs[c.prop]} />
                 </Table.HeaderCell>
@@ -262,8 +264,8 @@ export default class LoadBalancerFarmsBuffedTable extends Component {
 
 
         var tableBody = renderData.map(data => (
-            <Table.Row positive={isEdit.isAdd && loadBalancerFarmsToAdd.indexOf(data.Id) > -1}
-                negative={isEdit.isAdd === false && loadBalancerFarmsToRemove.indexOf(data.Id) > -1}
+            <Table.Row positive={isEdit && isAdd === true && loadBalancerFarmsToAdd.indexOf(data.Id) > -1}
+                negative={isEdit && isAdd === false && loadBalancerFarmsToRemove.indexOf(data.Id) > -1}
                 key={data.Id}>
                 <Table.Cell>{data.Name}</Table.Cell>
                 <Table.Cell>{data.Pool}</Table.Cell>
@@ -279,12 +281,12 @@ export default class LoadBalancerFarmsBuffedTable extends Component {
                 {
                     isEdit ? (
                         <Table.Cell>
-                            <Button onClick={isEdit.isAdd ? () => this.props.handleAdd(data.Id) : () => this.props.handleRemove(data.Id)} style={{ padding: '0.3em' }} size='medium'
+                            <Button onClick={isEdit && isAdd ? () => this.props.handleAdd(data.Id) : () => this.props.handleRemove(data.Id)} style={{ padding: '0.3em' }} size='medium'
                                 icon={
                                     <>
                                         <Icon name='balance' />
                                         {
-                                            isEdit.isAdd ? (
+                                            isEdit && isAdd ? (
                                                 loadBalancerFarmsToAdd.indexOf(data.Id) > -1 ? (<Icon color="red" corner name='minus' />) : (<Icon color="green" corner name='add' />)
                                             ) : (
                                                     loadBalancerFarmsToRemove.indexOf(data.Id) > -1 ? (<Icon color="green" corner name='add' />) : (<Icon color="red" corner name='minus' />)

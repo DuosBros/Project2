@@ -83,9 +83,8 @@ class LoadBalancerFarmsTasks extends React.Component {
                                         </Header>
                                         <Segment attached='bottom'>
                                             <LoadBalancerFarmsBuffedTable
-                                                isEdit={{
-                                                    isAdd: true
-                                                }}
+                                                isEdit={true}
+                                                isAdd= {true}
                                                 data={this.props.loadBalancerFarmsTasksStore.loadBalancerFarms}
                                                 multiSearchInput={serviceDetails.Service[0].Name}
                                                 handleAdd={this.handleAdd}
@@ -101,9 +100,8 @@ class LoadBalancerFarmsTasks extends React.Component {
                                         </Header>
                                         <Segment attached='bottom'>
                                             <LoadBalancerFarmsBuffedTable data={serviceDetails.LbFarms}
-                                                isEdit={{
-                                                    isAdd: false
-                                                }}
+                                                isEdit={true}
+                                                isAdd={false}
                                                 handleAdd={this.handleAdd}
                                                 handleRemove={this.handleRemove}
                                                 parentState={this.state} />

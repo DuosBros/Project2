@@ -442,7 +442,7 @@ class ServerDetails extends React.Component {
                             {
                                 loadbalancerfarms ? (
                                     <Segment attached='bottom'>
-                                        <LoadBalancerFarmsBuffedTable data={serverDetails.LoadBalancerFarms} />
+                                        <LoadBalancerFarmsBuffedTable data={serverDetails.LoadBalancerFarms} isEdit={false} />
                                     </Segment>
                                 ) : (
                                         <div></div>

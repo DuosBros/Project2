@@ -146,6 +146,10 @@ class ServiceDetails extends React.Component {
                                                     <a target="_blank" rel="noopener noreferrer" href={_.replace(KIBANA_WINLOGBEAT_SERVICE_URL, new RegExp(KIBANA_SERVICE_URL_PLACEHOLDER, "g"), serviceDetails.Service[0].Shortcut)}>Eventlog</a><br />
                                                     <a target="_blank" rel="noopener noreferrer" href={_.replace(KIBANA_PERFCOUNTER_SERVICE_URL, new RegExp(KIBANA_SERVICE_URL_PLACEHOLDER, "g"), serviceDetails.Service[0].Shortcut)}>PerfCounter</a>
                                                 </dd>
+                                                <dt>AppDynamics:</dt>
+                                                <dd>
+                                                    <a target="_blank" href={"https://apm.bwinparty.corp/controller/#/location=APP_COMPONENT_MANAGER&timeRange=last_15_minutes.BEFORE_NOW.-1.-1.15&application=" + serviceDetails.Service[0].ApmAppId + "&component=" + serviceDetails.Service[0].ApmTierId + ")"}> Dashboard</a>
+                                                </dd>
                                             </dl>
                                         </Grid.Column>
                                         {/* <Grid.Column width={16}>
@@ -188,7 +192,7 @@ class ServiceDetails extends React.Component {
                             {
                                 assignedLoadBalancerFarms ? (
                                     <Segment attached='bottom'>
-                                        <LoadBalancerFarmsBuffedTable data={serviceDetails.LbFarms} isEdit={false} />
+                                        <LoadBalancerFarmsBuffedTable data={serviceDetails.LbFarms} />
                                     </Segment>
                                 ) : (
                                         <div></div>
