@@ -135,7 +135,6 @@ class Header extends React.Component {
                                 search
                             />
                         </Ref>
-
                     </Menu.Item>
                     <Menu.Menu position='right'>
                         <Menu.Item content={this.props.baseStore.currentUser.Identity} onClick={() => this.props.toggleUserDetailsAction()} />
