@@ -21,6 +21,7 @@ import { debounce } from '../utils/HelperFunction';
 import { LOCO_API } from '../appConfig';
 import NotAuthorized from '../modals/NotAuthorized';
 import LoadBalancerFarmsTasks from '../modals/LoadBalancerFarmsTasks';
+import ServerBuffedTable from '../components/ServerBuffedTable';
 
 class Base extends React.Component {
     constructor(props) {
@@ -111,9 +112,8 @@ class Base extends React.Component {
                                 <Route exact path='/' component={Home} />
                                 <Route exact path='/login' component={Login} />
                                 <Route path='/server/:id' component={ServerDetails} />
-                                <Route path='/service/:id' render={(props) => (
-                                    <ServiceDetails key={props.match.params.id} {...props} />)
-                                } />
+                                <Route path='/server' component={ServerBuffedTable} />
+                                <Route path='/service/:id' component={ServiceDetails} />
                             </Switch>
                         </div>
                         <Footer id="footer" {...wideClass} />
