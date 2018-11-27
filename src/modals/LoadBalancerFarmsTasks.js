@@ -123,9 +123,7 @@ class LoadBalancerFarmsTasks extends React.Component {
                     closeIcon={true}
                     onClose={() => this.props.toggleLoadBalancerFarmsTasksModalAction()}
                 >
-
                     {modalBody}
-
                     <Modal.Actions>
 
                         {
