@@ -25,8 +25,6 @@ class Header extends React.Component {
         serviceShortcutQuery: ''
     }
 
-
-
     componentDidMount() {
         document.addEventListener('keydown', this.handleDocumentKeyDown)
     }
