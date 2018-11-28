@@ -1,0 +1,1 @@
+export const GET_PATCHGROUPS = 'GET_PATCHGROUPS';
