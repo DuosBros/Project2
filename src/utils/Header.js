@@ -21,10 +21,6 @@ class Header extends React.Component {
         this.handleSearchServiceShortcut = debounce(this.handleSearchServiceShortcut, 150);
     }
 
-    state = {
-        serviceShortcutQuery: ''
-    }
-
     componentDidMount() {
         document.addEventListener('keydown', this.handleDocumentKeyDown)
     }
@@ -45,7 +41,7 @@ class Header extends React.Component {
     }
 
     handleSearchServers(value) {
-        searchServers(value)
+        searchServers(value.trim())
             .then(res => {
                 this.props.searchServersAction(res.data.map(e => ({ text: e.Name, value: e.Id })))
             })
@@ -83,10 +79,6 @@ class Header extends React.Component {
         if (e.target.value.length > 1) {
             this.handleSearchServiceShortcut(e.target.value)
         }
-    }
-
-    handleSearchServiceShortcutSelect = (e, { value }) => {
-        this.setState({ serviceShortcutQuery: value })
     }
 
     handleSearchServerRef = (c) => {
