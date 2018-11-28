@@ -22,6 +22,7 @@ import { LOCO_API } from '../appConfig';
 import NotAuthorized from '../modals/NotAuthorized';
 import LoadBalancerFarmsTasks from '../modals/LoadBalancerFarmsTasks';
 import ServerBuffedTable from '../components/ServerBuffedTable';
+import PatchGroup from '../pages/PatchGroup';
 
 class Base extends React.Component {
     constructor(props) {
@@ -113,6 +114,7 @@ class Base extends React.Component {
                                 <Route exact path='/login' component={Login} />
                                 <Route path='/server/:id' component={ServerDetails} />
                                 <Route path='/server' component={ServerBuffedTable} />
+                                <Route path='/patchgroups' component={PatchGroup} />
                                 <Route path='/service/:id' component={ServiceDetails} />
                             </Switch>
                         </div>

@@ -10,10 +10,10 @@ class UserDetails extends React.Component {
     render() {
         return (
             <Modal
+
                 size='mini'
                 open={this.props.show}
                 closeOnEscape={true}
-                closeOnDimmerClick={false}
                 closeIcon={true}
                 onClose={() => this.props.toggleUserDetailsAction()}
             >

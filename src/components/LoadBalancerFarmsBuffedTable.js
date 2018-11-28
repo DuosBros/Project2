@@ -212,7 +212,9 @@ export default class LoadBalancerFarmsBuffedTable extends Component {
             for (let col of Object.getOwnPropertyNames(filters)) {
                 if (!_.isEmpty(filters[col])) {
                     filteredData = filteredData.filter(data => {
-                        return data[col].search(new RegExp(filters[col], "i")) >= 0
+                        if (data[col]) {
+                            return data[col].toString().search(new RegExp(filters[col], "i")) >= 0
+                        }
                     })
                 }
             }
