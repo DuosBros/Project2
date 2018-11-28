@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Modal, Header, Segment, Grid, Table } from 'semantic-ui-react';
+import { Button, Modal, Header, Segment, Grid } from 'semantic-ui-react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -89,7 +89,8 @@ class LoadBalancerFarmsTasks extends React.Component {
                                                 multiSearchInput={serviceDetails.Service[0].Name}
                                                 handleAdd={this.handleAdd}
                                                 handleRemove={this.handleRemove}
-                                                parentState={this.state} />
+                                                toAdd={this.state.loadBalancerFarmsToAdd}
+                                                toRemove={this.state.loadBalancerFarmsToRemove} />
                                         </Segment>
                                     </Grid.Column>
                                 </Grid.Row>
@@ -104,7 +105,8 @@ class LoadBalancerFarmsTasks extends React.Component {
                                                 isAdd={false}
                                                 handleAdd={this.handleAdd}
                                                 handleRemove={this.handleRemove}
-                                                parentState={this.state} />
+                                                toAdd={this.state.loadBalancerFarmsToAdd}
+                                                toRemove={this.state.loadBalancerFarmsToRemove} />
                                         </Segment>
                                     </Grid.Column>
                                 </Grid.Row>
