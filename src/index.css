@@ -21,7 +21,7 @@ html, body {
     padding-bottom: 1em;
     bottom: 1em;
     position: relative;
-    
+
 }
 
 #footer.wide {
@@ -197,4 +197,22 @@ dd {
     .dl-horizontal dd {
         margin-left: 180px;
     }
+}
+
+.links.column {
+    display: inline-block;
+}
+
+.links.section img {
+    width: 16px;
+    height: 16px;
+}
+
+.links.section {
+    margin: 0 20px 20px 0;
+}
+
+div.content.noimg {
+    margin-left: 16px;
+    padding-left: 7px;
 }
