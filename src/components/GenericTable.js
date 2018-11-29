@@ -125,7 +125,7 @@ export default class GenericTable extends Component {
         const { sortColumn, sortDirection, multiSearchInput, defaultLimit,
             showColumnFilters, data, filters, offset } = this.state
 
-        if(data === null) {
+        if(!Array.isArray(data)) {
             let msg = this.props.placeholder ? this.props.placeholder : "Fetching data...";
             return (
                 <div className="centered">
