@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, { Component } from 'react'
 import { Table, Grid, Message, Input, Button, Icon } from 'semantic-ui-react'
 import Pagination from 'semantic-ui-react-button-pagination';
-import { filterInArrayOfObjects, debounce } from '../utils/HelperFunction';
+import { filterInArrayOfObjects, isNum, debounce } from '../utils/HelperFunction';
 
 const DEFAULT_COLUMN_PROPS = {
     collapsing: false,
@@ -30,8 +30,9 @@ export default class GenericTable extends Component {
             sortColumn: null,
             sortDirection: null,
             offset: 0,
-            defaultLimit: 15,
-
+            limit: 15,
+            limitInput: "15",
+            limitInputValid: true,
             multiSearchInput: this.props.multiSearchInput ? this.props.multiSearchInput : "",
             showColumnFilters: false,
             filterInputs,
@@ -41,6 +42,7 @@ export default class GenericTable extends Component {
         }
 
         this.updateFilters = debounce(this.updateFilters, 400);
+        this.updateLimit = debounce(this.updateLimit, 400);
     }
 
     generateColumns(props) {
@@ -120,14 +122,32 @@ export default class GenericTable extends Component {
     }
 
     handleChangeRecordsPerPage = (e, {value}) => {
-        let n = parseInt(value);
-        if(!isNaN(n)) {
-            this.setState({ defaultLimit: n });
+        let n = value.trim(),
+            limitInputValid = isNum(n);
+
+        this.setState({
+            limitInput: value,
+            limitInputValid
+        });
+
+        if(limitInputValid) {
+            this.updateLimit();
         }
     }
 
+    updateLimit() {
+        this.setState(prev => {
+            let n = prev.limitInput.trim(),
+                limitInputValid = isNum(n);
+
+            if(limitInputValid) {
+                return { limit: parseInt(n) };
+            }
+        });
+    }
+
     render() {
-        const { sortColumn, sortDirection, multiSearchInput, defaultLimit,
+        const { sortColumn, sortDirection, multiSearchInput, limit, limitInput, limitInputValid,
             showColumnFilters, data, filters, offset } = this.state
 
         if(!Array.isArray(data)) {
@@ -198,19 +218,19 @@ export default class GenericTable extends Component {
             }
         }
 
-        if (filteredData.length > defaultLimit) {
-            renderData = filteredData.slice(offset, offset + defaultLimit)
+        if (filteredData.length > limit) {
+            renderData = filteredData.slice(offset, offset + limit)
             tableFooter = (
                 <Table.Footer fullWidth>
                     <Table.Row>
-                        <Table.HeaderCell colSpan='7'>
+                        <Table.HeaderCell colSpan='16'>
                             <Pagination
                                 compact
                                 reduced
                                 size="small"
                                 floated="right"
                                 offset={offset}
-                                limit={defaultLimit}
+                                limit={limit}
                                 total={filteredData.length}
                                 onClick={(e, props, o) => this.handleClick(o)}
                             />
@@ -290,7 +310,7 @@ export default class GenericTable extends Component {
         });
 
         return (
-            <>
+            <div className="generic table">
                 <Grid>
                     <Grid.Column floated='left' width={4}>
                         <Input
@@ -299,29 +319,32 @@ export default class GenericTable extends Component {
                             fluid
                             value={multiSearchInput} placeholder="Type to search..." name="multiSearchInput" onChange={this.handleMultiFilterChange} ></Input>
                     </Grid.Column>
-                    <Grid.Column width={8}/>
-                    <Grid.Column width={2}>
-                        <Input
-                            label='Records per page:'
-                            id="inputRecordsPerPage"
-                            fluid
-                            size="tiny"
-                            value={defaultLimit} name="inputRecordsPerPage" onChange={this.handleChangeRecordsPerPage} ></Input>
-                    </Grid.Column>
-                    <Grid.Column floated='right' width={2} textAlign="right">
-                        Showing {filteredData.length > 0 ? this.state.offset + 1 : 0} to {filteredData.length < defaultLimit ? filteredData.length : this.state.offset + defaultLimit} of {filteredData.length} entries
-                            <br />
-                        <Button
-                            fluid
-                            size="small"
-                            onClick={() => this.handleToggleColumnFilters()}
-                            compact
-                            content={showColumnFilters ? 'Hide Column Filters' : 'Show Column Filters'}
-                            style={{ padding: '0.3em', marginTop: '0.5em', textAlign: 'right' }}
-                            id="secondaryButton"
-                            icon={showColumnFilters ? 'eye slash' : 'eye'}
-                            labelPosition='left' />
-                        {this.renderCustomFilter()}
+                    <Grid.Column width={6}/>
+                    <Grid.Column floated='right' width={6} textAlign="right">
+                        <div style={{ float: "right" }}>
+                            <p>Showing {filteredData.length > 0 ? this.state.offset + 1 : 0} to {filteredData.length < limit ? filteredData.length : this.state.offset + limit} of {filteredData.length} entries</p>
+                            <div>
+                                <Button
+                                    size="small"
+                                    onClick={() => this.handleToggleColumnFilters()}
+                                    compact
+                                    content={showColumnFilters ? 'Hide Column Filters' : 'Show Column Filters'}
+                                    style={{ padding: '0.3em', marginTop: '0.5em', textAlign: 'right' }}
+                                    id="secondaryButton"
+                                    icon={showColumnFilters ? 'eye slash' : 'eye'}
+                                    labelPosition='right' />
+                            </div>
+                            {this.renderCustomFilter()}
+                        </div>
+                        <div style={{ float: "right", margin: "0 10px" }}>
+                            <Input
+                                label='Records per page:'
+                                className="RecordsPerPage"
+                                error={!limitInputValid}
+                                value={limitInput}
+                                name="inputRecordsPerPage"
+                                onChange={this.handleChangeRecordsPerPage} />
+                        </div>
                     </Grid.Column>
                 </Grid>
                 <Table selectable sortable celled basic='very'>
@@ -334,7 +357,7 @@ export default class GenericTable extends Component {
                     </Table.Body>
                     {tableFooter}
                 </Table>
-            </>
+            </div>
         );
     }
 
