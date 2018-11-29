@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, List, Image, Input, Button } from 'semantic-ui-react';
+import { Grid, List, Header, Image, Input, Button } from 'semantic-ui-react';
 import keyboardKey from 'keyboard-key'
 import _ from 'lodash'
 
@@ -14,6 +14,7 @@ import GI from '../assets/GI.png'
 import GG from '../assets/GG.png'
 
 import {INCIDENT_PLACEHOLDER, SN_INC_SEARCH_URL, VERSION1_SEARCH_URL, VERSION1_PLACEHOLDER} from '../appConfig';
+import links from '../links';
 
 export default class Home extends React.Component {
 
@@ -23,7 +24,6 @@ export default class Home extends React.Component {
         this.state = {
             incident: "",
             version1: ""
-
         }
     }
 
@@ -55,117 +55,64 @@ export default class Home extends React.Component {
         }
     }
 
-    render() {
+    renderLinks() {
+        let columns = links.map((e, i) => (<div key={"links-column-" + i} className="links column">{this.renderLinksColumn(e)}</div>));
+        return (<div className="links listing">{columns}</div>);
+    }
+
+    renderLinksColumn(column) {
+        let sections = column.map((e, i) => (<div key={"links-section-" + i} className="links section">{this.renderLinksSection(e)}</div>));
+        return sections;
+    }
+
+    renderLinksSection(section) {
+        let items = section.items.map((e, i) => this.renderLinksItem(e, i))
         return (
             <div>
-                <Grid columns={4}>
-                    <Grid.Column>
-                        <List>
-                            <List.Item>
-                                <List.Icon name={null} />
-                                <List.Content>
-                                    <List.Header id="homeSubHeader">Main</List.Header>
-                                    <List.List>
-                                        <List.Item>
-                                            <Image src={GVC} />
-                                            <List.Content>
-                                                <List.Header><a target="_blank" rel="noopener noreferrer" href="https://my.gvcgroup.com/">Intra</a></List.Header>
-                                            </List.Content>
-                                        </List.Item>
-                                        <List.Item>
-                                            <List.Icon name='react' />
-                                            <List.Content>
-                                                <List.Header><a target="_blank" rel="noopener noreferrer" href="http://pm.bwin.corp/">Product Matrix</a></List.Header>
-                                            </List.Content>
-                                        </List.Item>
-                                        <List.Item>
-                                            <Image src={beholder} />
-                                            <List.Content>
-                                                <List.Header><a target="_blank" rel="noopener noreferrer" href="http://beholder.bwin.func/#/">Beholder QA Environments</a></List.Header>
-                                            </List.Content>
-                                        </List.Item>
-                                        <List.Item>
-                                            <List.Icon name='gitlab' />
-                                            <List.Content>
-                                                <List.Header><a target="_blank" rel="noopener noreferrer" href="https://vie.git.bwinparty.com/">Gitlab</a></List.Header>
-                                            </List.Content>
-                                        </List.Item>
-                                    </List.List>
-                                    <List.Header id="homeSubHeader">F5 <Image src={f5} inline /></List.Header>
-                                    <List.List>
-                                        <List.Item>
-                                            <Image src={AT} />
-                                            <List.Content>
-                                                <List.Header><a target="_blank" rel="noopener noreferrer" href="https://10.130.128.10/tmui/login.jsp">IXI EXT</a></List.Header>
-                                            </List.Content>
-                                        </List.Item>
-                                        <List.Item>
-                                            <Image src={AT} />
-                                            <List.Content>
-                                                <List.Header><a target="_blank" rel="noopener noreferrer" href="https://10.140.128.10/tmui/login.jsp">TSI EXT</a></List.Header>
-                                            </List.Content>
-                                        </List.Item>
-                                        <List.Item>
-                                            <Image src={AT} />
-                                            <List.Content>
-                                                <List.Header><a target="_blank" rel="noopener noreferrer" href="https://10.130.0.6/tmui/login.jsp">IXI INT</a></List.Header>
-                                            </List.Content>
-                                        </List.Item>
-                                        <List.Item>
-                                            <Image src={AT} />
-                                            <List.Content>
-                                                <List.Header><a target="_blank" rel="noopener noreferrer" href="https://10.140.0.9/tmui/login.jsp">TSI INT</a></List.Header>
-                                            </List.Content>
-                                        </List.Item>
-                                        <List.Item>
-                                            <Image src={BE} />
-                                            <List.Content>
-                                                <List.Header><a target="_blank" rel="noopener noreferrer" href="https://10.164.128.10/tmui/login.jsp">oos-lb1-2</a></List.Header>
-                                            </List.Content>
-                                        </List.Item>
-                                        <List.Item>
-                                            <Image src={FR} />
-                                            <List.Content>
-                                                <List.Header><a target="_blank" rel="noopener noreferrer" href="https://10.165.128.10/tmui/login.jsp">par-lb1-1</a></List.Header>
-                                            </List.Content>
-                                        </List.Item>
-                                        <List.Item>
-                                            <Image src={RU} />
-                                            <List.Content>
-                                                <List.Header><a target="_blank" rel="noopener noreferrer" href="https://10.162.128.10/tmui/login.jsp">mos-lb1-2</a></List.Header>
-                                            </List.Content>
-                                        </List.Item>
-                                        <List.Item>
-                                            <Image src={GI} />
-                                            <List.Content>
-                                                <List.Header><a target="_blank" rel="noopener noreferrer" href="https://10.166.222.56/tmui/login.jsp">gib2-lb2-2</a></List.Header>
-                                            </List.Content>
-                                        </List.Item>
-                                        <List.Item>
-                                            <Image src={GG} />
-                                            <List.Content>
-                                                <List.Header><a target="_blank" rel="noopener noreferrer" href="https://10.169.222.56/tmui/login.jsp">gci2-lb2-2</a></List.Header>
-                                            </List.Content>
-                                        </List.Item>
-                                    </List.List>
-                                </List.Content>
-                            </List.Item>
-                        </List>
-                    </Grid.Column>
-                    <Grid.Column>
-                        column2
-                    </Grid.Column>
-                    <Grid.Column>
-                        column3
-                    </Grid.Column>
-                    <Grid.Column>
-                        <Input onKeyPress={this.handleKeyPressIncident} onChange={this.handleChange} name="incident" placeholder='INCxxxxxx'></Input>
-                        {this.state.incident !== "" ? <Button circular icon="arrow right" id="homeSecondIcon" /> : <span></span>}
-                        <Input onKeyPress={this.handleKeyPressVersion1} onChange={this.handleChange} name="version1" placeholder='B-xxxxxxx'></Input>
-                        {this.state.version1 !== "" ? <Button circular icon="arrow right" id="homeSecondIcon" /> : <span></span>}
-                    </Grid.Column>
-                </Grid>
+                <Header size="medium" href={section.url} target="_blank" rel="noopener noreferrer">{section.SectionTitle}</Header>
+                <List>{items}</List>
             </div>
+        )
+    }
+
+    renderLinksItem(item, i) {
+        let icon = item.icon;
+        if(!icon) {
+            icon = null;
+        } else if(icon.startsWith("data:") || icon.startsWith("http:") || icon.startsWith("https:")) {
+            icon = (<Image src={icon}/>);
+        } else {
+            icon = (<Image src={process.env.PUBLIC_URL + "icons/" + icon}/>);
+        }
+        return (
+            <List.Item key={"links-item-" + i}>
+                {icon}
+                <List.Content className={icon === null ? "noimg" : ""}>
+                    <a href={item.url} target="_blank" rel="noopener noreferrer">{item.title}</a>
+                </List.Content>
+            </List.Item>
+        );
+    }
+
+    render() {
+        let links = this.renderLinks();
+
+        return (
+            <Grid>
+                <Grid.Column width={12}>
+                    {links}
+                </Grid.Column>
+                <Grid.Column width={4}>
+                    <div>
+                        <Input onKeyPress={this.handleKeyPressIncident} onChange={this.handleChange} name="incident" placeholder='INCxxxxxx'></Input>
+                        {this.state.incident !== "" ? <Button circular icon="arrow right" id="homeSecondIcon" /> : null}
+                    </div>
+                    <div>
+                        <Input onKeyPress={this.handleKeyPressVersion1} onChange={this.handleChange} name="version1" placeholder='B-xxxxxxx'></Input>
+                        {this.state.version1 !== "" ? <Button circular icon="arrow right" id="homeSecondIcon" /> : null}
+                    </div>
+                </Grid.Column>
+            </Grid>
         )
     }
 }

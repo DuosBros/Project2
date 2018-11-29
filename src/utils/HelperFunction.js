@@ -122,19 +122,23 @@ function itemExists(haystack, needle) {
     return false;
 }
 
-export const filterInArrayOfObjects = (toSearch, array) => {
-    var results = [];
+/*
+ * "keys" (optional) Specifies which properties of objects should be inspected.
+ *                   If omitted, all properties will be inspected.
+ */
+export const filterInArrayOfObjects = (toSearch, array, keys) => {
     toSearch = trimString(toSearch); // trim it
-    for (var i = 0; i < array.length; i++) {
-        Object.keys(array[i]).map((key, index) => {
-            if (array[i][key]) { // fuken lodash returning isEmpty true for numbers
-                if (array[i][key].toString().toLowerCase().indexOf(toSearch.toString().toLowerCase()) !== -1) {
-                    if (!itemExists(results, array[i])) results.push(array[i]);
+    return array.filter(element => {
+        let objk = keys ? keys : Object.keys(element);
+        for(let key of objk) {
+            if(element[key]) { // fuken lodash returning isEmpty true for numbers
+                if(element[key].toString().toLowerCase().indexOf(toSearch.toString().toLowerCase()) !== -1) {
+                    return true
                 }
             }
-        })
-    }
-    return results;
+        }
+        return false;
+    });
 }
 
 export const isAdmin = (user) => {
@@ -144,4 +148,3 @@ export const isAdmin = (user) => {
 
     return false;
 }
-
