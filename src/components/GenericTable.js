@@ -31,6 +31,7 @@ export default class GenericTable extends Component {
             sortDirection: null,
             offset: 0,
             defaultLimit: 15,
+
             multiSearchInput: this.props.multiSearchInput ? this.props.multiSearchInput : "",
             showColumnFilters: false,
             filterInputs,
@@ -43,7 +44,11 @@ export default class GenericTable extends Component {
     }
 
     generateColumns(props) {
-        let columns = props.columns ? props.columns : this.getColumns();
+        let columns = this.getColumns();
+
+        if(!columns && props.columns) {
+            columns = props.columns
+        }
 
         if(!columns) {
             throw new Error("Columns are undefined!");
@@ -331,6 +336,10 @@ export default class GenericTable extends Component {
                 </Table>
             </>
         );
+    }
+
+    getColumns() {
+        return null;
     }
 
     transformDataRow(data) {
