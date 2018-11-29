@@ -23,6 +23,7 @@ import NotAuthorized from '../modals/NotAuthorized';
 import LoadBalancerFarmsTasks from '../modals/LoadBalancerFarmsTasks';
 import ServerBuffedTable from '../components/ServerBuffedTable';
 import PatchGroup from '../pages/PatchGroup';
+import RolloutStatus from '../pages/RolloutStatus';
 
 class Base extends React.Component {
     constructor(props) {
@@ -114,6 +115,7 @@ class Base extends React.Component {
                                 <Route exact path='/login' component={Login} />
                                 <Route path='/server/:id' component={ServerDetails} />
                                 <Route path='/server' component={ServerBuffedTable} />
+                                <Route path='/rolloutstatus' component={RolloutStatus} />
                                 <Route path='/patchgroups' component={PatchGroup} />
                                 <Route path='/service/:id' component={ServiceDetails} />
                             </Switch>

@@ -1,7 +1,7 @@
 import {
     AUTHENTICATE, AUTHENTICATION_STARTED, AUTHENTICATION_ENDED, AUTHENTICATION_OK, AUTHENTICATION_FAIL,
     TOGGLE_NOT_AUTHORIZED_MODAL
-} from '../contants/BaseConstants';
+} from '../constants/BaseConstants';
 
 const baseInitialState = {
     currentUser: {},

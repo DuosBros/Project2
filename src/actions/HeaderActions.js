@@ -1,4 +1,4 @@
-import {SEARCH_SERVERS, SEARCH_SERVICE_SHORTCUTS, TOGGLE_VERTICAL_MENU, TOGGLE_USER_DETAILS} from '../contants/HeaderConstants';
+import {SEARCH_SERVERS, SEARCH_SERVICE_SHORTCUTS, TOGGLE_VERTICAL_MENU, TOGGLE_USER_DETAILS} from '../constants/HeaderConstants';
 
 export function searchServersAction(payload) {
     return {

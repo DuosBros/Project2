@@ -29,9 +29,6 @@ class PatchGroup extends React.Component {
                         </Segment>
                     </Grid.Column>
                 </Grid.Row>
-                {/* <Grid.Row>
-
-                </Grid.Row> */}
             </Grid>
         )
     }

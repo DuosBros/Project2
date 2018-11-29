@@ -1,4 +1,4 @@
-import { GET_SERVER_DETAILS, GET_VM_DETAILS, GET_SERVER_SCOM_ALERTS } from '../contants/ServerConstants';
+import { GET_SERVER_DETAILS, GET_VM_DETAILS, GET_SERVER_SCOM_ALERTS } from '../constants/ServerConstants';
 import { getServerState, getDismeState } from '../utils/HelperFunction';
 
 const serverInitialState = {

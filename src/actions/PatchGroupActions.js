@@ -1,4 +1,4 @@
-import { GET_PATCHGROUPS } from '../contants/PatchGroupConstants';
+import { GET_PATCHGROUPS } from '../constants/PatchGroupConstants';
 
 export function getPatchGroupsAction(payload) {
     return {

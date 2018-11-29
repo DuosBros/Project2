@@ -1,4 +1,4 @@
-import { GET_LOADBALANCER_FARMS } from '../contants/LoadBalancerFarmsTasksConstants';
+import { GET_LOADBALANCER_FARMS } from '../constants/LoadBalancerFarmsTasksConstants';
 
 const initialState = {
     loadBalancerFarms: []

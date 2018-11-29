@@ -1,5 +1,5 @@
 import {AUTHENTICATE, AUTHENTICATION_STARTED, AUTHENTICATION_ENDED, AUTHENTICATION_OK, AUTHENTICATION_FAIL,
-    TOGGLE_NOT_AUTHORIZED_MODAL} from '../contants/BaseConstants';
+    TOGGLE_NOT_AUTHORIZED_MODAL} from '../constants/BaseConstants';
 
 export function authenticateAction(payload) {
     return {

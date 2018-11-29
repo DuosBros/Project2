@@ -1,4 +1,4 @@
-import { GET_SERVICE_DETAILS, TOGGLE_LOADBALANCERFARMS_TASKS } from '../contants/ServiceConstatnts';
+import { GET_SERVICE_DETAILS, TOGGLE_LOADBALANCERFARMS_TASKS } from '../constants/ServiceConstatnts';
 import { getServerState, getDismeState } from '../utils/HelperFunction';
 
 const serviceInitialState = {
