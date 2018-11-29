@@ -75,16 +75,17 @@ export default class LoadBalancerFarmsBuffedTable extends GenericTable {
     renderCustomFilter() {
         const { showBETAPools } = this.state;
         return (
-            <Button
-                fluid
-                size="small"
-                onClick={() => this.setState({ showBETAPools: !this.state.showBETAPools })}
-                compact
-                content={showBETAPools ? 'Hide BETA Pools' : 'Show BETA Pools'}
-                style={{ padding: '0.3em', marginTop: '0.5em', textAlign: 'right' }}
-                id="secondaryButton"
-                icon={showBETAPools ? 'eye slash' : 'eye'}
-                labelPosition='left' />
+            <div>
+                <Button
+                    size="small"
+                    onClick={() => this.setState({ showBETAPools: !this.state.showBETAPools })}
+                    compact
+                    content={showBETAPools ? 'Hide BETA Pools' : 'Show BETA Pools'}
+                    style={{ padding: '0.3em', marginTop: '0.5em', textAlign: 'right' }}
+                    id="secondaryButton"
+                    icon={showBETAPools ? 'eye slash' : 'eye'}
+                    labelPosition='right' />
+            </div>
         );
     }
 }
