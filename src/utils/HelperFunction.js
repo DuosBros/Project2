@@ -131,9 +131,9 @@ export const filterInArrayOfObjects = (toSearch, array, keys) => {
     toSearch = trimString(toSearch); // trim it
     return array.filter(element => {
         let objk = keys ? keys : Object.keys(element);
-        for(let key of objk) {
-            if(element[key]) { // fuken lodash returning isEmpty true for numbers
-                if(element[key].toString().toLowerCase().indexOf(toSearch.toString().toLowerCase()) !== -1) {
+        for (let key of objk) {
+            if (element[key]) { // fuken lodash returning isEmpty true for numbers
+                if (element[key].toString().toLowerCase().indexOf(toSearch.toString().toLowerCase()) !== -1) {
                     return true
                 }
             }

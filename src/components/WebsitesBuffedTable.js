@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { Component } from 'react'
-import { Table, Input, Button } from 'semantic-ui-react'
+import { Table, Input, Button, Grid } from 'semantic-ui-react'
 import Pagination from 'semantic-ui-react-button-pagination';
 import { filterInArrayOfObjects, debounce } from '../utils/HelperFunction';
 import { groupBy } from '../utils/HelperFunction';
@@ -42,7 +42,7 @@ export default class WebsitesBuffedTable extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        this.setState({ data: nextProps.data  });
+        this.setState({ data: nextProps.data });
     }
 
     handleSort = clickedColumn => () => {
@@ -274,10 +274,10 @@ export default class WebsitesBuffedTable extends Component {
                         <Table.HeaderCell width={3}>
                             <Input fluid name='filterAppPoolName' onChange={this.handleChange} />
                         </Table.HeaderCell>
-                        <Table.HeaderCell width={5}>
+                        <Table.HeaderCell width={6}>
                             <Input fluid name='filterBindings' onChange={this.handleChange} />
                         </Table.HeaderCell>
-                        <Table.HeaderCell width={2}>
+                        <Table.HeaderCell width={1}>
                             <Input fluid name='filterFrameWork' onChange={this.handleChange} />
                         </Table.HeaderCell>
                         <Table.HeaderCell width={1}>
@@ -348,13 +348,13 @@ export default class WebsitesBuffedTable extends Component {
         )
 
         return (
-            <Table selectable sortable celled basic='very'>
-                <Table.Header>
-                    <Table.Row>
-                        <Table.HeaderCell colSpan={1} textAlign="left">
+            <>
+                <Grid>
+                    <Grid.Row>
+                        <Grid.Column width={4} textAlign="left" >
                             <Input label='filter:' placeholder="Type to search..." name="multiSearchInput" onChange={this.handleChange} ></Input>
-                        </Table.HeaderCell>
-                        <Table.HeaderCell colSpan={10} textAlign="right">
+                        </Grid.Column>
+                        <Grid.Column width={12} textAlign="right">
                             Showing {this.state.offset + 1} to {filteredData.length < defaultLimit ? filteredData.length : this.state.offset + 15} of {filteredData.length} entries
                             <br />
                             <Button
@@ -366,86 +366,88 @@ export default class WebsitesBuffedTable extends Component {
                                 id="secondaryButton"
                                 icon={showColumnFilters ? 'eye slash' : 'eye'}
                                 labelPosition='left' />
-                        </Table.HeaderCell>
-                    </Table.Row>
-                </Table.Header>
-                <Table.Header>
-                    <Table.Row>
-                        <Table.HeaderCell
-                            width={1}
-                            sorted={column === 'ServerName' ? direction : null}
-                            onClick={this.handleSort('ServerName')}
-                            content='Server Name'
-                        />
-                        {/* <Table.HeaderCell
+                        </Grid.Column>
+                    </Grid.Row>
+                </Grid>
+                <Table selectable sortable celled basic='very'>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell
+                                width={1}
+                                sorted={column === 'ServerName' ? direction : null}
+                                onClick={this.handleSort('ServerName')}
+                                content='Server Name'
+                            />
+                            {/* <Table.HeaderCell
                             width={2}
                             sorted={column === 'Environment' ? direction : null}
                             onClick={this.handleSort('Environment')}
                             content='Environment'
                         /> */}
-                        <Table.HeaderCell
-                            width={1}
-                            sorted={column === 'SiteId' ? direction : null}
-                            onClick={this.handleSort('SiteId')}
-                            content='Site ID'
-                        />
-                        <Table.HeaderCell
-                            width={3}
-                            sorted={column === 'AppPoolName' ? direction : null}
-                            onClick={this.handleSort('AppPoolName')}
-                            content='AppPool Name'
-                        />
-                        <Table.HeaderCell
-                            disabled
-                            width={5}
-                            // sorted={column === 'Bindings' ? direction : null}
-                            // onClick={this.handleSort('Bindings')}
-                            content='Bindings'
-                        />
-                        <Table.HeaderCell
-                            width={2}
-                            sorted={column === 'FrameWork' ? direction : null}
-                            onClick={this.handleSort('FrameWork')}
-                            content='Framework'
-                        />
-                        <Table.HeaderCell
-                            width={1}
-                            sorted={column === 'AutoStart' ? direction : null}
-                            onClick={this.handleSort('AutoStart')}
-                            content='AutoStart'
-                        />
-                        <Table.HeaderCell
-                            width={1}
-                            sorted={column === 'User' ? direction : null}
-                            onClick={this.handleSort('User')}
-                            content='User'
-                        />
-                        <Table.HeaderCell
-                            width={1}
-                            sorted={column === 'State' ? direction : null}
-                            onClick={this.handleSort('State')}
-                            content='State'
-                        />
-                        <Table.HeaderCell
-                            width={1}
-                            sorted={column === 'PeriodicRecycle' ? direction : null}
-                            onClick={this.handleSort('PeriodicRecycle')}
-                            content='Per.Recycle'
-                        />
-                        <Table.HeaderCell
-                            width={1}
-                            sorted={column === 'IdleTimeout' ? direction : null}
-                            onClick={this.handleSort('IdleTimeout')}
-                            content='IdleTimeout'
-                        />
-                    </Table.Row>
-                </Table.Header>
-                {filterColumnsRow}
-                <Table.Body>
-                    {tableRows}
-                </Table.Body>
-                {tableFooter}
-            </Table>
+                            <Table.HeaderCell
+                                width={1}
+                                sorted={column === 'SiteId' ? direction : null}
+                                onClick={this.handleSort('SiteId')}
+                                content='Site ID'
+                            />
+                            <Table.HeaderCell
+                                width={3}
+                                sorted={column === 'AppPoolName' ? direction : null}
+                                onClick={this.handleSort('AppPoolName')}
+                                content='AppPool Name'
+                            />
+                            <Table.HeaderCell
+                                disabled
+                                width={6}
+                                // sorted={column === 'Bindings' ? direction : null}
+                                // onClick={this.handleSort('Bindings')}
+                                content='Bindings'
+                            />
+                            <Table.HeaderCell
+                                width={1}
+                                sorted={column === 'FrameWork' ? direction : null}
+                                onClick={this.handleSort('FrameWork')}
+                                content='Framework'
+                            />
+                            <Table.HeaderCell
+                                width={1}
+                                sorted={column === 'AutoStart' ? direction : null}
+                                onClick={this.handleSort('AutoStart')}
+                                content='AutoStart'
+                            />
+                            <Table.HeaderCell
+                                width={1}
+                                sorted={column === 'User' ? direction : null}
+                                onClick={this.handleSort('User')}
+                                content='User'
+                            />
+                            <Table.HeaderCell
+                                width={1}
+                                sorted={column === 'State' ? direction : null}
+                                onClick={this.handleSort('State')}
+                                content='State'
+                            />
+                            <Table.HeaderCell
+                                width={1}
+                                sorted={column === 'PeriodicRecycle' ? direction : null}
+                                onClick={this.handleSort('PeriodicRecycle')}
+                                content='Per.Recycle'
+                            />
+                            <Table.HeaderCell
+                                width={1}
+                                sorted={column === 'IdleTimeout' ? direction : null}
+                                onClick={this.handleSort('IdleTimeout')}
+                                content='IdleTimeout'
+                            />
+                        </Table.Row>
+                    </Table.Header>
+                    {filterColumnsRow}
+                    <Table.Body>
+                        {tableRows}
+                    </Table.Body>
+                    {tableFooter}
+                </Table>
+            </>
         )
     }
 }
