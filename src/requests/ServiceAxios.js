@@ -8,3 +8,7 @@ export function getServiceDetails(serviceId) {
 export function getDismeApplications() {
     return axios.get(LOCO_API + 'service/byapplication')
 }
+
+export function getServiceByShortcut(shortcuts) {
+    return axios.get(LOCO_API + 'service/name/' + shortcuts + "/full");
+}

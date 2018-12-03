@@ -17,7 +17,6 @@ const ServiceReducer = (state = serviceInitialState, action) => {
                 })
 
                 action.payload.Servers = mappedServers;
-
             }
 
             return Object.assign({}, state, { serviceDetails: action.payload })

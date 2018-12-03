@@ -149,6 +149,9 @@ class ServerDetails extends React.Component {
                             <Link to={'/service/' + service.Id} target="_blank">{service.Shortcut}</Link>
                         </Table.Cell>
                         <Table.Cell>
+                            <DismeStatus dismeStatus={service.Status} />
+                        </Table.Cell>
+                        <Table.Cell>
                             <Button
                                 onClick={() =>
                                     window.open(
@@ -170,6 +173,10 @@ class ServerDetails extends React.Component {
                 {
                     name: "Shortcut",
                     width: 3,
+                },
+                {
+                    name: "Status",
+                    width: 2
                 },
                 {
                     name: "Disme",
