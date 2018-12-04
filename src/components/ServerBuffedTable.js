@@ -51,6 +51,27 @@ export default class ServerBuffedTable extends GenericTable {
                 prop: "OperatingSystem",
                 width: 4,
                 collapsing: false
+            },
+            {
+                name: "Patch Group",
+                prop: "PatchGroupName",
+                width: 1,
+                collapsing: false,
+                visibleByDefault: false
+            },
+            {
+                name: "Patch Group ID",
+                prop: "PatchID",
+                width: 1,
+                collapsing: false,
+                visibleByDefault: false
+            },
+            {
+                name: "AD Path",
+                prop: "ADPath",
+                width: 3,
+                collapsing: false,
+                visibleByDefault: false
             }
         ];
     }

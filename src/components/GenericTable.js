@@ -1,13 +1,14 @@
 import _ from 'lodash'
 import React, { Component } from 'react'
-import { Table, Grid, Message, Input, Button, Icon } from 'semantic-ui-react'
+import { Table, Grid, Message, Input, Button, Icon, Label } from 'semantic-ui-react'
 import Pagination from 'semantic-ui-react-button-pagination';
 import { filterInArrayOfObjects, isNum, debounce } from '../utils/HelperFunction';
 
 const DEFAULT_COLUMN_PROPS = {
     collapsing: false,
     sortable: true,
-    searchable: true
+    searchable: true,
+    visibleByDefault: true
 }
 
 export default class GenericTable extends Component {
@@ -38,7 +39,10 @@ export default class GenericTable extends Component {
             filterInputs,
             filters,
             columns,
-            data: this.props.data
+            data: this.props.data,
+            columnToggle: columns.filter(c => c.visibleByDefault === false).length > 0,
+            showColumnToggles: false,
+            visibleColumnsList: columns.filter(c => c.visibleByDefault).map(c => c.prop)
         }
 
         this.updateFilters = debounce(this.updateFilters, 400);
@@ -71,6 +75,11 @@ export default class GenericTable extends Component {
             }
         }
         columns = columns.map(c => Object.assign({}, DEFAULT_COLUMN_PROPS, c));
+        for(let c of columns) {
+            if(!c.hasOwnProperty("prop")) {
+                throw new Error("Columns need a 'prop' property");
+            }
+        }
         return columns;
     }
 
@@ -121,6 +130,28 @@ export default class GenericTable extends Component {
         });
     }
 
+    handleStateToggle = (e, {name}) => {
+        this.setState({
+            [name]: !this.state[name]
+        });
+    }
+
+    handleColumnToggle = (e, {prop, value}) => {
+        const { columns, visibleColumnsList } = this.state;
+        let newVisibleValue = !value;
+
+        let newVisibleColumnsList = columns.filter(c => {
+            if(c.prop === prop) {
+                return newVisibleValue;
+            }
+            return visibleColumnsList.indexOf(c.prop) !== -1;
+        }).map(c => c.prop);
+
+        this.setState({
+            visibleColumnsList: newVisibleColumnsList
+        });
+    }
+
     handleChangeRecordsPerPage = (e, {value}) => {
         let n = value.trim(),
             limitInputValid = isNum(n);
@@ -147,8 +178,24 @@ export default class GenericTable extends Component {
     }
 
     render() {
-        const { sortColumn, sortDirection, multiSearchInput, limit, limitInput, limitInputValid,
-            showColumnFilters, data, filters, offset } = this.state
+        const {
+            columns,
+            visibleColumnsList,
+            sortColumn,
+            sortDirection,
+            multiSearchInput,
+            limit,
+            limitInput,
+            limitInputValid,
+            showColumnFilters,
+            showColumnToggles,
+            columnToggle,
+            data,
+            filters,
+            offset
+        } = this.state
+
+        let visibleColumns = columns.filter(c => visibleColumnsList.indexOf(c.prop) !== -1);
 
         if(!Array.isArray(data)) {
             let msg = this.props.placeholder ? this.props.placeholder : "Fetching data...";
@@ -164,7 +211,10 @@ export default class GenericTable extends Component {
             );
         }
 
-        var renderData, tableFooter, filteredData, filterColumnsRow, isEdit, isAdd, toAdd, toRemove;
+        var renderData, tableFooter, filteredData,
+            filterColumnsRow, toggleColumnsRow,
+            columnToggleButton,
+            isEdit, isAdd, toAdd, toRemove;
 
         isEdit = this.props.isEdit;
         isAdd = this.props.isAdd;
@@ -174,7 +224,7 @@ export default class GenericTable extends Component {
             toRemove = this.props.toRemove;
         }
 
-        let headerCells = this.state.columns.map(c => {
+        let headerCells = visibleColumns.map(c => {
             let headerProps;
             if(c.sortable) {
                 headerProps = {
@@ -198,7 +248,7 @@ export default class GenericTable extends Component {
         });
 
         if (multiSearchInput !== "") {
-            filteredData = filterInArrayOfObjects(multiSearchInput, data, this.state.columns.filter(c => c.searchable).map(c => c.prop));
+            filteredData = filterInArrayOfObjects(multiSearchInput, data, visibleColumns.filter(c => c.searchable).map(c => c.prop));
         } else {
             filteredData = data;
         }
@@ -247,7 +297,7 @@ export default class GenericTable extends Component {
         }
 
         if (showColumnFilters) {
-            let headerFilterCells = this.state.columns.map(c => {
+            let headerFilterCells = visibleColumns.map(c => {
                 let filterInput = null;
                 if(c.searchable) {
                     filterInput = (<Input fluid name={c.prop} onChange={this.handleColumnFilterChange} value={this.state.filterInputs[c.prop]} />)
@@ -269,7 +319,7 @@ export default class GenericTable extends Component {
         }
 
         var tableBody = renderData.map(data => this.transformDataRow(Object.assign({}, data))).map(data => {
-            let cells = this.state.columns.map(c => {
+            let cells = visibleColumns.map(c => {
                 if(c.data === false) {
                     return null;
                 }
@@ -309,9 +359,54 @@ export default class GenericTable extends Component {
             );
         });
 
+        if(columnToggle) {
+            columnToggleButton = (
+                <div>
+                    <Button
+                        size="small"
+                        name="showColumnToggles"
+                        onClick={this.handleStateToggle}
+                        compact
+                        content={showColumnToggles ? 'Hide Column Toggles' : 'Show Column Toggles'}
+                        style={{ padding: '0.3em', marginTop: '0.5em', textAlign: 'right' }}
+                        id="secondaryButton"
+                        icon={showColumnToggles ? 'eye slash' : 'eye'}
+                        labelPosition='right' />
+                </div>
+            )
+
+            if(showColumnToggles) {
+                let columnToggles = columns.map(c => {
+                    let visible = visibleColumnsList.indexOf(c.prop) !== -1;
+                    return (
+                        <Label
+                            key={c.prop}
+                            color={visible ? "green" : "red"}
+                            content={c.name}
+                            value={visible}
+                            onClick={this.handleColumnToggle}
+                            prop={c.prop}/>
+                    );
+                });
+                toggleColumnsRow = (
+                    <Grid.Row>
+                        <Grid.Column textAlign="right" className="column toggles">
+                        {columnToggles}
+                        </Grid.Column>
+                    </Grid.Row>
+                );
+            } else {
+                toggleColumnsRow = null;
+            }
+        } else {
+            columnToggleButton = null;
+            toggleColumnsRow = null;
+        }
+
         return (
             <div className="generic table">
                 <Grid>
+                    <Grid.Row>
                     <Grid.Column floated='left' width={4}>
                         <Input
                             label='Filter:'
@@ -326,7 +421,8 @@ export default class GenericTable extends Component {
                             <div>
                                 <Button
                                     size="small"
-                                    onClick={() => this.handleToggleColumnFilters()}
+                                    name="showColumnFilters"
+                                    onClick={this.handleStateToggle}
                                     compact
                                     content={showColumnFilters ? 'Hide Column Filters' : 'Show Column Filters'}
                                     style={{ padding: '0.3em', marginTop: '0.5em', textAlign: 'right' }}
@@ -334,9 +430,10 @@ export default class GenericTable extends Component {
                                     icon={showColumnFilters ? 'eye slash' : 'eye'}
                                     labelPosition='right' />
                             </div>
+                            {columnToggleButton}
                             {this.renderCustomFilter()}
                         </div>
-                        <div style={{ float: "right", margin: "0 10px" }}>
+                        <div style={{ float: "right", margin: "0 20px" }}>
                             <Input
                                 label='Records per page:'
                                 className="RecordsPerPage"
@@ -346,6 +443,8 @@ export default class GenericTable extends Component {
                                 onChange={this.handleChangeRecordsPerPage} />
                         </div>
                     </Grid.Column>
+                    </Grid.Row>
+                    {toggleColumnsRow}
                 </Grid>
                 <Table selectable sortable celled basic='very'>
                     <Table.Header>

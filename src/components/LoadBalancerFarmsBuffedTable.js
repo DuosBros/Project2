@@ -78,7 +78,8 @@ export default class LoadBalancerFarmsBuffedTable extends GenericTable {
             <div>
                 <Button
                     size="small"
-                    onClick={() => this.setState({ showBETAPools: !this.state.showBETAPools })}
+                    name="showBETAPools"
+                    onClick={this.handleStateToggle}
                     compact
                     content={showBETAPools ? 'Hide BETA Pools' : 'Show BETA Pools'}
                     style={{ padding: '0.3em', marginTop: '0.5em', textAlign: 'right' }}
