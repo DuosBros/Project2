@@ -60,20 +60,6 @@ export default class GenericTable extends Component {
             throw new Error("Columns are undefined!");
         }
 
-        if(props.isEdit) {
-            var isAddedAlready = columns.filter(x => x.name === "Actions");
-            if(isAddedAlready.length === 0) {
-                columns = columns.slice();
-                columns.push({
-                    name: "Actions",
-                    prop: "a",
-                    width: 1,
-                    sortable: false,
-                    data: false,
-                    searchable: false
-                });
-            }
-        }
         columns = columns.map(c => Object.assign({}, DEFAULT_COLUMN_PROPS, c));
         for(let c of columns) {
             if(!c.hasOwnProperty("prop")) {
@@ -240,12 +226,23 @@ export default class GenericTable extends Component {
                 <Table.HeaderCell
                     collapsing={c.collapsing}
                     width={c.collapsing ? null : c.width}
-                    key={c.prop}
+                    key={"c-" + c.prop}
                     content={c.name}
                     {...headerProps}
                 />
             );
         });
+        if(isEdit) {
+            headerCells.push((
+                <Table.HeaderCell
+                    collapsing={false}
+                    width={1}
+                    key="action"
+                    content="Actions"
+                    disabled
+                />
+            ));
+        }
 
         if (multiSearchInput !== "") {
             filteredData = filterInArrayOfObjects(multiSearchInput, data, visibleColumns.filter(c => c.searchable).map(c => c.prop));
@@ -330,21 +327,26 @@ export default class GenericTable extends Component {
             });
 
             if(isEdit) {
+                let editIcon;
+                if(isAdd) {
+                    editIcon = toAdd.indexOf(data.Id) > -1 ? (<Icon color="red" corner name='minus' />) : (<Icon color="green" corner name='add' />);
+                } else {
+                    editIcon = toRemove.indexOf(data.Id) > -1 ? (<Icon color="green" corner name='add' />) : (<Icon color="red" corner name='minus' />);
+                }
+                let editIconGroup = (
+                    <>
+                        <Icon name='balance' />
+                        {editIcon}
+                    </>
+                );
+
                 cells.push((
                     <Table.Cell key="a">
-                        <Button onClick={isEdit && isAdd ? () => this.props.handleAdd(data.Id) : () => this.props.handleRemove(data.Id)} style={{ padding: '0.3em' }} size='medium'
-                            icon={
-                                <>
-                                    <Icon name='balance' />
-                                    {
-                                        isAdd ? (
-                                            toAdd.indexOf(data.Id) > -1 ? (<Icon color="red" corner name='minus' />) : (<Icon color="green" corner name='add' />)
-                                        ) : (
-                                            toRemove.indexOf(data.Id) > -1 ? (<Icon color="green" corner name='add' />) : (<Icon color="red" corner name='minus' />)
-                                        )
-                                    }
-                                </>
-                            } >
+                        <Button
+                            onClick={isEdit && isAdd ? () => this.props.handleAdd(data.Id) : () => this.props.handleRemove(data.Id)}
+                            style={{ padding: '0.3em' }}
+                            size='medium'
+                            icon={editIconGroup} >
                         </Button>
                     </Table.Cell>
                 ));
