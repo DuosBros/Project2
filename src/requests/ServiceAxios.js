@@ -10,5 +10,5 @@ export function getDismeApplications() {
 }
 
 export function getServiceByShortcut(shortcuts) {
-    return axios.get(LOCO_API + 'service/name/' + shortcuts + "/full");
+    return axios.post(LOCO_API + 'service/full', "\"" + shortcuts + "\"");
 }

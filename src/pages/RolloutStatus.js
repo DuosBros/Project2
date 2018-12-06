@@ -12,7 +12,7 @@ import { DISME_SERVICE_URL, DISME_SERVICE_PLACEHOLDER } from '../appConfig';
 import SimpleTable from '../components/SimpleTable';
 import { searchServiceShortcut } from '../requests/HeaderAxios';
 import { searchServiceShortcutAction } from '../actions/HeaderActions';
-import { debounce } from '../utils/HelperFunction';
+import { debounce, sleep } from '../utils/HelperFunction';
 import { getRolloutStatus } from '../requests/RolloutStatusAxios';
 
 class RolloutStatus extends React.Component {
@@ -25,7 +25,8 @@ class RolloutStatus extends React.Component {
             inputProductsValues: "",
             selectedServices: [],
             loadingServiceDetails: false,
-            dropdownValue: ""
+            dropdownValue: "",
+            getServiceDetailsError: {}
 
         }
 
@@ -83,8 +84,6 @@ class RolloutStatus extends React.Component {
         this.setState({ inputProductsValues: value });
 
         this.getServiceDetailsAndRolloutStatus(value)
-
-
     }
 
     getServiceDetailsAndRolloutStatus(services) {
@@ -99,33 +98,48 @@ class RolloutStatus extends React.Component {
 
                 this.setState({ loadingServiceDetails: false });
             })
+            // .catch(err => {
+            //     this.setState({
+            //         loadingServiceDetails: false,
+            //         getServiceDetailsError: err
+            //     });
+            // })
             .then(() => {
                 var split = services.split(",")
 
                 for (let i = 0; i < split.length; i++) {
 
-                    getRolloutStatus(split[i])
-                        .then(res => {
-                            // console.log(this.props.rolloutStatusStore.serviceDetails)
-                            for (let i = 0; i < this.props.rolloutStatusStore.serviceDetails.length; i++) {
-                                var found = false;
-                                var element = this.props.rolloutStatusStore.serviceDetails[i];
-                                if (element !== null) {
-                                    if (element.Service[0].Shortcut.search(new RegExp(split[i], "i")) >= 0) {
-                                        found = true;
-                                        break;
+                    sleep(500).then(() => {
+                        getRolloutStatus(split[i])
+                            .then(res => {
+                                // console.log(this.props.rolloutStatusStore.serviceDetails)
+                                for (let i = 0; i < this.props.rolloutStatusStore.serviceDetails.length; i++) {
+                                    var found = false;
+                                    var element = this.props.rolloutStatusStore.serviceDetails[i];
+                                    if (element !== null) {
+                                        if (element.Service[0].Shortcut.search(new RegExp(split[i], "i")) >= 0) {
+                                            found = true;
+                                            break;
+                                        }
                                     }
                                 }
-                            }
 
-                            if (res.data && found) {
+                                if (res.data && found) {
+                                    var object = {
+                                        serviceName: split[i],
+                                        rolloutStatus: res.data
+                                    }
+                                    this.props.getRolloutStatusAction(object)
+                                }
+                            })
+                            .catch(err => {
                                 var object = {
                                     serviceName: split[i],
-                                    rolloutStatus: res.data
+                                    err: err
                                 }
                                 this.props.getRolloutStatusAction(object)
-                            }
-                        })
+                            })
+                    })
                 }
             })
     }
@@ -146,17 +160,6 @@ class RolloutStatus extends React.Component {
     // handleServiceChange = (e, { value }) => {
     //     this.setState({ inputProductsValues: e.target.innerText + "," + this.state.inputProductsValues });
     // }
-
-    getServiceInfo = (inputProductsValues) => {
-        var splitted = inputProductsValues.split(",")
-
-        var result = splitted.map(service => {
-            service = service.trim();
-
-
-        })
-
-    }
 
     handleGetRolloutStatusOnClick = () => {
         // var splitted = this.state.inputProductsValues.split(",")
@@ -188,7 +191,6 @@ class RolloutStatus extends React.Component {
     render() {
         // console.log(this.props.rolloutStatusStore.serviceDetails)
         console.log(this.props.rolloutStatusStore.rolloutStatuses)
-        this.getServiceInfo(this.state.inputProductsValues)
 
         // var rolloutStatuses = this.props.rolloutStatusStore.rolloutStatuses.rolloutStatus.map(x => {
         //     return (<div></div>)
@@ -220,47 +222,94 @@ class RolloutStatus extends React.Component {
             }
         ];
 
-        var servicesTableRows = this.props.rolloutStatusStore.serviceDetails.map((service, index) => {
-            if (service) {
-                return (
-                    <Table.Row key={service.Service[0].Id}>
-                        <Table.Cell>{service.Service[0].Name}</Table.Cell>
-                        <Table.Cell>
-                            <Link to={'/service/' + service.Service[0].Id} target="_blank">{service.Service[0].Shortcut}</Link>
-                        </Table.Cell>
-                        <Table.Cell>
-                            <DismeStatus dismeStatus={service.Service[0].Status} />
-                        </Table.Cell>
-                        <Table.Cell>
-                            <Button
-                                onClick={() =>
-                                    window.open(
-                                        _.replace(DISME_SERVICE_URL, new RegExp(DISME_SERVICE_PLACEHOLDER, "g"),
-                                            service.Service[0].DismeID))}
-                                style={{ padding: '0.3em' }}
-                                size='medium'
-                                icon='external' />
-                        </Table.Cell>
-                        <Table.Cell>
-                            {service.Servers.filter(x => x.Environment.toLowerCase() === "production").length}
-                        </Table.Cell>
-                        <Table.Cell textAlign="center">
-                            <Button onClick={() => this.removeServiceFromSearch(service.Service[0])} style={{ padding: '0.3em' }} icon="close"></Button>
-                        </Table.Cell>
-                    </Table.Row>
-                )
-            }
-            else {
-                return (
-                    <Table.Row error>
-                        <Table.Cell colSpan={5}>Could not get {this.state.inputProductsValues.split(",")[index]}</Table.Cell>
-                    </Table.Row>
-                )
-            }
-        })
+        var servicesTableRows;
+
+        if (!_.isEmpty(this.state.getServiceDetailsError)) {
+            console.log(this.state.getServiceDetailsError)
+            servicesTableRows = (
+                <Table.Row error>
+                    <Table.Cell colSpan={6}>Error fetching data</Table.Cell>
+                </Table.Row>
+            )
+        }
+        else {
+            servicesTableRows = this.props.rolloutStatusStore.serviceDetails.map((service, index) => {
+                if (service) {
+                    return (
+                        <Table.Row key={service.Service[0].Id}>
+                            <Table.Cell>{service.Service[0].Name}</Table.Cell>
+                            <Table.Cell>
+                                <Link to={'/service/' + service.Service[0].Id} target="_blank">{service.Service[0].Shortcut}</Link>
+                            </Table.Cell>
+                            <Table.Cell>
+                                <DismeStatus dismeStatus={service.Service[0].Status} />
+                            </Table.Cell>
+                            <Table.Cell>
+                                <Button
+                                    onClick={() =>
+                                        window.open(
+                                            _.replace(DISME_SERVICE_URL, new RegExp(DISME_SERVICE_PLACEHOLDER, "g"),
+                                                service.Service[0].DismeID))}
+                                    style={{ padding: '0.3em' }}
+                                    size='medium'
+                                    icon='external' />
+                            </Table.Cell>
+                            <Table.Cell>
+                                {service.Servers.filter(x => x.Environment.toLowerCase() === "production").length}
+                            </Table.Cell>
+                            <Table.Cell textAlign="center">
+                                <Button onClick={() => this.removeServiceFromSearch(service.Service[0])} style={{ padding: '0.3em' }} icon="close"></Button>
+                            </Table.Cell>
+                        </Table.Row>
+                    )
+                }
+                else {
+                    return (
+                        <Table.Row error>
+                            <Table.Cell colSpan={6}>Could not get {this.state.inputProductsValues.split(",")[index]}</Table.Cell>
+                        </Table.Row>
+                    )
+                }
+            })
+        }
+
+
+
+        // TODO: render only these which are in table service details. in Reducer there can be also the previous ones
+        // 
 
         var segments; // segment for every application 
         // console.log(this.props.rolloutStatusStore.dismeApplications)
+        var serviceDetails;
+        if (this.state.inputProductsValues) {
+            serviceDetails = (
+                <Grid.Row>
+                    <Grid.Column>
+                        <Header block attached='top' as='h4'>
+                            Service details
+                            </Header>
+                        <Segment attached='bottom'>
+                            {
+                                this.state.loadingServiceDetails ? (
+                                    <Message info icon>
+                                        <Icon name='circle notched' loading />
+                                        <Message.Content>
+                                            <Message.Header>Fetching service details</Message.Header>
+                                        </Message.Content>
+                                    </Message>
+                                ) : (
+                                        <SimpleTable columnProperties={serviceTableColumnProperties} body={servicesTableRows} />
+                                    )
+                            }
+                        </Segment>
+                    </Grid.Column>
+                </Grid.Row>
+            )
+        }
+        else {
+            serviceDetails = null
+        }
+
 
         return (
             <Grid stackable>
@@ -314,29 +363,7 @@ class RolloutStatus extends React.Component {
                         {segments}
                     </Grid.Column>
                 </Grid.Row>
-                <Grid.Row>
-                    <Grid.Column>
-                        <Header block attached='top' as='h4'>
-                            Service details
-                        </Header>
-
-                        <Segment attached='bottom'>
-                            {
-                                this.state.loadingServiceDetails ? (
-                                    <Message info icon>
-                                        <Icon name='circle notched' loading />
-                                        <Message.Content>
-                                            <Message.Header>Fetching service details</Message.Header>
-                                        </Message.Content>
-                                    </Message>
-                                ) : (
-                                        <SimpleTable columnProperties={serviceTableColumnProperties} body={servicesTableRows} />
-                                    )
-                            }
-                        </Segment>
-
-                    </Grid.Column>
-                </Grid.Row>
+                {serviceDetails}
             </Grid>
         )
     }

@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 export const groupBy = (items, key) => items.reduce(
     (result, item) => ({
         ...result,
@@ -111,18 +109,6 @@ function trimString(s) {
     return s.substring(l, r + 1);
 }
 
-function compareObjects(o1, o2) {
-    var k = '';
-    for (k in o1) if (o1[k] !== o2[k]) return false;
-    for (k in o2) if (o1[k] !== o2[k]) return false;
-    return true;
-}
-
-function itemExists(haystack, needle) {
-    for (var i = 0; i < haystack.length; i++) if (compareObjects(haystack[i], needle)) return true;
-    return false;
-}
-
 /*
  * "keys" (optional) Specifies which properties of objects should be inspected.
  *                   If omitted, all properties will be inspected.
@@ -148,4 +134,8 @@ export const isAdmin = (user) => {
     }
 
     return false;
+}
+
+export const sleep = (milliseconds) => {
+    return new Promise(resolve => setTimeout(resolve, milliseconds))
 }

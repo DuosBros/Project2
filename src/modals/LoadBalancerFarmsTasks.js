@@ -26,6 +26,7 @@ class LoadBalancerFarmsTasks extends React.Component {
 
     componentWillReceiveProps(next) {
         if (this.props.show !== next.show) {
+            this.setState({ loadBalancerFarmsToAdd: [], loadBalancerFarmsToRemove: [] });
             getAllLoadBalancerFarms()
                 .then(res => {
                     this.props.getAllLoadBalancerFarmsAction(res.data)
@@ -84,7 +85,7 @@ class LoadBalancerFarmsTasks extends React.Component {
                                         <Segment attached='bottom'>
                                             <LoadBalancerFarmsBuffedTable
                                                 isEdit={true}
-                                                isAdd= {true}
+                                                isAdd={true}
                                                 data={this.props.loadBalancerFarmsTasksStore.loadBalancerFarms}
                                                 multiSearchInput={serviceDetails.Service[0].Name}
                                                 handleAdd={this.handleAdd}
