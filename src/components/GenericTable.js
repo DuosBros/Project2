@@ -11,6 +11,8 @@ const DEFAULT_COLUMN_PROPS = {
     visibleByDefault: true
 }
 
+const DEFAUL_PAGE_SIZE = 15;
+
 export default class GenericTable extends Component {
 
     constructor(props) {
@@ -27,12 +29,21 @@ export default class GenericTable extends Component {
             filters[col.prop] = "";
         }
 
+        let defaultLimit = DEFAUL_PAGE_SIZE;
+        if(this.props.hasOwnProperty("defaultLimitOverride")) {
+            if(typeof this.props.defaultLimitOverride !== "number") {
+                throw new Error("defaultLimitOverride property must be a number.")
+            }
+            defaultLimit = parseInt(this.props.defaultLimitOverride);
+        }
+
         this.state = {
             sortColumn: null,
             sortDirection: null,
             offset: 0,
-            limit: this.props.defaultLimitOverride ? this.props.defaultLimitOverride : 15,
-            limitInput: this.props.defaultLimitOverride ? this.props.defaultLimitOverride.toString() : "15",
+            defaultLimit,
+            limit: defaultLimit,
+            limitInput: defaultLimit.toString(),
             limitInputValid: true,
             multiSearchInput: this.props.multiSearchInput ? this.props.multiSearchInput : "",
             showColumnFilters: false,
@@ -226,6 +237,7 @@ export default class GenericTable extends Component {
             sortColumn,
             sortDirection,
             multiSearchInput,
+            defaultLimit,
             limit,
             limitInput,
             limitInputValid,
@@ -321,7 +333,7 @@ export default class GenericTable extends Component {
             }
         }
 
-        if (filteredData.length > limit) {
+        if (defaultLimit && filteredData.length > limit) {
             renderData = filteredData.slice(offset, offset + limit)
             tableFooter = (
                 <Table.Footer fullWidth>
@@ -512,7 +524,7 @@ export default class GenericTable extends Component {
                             {columnToggleButton}
                             {this.renderCustomFilter()}
                         </div>
-                        <div style={{ float: "right", margin: "0 20px" }}>
+                        <div style={{ float: "right", margin: "0 20px", display: defaultLimit === 0 ? "none" : "visible" }}>
                             <Input
                                 label='Records per page:'
                                 className="RecordsPerPage"
