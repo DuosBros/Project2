@@ -205,7 +205,7 @@ export default class GenericTable extends Component {
                 return res;
             }
         }
-        if (prop === null) {
+        if (prop === null || a[prop] === null || b[prop] === null) {
             return res;
         }
         return sortFactor * this.compareBase(a[prop], b[prop]);
