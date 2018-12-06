@@ -16,8 +16,8 @@ export default class GenericTable extends Component {
     constructor(props) {
         super(props);
 
-        // generate columns
-        let columns = this.generateColumns(props);
+        // generate columns and grouping
+        let { columns, grouping } = this.generateColumnsAndGrouping(props);
 
         // generate empty filters and filterInputs objects
         let filterInputs = {},
@@ -39,17 +39,22 @@ export default class GenericTable extends Component {
             filterInputs,
             filters,
             columns,
+            grouping,
             data: this.props.data,
             columnToggle: columns.filter(c => c.visibleByDefault === false).length > 0,
             showColumnToggles: false,
             visibleColumnsList: columns.filter(c => c.visibleByDefault).map(c => c.prop)
         }
 
+        if(Array.isArray(this.state.data)) {
+            this.state.data = this.sort(this.state.data, null);
+        }
+
         this.updateFilters = debounce(this.updateFilters, 400);
         this.updateLimit = debounce(this.updateLimit, 400);
     }
 
-    generateColumns(props) {
+    generateColumnsAndGrouping(props) {
         let columns = this.getColumns();
 
         if(!columns && props.columns) {
@@ -66,30 +71,50 @@ export default class GenericTable extends Component {
                 throw new Error("Columns need a 'prop' property");
             }
         }
-        return columns;
+
+        let grouping = this.getGrouping();
+        grouping = grouping.map(gp => {
+            let match = columns.filter(c => c.prop === gp);
+            if(match.length > 1) {
+                throw new Error("Grouping on '" + gp + "' is ambiguous. Mulitple columns with this prop are defined.");
+            } else if(match.length < 1) {
+                throw new Error("Grouping on '" + gp + "' not possible. Grouping only possible on props that are specified by a column.");
+            }
+            match[0].sortable = false;
+            return match[0];
+        });
+
+        return {
+            columns,
+            grouping
+        };
     }
 
     componentWillReceiveProps(nextProps) {
-        this.setState({ data: nextProps.data });
+        if(this.props.data !== nextProps.data) {
+            let data = this.sort(nextProps.data, null);
+            this.setState({ data });
+        }
     }
 
     handleSort = clickedColumn => () => {
-        const { sortColumn, data, sortDirection } = this.state
+        let { sortColumn, data, sortDirection } = this.state
 
         if (sortColumn !== clickedColumn) {
             this.setState({
                 sortColumn: clickedColumn,
-                data: _.sortBy(data, [element => typeof element[clickedColumn] === "string" ? element[clickedColumn].toLowerCase() : element[clickedColumn]]),
+                data: this.sort(data, clickedColumn, 'ascending'),
                 sortDirection: 'ascending',
-            })
+            });
 
-            return
+            return;
         }
 
+        sortDirection = sortDirection === 'ascending' ? 'descending' : 'ascending';
         this.setState({
-            data: data.reverse(),
-            sortDirection: sortDirection === 'ascending' ? 'descending' : 'ascending',
-        })
+            data: this.sort(data, sortColumn, sortDirection),
+            sortDirection
+        });
     }
 
     handleClick(offset) {
@@ -163,9 +188,40 @@ export default class GenericTable extends Component {
         });
     }
 
+    sort(data, by, direction) {
+        data = data.slice();
+        data.sort(this.comparatorGrouped.bind(this, direction, by));
+        return data
+    }
+
+    comparatorGrouped(direction, prop, a, b) {
+        let sortFactor = direction === "descending" ? -1 : 1;
+
+        var res;
+        for(let g of this.state.grouping) {
+            res = this.compareBase(a[g.prop], b[g.prop]);
+
+            if(res !== 0) {
+                return res;
+            }
+        }
+        if(prop === null) {
+            return res;
+        }
+        return sortFactor * this.compareBase(a[prop], b[prop]);
+    }
+
+    compareBase(a, b) {
+        if(typeof a === "number" && typeof b === "number") {
+            return a < b ? -1 : (a > b ? 1 : 0);
+        }
+        return a.toString().localeCompare(b.toString());
+    }
+
     render() {
         const {
             columns,
+            grouping,
             visibleColumnsList,
             sortColumn,
             sortDirection,
@@ -315,7 +371,27 @@ export default class GenericTable extends Component {
             filterColumnsRow = null
         }
 
-        var tableBody = renderData.map(data => this.transformDataRow(Object.assign({}, data))).map(data => {
+        var tableBody = [],
+            prevRow = {};
+        renderData.map(data => this.transformDataRow(Object.assign({}, data))).forEach(data => {
+            let insertGroupingHeader = false;
+            for(let gc of grouping) {
+                if(data[gc.prop] !== prevRow[gc.prop]) {
+                    insertGroupingHeader = true;
+                    break;
+                }
+            }
+
+            if(insertGroupingHeader === true) {
+                let groupingHeaderKey = grouping.map(gc => data[gc.prop]),
+                    groupingHeaderText = grouping.map(gc => data[gc.display ? gc.display : gc.prop]);
+                tableBody.push((
+                    <Table.Row key={"group-" + groupingHeaderKey.join('::')}>
+                        <Table.HeaderCell style={{ backgroundColor: '#f2f2f2' }} colSpan='11'>{groupingHeaderText.join(', ')}</Table.HeaderCell>
+                    </Table.Row>
+                ));
+            }
+
             let cells = visibleColumns.map(c => {
                 if(c.data === false) {
                     return null;
@@ -352,13 +428,14 @@ export default class GenericTable extends Component {
                 ));
             }
 
-            return (
+            tableBody.push((
                 <Table.Row positive={isEdit && isAdd === true && toAdd.indexOf(data.Id) > -1}
                     negative={isEdit && isAdd === false && toRemove.indexOf(data.Id) > -1}
-                    key={data.Id}>
+                    key={"data-" + data.Id}>
                     {cells}
                 </Table.Row>
-            );
+            ));
+            prevRow = data;
         });
 
         if(columnToggle) {
@@ -460,6 +537,10 @@ export default class GenericTable extends Component {
                 </Table>
             </div>
         );
+    }
+
+    getGrouping() {
+        return [];
     }
 
     getColumns() {
