@@ -8,10 +8,11 @@ import LoginReducer from '../reducers/LoginReducer';
 import LoadBalancerFarmsTasksReducer from '../reducers/LoadBalancerFarmsTasksReducer';
 import PatchGroupReducer from '../reducers/PatchGroupReducer';
 import RolloutStatusReducer from '../reducers/RolloutStatusReducer';
+import VirtualMachineReducer from '../reducers/VirtualMachineReducer';
 
 const CommonReducer = combineReducers({
     HeaderReducer, BaseReducer, ServerReducer, ServiceReducer, LoginReducer, LoadBalancerFarmsTasksReducer,
-    PatchGroupReducer, RolloutStatusReducer
+    PatchGroupReducer, RolloutStatusReducer, VirtualMachineReducer
 });
 
 export default CommonReducer;

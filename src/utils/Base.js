@@ -24,6 +24,7 @@ import LoadBalancerFarmsTasks from '../modals/LoadBalancerFarmsTasks';
 import ServerBuffedTable from '../components/ServerBuffedTable';
 import PatchGroup from '../pages/PatchGroup';
 import RolloutStatus from '../pages/RolloutStatus';
+import VirtualMachine from '../pages/VirtualMachine';
 
 class Base extends React.Component {
     constructor(props) {
@@ -118,6 +119,7 @@ class Base extends React.Component {
                                 <Route path='/rolloutstatus' component={RolloutStatus} />
                                 <Route path='/patchgroups' component={PatchGroup} />
                                 <Route path='/service/:id' component={ServiceDetails} />
+                                <Route path='/virtualmachines' component={VirtualMachine} />
                             </Switch>
                         </div>
                         <Footer id="footer" {...wideClass} />

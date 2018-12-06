@@ -30,7 +30,7 @@ class Sidebar extends React.Component {
                             <Menu.Item as={Link} to='/patchgroups'>
                                 PatchGroups
                             </Menu.Item>
-                            <Menu.Item as={Link} to='/usage' >
+                            <Menu.Item as={Link} to='/virtualmachines' >
                                 VirtualMachines
                             </Menu.Item>
                         </Menu.Menu>
