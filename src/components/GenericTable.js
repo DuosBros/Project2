@@ -1,13 +1,14 @@
 import _ from 'lodash'
 import React, { Component } from 'react'
-import { Table, Grid, Message, Input, Button, Icon } from 'semantic-ui-react'
+import { Table, Grid, Message, Input, Button, Icon, Label } from 'semantic-ui-react'
 import Pagination from 'semantic-ui-react-button-pagination';
 import { filterInArrayOfObjects, isNum, debounce } from '../utils/HelperFunction';
 
 const DEFAULT_COLUMN_PROPS = {
     collapsing: false,
     sortable: true,
-    searchable: true
+    searchable: true,
+    visibleByDefault: true
 }
 
 export default class GenericTable extends Component {
@@ -15,8 +16,8 @@ export default class GenericTable extends Component {
     constructor(props) {
         super(props);
 
-        // generate columns
-        let columns = this.generateColumns(props);
+        // generate columns and grouping
+        let { columns, grouping } = this.generateColumnsAndGrouping(props);
 
         // generate empty filters and filterInputs objects
         let filterInputs = {},
@@ -38,14 +39,22 @@ export default class GenericTable extends Component {
             filterInputs,
             filters,
             columns,
-            data: this.props.data
+            grouping,
+            data: this.props.data,
+            columnToggle: columns.filter(c => c.visibleByDefault === false).length > 0,
+            showColumnToggles: false,
+            visibleColumnsList: columns.filter(c => c.visibleByDefault).map(c => c.prop)
+        }
+
+        if(Array.isArray(this.state.data)) {
+            this.state.data = this.sort(this.state.data, null);
         }
 
         this.updateFilters = debounce(this.updateFilters, 400);
         this.updateLimit = debounce(this.updateLimit, 400);
     }
 
-    generateColumns(props) {
+    generateColumnsAndGrouping(props) {
         let columns = this.getColumns();
 
         if(!columns && props.columns) {
@@ -56,45 +65,56 @@ export default class GenericTable extends Component {
             throw new Error("Columns are undefined!");
         }
 
-        if(props.isEdit) {
-            var isAddedAlready = columns.filter(x => x.name === "Actions");
-            if(isAddedAlready.length === 0) {
-                columns = columns.slice();
-                columns.push({
-                    name: "Actions",
-                    prop: "a",
-                    width: 1,
-                    sortable: false,
-                    data: false,
-                    searchable: false
-                });
+        columns = columns.map(c => Object.assign({}, DEFAULT_COLUMN_PROPS, c));
+        for(let c of columns) {
+            if(!c.hasOwnProperty("prop")) {
+                throw new Error("Columns need a 'prop' property");
             }
         }
-        columns = columns.map(c => Object.assign({}, DEFAULT_COLUMN_PROPS, c));
-        return columns;
+
+        let grouping = this.getGrouping();
+        grouping = grouping.map(gp => {
+            let match = columns.filter(c => c.prop === gp);
+            if(match.length > 1) {
+                throw new Error("Grouping on '" + gp + "' is ambiguous. Mulitple columns with this prop are defined.");
+            } else if(match.length < 1) {
+                throw new Error("Grouping on '" + gp + "' not possible. Grouping only possible on props that are specified by a column.");
+            }
+            match[0].sortable = false;
+            return match[0];
+        });
+
+        return {
+            columns,
+            grouping
+        };
     }
 
     componentWillReceiveProps(nextProps) {
-        this.setState({ data: nextProps.data });
+        if(this.props.data !== nextProps.data) {
+            let data = this.sort(nextProps.data, null);
+            this.setState({ data });
+        }
     }
 
     handleSort = clickedColumn => () => {
-        const { sortColumn, data, sortDirection } = this.state
+        let { sortColumn, data, sortDirection } = this.state
 
         if (sortColumn !== clickedColumn) {
             this.setState({
                 sortColumn: clickedColumn,
-                data: _.sortBy(data, [element => typeof element[clickedColumn] === "string" ? element[clickedColumn].toLowerCase() : element[clickedColumn]]),
+                data: this.sort(data, clickedColumn, 'ascending'),
                 sortDirection: 'ascending',
-            })
+            });
 
-            return
+            return;
         }
 
+        sortDirection = sortDirection === 'ascending' ? 'descending' : 'ascending';
         this.setState({
-            data: data.reverse(),
-            sortDirection: sortDirection === 'ascending' ? 'descending' : 'ascending',
-        })
+            data: this.sort(data, sortColumn, sortDirection),
+            sortDirection
+        });
     }
 
     handleClick(offset) {
@@ -118,6 +138,28 @@ export default class GenericTable extends Component {
     handleToggleColumnFilters = () => {
         this.setState({
             showColumnFilters: !this.state.showColumnFilters
+        });
+    }
+
+    handleStateToggle = (e, {name}) => {
+        this.setState({
+            [name]: !this.state[name]
+        });
+    }
+
+    handleColumnToggle = (e, {prop, value}) => {
+        const { columns, visibleColumnsList } = this.state;
+        let newVisibleValue = !value;
+
+        let newVisibleColumnsList = columns.filter(c => {
+            if(c.prop === prop) {
+                return newVisibleValue;
+            }
+            return visibleColumnsList.indexOf(c.prop) !== -1;
+        }).map(c => c.prop);
+
+        this.setState({
+            visibleColumnsList: newVisibleColumnsList
         });
     }
 
@@ -146,9 +188,56 @@ export default class GenericTable extends Component {
         });
     }
 
+    sort(data, by, direction) {
+        data = data.slice();
+        data.sort(this.comparatorGrouped.bind(this, direction, by));
+        return data
+    }
+
+    comparatorGrouped(direction, prop, a, b) {
+        let sortFactor = direction === "descending" ? -1 : 1;
+
+        var res;
+        for(let g of this.state.grouping) {
+            res = this.compareBase(a[g.prop], b[g.prop]);
+
+            if(res !== 0) {
+                return res;
+            }
+        }
+        if(prop === null) {
+            return res;
+        }
+        return sortFactor * this.compareBase(a[prop], b[prop]);
+    }
+
+    compareBase(a, b) {
+        if(typeof a === "number" && typeof b === "number") {
+            return a < b ? -1 : (a > b ? 1 : 0);
+        }
+        return a.toString().localeCompare(b.toString());
+    }
+
     render() {
-        const { sortColumn, sortDirection, multiSearchInput, limit, limitInput, limitInputValid,
-            showColumnFilters, data, filters, offset } = this.state
+        const {
+            columns,
+            grouping,
+            visibleColumnsList,
+            sortColumn,
+            sortDirection,
+            multiSearchInput,
+            limit,
+            limitInput,
+            limitInputValid,
+            showColumnFilters,
+            showColumnToggles,
+            columnToggle,
+            data,
+            filters,
+            offset
+        } = this.state
+
+        let visibleColumns = columns.filter(c => visibleColumnsList.indexOf(c.prop) !== -1);
 
         if(!Array.isArray(data)) {
             let msg = this.props.placeholder ? this.props.placeholder : "Fetching data...";
@@ -164,7 +253,10 @@ export default class GenericTable extends Component {
             );
         }
 
-        var renderData, tableFooter, filteredData, filterColumnsRow, isEdit, isAdd, toAdd, toRemove;
+        var renderData, tableFooter, filteredData,
+            filterColumnsRow, toggleColumnsRow,
+            columnToggleButton,
+            isEdit, isAdd, toAdd, toRemove;
 
         isEdit = this.props.isEdit;
         isAdd = this.props.isAdd;
@@ -174,7 +266,7 @@ export default class GenericTable extends Component {
             toRemove = this.props.toRemove;
         }
 
-        let headerCells = this.state.columns.map(c => {
+        let headerCells = visibleColumns.map(c => {
             let headerProps;
             if(c.sortable) {
                 headerProps = {
@@ -190,15 +282,26 @@ export default class GenericTable extends Component {
                 <Table.HeaderCell
                     collapsing={c.collapsing}
                     width={c.collapsing ? null : c.width}
-                    key={c.prop}
+                    key={"c-" + c.prop}
                     content={c.name}
                     {...headerProps}
                 />
             );
         });
+        if(isEdit) {
+            headerCells.push((
+                <Table.HeaderCell
+                    collapsing={false}
+                    width={1}
+                    key="action"
+                    content="Actions"
+                    disabled
+                />
+            ));
+        }
 
         if (multiSearchInput !== "") {
-            filteredData = filterInArrayOfObjects(multiSearchInput, data, this.state.columns.filter(c => c.searchable).map(c => c.prop));
+            filteredData = filterInArrayOfObjects(multiSearchInput, data, visibleColumns.filter(c => c.searchable).map(c => c.prop));
         } else {
             filteredData = data;
         }
@@ -247,7 +350,7 @@ export default class GenericTable extends Component {
         }
 
         if (showColumnFilters) {
-            let headerFilterCells = this.state.columns.map(c => {
+            let headerFilterCells = visibleColumns.map(c => {
                 let filterInput = null;
                 if(c.searchable) {
                     filterInput = (<Input fluid name={c.prop} onChange={this.handleColumnFilterChange} value={this.state.filterInputs[c.prop]} />)
@@ -268,8 +371,28 @@ export default class GenericTable extends Component {
             filterColumnsRow = null
         }
 
-        var tableBody = renderData.map(data => this.transformDataRow(Object.assign({}, data))).map(data => {
-            let cells = this.state.columns.map(c => {
+        var tableBody = [],
+            prevRow = {};
+        renderData.map(data => this.transformDataRow(Object.assign({}, data))).forEach(data => {
+            let insertGroupingHeader = false;
+            for(let gc of grouping) {
+                if(data[gc.prop] !== prevRow[gc.prop]) {
+                    insertGroupingHeader = true;
+                    break;
+                }
+            }
+
+            if(insertGroupingHeader === true) {
+                let groupingHeaderKey = grouping.map(gc => data[gc.prop]),
+                    groupingHeaderText = grouping.map(gc => data[gc.display ? gc.display : gc.prop]);
+                tableBody.push((
+                    <Table.Row key={"group-" + groupingHeaderKey.join('::')}>
+                        <Table.HeaderCell style={{ backgroundColor: '#f2f2f2' }} colSpan='11'>{groupingHeaderText.join(', ')}</Table.HeaderCell>
+                    </Table.Row>
+                ));
+            }
+
+            let cells = visibleColumns.map(c => {
                 if(c.data === false) {
                     return null;
                 }
@@ -280,38 +403,89 @@ export default class GenericTable extends Component {
             });
 
             if(isEdit) {
+                let editIcon;
+                if(isAdd) {
+                    editIcon = toAdd.indexOf(data.Id) > -1 ? (<Icon color="red" corner name='minus' />) : (<Icon color="green" corner name='add' />);
+                } else {
+                    editIcon = toRemove.indexOf(data.Id) > -1 ? (<Icon color="green" corner name='add' />) : (<Icon color="red" corner name='minus' />);
+                }
+                let editIconGroup = (
+                    <>
+                        <Icon name='balance' />
+                        {editIcon}
+                    </>
+                );
+
                 cells.push((
                     <Table.Cell key="a">
-                        <Button onClick={isEdit && isAdd ? () => this.props.handleAdd(data.Id) : () => this.props.handleRemove(data.Id)} style={{ padding: '0.3em' }} size='medium'
-                            icon={
-                                <>
-                                    <Icon name='balance' />
-                                    {
-                                        isAdd ? (
-                                            toAdd.indexOf(data.Id) > -1 ? (<Icon color="red" corner name='minus' />) : (<Icon color="green" corner name='add' />)
-                                        ) : (
-                                            toRemove.indexOf(data.Id) > -1 ? (<Icon color="green" corner name='add' />) : (<Icon color="red" corner name='minus' />)
-                                        )
-                                    }
-                                </>
-                            } >
+                        <Button
+                            onClick={isEdit && isAdd ? () => this.props.handleAdd(data.Id) : () => this.props.handleRemove(data.Id)}
+                            style={{ padding: '0.3em' }}
+                            size='medium'
+                            icon={editIconGroup} >
                         </Button>
                     </Table.Cell>
                 ));
             }
 
-            return (
+            tableBody.push((
                 <Table.Row positive={isEdit && isAdd === true && toAdd.indexOf(data.Id) > -1}
                     negative={isEdit && isAdd === false && toRemove.indexOf(data.Id) > -1}
-                    key={data.Id}>
+                    key={"data-" + data.Id}>
                     {cells}
                 </Table.Row>
-            );
+            ));
+            prevRow = data;
         });
+
+        if(columnToggle) {
+            columnToggleButton = (
+                <div>
+                    <Button
+                        size="small"
+                        name="showColumnToggles"
+                        onClick={this.handleStateToggle}
+                        compact
+                        content={showColumnToggles ? 'Hide Column Toggles' : 'Show Column Toggles'}
+                        style={{ padding: '0.3em', marginTop: '0.5em', textAlign: 'right' }}
+                        id="secondaryButton"
+                        icon={showColumnToggles ? 'eye slash' : 'eye'}
+                        labelPosition='right' />
+                </div>
+            )
+
+            if(showColumnToggles) {
+                let columnToggles = columns.map(c => {
+                    let visible = visibleColumnsList.indexOf(c.prop) !== -1;
+                    return (
+                        <Label
+                            key={c.prop}
+                            color={visible ? "green" : "red"}
+                            content={c.name}
+                            value={visible}
+                            onClick={this.handleColumnToggle}
+                            prop={c.prop}/>
+                    );
+                });
+                toggleColumnsRow = (
+                    <Grid.Row>
+                        <Grid.Column textAlign="right" className="column toggles">
+                        {columnToggles}
+                        </Grid.Column>
+                    </Grid.Row>
+                );
+            } else {
+                toggleColumnsRow = null;
+            }
+        } else {
+            columnToggleButton = null;
+            toggleColumnsRow = null;
+        }
 
         return (
             <div className="generic table">
                 <Grid>
+                    <Grid.Row>
                     <Grid.Column floated='left' width={4}>
                         <Input
                             label='Filter:'
@@ -326,7 +500,8 @@ export default class GenericTable extends Component {
                             <div>
                                 <Button
                                     size="small"
-                                    onClick={() => this.handleToggleColumnFilters()}
+                                    name="showColumnFilters"
+                                    onClick={this.handleStateToggle}
                                     compact
                                     content={showColumnFilters ? 'Hide Column Filters' : 'Show Column Filters'}
                                     style={{ padding: '0.3em', marginTop: '0.5em', textAlign: 'right' }}
@@ -334,9 +509,10 @@ export default class GenericTable extends Component {
                                     icon={showColumnFilters ? 'eye slash' : 'eye'}
                                     labelPosition='right' />
                             </div>
+                            {columnToggleButton}
                             {this.renderCustomFilter()}
                         </div>
-                        <div style={{ float: "right", margin: "0 10px" }}>
+                        <div style={{ float: "right", margin: "0 20px" }}>
                             <Input
                                 label='Records per page:'
                                 className="RecordsPerPage"
@@ -346,6 +522,8 @@ export default class GenericTable extends Component {
                                 onChange={this.handleChangeRecordsPerPage} />
                         </div>
                     </Grid.Column>
+                    </Grid.Row>
+                    {toggleColumnsRow}
                 </Grid>
                 <Table selectable sortable celled basic='very'>
                     <Table.Header>
@@ -359,6 +537,10 @@ export default class GenericTable extends Component {
                 </Table>
             </div>
         );
+    }
+
+    getGrouping() {
+        return [];
     }
 
     getColumns() {

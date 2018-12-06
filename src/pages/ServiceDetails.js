@@ -226,7 +226,7 @@ class ServiceDetails extends React.Component {
                             {
                                 websites ? (
                                     <Segment attached='bottom' id="websitesBuffedTable">
-                                        <WebsitesBuffedTable data={serviceDetails} />
+                                        <WebsitesBuffedTable data={serviceDetails.Websites} />
                                     </Segment>
                                 ) : (
                                         <div></div>
