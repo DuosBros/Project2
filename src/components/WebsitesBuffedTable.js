@@ -39,7 +39,8 @@ export default class WebsitesBuffedTable extends GenericTable {
             {
                 name: "Bindings",
                 prop: "Bindings",
-                width: 3,
+                display: "BindingsDisplay",
+                width: 1,
                 collapsing: true
             },
             {
@@ -80,6 +81,19 @@ export default class WebsitesBuffedTable extends GenericTable {
 
     transformDataRow(data) {
         data.ServerLink = (<Link to={'/server/' + data.Id}>{data.ServerName}</Link>);
+        if (data.Bindings) {
+            data.BindingsDisplay = data.Bindings.map((binding, i) => {
+                return (
+                    <React.Fragment key={i}>
+                        {binding.IpAddress + ":" + binding.Port + ":" + binding.Binding} 
+                        <br />
+                    </React.Fragment>
+                );
+            });
+        } else {
+            data.BindingsDisplay = "";
+        }
+
         return data;
     }
 }
