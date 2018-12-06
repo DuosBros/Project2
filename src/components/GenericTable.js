@@ -22,7 +22,7 @@ export default class GenericTable extends Component {
         // generate empty filters and filterInputs objects
         let filterInputs = {},
             filters = {};
-        for(let col in columns) {
+        for (let col in columns) {
             filterInputs[col.prop] = "";
             filters[col.prop] = "";
         }
@@ -46,7 +46,7 @@ export default class GenericTable extends Component {
             visibleColumnsList: columns.filter(c => c.visibleByDefault).map(c => c.prop)
         }
 
-        if(Array.isArray(this.state.data)) {
+        if (Array.isArray(this.state.data)) {
             this.state.data = this.sort(this.state.data, null);
         }
 
@@ -57,17 +57,17 @@ export default class GenericTable extends Component {
     generateColumnsAndGrouping(props) {
         let columns = this.getColumns();
 
-        if(!columns && props.columns) {
+        if (!columns && props.columns) {
             columns = props.columns
         }
 
-        if(!columns) {
+        if (!columns) {
             throw new Error("Columns are undefined!");
         }
 
         columns = columns.map(c => Object.assign({}, DEFAULT_COLUMN_PROPS, c));
-        for(let c of columns) {
-            if(!c.hasOwnProperty("prop")) {
+        for (let c of columns) {
+            if (!c.hasOwnProperty("prop")) {
                 throw new Error("Columns need a 'prop' property");
             }
         }
@@ -75,9 +75,9 @@ export default class GenericTable extends Component {
         let grouping = this.getGrouping();
         grouping = grouping.map(gp => {
             let match = columns.filter(c => c.prop === gp);
-            if(match.length > 1) {
+            if (match.length > 1) {
                 throw new Error("Grouping on '" + gp + "' is ambiguous. Mulitple columns with this prop are defined.");
-            } else if(match.length < 1) {
+            } else if (match.length < 1) {
                 throw new Error("Grouping on '" + gp + "' not possible. Grouping only possible on props that are specified by a column.");
             }
             match[0].sortable = false;
@@ -91,7 +91,7 @@ export default class GenericTable extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if(this.props.data !== nextProps.data) {
+        if (this.props.data !== nextProps.data) {
             let data = this.sort(nextProps.data, null);
             this.setState({ data });
         }
@@ -141,18 +141,18 @@ export default class GenericTable extends Component {
         });
     }
 
-    handleStateToggle = (e, {name}) => {
+    handleStateToggle = (e, { name }) => {
         this.setState({
             [name]: !this.state[name]
         });
     }
 
-    handleColumnToggle = (e, {prop, value}) => {
+    handleColumnToggle = (e, { prop, value }) => {
         const { columns, visibleColumnsList } = this.state;
         let newVisibleValue = !value;
 
         let newVisibleColumnsList = columns.filter(c => {
-            if(c.prop === prop) {
+            if (c.prop === prop) {
                 return newVisibleValue;
             }
             return visibleColumnsList.indexOf(c.prop) !== -1;
@@ -163,7 +163,7 @@ export default class GenericTable extends Component {
         });
     }
 
-    handleChangeRecordsPerPage = (e, {value}) => {
+    handleChangeRecordsPerPage = (e, { value }) => {
         let n = value.trim(),
             limitInputValid = isNum(n);
 
@@ -172,7 +172,7 @@ export default class GenericTable extends Component {
             limitInputValid
         });
 
-        if(limitInputValid) {
+        if (limitInputValid) {
             this.updateLimit();
         }
     }
@@ -182,7 +182,7 @@ export default class GenericTable extends Component {
             let n = prev.limitInput.trim(),
                 limitInputValid = isNum(n);
 
-            if(limitInputValid) {
+            if (limitInputValid) {
                 return { limit: parseInt(n) };
             }
         });
@@ -198,21 +198,21 @@ export default class GenericTable extends Component {
         let sortFactor = direction === "descending" ? -1 : 1;
 
         var res;
-        for(let g of this.state.grouping) {
+        for (let g of this.state.grouping) {
             res = this.compareBase(a[g.prop], b[g.prop]);
 
-            if(res !== 0) {
+            if (res !== 0) {
                 return res;
             }
         }
-        if(prop === null) {
+        if (prop === null) {
             return res;
         }
         return sortFactor * this.compareBase(a[prop], b[prop]);
     }
 
     compareBase(a, b) {
-        if(typeof a === "number" && typeof b === "number") {
+        if (typeof a === "number" && typeof b === "number") {
             return a < b ? -1 : (a > b ? 1 : 0);
         }
         return a.toString().localeCompare(b.toString());
@@ -239,7 +239,7 @@ export default class GenericTable extends Component {
 
         let visibleColumns = columns.filter(c => visibleColumnsList.indexOf(c.prop) !== -1);
 
-        if(!Array.isArray(data)) {
+        if (!Array.isArray(data)) {
             let msg = this.props.placeholder ? this.props.placeholder : "Fetching data...";
             return (
                 <div className="centered">
@@ -261,14 +261,14 @@ export default class GenericTable extends Component {
         isEdit = this.props.isEdit;
         isAdd = this.props.isAdd;
 
-        if(isEdit) {
+        if (isEdit) {
             toAdd = this.props.toAdd;
             toRemove = this.props.toRemove;
         }
 
         let headerCells = visibleColumns.map(c => {
             let headerProps;
-            if(c.sortable) {
+            if (c.sortable) {
                 headerProps = {
                     sorted: sortColumn === c.prop ? sortDirection : null,
                     onClick: this.handleSort(c.prop)
@@ -288,7 +288,7 @@ export default class GenericTable extends Component {
                 />
             );
         });
-        if(isEdit) {
+        if (isEdit) {
             headerCells.push((
                 <Table.HeaderCell
                     collapsing={false}
@@ -308,11 +308,11 @@ export default class GenericTable extends Component {
 
         filteredData = this.applyCustomFilter(filteredData);
 
-        if(showColumnFilters) {
-            for(let col of Object.getOwnPropertyNames(filters)) {
-                if(!_.isEmpty(filters[col])) {
+        if (showColumnFilters) {
+            for (let col of Object.getOwnPropertyNames(filters)) {
+                if (!_.isEmpty(filters[col])) {
                     filteredData = filteredData.filter(data => {
-                        if(data[col]) {
+                        if (data[col]) {
                             return data[col].toString().search(new RegExp(filters[col], "i")) >= 0
                         }
                         return false;
@@ -352,7 +352,7 @@ export default class GenericTable extends Component {
         if (showColumnFilters) {
             let headerFilterCells = visibleColumns.map(c => {
                 let filterInput = null;
-                if(c.searchable) {
+                if (c.searchable) {
                     filterInput = (<Input fluid name={c.prop} onChange={this.handleColumnFilterChange} value={this.state.filterInputs[c.prop]} />)
                 }
                 return (
@@ -375,14 +375,14 @@ export default class GenericTable extends Component {
             prevRow = {};
         renderData.map(data => this.transformDataRow(Object.assign({}, data))).forEach(data => {
             let insertGroupingHeader = false;
-            for(let gc of grouping) {
-                if(data[gc.prop] !== prevRow[gc.prop]) {
+            for (let gc of grouping) {
+                if (data[gc.prop] !== prevRow[gc.prop]) {
                     insertGroupingHeader = true;
                     break;
                 }
             }
 
-            if(insertGroupingHeader === true) {
+            if (insertGroupingHeader === true) {
                 let groupingHeaderKey = grouping.map(gc => data[gc.prop]),
                     groupingHeaderText = grouping.map(gc => data[gc.display ? gc.display : gc.prop]);
                 tableBody.push((
@@ -393,18 +393,18 @@ export default class GenericTable extends Component {
             }
 
             let cells = visibleColumns.map(c => {
-                if(c.data === false) {
+                if (c.data === false) {
                     return null;
                 }
-                if(c.display) {
+                if (c.display) {
                     return (<Table.Cell key={c.prop}>{data[c.display]}</Table.Cell>)
                 }
                 return (<Table.Cell key={c.prop}>{data[c.prop]}</Table.Cell>)
             });
 
-            if(isEdit) {
+            if (isEdit) {
                 let editIcon;
-                if(isAdd) {
+                if (isAdd) {
                     editIcon = toAdd.indexOf(data.Id) > -1 ? (<Icon color="red" corner name='minus' />) : (<Icon color="green" corner name='add' />);
                 } else {
                     editIcon = toRemove.indexOf(data.Id) > -1 ? (<Icon color="green" corner name='add' />) : (<Icon color="red" corner name='minus' />);
@@ -438,7 +438,7 @@ export default class GenericTable extends Component {
             prevRow = data;
         });
 
-        if(columnToggle) {
+        if (columnToggle) {
             columnToggleButton = (
                 <div>
                     <Button
@@ -454,7 +454,7 @@ export default class GenericTable extends Component {
                 </div>
             )
 
-            if(showColumnToggles) {
+            if (showColumnToggles) {
                 let columnToggles = columns.map(c => {
                     let visible = visibleColumnsList.indexOf(c.prop) !== -1;
                     return (
@@ -464,13 +464,13 @@ export default class GenericTable extends Component {
                             content={c.name}
                             value={visible}
                             onClick={this.handleColumnToggle}
-                            prop={c.prop}/>
+                            prop={c.prop} />
                     );
                 });
                 toggleColumnsRow = (
                     <Grid.Row>
                         <Grid.Column textAlign="right" className="column toggles">
-                        {columnToggles}
+                            {columnToggles}
                         </Grid.Column>
                     </Grid.Row>
                 );
@@ -484,47 +484,54 @@ export default class GenericTable extends Component {
 
         return (
             <div className="generic table">
-                <Grid>
-                    <Grid.Row>
-                    <Grid.Column floated='left' width={4}>
-                        <Input
-                            label='Filter:'
-                            id="multiSearchFilterInBuffedTable"
-                            fluid
-                            value={multiSearchInput} placeholder="Type to search..." name="multiSearchInput" onChange={this.handleMultiFilterChange} ></Input>
-                    </Grid.Column>
-                    <Grid.Column width={6}/>
-                    <Grid.Column floated='right' width={6} textAlign="right">
-                        <div style={{ float: "right" }}>
-                            <p>Showing {filteredData.length > 0 ? this.state.offset + 1 : 0} to {filteredData.length < limit ? filteredData.length : this.state.offset + limit} of {filteredData.length} entries</p>
-                            <div>
-                                <Button
-                                    size="small"
-                                    name="showColumnFilters"
-                                    onClick={this.handleStateToggle}
-                                    compact
-                                    content={showColumnFilters ? 'Hide Column Filters' : 'Show Column Filters'}
-                                    style={{ padding: '0.3em', marginTop: '0.5em', textAlign: 'right' }}
-                                    id="secondaryButton"
-                                    icon={showColumnFilters ? 'eye slash' : 'eye'}
-                                    labelPosition='right' />
-                            </div>
-                            {columnToggleButton}
-                            {this.renderCustomFilter()}
-                        </div>
-                        <div style={{ float: "right", margin: "0 20px" }}>
-                            <Input
-                                label='Records per page:'
-                                className="RecordsPerPage"
-                                error={!limitInputValid}
-                                value={limitInput}
-                                name="inputRecordsPerPage"
-                                onChange={this.handleChangeRecordsPerPage} />
-                        </div>
-                    </Grid.Column>
-                    </Grid.Row>
-                    {toggleColumnsRow}
-                </Grid>
+                {
+                    this.props.data.length > 0 ? (
+                        <Grid>
+                            <Grid.Row>
+                                <Grid.Column floated='left' width={4}>
+                                    <Input
+                                        label='Filter:'
+                                        id="multiSearchFilterInBuffedTable"
+                                        fluid
+                                        value={multiSearchInput} placeholder="Type to search..." name="multiSearchInput" onChange={this.handleMultiFilterChange} ></Input>
+                                </Grid.Column>
+                                <Grid.Column width={6} />
+                                <Grid.Column floated='right' width={6} textAlign="right">
+                                    <div style={{ float: "right" }}>
+                                        <p>Showing {filteredData.length > 0 ? this.state.offset + 1 : 0} to {filteredData.length < limit ? filteredData.length : this.state.offset + limit} of {filteredData.length} entries</p>
+                                        <div>
+                                            <Button
+                                                size="small"
+                                                name="showColumnFilters"
+                                                onClick={this.handleStateToggle}
+                                                compact
+                                                content={showColumnFilters ? 'Hide Column Filters' : 'Show Column Filters'}
+                                                style={{ padding: '0.3em', marginTop: '0.5em', textAlign: 'right' }}
+                                                id="secondaryButton"
+                                                icon={showColumnFilters ? 'eye slash' : 'eye'}
+                                                labelPosition='right' />
+                                        </div>
+                                        {columnToggleButton}
+                                        {this.renderCustomFilter()}
+                                    </div>
+                                    <div style={{ float: "right", margin: "0 20px" }}>
+                                        <Input
+                                            label='Records per page:'
+                                            className="RecordsPerPage"
+                                            error={!limitInputValid}
+                                            value={limitInput}
+                                            name="inputRecordsPerPage"
+                                            onChange={this.handleChangeRecordsPerPage} />
+                                    </div>
+                                </Grid.Column>
+                            </Grid.Row>
+                            {toggleColumnsRow}
+                        </Grid>
+                    ) : (
+                            null
+                        )
+                }
+
                 <Table selectable sortable celled basic='very'>
                     <Table.Header>
                         <Table.Row>{headerCells}</Table.Row>
