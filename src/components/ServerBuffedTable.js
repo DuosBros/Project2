@@ -11,16 +11,14 @@ export default class ServerBuffedTable extends GenericTable {
                 name: "Name",
                 prop: "ServerName",
                 display: "ServerLink",
-                width: 3,
-                collapsing: false
+                width: 3
             },
             {
                 name: "Status | Disme",
                 prop: "state",
                 width: 2,
                 sortable: false,
-                searchable: false,
-                collapsing: false
+                searchable: false
             },
             {
                 name: "Owner",
@@ -49,28 +47,24 @@ export default class ServerBuffedTable extends GenericTable {
             {
                 name: "Operating System",
                 prop: "OperatingSystem",
-                width: 4,
-                collapsing: false
+                width: 4
             },
             {
                 name: "Patch Group",
                 prop: "PatchGroupName",
                 width: 1,
-                collapsing: false,
                 visibleByDefault: false
             },
             {
                 name: "Patch Group ID",
                 prop: "PatchID",
                 width: 1,
-                collapsing: false,
                 visibleByDefault: false
             },
             {
                 name: "AD Path",
                 prop: "ADPath",
                 width: 3,
-                collapsing: false,
                 visibleByDefault: false
             }
         ];
