@@ -33,8 +33,9 @@ class Header extends React.Component {
         const isq = keyboardKey.getKey(e) === 'q'
         const isw = keyboardKey.getKey(e) === 'w'
         const hasModifier = e.altKey || e.ctrlKey || e.metaKey
+        const isOnInputAlready = document.activeElement.className === "search" ? true : false
 
-        if (!e.currentTarget.activeElement.name) {
+        if (!e.currentTarget.activeElement.name && !isOnInputAlready) {
             if (!hasModifier && isq) { this._searchServerInput.focus(); e.preventDefault(); }
             if (!hasModifier && isw) { this._searchServiceShortcutInput.focus(); e.preventDefault(); }
         }
