@@ -6,12 +6,12 @@ import _ from 'lodash';
 
 import { toggleLoadBalancerFarmsTasksModalAction } from '../actions/ServiceActions';
 import { toggleNotAuthorizedModalAction } from '../actions/BaseAction'
-import { getAllLoadBalancerFarmsAction } from '../actions/LoadBalancerFarmsTasksAction'
+import { getAllLoadBalancerFarmsAction } from '../actions/LoadBalancerFarmsAction'
 
 import { isAdmin } from '../utils/HelperFunction';
 import NotAuthorized from './NotAuthorized';
 import LoadBalancerFarmsTable from '../components/LoadBalancerFarmsTable';
-import { getAllLoadBalancerFarms } from '../requests/LoadBalancerFarmsTasksAxios';
+import { getAllLoadBalancerFarms } from '../requests/LoadBalancerFarmsAxios';
 
 class LoadBalancerFarmsTasks extends React.Component {
 
@@ -65,7 +65,7 @@ class LoadBalancerFarmsTasks extends React.Component {
     }
 
     render() {
-        console.log(this.props.loadBalancerFarmsTasksStore.loadBalancerFarms)
+        console.log(this.props.loadBalancerFarmsStore.loadBalancerFarms)
         if (isAdmin(this.props.baseStore.currentUser)) {
 
             var serviceDetails = this.props.serviceStore.serviceDetails;
@@ -86,7 +86,7 @@ class LoadBalancerFarmsTasks extends React.Component {
                                             <LoadBalancerFarmsTable
                                                 isEdit={true}
                                                 isAdd={true}
-                                                data={this.props.loadBalancerFarmsTasksStore.loadBalancerFarms}
+                                                data={this.props.loadBalancerFarmsStore.loadBalancerFarms}
                                                 multiSearchInput={serviceDetails.Service[0].Name}
                                                 handleAdd={this.handleAdd}
                                                 handleRemove={this.handleRemove}
@@ -169,7 +169,7 @@ function mapStateToProps(state) {
     return {
         baseStore: state.BaseReducer,
         serviceStore: state.ServiceReducer,
-        loadBalancerFarmsTasksStore: state.LoadBalancerFarmsTasksReducer
+        loadBalancerFarmsStore: state.LoadBalancerFarmsReducer
     };
 }
 

@@ -49,6 +49,11 @@ export default class LoadBalancerFarmsTable extends GenericTable {
                 name: "Load Balancer Name",
                 prop: "LbName",
                 width: 2
+            },
+            {
+                name: "Env",
+                prop: "Environment",
+                width: 1
             }
         ];
     }

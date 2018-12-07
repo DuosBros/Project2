@@ -27,6 +27,7 @@ import RolloutStatus from '../pages/RolloutStatus';
 import VirtualMachines from '../pages/VirtualMachines';
 import Servers from '../pages/Servers';
 import Services from '../pages/Services';
+import LoadBalancerFarms from '../pages/LoadBalancerFarms';
 
 class Base extends React.Component {
     constructor(props) {
@@ -124,6 +125,7 @@ class Base extends React.Component {
                                 <Route path='/virtualmachines' component={VirtualMachines} />
                                 <Route path='/servers' component={Servers} />
                                 <Route path='/services' component={Services} />
+                                <Route path='/lbfarms' component={LoadBalancerFarms} />
                             </Switch>
                         </div>
                         <Footer id="footer" {...wideClass} />
