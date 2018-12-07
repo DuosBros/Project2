@@ -1,6 +1,6 @@
 import GenericTable from './GenericTable';
 
-export default class PatchGroupsBuffedTable extends GenericTable {
+export default class PatchGroupsTable extends GenericTable {
     getColumns() {
         return [
             {

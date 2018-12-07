@@ -25,7 +25,7 @@ class Sidebar extends React.Component {
                         <Menu.Header>Home</Menu.Header>
                     </Menu.Item>
                     <Menu.Item>
-                        <Menu.Header as={Link} to='/server'>Server</Menu.Header>
+                        <Menu.Header as={Link} to='/servers'>Server</Menu.Header>
                         <Menu.Menu>
                             <Menu.Item as={Link} to='/patchgroups'>
                                 PatchGroups
@@ -36,7 +36,7 @@ class Sidebar extends React.Component {
                         </Menu.Menu>
                     </Menu.Item>
                     <Menu.Item>
-                        <Menu.Header>Services</Menu.Header>
+                        <Menu.Header as={Link} to='/services'>Services</Menu.Header>
                         <Menu.Menu>
                             <Menu.Item as={Link} to='/rolloutstatus' >
                                 RolloutStatus

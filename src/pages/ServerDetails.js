@@ -14,7 +14,7 @@ import { getServerDetails, getServerScomAlerts } from '../requests/ServerAxios';
 import { KIBANA_WINLOGBEAT_SERVER_URL, KIBANA_SERVER_URL_PLACEHOLDER, KIBANA_PERFCOUNTER_SERVER_URL, DISME_SERVICE_PLACEHOLDER, DISME_SERVICE_URL, errorColor } from '../appConfig';
 
 import spinner from '../assets/Spinner.svg';
-import LoadBalancerFarmsBuffedTable from '../components/LoadBalancerFarmsBuffedTable';
+import LoadBalancerFarmsTable from '../components/LoadBalancerFarmsTable';
 import SCOMSegment from '../components/SCOMSegment';
 import DismeStatus from '../components/DismeStatus';
 import { Link } from 'react-router-dom';
@@ -449,7 +449,7 @@ class ServerDetails extends React.Component {
                             {
                                 loadbalancerfarms ? (
                                     <Segment attached='bottom'>
-                                        <LoadBalancerFarmsBuffedTable data={serverDetails.LoadBalancerFarms} isEdit={false} />
+                                        <LoadBalancerFarmsTable data={serverDetails.LoadBalancerFarms} isEdit={false} />
                                     </Segment>
                                 ) : (
                                         <div></div>

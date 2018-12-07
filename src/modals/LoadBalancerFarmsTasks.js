@@ -10,7 +10,7 @@ import { getAllLoadBalancerFarmsAction } from '../actions/LoadBalancerFarmsTasks
 
 import { isAdmin } from '../utils/HelperFunction';
 import NotAuthorized from './NotAuthorized';
-import LoadBalancerFarmsBuffedTable from '../components/LoadBalancerFarmsBuffedTable';
+import LoadBalancerFarmsTable from '../components/LoadBalancerFarmsTable';
 import { getAllLoadBalancerFarms } from '../requests/LoadBalancerFarmsTasksAxios';
 
 class LoadBalancerFarmsTasks extends React.Component {
@@ -83,7 +83,7 @@ class LoadBalancerFarmsTasks extends React.Component {
                                             Assign LoadBalancerFarms to Service
                                         </Header>
                                         <Segment attached='bottom'>
-                                            <LoadBalancerFarmsBuffedTable
+                                            <LoadBalancerFarmsTable
                                                 isEdit={true}
                                                 isAdd={true}
                                                 data={this.props.loadBalancerFarmsTasksStore.loadBalancerFarms}
@@ -101,7 +101,7 @@ class LoadBalancerFarmsTasks extends React.Component {
                                             Assigned LoadBalancer Farms
                                         </Header>
                                         <Segment attached='bottom'>
-                                            <LoadBalancerFarmsBuffedTable data={serviceDetails.LbFarms}
+                                            <LoadBalancerFarmsTable data={serviceDetails.LbFarms}
                                                 isEdit={true}
                                                 isAdd={false}
                                                 handleAdd={this.handleAdd}

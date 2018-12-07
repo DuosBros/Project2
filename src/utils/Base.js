@@ -21,10 +21,12 @@ import { debounce } from '../utils/HelperFunction';
 import { LOCO_API } from '../appConfig';
 import NotAuthorized from '../modals/NotAuthorized';
 import LoadBalancerFarmsTasks from '../modals/LoadBalancerFarmsTasks';
-import ServerBuffedTable from '../components/ServerBuffedTable';
+import ServerTable from '../components/ServerTable';
 import PatchGroup from '../pages/PatchGroup';
 import RolloutStatus from '../pages/RolloutStatus';
-import VirtualMachine from '../pages/VirtualMachine';
+import VirtualMachines from '../pages/VirtualMachines';
+import Servers from '../pages/Servers';
+import Services from '../pages/Services';
 
 class Base extends React.Component {
     constructor(props) {
@@ -115,11 +117,13 @@ class Base extends React.Component {
                                 <Route exact path='/' component={Home} />
                                 <Route exact path='/login' component={Login} />
                                 <Route path='/server/:id' component={ServerDetails} />
-                                <Route path='/server' component={ServerBuffedTable} />
+                                <Route path='/server' component={ServerTable} />
                                 <Route path='/rolloutstatus' component={RolloutStatus} />
                                 <Route path='/patchgroups' component={PatchGroup} />
                                 <Route path='/service/:id' component={ServiceDetails} />
-                                <Route path='/virtualmachines' component={VirtualMachine} />
+                                <Route path='/virtualmachines' component={VirtualMachines} />
+                                <Route path='/servers' component={Servers} />
+                                <Route path='/services' component={Services} />
                             </Switch>
                         </div>
                         <Footer id="footer" {...wideClass} />

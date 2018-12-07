@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom';
 import GenericTable from './GenericTable';
 
-export default class WebsitesBuffedTable extends GenericTable {
+export default class WebsitesTable extends GenericTable {
 
     getGrouping() {
         return [

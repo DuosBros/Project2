@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import { getPatchGroupsAction } from '../actions/PatchGroupActions';
 import { getPatchGroups } from '../requests/PatchGroupAxios';
 import { Grid, Header, Segment } from 'semantic-ui-react';
-import PatchGroupsBuffedTable from '../components/PatchGroupsBuffedTable';
+import PatchGroupsTable from '../components/PatchGroupsTable';
 
 class PatchGroup extends React.Component {
 
@@ -25,7 +25,7 @@ class PatchGroup extends React.Component {
                             Patch groups
                         </Header>
                         <Segment attached='bottom' >
-                            <PatchGroupsBuffedTable defaultLimitOverride={45} data={this.props.patchGroupStore.patchGroups} />
+                            <PatchGroupsTable defaultLimitOverride={45} data={this.props.patchGroupStore.patchGroups} />
                         </Segment>
                     </Grid.Column>
                 </Grid.Row>

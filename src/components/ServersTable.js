@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import ServerStatus from './ServerStatus';
 import DismeStatus from './DismeStatus';
 
-export default class ServerBuffedTable extends GenericTable {
+export default class ServersTable extends GenericTable {
     getColumns() {
         return [
             {
@@ -23,7 +23,6 @@ export default class ServerBuffedTable extends GenericTable {
             {
                 name: "Owner",
                 prop: "ServerOwner",
-                width: 1,
                 collapsing: true
             },
             {
@@ -35,13 +34,11 @@ export default class ServerBuffedTable extends GenericTable {
             {
                 name: "Data Center",
                 prop: "DataCenter",
-                width: 1,
                 collapsing: true
             },
             {
                 name: "Country",
                 prop: "CountryName",
-                width: 2,
                 collapsing: true
             },
             {
@@ -65,6 +62,30 @@ export default class ServerBuffedTable extends GenericTable {
                 name: "AD Path",
                 prop: "ADPath",
                 width: 3,
+                visibleByDefault: false
+            },
+            {
+                name: "LastUpdate",
+                prop: "LastUpdate",
+                width: 1,
+                visibleByDefault: false
+            },
+            {
+                name: "Domain",
+                prop: "Domain",
+                width: 1,
+                visibleByDefault: false
+            },
+            {
+                name: "FQDN",
+                prop: "FQDN",
+                width: 1,
+                visibleByDefault: false
+            },
+            {
+                name: "Stage",
+                prop: "Stage",
+                width: 1,
                 visibleByDefault: false
             }
         ];

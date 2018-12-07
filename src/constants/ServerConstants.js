@@ -4,3 +4,5 @@ export const GET_VM_DETAILS = 'GET_VM_DETAILS';
 
 export const GET_SERVER_SCOM_ALERTS = 'GET_SERVER_SCOM_ALERTS';
 
+export const GET_SERVERS = 'GET_SERVERS';
+
