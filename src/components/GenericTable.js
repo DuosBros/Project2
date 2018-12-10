@@ -405,9 +405,9 @@ export default class GenericTable extends Component {
             if (isEdit) {
                 let editIcon;
                 if (isAdd) {
-                    editIcon = toAdd.indexOf(data.Id) > -1 ? (<Icon color="red" corner name='minus' />) : (<Icon color="green" corner name='add' />);
+                    editIcon = toAdd.map(x => x.Id).indexOf(data.Id) > -1 ? (<Icon color="red" corner name='minus' />) : (<Icon color="green" corner name='add' />);
                 } else {
-                    editIcon = toRemove.indexOf(data.Id) > -1 ? (<Icon color="green" corner name='add' />) : (<Icon color="red" corner name='minus' />);
+                    editIcon = toRemove.map(x => x.Id).indexOf(data.Id) > -1 ? (<Icon color="green" corner name='add' />) : (<Icon color="red" corner name='minus' />);
                 }
                 let editIconGroup = (
                     <>
@@ -419,7 +419,7 @@ export default class GenericTable extends Component {
                 cells.push((
                     <Table.Cell key="a">
                         <Button
-                            onClick={isEdit && isAdd ? () => this.props.handleAdd(data.Id) : () => this.props.handleRemove(data.Id)}
+                            onClick={isEdit && isAdd ? () => this.props.handleAdd(data) : () => this.props.handleRemove(data)}
                             style={{ padding: '0.3em' }}
                             size='medium'
                             icon={editIconGroup} >
@@ -429,8 +429,8 @@ export default class GenericTable extends Component {
             }
 
             tableBody.push((
-                <Table.Row positive={isEdit && isAdd === true && toAdd.indexOf(data.Id) > -1}
-                    negative={isEdit && isAdd === false && toRemove.indexOf(data.Id) > -1}
+                <Table.Row positive={isEdit && isAdd === true && toAdd.map(x => x.Id).indexOf(data.Id) > -1}
+                    negative={isEdit && isAdd === false && toRemove.map(x => x.Id).indexOf(data.Id) > -1}
                     key={"data-" + data.Id}>
                     {cells}
                 </Table.Row>
