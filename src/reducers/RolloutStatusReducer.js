@@ -14,6 +14,7 @@ const RolloutStatusReducer = (state = initialState, action) => {
         case GET_DISME_APPLICATIONS:
             return Object.assign({}, state, { dismeApplications: action.payload })
         case GET_SERVICE_DETAILS_BY_SHORTCUTS:
+        debugger
             // return Object.assign({}, state, { serviceDetails: [...state.serviceDetails, action.payload] })
             return Object.assign({}, state, { serviceDetails: action.payload })
         case REMOVE_SERVICE_DETAILS:

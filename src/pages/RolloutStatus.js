@@ -32,8 +32,8 @@ class RolloutStatus extends React.Component {
 
         this.getServiceDetailsAndRolloutStatus = this.getServiceDetailsAndRolloutStatus.bind(this);
         this.getServiceDetailsAndRolloutStatus = debounce(this.getServiceDetailsAndRolloutStatus, 150);
-        // this.handleSearchServiceShortcut = this.handleSearchServiceShortcut.bind(this);
-        // this.handleSearchServiceShortcut = debounce(this.handleSearchServiceShortcut, 150);
+        this.handleSearchServiceShortcut = this.handleSearchServiceShortcut.bind(this);
+        this.handleSearchServiceShortcut = debounce(this.handleSearchServiceShortcut, 150);
     }
 
     componentDidMount() {
@@ -144,22 +144,25 @@ class RolloutStatus extends React.Component {
             })
     }
 
-    // handleSearchServiceShortcut(value) {
-    //     searchServiceShortcut(value)
-    //         .then(res => {
-    //             this.props.searchServiceShortcutAction(res.data.map(e => ({ text: e.Name, value: e.Id })))
-    //         })
-    // }
+    handleSearchServiceShortcut(value) {
+        searchServiceShortcut(value)
+            .then(res => {
+                this.props.searchServiceShortcutAction(res.data.map(e => ({ text: e.Name, value: e.Id })))
+            })
+    }
 
-    // handleServiceShortcutSearchChange = (e) => {
-    //     if (e.target.value.length > 1) {
-    //         this.handleSearchServiceShortcut(e.target.value)
-    //     }
-    // }
+    handleServiceShortcutSearchChange = (e) => {
+        if (e.target.value.length > 1) {
+            this.handleSearchServiceShortcut(e.target.value)
+        }
+    }
 
-    // handleServiceChange = (e, { value }) => {
-    //     this.setState({ inputProductsValues: e.target.innerText + "," + this.state.inputProductsValues });
-    // }
+    handleServiceChange = (e, m) => {
+        var value = m.options.find(x => x.value === m.value).text;
+
+        this.setState({ inputProductsValues: this.state.inputProductsValues + "," + value });
+        this.getServiceDetailsAndRolloutStatus(this.state.inputProductsValues)
+    }
 
     handleGetRolloutStatusOnClick = () => {
         // var splitted = this.state.inputProductsValues.split(",")
@@ -177,14 +180,6 @@ class RolloutStatus extends React.Component {
 
         this.setState({ inputProductsValues: filtered.join(",") });
 
-        // this.setState({
-        //     inputProductsValues: this.state.inputProductsValues
-        //         .replace(new RegExp("\\b" + service.Shortcut + "\\b", "i"), "")
-        //         .replace(/,\s*$/, "")
-        //         .replace(/^,/, "")
-        //         .replace(/,,+/g, ",")
-        // })
-
         this.props.removeServiceDetailsAction(service);
     }
 
@@ -192,9 +187,6 @@ class RolloutStatus extends React.Component {
         // console.log(this.props.rolloutStatusStore.serviceDetails)
         console.log(this.props.rolloutStatusStore.rolloutStatuses)
 
-        // var rolloutStatuses = this.props.rolloutStatusStore.rolloutStatuses.rolloutStatus.map(x => {
-        //     return (<div></div>)
-        // })
         var serviceTableColumnProperties = [
             {
                 name: "Name",
@@ -273,6 +265,26 @@ class RolloutStatus extends React.Component {
             })
         }
 
+        servicesTableRows.push(
+            <Table.Row>
+                <Table.Cell colSpan={6}>
+                    <Dropdown
+                        className="search"
+                        icon='search'
+                        selection
+                        onChange={this.handleServiceChange}
+                        options={this.props.headerStore.searchServiceShortcutsResult.slice(0, 10)}
+                        fluid
+                        selectOnBlur={false}
+                        selectOnNavigation={false}
+                        placeholder='Type to search a service'
+                        value=""
+                        onSearchChange={this.handleServiceShortcutSearchChange}
+                        search
+                    />
+                </Table.Cell>
+            </Table.Row>
+        )
 
 
         // TODO: render only these which are in table service details. in Reducer there can be also the previous ones
