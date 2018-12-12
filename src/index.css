@@ -20,7 +20,7 @@ html, body {
     padding-top: 1em;
     padding-bottom: 1em;
     bottom: 1em;
-    position: relative;
+    position: fixed;
 
 }
 

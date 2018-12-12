@@ -2,7 +2,7 @@ import React from 'react';
 import { Route, Switch, BrowserRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Image, Icon, Message } from 'semantic-ui-react';
+import { Icon, Message } from 'semantic-ui-react';
 
 import Header from './Header';
 import Sidebar from './Sidebar';
@@ -15,11 +15,9 @@ import UserDetails from '../modals/UserDetails';
 
 import { authenticateAction, authenticationStartedAction, authenticateEndedAction, authenticateOKAction, authenticationFailedAction } from '../actions/BaseAction';
 import { authenticate } from '../requests/BaseAxios';
-import spinner from '../assets/Spinner.svg';
 import { debounce } from '../utils/HelperFunction';
 
 import { LOCO_API } from '../appConfig';
-import NotAuthorized from '../modals/NotAuthorized';
 import LoadBalancerFarmsTasks from '../modals/LoadBalancerFarmsTasks';
 import ServerTable from '../components/ServerTable';
 import PatchGroup from '../pages/PatchGroup';
@@ -29,6 +27,7 @@ import Servers from '../pages/Servers';
 import Services from '../pages/Services';
 import LoadBalancerFarms from '../pages/LoadBalancerFarms';
 import IPAddresses from '../pages/IPAddresses';
+import Admin from '../pages/Admin';
 
 class Base extends React.Component {
     constructor(props) {
@@ -76,8 +75,6 @@ class Base extends React.Component {
 
     render() {
 
-        // will use this, do not remove
-        const isMobile = this.state.width <= 766;
 
         if (!this.props.baseStore.authenticationDone) {
             return (
@@ -128,6 +125,7 @@ class Base extends React.Component {
                                 <Route path='/services' component={Services} />
                                 <Route path='/lbfarms' component={LoadBalancerFarms} />
                                 <Route path='/ipaddresses' component={IPAddresses} />
+                                <Route path='/admin' component={Admin} />
                             </Switch>
                         </div>
                         <Footer id="footer" {...wideClass} />

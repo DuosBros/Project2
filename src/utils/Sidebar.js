@@ -83,14 +83,14 @@ class Sidebar extends React.Component {
                         </Menu.Menu>
                     </Menu.Item> */}
                     <Menu.Item>
-                        <Menu.Header>Admin</Menu.Header>
+                        <Menu.Header as={Link} to='/admin'>Admin</Menu.Header>
                     </Menu.Item>
-                    <Menu.Item>
+                    {/* <Menu.Item>
                         <Menu.Header>Help</Menu.Header>
-                    </Menu.Item>
-                    <Menu.Item>
+                    </Menu.Item> */}
+                    {/* <Menu.Item>
                         <Menu.Header>About</Menu.Header>
-                    </Menu.Item>
+                    </Menu.Item> */}
                 </div>
             );
 

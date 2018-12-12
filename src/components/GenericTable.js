@@ -30,8 +30,8 @@ export default class GenericTable extends Component {
         }
 
         let defaultLimit = DEFAUL_PAGE_SIZE;
-        if(this.props.hasOwnProperty("defaultLimitOverride")) {
-            if(typeof this.props.defaultLimitOverride !== "number") {
+        if (this.props.hasOwnProperty("defaultLimitOverride")) {
+            if (typeof this.props.defaultLimitOverride !== "number") {
                 throw new Error("defaultLimitOverride property must be a number.")
             }
             defaultLimit = parseInt(this.props.defaultLimitOverride);
@@ -265,6 +265,10 @@ export default class GenericTable extends Component {
             );
         }
 
+        if (this.props.data.length < 1) {
+            return null;
+        }
+
         var renderData, tableFooter, filteredData,
             filterColumnsRow, toggleColumnsRow,
             columnToggleButton,
@@ -454,6 +458,7 @@ export default class GenericTable extends Component {
             columnToggleButton = (
                 <div>
                     <Button
+                        fluid
                         size="small"
                         name="showColumnToggles"
                         onClick={this.handleStateToggle}
@@ -462,7 +467,7 @@ export default class GenericTable extends Component {
                         style={{ padding: '0.3em', marginTop: '0.5em', textAlign: 'right' }}
                         id="secondaryButton"
                         icon={showColumnToggles ? 'eye slash' : 'eye'}
-                        labelPosition='right' />
+                        labelPosition='left' />
                 </div>
             )
 
@@ -494,50 +499,50 @@ export default class GenericTable extends Component {
             toggleColumnsRow = null;
         }
 
-        if(this.props.data.length < 1) {
-            return null;
-        }
-
         return (
             <div className="generic table">
                 <Grid>
                     <Grid.Row>
-                    <Grid.Column floated='left' width={4}>
-                        <Input
-                            label='Filter:'
-                            id="multiSearchFilterInBuffedTable"
-                            fluid
-                            value={multiSearchInput} placeholder="Type to search..." name="multiSearchInput" onChange={this.handleMultiFilterChange} ></Input>
-                    </Grid.Column>
-                    <Grid.Column width={6}/>
-                    <Grid.Column floated='right' width={6} textAlign="right">
-                        <div style={{ float: "right" }}>
-                            <p>Showing {filteredData.length > 0 ? this.state.offset + 1 : 0} to {filteredData.length < limit ? filteredData.length : this.state.offset + limit} of {filteredData.length} entries</p>
-                            <div>
-                                <Button
-                                    size="small"
-                                    name="showColumnFilters"
-                                    onClick={this.handleStateToggle}
-                                    compact
-                                    content={showColumnFilters ? 'Hide Column Filters' : 'Show Column Filters'}
-                                    style={{ padding: '0.3em', marginTop: '0.5em', textAlign: 'right' }}
-                                    id="secondaryButton"
-                                    icon={showColumnFilters ? 'eye slash' : 'eye'}
-                                    labelPosition='right' />
-                            </div>
-                            {columnToggleButton}
-                            {this.renderCustomFilter()}
-                        </div>
-                        <div style={{ float: "right", margin: "0 20px", display: defaultLimit === 0 ? "none" : "visible" }}>
+                        <Grid.Column floated='left' width={6}>
                             <Input
-                                label='Records per page:'
-                                className="RecordsPerPage"
-                                error={!limitInputValid}
-                                value={limitInput}
-                                name="inputRecordsPerPage"
-                                onChange={this.handleChangeRecordsPerPage} />
-                        </div>
-                    </Grid.Column>
+                                label='Filter:'
+                                id="multiSearchFilterInBuffedTable"
+                                fluid
+                                value={multiSearchInput} placeholder="Type to search..." name="multiSearchInput" onChange={this.handleMultiFilterChange} ></Input>
+                        </Grid.Column>
+                        <Grid.Column width={7}>
+                            <div style={{ float: "left", margin: "0 20px", display: defaultLimit === 0 ? "none" : "visible" }}>
+                                <Input
+                                    label='Records per page:'
+                                    className="RecordsPerPage"
+                                    error={!limitInputValid}
+                                    value={limitInput}
+                                    name="inputRecordsPerPage"
+                                    onChange={this.handleChangeRecordsPerPage} />
+                            </div>
+                        </Grid.Column>
+                        <Grid.Column floated='right' width={3} textAlign="right">
+                            <div style={{ float: "right" }}>
+                                <p>Showing {filteredData.length > 0 ? this.state.offset + 1 : 0} to {filteredData.length < limit ? filteredData.length : this.state.offset + limit} of {filteredData.length} entries</p>
+                                <div>
+                                    <Button
+                                        fluid
+                                        size="small"
+                                        name="showColumnFilters"
+                                        
+                                        onClick={this.handleStateToggle}
+                                        compact
+                                        content={showColumnFilters ? 'Hide Column Filters' : 'Show Column Filters'}
+                                        style={{ padding: '0.3em', marginTop: '0.5em', textAlign: 'right' }}
+                                        id="secondaryButton"
+                                        icon={showColumnFilters ? 'eye slash' : 'eye'}
+                                        labelPosition='left' />
+                                </div>
+                                {columnToggleButton}
+                                {this.renderCustomFilter()}
+                            </div>
+
+                        </Grid.Column>
                     </Grid.Row>
                     {toggleColumnsRow}
                 </Grid>

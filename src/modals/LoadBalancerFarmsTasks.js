@@ -12,6 +12,8 @@ import { isAdmin, groupBy } from '../utils/HelperFunction';
 import NotAuthorized from './NotAuthorized';
 import LoadBalancerFarmsTable from '../components/LoadBalancerFarmsTable';
 import { getAllLoadBalancerFarms, saveLoadBalancerFarmsChanges } from '../requests/LoadBalancerFarmsAxios';
+import { getServiceDetails } from '../requests/ServiceAxios';
+import { getServiceDetailsAction } from '../actions/ServiceActions';
 
 class LoadBalancerFarmsTasks extends React.Component {
 
@@ -50,6 +52,10 @@ class LoadBalancerFarmsTasks extends React.Component {
                 })
                 .then(() => {
                     that.props.toggleLoadBalancerFarmsTasksModalAction()
+                    getServiceDetails(serviceDetails.Id)
+                        .then(res => {
+                            this.props.getServiceDetailsAction(res.data)
+                        })
                 })
         }
     }
@@ -206,7 +212,8 @@ function mapDispatchToProps(dispatch) {
     return bindActionCreators({
         toggleLoadBalancerFarmsTasksModalAction,
         toggleNotAuthorizedModalAction,
-        getAllLoadBalancerFarmsAction
+        getAllLoadBalancerFarmsAction,
+        getServiceDetailsAction
     }, dispatch);
 }
 

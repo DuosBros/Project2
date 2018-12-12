@@ -25,7 +25,7 @@ export default class IPAddressesTable extends GenericTable {
     }
 
     transformDataRow(data) {
-        data.ServerLink = (<Link to={'/server/' + data.Id}>{data.ServerName}</Link>);
+        data.ServerLink = (<Link to={'/server/' + data.ServerId}>{data.ServerName}</Link>);
        
         return data;
     }
