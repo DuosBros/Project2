@@ -113,7 +113,7 @@ html, body {
     bottom: '0.1em';
 }
 
-#websitesBuffedTable {
+#WebsitesTable {
     overflow-x: scroll;
 }
 /* .simpleTable {

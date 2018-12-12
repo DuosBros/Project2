@@ -1,9 +1,10 @@
-import { GET_SERVICE_DETAILS, TOGGLE_LOADBALANCERFARMS_TASKS } from '../constants/ServiceConstatnts';
+import { GET_SERVICE_DETAILS, TOGGLE_LOADBALANCERFARMS_TASKS, GET_SERVICES } from '../constants/ServiceConstatnts';
 import { getServerState, getDismeState } from '../utils/HelperFunction';
 
 const serviceInitialState = {
     serviceDetails: {},
-    showLoadBalancerFarmsTasksModal: false
+    showLoadBalancerFarmsTasksModal: false,
+    services: null
 }
 
 const ServiceReducer = (state = serviceInitialState, action) => {
@@ -22,6 +23,8 @@ const ServiceReducer = (state = serviceInitialState, action) => {
             return Object.assign({}, state, { serviceDetails: action.payload })
         case TOGGLE_LOADBALANCERFARMS_TASKS:
             return Object.assign({}, state, { showLoadBalancerFarmsTasksModal: !state.showLoadBalancerFarmsTasksModal })
+        case GET_SERVICES:
+            return Object.assign({}, state, { services: action.payload })
         default:
             return state;
     }

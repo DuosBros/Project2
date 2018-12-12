@@ -1,4 +1,4 @@
-import { GET_LOADBALANCER_FARMS } from "../constants/LoadBalancerFarmsTasksConstants";
+import { GET_LOADBALANCER_FARMS } from "../constants/LoadBalancerFarmsConstants";
 
 export function getAllLoadBalancerFarmsAction(payload) {
     return {

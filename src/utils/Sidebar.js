@@ -25,7 +25,7 @@ class Sidebar extends React.Component {
                         <Menu.Header>Home</Menu.Header>
                     </Menu.Item>
                     <Menu.Item>
-                        <Menu.Header as={Link} to='/server'>Server</Menu.Header>
+                        <Menu.Header as={Link} to='/servers'>Server</Menu.Header>
                         <Menu.Menu>
                             <Menu.Item as={Link} to='/patchgroups'>
                                 PatchGroups
@@ -36,12 +36,12 @@ class Sidebar extends React.Component {
                         </Menu.Menu>
                     </Menu.Item>
                     <Menu.Item>
-                        <Menu.Header>Services</Menu.Header>
+                        <Menu.Header as={Link} to='/services'>Services</Menu.Header>
                         <Menu.Menu>
                             <Menu.Item as={Link} to='/rolloutstatus' >
                                 RolloutStatus
                             </Menu.Item>
-                            <Menu.Item as={Link} to='/usage' >
+                            {/* <Menu.Item as={Link} to='/usage' >
                                 VersionStatus
                             </Menu.Item>
                             <Menu.Item as={Link} to='/theming' >
@@ -49,21 +49,21 @@ class Sidebar extends React.Component {
                             </Menu.Item>
                             <Menu.Item as={Link} to='/theming' >
                                 Availability
-                            </Menu.Item>
+                            </Menu.Item> */}
                         </Menu.Menu>
                     </Menu.Item>
                     <Menu.Item>
-                        <Menu.Header>Loadbalancer Farms</Menu.Header>
-                        <Menu.Menu>
+                        <Menu.Header as={Link} to='/lbfarms'>Loadbalancer Farms</Menu.Header>
+                        {/* <Menu.Menu>
                             <Menu.Item as={Link} to='/' >
                                 Consistency
                             </Menu.Item>
-                        </Menu.Menu>
+                        </Menu.Menu> */}
                     </Menu.Item>
-                    <Menu.Item>
+                    {/* <Menu.Item>
                         <Menu.Header>Scom</Menu.Header>
-                    </Menu.Item>
-                    <Menu.Item>
+                    </Menu.Item> */}
+                    {/* <Menu.Item>
                         <Menu.Header>Config</Menu.Header>
                         <Menu.Menu>
                             <Menu.Item as={Link} to='/' >
@@ -73,7 +73,7 @@ class Sidebar extends React.Component {
                                 ActiveDirectory
                             </Menu.Item>
                         </Menu.Menu>
-                    </Menu.Item>
+                    </Menu.Item> */}
                     <Menu.Item>
                         <Menu.Header>Admin</Menu.Header>
                     </Menu.Item>

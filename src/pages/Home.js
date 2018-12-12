@@ -43,8 +43,7 @@ export default class Home extends React.Component {
         }
 
     }
-
-    // TODO version 1 link
+    
     handleKeyPressVersion1 = (e) => {
         const isEnter = keyboardKey.getKey(e) === 'Enter'
 

@@ -29,14 +29,4 @@ export const KIBANA_PERFCOUNTER_SERVICE_URL = "https://kibana.prod.env.works/app
 // 22.11. 4265 
 // 28.11. 5110
 // 03.12. 5522
-
-
-
-// 1) open lb modal
-// 2) sort by some column (data reordering needs to happen, to trigger the bug)
-// 3) click add or remove button
-// =>row sorting will be reset, but still be shown in the column header as if it was still working
- 
-// i think this is because add/remove action trigger a prop change, which will reassign the data prop (even if there was no change in data), but resetting data means resetting ordering...
- 
-// this only happens where actions are usable, so not high prio imho
+// 07.12. 6148 

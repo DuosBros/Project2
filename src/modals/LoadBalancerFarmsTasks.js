@@ -6,12 +6,12 @@ import _ from 'lodash';
 
 import { toggleLoadBalancerFarmsTasksModalAction } from '../actions/ServiceActions';
 import { toggleNotAuthorizedModalAction } from '../actions/BaseAction'
-import { getAllLoadBalancerFarmsAction } from '../actions/LoadBalancerFarmsTasksAction'
+import { getAllLoadBalancerFarmsAction } from '../actions/LoadBalancerFarmsAction'
 
-import { isAdmin } from '../utils/HelperFunction';
+import { isAdmin, groupBy } from '../utils/HelperFunction';
 import NotAuthorized from './NotAuthorized';
-import LoadBalancerFarmsBuffedTable from '../components/LoadBalancerFarmsBuffedTable';
-import { getAllLoadBalancerFarms } from '../requests/LoadBalancerFarmsTasksAxios';
+import LoadBalancerFarmsTable from '../components/LoadBalancerFarmsTable';
+import { getAllLoadBalancerFarms, saveLoadBalancerFarmsChanges } from '../requests/LoadBalancerFarmsAxios';
 
 class LoadBalancerFarmsTasks extends React.Component {
 
@@ -34,38 +34,54 @@ class LoadBalancerFarmsTasks extends React.Component {
         }
     }
 
-    handleAdd = (id) => {
-        if (this.state.loadBalancerFarmsToAdd.indexOf(id) > -1) {
+    handleSave = () => {
+        var serviceDetails = this.props.serviceStore.serviceDetails.Service[0]
+        var merged = this.state.loadBalancerFarmsToAdd.concat(this.state.loadBalancerFarmsToRemove)
+        var grouped = groupBy(merged, "LbId")
+        var promises = [];
+
+        Object.keys(grouped).forEach(key => {
+            promises.push(saveLoadBalancerFarmsChanges(serviceDetails.Id, grouped[key].map(x => x.Id).join(','), key))
+        });
+
+        Promise.all(promises).then(() => {
+            var route = "/service/" + serviceDetails.Id;
+            this.props.history.push(route)
+        });
+    }
+
+    handleAdd = (item) => {
+        if (this.state.loadBalancerFarmsToAdd.indexOf(item.Id) > -1) {
             this.setState({
                 loadBalancerFarmsToAdd: this.state.loadBalancerFarmsToAdd.filter(x => {
-                    return x !== id
+                    return x.Id !== item.Id
                 })
             });
         }
         else {
             this.setState(prevState => ({
-                loadBalancerFarmsToAdd: [...prevState.loadBalancerFarmsToAdd, id]
+                loadBalancerFarmsToAdd: [...prevState.loadBalancerFarmsToAdd, item]
             }))
         }
     }
 
-    handleRemove = (id) => {
-        if (this.state.loadBalancerFarmsToRemove.indexOf(id) > -1) {
+    handleRemove = (item) => {
+        if (this.state.loadBalancerFarmsToRemove.indexOf(item.Id) > -1) {
             this.setState({
                 loadBalancerFarmsToRemove: this.state.loadBalancerFarmsToRemove.filter(x => {
-                    return x !== id
+                    return x.Id !== item.Id
                 })
             });
         }
         else {
             this.setState(prevState => ({
-                loadBalancerFarmsToRemove: [...prevState.loadBalancerFarmsToRemove, id]
+                loadBalancerFarmsToRemove: [...prevState.loadBalancerFarmsToRemove, item]
             }))
         }
     }
 
     render() {
-        console.log(this.props.loadBalancerFarmsTasksStore.loadBalancerFarms)
+        console.log(this.props.loadBalancerFarmsStore.loadBalancerFarms)
         if (isAdmin(this.props.baseStore.currentUser)) {
 
             var serviceDetails = this.props.serviceStore.serviceDetails;
@@ -83,10 +99,10 @@ class LoadBalancerFarmsTasks extends React.Component {
                                             Assign LoadBalancerFarms to Service
                                         </Header>
                                         <Segment attached='bottom'>
-                                            <LoadBalancerFarmsBuffedTable
+                                            <LoadBalancerFarmsTable
                                                 isEdit={true}
                                                 isAdd={true}
-                                                data={this.props.loadBalancerFarmsTasksStore.loadBalancerFarms}
+                                                data={this.props.loadBalancerFarmsStore.loadBalancerFarms}
                                                 multiSearchInput={serviceDetails.Service[0].Name}
                                                 handleAdd={this.handleAdd}
                                                 handleRemove={this.handleRemove}
@@ -101,7 +117,7 @@ class LoadBalancerFarmsTasks extends React.Component {
                                             Assigned LoadBalancer Farms
                                         </Header>
                                         <Segment attached='bottom'>
-                                            <LoadBalancerFarmsBuffedTable data={serviceDetails.LbFarms}
+                                            <LoadBalancerFarmsTable data={serviceDetails.LbFarms}
                                                 isEdit={true}
                                                 isAdd={false}
                                                 handleAdd={this.handleAdd}
@@ -133,6 +149,7 @@ class LoadBalancerFarmsTasks extends React.Component {
                             this.state.loadBalancerFarmsToAdd.length > 0 || this.state.loadBalancerFarmsToRemove.length > 0 ?
                                 (<>
                                     <Button
+                                        onClick={() => this.handleSave()}
                                         positive
                                         content={'Save (' + (this.state.loadBalancerFarmsToAdd.length + this.state.loadBalancerFarmsToRemove.length) + ') changes'}>
                                     </Button>
@@ -169,7 +186,7 @@ function mapStateToProps(state) {
     return {
         baseStore: state.BaseReducer,
         serviceStore: state.ServiceReducer,
-        loadBalancerFarmsTasksStore: state.LoadBalancerFarmsTasksReducer
+        loadBalancerFarmsStore: state.LoadBalancerFarmsReducer
     };
 }
 

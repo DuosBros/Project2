@@ -9,12 +9,12 @@ import { getServiceDetailsAction, toggleLoadBalancerFarmsTasksModalAction } from
 import { getServiceDetails } from '../requests/ServiceAxios';
 import spinner from '../assets/Spinner.svg';
 import SimpleTable from '../components/SimpleTable';
-import ServerBuffedTable from '../components/ServerBuffedTable';
-import WebsitesBuffedTable from '../components/WebsitesBuffedTable';
+import ServerTable from '../components/ServerTable';
+import WebsitesTable from '../components/WebsitesTable';
 import LBPoolStatus from '../components/LBPoolStatus';
 import VsStatus from '../components/VsStatus';
 import { isAdmin } from '../utils/HelperFunction';
-import LoadBalancerFarmsBuffedTable from '../components/LoadBalancerFarmsBuffedTable';
+import LoadBalancerFarmsTable from '../components/LoadBalancerFarmsTable';
 import DismeStatus from '../components/DismeStatus';
 import { KIBANA_SERVICE_URL_PLACEHOLDER, KIBANA_WINLOGBEAT_SERVICE_URL, KIBANA_PERFCOUNTER_SERVICE_URL } from '../appConfig';
 
@@ -192,7 +192,7 @@ class ServiceDetails extends React.Component {
                             {
                                 assignedLoadBalancerFarms ? (
                                     <Segment attached='bottom'>
-                                        <LoadBalancerFarmsBuffedTable data={serviceDetails.LbFarms} />
+                                        <LoadBalancerFarmsTable data={serviceDetails.LbFarms} />
                                     </Segment>
                                 ) : (
                                         <div></div>
@@ -209,7 +209,7 @@ class ServiceDetails extends React.Component {
                             {
                                 servers ? (
                                     <Segment attached='bottom'>
-                                        <ServerBuffedTable data={serviceDetails.Servers} />
+                                        <ServerTable data={serviceDetails.Servers} />
                                     </Segment>
                                 ) : (
                                         <div></div>
@@ -225,8 +225,8 @@ class ServiceDetails extends React.Component {
                             </Header>
                             {
                                 websites ? (
-                                    <Segment attached='bottom' id="websitesBuffedTable">
-                                        <WebsitesBuffedTable data={serviceDetails.Websites} />
+                                    <Segment attached='bottom' id="WebsitesTable">
+                                        <WebsitesTable data={serviceDetails.Websites} />
                                     </Segment>
                                 ) : (
                                         <div></div>
