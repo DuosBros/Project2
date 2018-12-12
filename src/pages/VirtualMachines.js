@@ -18,7 +18,7 @@ class VirtualMachines extends React.Component {
     render() {
         if (this.props.virtualMachineStore.virtualMachines === null) {
             return (
-                <div className="centered">
+                <div className="messageBox">
                     <Message info icon>
                         <Icon name='circle notched' loading />
                         <Message.Content>

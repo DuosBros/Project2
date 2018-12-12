@@ -481,7 +481,7 @@ class ServerDetails extends React.Component {
         }
         else {
             serverDetailsBody = (
-                <div className="centered">
+                <div className="messageBox">
                     <Message info icon>
                         <Icon name='circle notched' loading />
                         <Message.Content>

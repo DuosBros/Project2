@@ -28,6 +28,7 @@ import VirtualMachines from '../pages/VirtualMachines';
 import Servers from '../pages/Servers';
 import Services from '../pages/Services';
 import LoadBalancerFarms from '../pages/LoadBalancerFarms';
+import IPAddresses from '../pages/IPAddresses';
 
 class Base extends React.Component {
     constructor(props) {
@@ -80,7 +81,7 @@ class Base extends React.Component {
 
         if (!this.props.baseStore.authenticationDone) {
             return (
-                <div className="centered">
+                <div className="messageBox">
                     <Message info icon >
                         <Icon name='circle notched' loading />
                         <Message.Content content={
@@ -126,6 +127,7 @@ class Base extends React.Component {
                                 <Route path='/servers' component={Servers} />
                                 <Route path='/services' component={Services} />
                                 <Route path='/lbfarms' component={LoadBalancerFarms} />
+                                <Route path='/ipaddresses' component={IPAddresses} />
                             </Switch>
                         </div>
                         <Footer id="footer" {...wideClass} />

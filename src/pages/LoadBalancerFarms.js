@@ -19,7 +19,7 @@ class LoadBalancerFarms extends React.Component {
     render() {
         if (this.props.loadbalancerFarmsStore.loadBalancerFarms === null) {
             return (
-                <div className="centered">
+                <div className="messageBox">
                     <Message info icon>
                         <Icon name='circle notched' loading />
                         <Message.Content>

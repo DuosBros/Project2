@@ -239,7 +239,7 @@ class ServiceDetails extends React.Component {
         }
         else {
             serviceDetailsBody = (
-                <div className="centered">
+                <div className="messageBox">
                     <Message info icon>
                         <Icon name='circle notched' loading />
                         <Message.Content>

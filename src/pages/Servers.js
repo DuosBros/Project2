@@ -23,7 +23,7 @@ class Servers extends React.Component {
     render() {
         if (this.props.serverStore.servers === null) {
             return (
-                <div className="centered">
+                <div className="messageBox">
                     <Message info icon>
                         <Icon name='circle notched' loading />
                         <Message.Content>

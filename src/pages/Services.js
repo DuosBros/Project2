@@ -19,7 +19,7 @@ class Services extends React.Component {
         console.log(this.props.serviceStore.services)
         if (this.props.serviceStore.services === null) {
             return (
-                <div className="centered">
+                <div className="messageBox">
                     <Message info icon>
                         <Icon name='circle notched' loading />
                         <Message.Content>

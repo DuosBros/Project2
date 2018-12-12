@@ -83,7 +83,8 @@ html, body {
     transition-duration: 0.1s
 }
 
-.centered {
+.messageBox {
+    z-index: 1;
     position: fixed;
     top: 50%;
     left: 50%;

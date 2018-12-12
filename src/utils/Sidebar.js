@@ -60,6 +60,14 @@ class Sidebar extends React.Component {
                             </Menu.Item>
                         </Menu.Menu> */}
                     </Menu.Item>
+                    <Menu.Item>
+                        <Menu.Header as={Link} to='/ipaddresses'>IPAddresses</Menu.Header>
+                        {/* <Menu.Menu>
+                            <Menu.Item as={Link} to='/' >
+                                Consistency
+                            </Menu.Item>
+                        </Menu.Menu> */}
+                    </Menu.Item>
                     {/* <Menu.Item>
                         <Menu.Header>Scom</Menu.Header>
                     </Menu.Item> */}

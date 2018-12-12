@@ -9,10 +9,11 @@ import LoadBalancerFarmsReducer from '../reducers/LoadBalancerFarmsReducer';
 import PatchGroupReducer from '../reducers/PatchGroupReducer';
 import RolloutStatusReducer from '../reducers/RolloutStatusReducer';
 import VirtualMachineReducer from '../reducers/VirtualMachineReducer';
+import IPAddressReducer from '../reducers/IPAddressReducer';
 
 const CommonReducer = combineReducers({
     HeaderReducer, BaseReducer, ServerReducer, ServiceReducer, LoginReducer, LoadBalancerFarmsReducer,
-    PatchGroupReducer, RolloutStatusReducer, VirtualMachineReducer
+    PatchGroupReducer, RolloutStatusReducer, VirtualMachineReducer, IPAddressReducer
 });
 
 export default CommonReducer;
