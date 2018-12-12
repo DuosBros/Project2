@@ -38,16 +38,20 @@ class LoadBalancerFarmsTasks extends React.Component {
         var serviceDetails = this.props.serviceStore.serviceDetails.Service[0]
         var merged = this.state.loadBalancerFarmsToAdd.concat(this.state.loadBalancerFarmsToRemove)
         var grouped = groupBy(merged, "LbId")
-        var promises = [];
+        var keys = Object.keys(grouped);
 
-        Object.keys(grouped).forEach(key => {
-            promises.push(saveLoadBalancerFarmsChanges(serviceDetails.Id, grouped[key].map(x => x.Id).join(','), key))
-        });
-
-        Promise.all(promises).then(() => {
-            var route = "/service/" + serviceDetails.Id;
-            this.props.history.push(route)
-        });
+        for (let i = 0; i < keys.length; i = i + 2) {
+            var that = this;
+            saveLoadBalancerFarmsChanges(serviceDetails.Id, grouped[keys[i]].map(x => x.Id).join(','), keys[i])
+                .then(() => {
+                    if (i + 1 < keys.length) {
+                        return saveLoadBalancerFarmsChanges(serviceDetails.Id, grouped[keys[i + 1]].map(x => x.Id).join(','), keys[i + 1])
+                    }
+                })
+                .then(() => {
+                    that.props.toggleLoadBalancerFarmsTasksModalAction()
+                })
+        }
     }
 
     handleAdd = (item) => {
@@ -87,6 +91,13 @@ class LoadBalancerFarmsTasks extends React.Component {
             var serviceDetails = this.props.serviceStore.serviceDetails;
 
             if (!_.isEmpty(serviceDetails)) {
+                var allLoadBalancerFarms = this.props.loadBalancerFarmsStore.loadBalancerFarms
+                var filteredLoadBalancerFarms = null;
+
+                if (allLoadBalancerFarms !== null) {
+                    filteredLoadBalancerFarms = allLoadBalancerFarms.filter((el) => !serviceDetails.LbFarms.map(x => x.Id).includes(el.Id));
+                }
+
 
                 var modalBody = (
                     <React.Fragment>
@@ -102,12 +113,13 @@ class LoadBalancerFarmsTasks extends React.Component {
                                             <LoadBalancerFarmsTable
                                                 isEdit={true}
                                                 isAdd={true}
-                                                data={this.props.loadBalancerFarmsStore.loadBalancerFarms}
+                                                data={filteredLoadBalancerFarms}
                                                 multiSearchInput={serviceDetails.Service[0].Name}
                                                 handleAdd={this.handleAdd}
                                                 handleRemove={this.handleRemove}
                                                 toAdd={this.state.loadBalancerFarmsToAdd}
-                                                toRemove={this.state.loadBalancerFarmsToRemove} />
+                                                toRemove={this.state.loadBalancerFarmsToRemove}
+                                                placeholder="Fetching loadbalancer farms" />
                                         </Segment>
                                     </Grid.Column>
                                 </Grid.Row>
