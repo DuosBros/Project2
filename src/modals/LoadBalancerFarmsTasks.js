@@ -51,7 +51,7 @@ class LoadBalancerFarmsTasks extends React.Component {
     }
 
     handleAdd = (item) => {
-        if (this.state.loadBalancerFarmsToAdd.indexOf(item.Id) > -1) {
+        if (this.state.loadBalancerFarmsToAdd.findIndex(lb => lb.Id === item.Id) > -1) {
             this.setState({
                 loadBalancerFarmsToAdd: this.state.loadBalancerFarmsToAdd.filter(x => {
                     return x.Id !== item.Id
@@ -66,7 +66,7 @@ class LoadBalancerFarmsTasks extends React.Component {
     }
 
     handleRemove = (item) => {
-        if (this.state.loadBalancerFarmsToRemove.indexOf(item.Id) > -1) {
+        if (this.state.loadBalancerFarmsToRemove.findIndex(lb => lb.Id === item.Id) > -1) {
             this.setState({
                 loadBalancerFarmsToRemove: this.state.loadBalancerFarmsToRemove.filter(x => {
                     return x.Id !== item.Id
