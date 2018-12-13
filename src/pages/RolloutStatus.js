@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
@@ -265,15 +265,16 @@ class RolloutStatus extends React.Component {
             })
         }
 
+        console.log("pica", this.props.headerStore.searchServiceShortcutsResult)
         servicesTableRows.push(
-            <Table.Row>
+            <Table.Row key={-1}>
                 <Table.Cell colSpan={6}>
                     <Dropdown
                         className="search"
                         icon='search'
                         selection
                         onChange={this.handleServiceChange}
-                        options={this.props.headerStore.searchServiceShortcutsResult.slice(0, 10)}
+                        options={this.props.headerStore.searchServiceShortcutsResult.filter(x => !this.state.inputProductsValues.split(",").includes(x.text)).slice(0, 10)}
                         fluid
                         selectOnBlur={false}
                         selectOnNavigation={false}

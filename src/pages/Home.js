@@ -3,16 +3,6 @@ import { Grid, List, Header, Image, Input, Button } from 'semantic-ui-react';
 import keyboardKey from 'keyboard-key'
 import _ from 'lodash'
 
-import GVC from '../assets/GVC.png'
-import beholder from '../assets/beholder.png'
-import f5 from '../assets/f5.png'
-import AT from '../assets/AT.png'
-import BE from '../assets/BE.png'
-import FR from '../assets/FR.png'
-import RU from '../assets/RU.png'
-import GI from '../assets/GI.png'
-import GG from '../assets/GG.png'
-
 import { INCIDENT_PLACEHOLDER, SN_INC_SEARCH_URL, VERSION1_SEARCH_URL, VERSION1_PLACEHOLDER } from '../appConfig';
 import links from '../links';
 
@@ -67,7 +57,7 @@ export default class Home extends React.Component {
 
     renderLinksSection(section, filter) {
         let items = section.items.map((e, i) => this.renderLinksItem(e, i, filter))
-        if (items.every((val, i, arr) => val === null)) {
+        if (items.every((val) => val === null)) {
             return null
         }
         else {

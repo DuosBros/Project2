@@ -1,6 +1,5 @@
 import React from 'react'
 import GenericTable from './GenericTable';
-import { Link } from 'react-router-dom';
 import VirtualMachineStatus from './VirtualMachineStatus';
 
 export default class VirtualMachinesTable extends GenericTable {

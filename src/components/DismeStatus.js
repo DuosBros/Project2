@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { Label } from 'semantic-ui-react';
 
-import { getDismeState } from '../utils/HelperFunction';
-
 export default class DismeStatus extends Component {
 
     render() {

@@ -21,7 +21,7 @@ export default class SCOMSegment extends Component {
     render() {
 
         var data = this.props.data;
-        var mappedData, tableHeader, tableBody, scomModal, href;
+        var mappedData, tableHeader, tableBody, scomModal;
         console.log(data)
 
         if (this.state.showScomModal) {

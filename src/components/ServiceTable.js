@@ -1,7 +1,6 @@
 import React from 'react'
 import GenericTable from './GenericTable';
 import { Link } from 'react-router-dom';
-import ServerStatus from './ServerStatus';
 import DismeStatus from './DismeStatus';
 import { DISME_SERVICE_URL, DISME_SERVICE_PLACEHOLDER, KIBANA_WINLOGBEAT_SERVICE_URL, KIBANA_SERVICE_URL_PLACEHOLDER, KIBANA_PERFCOUNTER_SERVICE_URL } from '../appConfig';
 import { Button } from 'semantic-ui-react';

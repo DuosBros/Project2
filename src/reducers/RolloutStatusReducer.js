@@ -14,8 +14,6 @@ const RolloutStatusReducer = (state = initialState, action) => {
         case GET_DISME_APPLICATIONS:
             return Object.assign({}, state, { dismeApplications: action.payload })
         case GET_SERVICE_DETAILS_BY_SHORTCUTS:
-        debugger
-            // return Object.assign({}, state, { serviceDetails: [...state.serviceDetails, action.payload] })
             return Object.assign({}, state, { serviceDetails: action.payload })
         case REMOVE_SERVICE_DETAILS:
             return Object.assign({}, state, {
@@ -28,15 +26,15 @@ const RolloutStatusReducer = (state = initialState, action) => {
             })
         case GET_ROLLOUT_STATUS:
 
-            var pica = state.rolloutStatuses.filter(x => {
+            var filteredRolloutStatuses = state.rolloutStatuses.filter(x => {
                 if (x.serviceName === action.payload.serviceName) {
                     x.rolloutStatus = action.payload.rolloutStatus;
                     return x;
                 }
             })
-            if (pica.length > 0) {
+            if (filteredRolloutStatuses.length > 0) {
                 var copy = Object.assign([], state, {
-                    rolloutStatuses: pica
+                    rolloutStatuses: filteredRolloutStatuses
                 })
                 return copy;
             }

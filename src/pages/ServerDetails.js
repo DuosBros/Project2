@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Grid, Header, Segment, Divider, Icon, List, Image, Table, Button, Message } from 'semantic-ui-react';
+import { Grid, Header, Segment, Icon, List, Table, Button, Message } from 'semantic-ui-react';
 import _ from 'lodash';
 import moment from 'moment'
 
@@ -13,7 +13,6 @@ import { getServerDetails, getServerScomAlerts } from '../requests/ServerAxios';
 
 import { KIBANA_WINLOGBEAT_SERVER_URL, KIBANA_SERVER_URL_PLACEHOLDER, KIBANA_PERFCOUNTER_SERVER_URL, DISME_SERVICE_PLACEHOLDER, DISME_SERVICE_URL, errorColor } from '../appConfig';
 
-import spinner from '../assets/Spinner.svg';
 import LoadBalancerFarmsTable from '../components/LoadBalancerFarmsTable';
 import SCOMSegment from '../components/SCOMSegment';
 import DismeStatus from '../components/DismeStatus';
@@ -47,9 +46,9 @@ class ServerDetails extends React.Component {
                     return getServerScomAlerts(res.data.ServerName)
                 }
             })
-            .catch(err => {
-                return
-            })
+            .catch(() => {
+                    return;
+                })
             .then(res => {
                 if (!_.isEmpty(res)) {
                     this.props.getServerScomAlertsAction(res.data)
@@ -89,7 +88,7 @@ class ServerDetails extends React.Component {
         var OSIcon, serverDetailsBody, servicesTableRows, serviceTableColumnProperties, websitesTableRows, websitesTableColumnProperties, windowsServicesTableColumnProperties,
             windowsServicesTableRows, webChecksTableColumnProperties, webChecksTableRows;
 
-        const { showAllSegments, webchecks, dismeservices, loadbalancerfarms, windowsservices, websites, scomalerts } = this.state;
+        const { webchecks, dismeservices, loadbalancerfarms, windowsservices, websites, scomalerts } = this.state;
 
         console.log(serverDetails)
         if (!_.isEmpty(serverDetails)) {
@@ -127,7 +126,7 @@ class ServerDetails extends React.Component {
                 return (
                     <Table.Row key={webcheck.Id}>
                         <Table.Cell >{webcheck.Title}</Table.Cell>
-                        <Table.Cell ><a href={webcheck.Url} target="_blank">{webcheck.Url}</a></Table.Cell>
+                        <Table.Cell ><a href={webcheck.Url} target="_blank" rel="noopener noreferrer">{webcheck.Url}</a></Table.Cell>
                         <Table.Cell >{webcheck.ExpectedText}</Table.Cell>
                         <Table.Cell>
                             <Button

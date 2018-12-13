@@ -2,17 +2,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
-import { Grid, Header, Segment, Divider, Icon, List, Image, Table, Button, Label, Message } from 'semantic-ui-react';
+import { Grid, Header, Segment, Icon, List, Button, Message } from 'semantic-ui-react';
 import moment from 'moment';
 
 import { getServiceDetailsAction, toggleLoadBalancerFarmsTasksModalAction } from '../actions/ServiceActions';
 import { getServiceDetails } from '../requests/ServiceAxios';
-import spinner from '../assets/Spinner.svg';
-import SimpleTable from '../components/SimpleTable';
 import ServerTable from '../components/ServerTable';
 import WebsitesTable from '../components/WebsitesTable';
-import LBPoolStatus from '../components/LBPoolStatus';
-import VsStatus from '../components/VsStatus';
 import { isAdmin } from '../utils/HelperFunction';
 import LoadBalancerFarmsTable from '../components/LoadBalancerFarmsTable';
 import DismeStatus from '../components/DismeStatus';
@@ -148,7 +144,7 @@ class ServiceDetails extends React.Component {
                                                 </dd>
                                                 <dt>AppDynamics:</dt>
                                                 <dd>
-                                                    <a target="_blank" href={"https://apm.bwinparty.corp/controller/#/location=APP_COMPONENT_MANAGER&timeRange=last_15_minutes.BEFORE_NOW.-1.-1.15&application=" + serviceDetails.Service[0].ApmAppId + "&component=" + serviceDetails.Service[0].ApmTierId + ")"}> Dashboard</a>
+                                                    <a target="_blank" href={"https://apm.bwinparty.corp/controller/#/location=APP_COMPONENT_MANAGER&timeRange=last_15_minutes.BEFORE_NOW.-1.-1.15&application=" + serviceDetails.Service[0].ApmAppId + "&component=" + serviceDetails.Service[0].ApmTierId + ")"} rel="noopener noreferrer"> Dashboard</a>
                                                 </dd>
                                             </dl>
                                         </Grid.Column>

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -7,7 +7,7 @@ import { getPatchGroups } from '../requests/PatchGroupAxios';
 import { Grid, Header, Segment } from 'semantic-ui-react';
 import PatchGroupsTable from '../components/PatchGroupsTable';
 
-class PatchGroup extends React.Component {
+class PatchGroups extends React.Component {
 
     componentDidMount() {
         getPatchGroups()
@@ -46,4 +46,4 @@ function mapDispatchToProps(dispatch) {
     }, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(PatchGroup);
+export default connect(mapStateToProps, mapDispatchToProps)(PatchGroups);
