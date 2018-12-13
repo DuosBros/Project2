@@ -14,11 +14,16 @@ export default class ServersTable extends GenericTable {
                 width: 3
             },
             {
-                name: "Status | Disme",
-                prop: "state",
-                width: 2,
-                sortable: false,
-                searchable: false
+                name: "State",
+                prop: "ServerState",
+                display: "StateLabel",
+                width: 1
+            },
+            {
+                name: "Disme",
+                prop: "Disme",
+                display: "DismeLabel",
+                collapsing: true
             },
             {
                 name: "Owner",
@@ -93,11 +98,11 @@ export default class ServersTable extends GenericTable {
 
     transformDataRow(data) {
         data.ServerLink = (<Link to={'/server/' + data.Id}>{data.ServerName}</Link>);
-        data.state = (
-            <>
-                <ServerStatus size='small' serverState={data.ServerState} />
-                <DismeStatus size='small' dismeStatus={data.Disme} />
-            </>
+        data.StateLabel = (
+            <ServerStatus size='small' serverState={data.ServerState} />
+        );
+        data.DismeLabel = (
+            <DismeStatus size='small' dismeStatus={data.Disme} />
         );
         return data;
     }

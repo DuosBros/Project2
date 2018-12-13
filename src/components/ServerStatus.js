@@ -17,7 +17,7 @@ export default class ServerStatus extends Component {
     }
 
     render() {
-        var state = this.props.serverState
+        var state = this.props.serverState ? this.props.serverState : "No Data"
         return (
             <Label size={this.props.size} color={this.getColor(state)} horizontal>
                 {state}
