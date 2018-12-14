@@ -11,7 +11,8 @@ const DEFAULT_COLUMN_PROPS = {
     visibleByDefault: true
 }
 
-const DEFAUL_PAGE_SIZE = 15;
+const DEFAULT_PAGE_SIZE = 15;
+const SHOW_TABLE_HEADER_FUNCTIONS = true;
 
 export default class GenericTable extends Component {
 
@@ -29,7 +30,7 @@ export default class GenericTable extends Component {
             filters[col.prop] = "";
         }
 
-        let defaultLimit = DEFAUL_PAGE_SIZE;
+        let defaultLimit = DEFAULT_PAGE_SIZE;
         if (this.props.hasOwnProperty("defaultLimitOverride")) {
             if (typeof this.props.defaultLimitOverride !== "number") {
                 throw new Error("defaultLimitOverride property must be a number.")
@@ -37,10 +38,20 @@ export default class GenericTable extends Component {
             defaultLimit = parseInt(this.props.defaultLimitOverride);
         }
 
+        // TODO ADD TOGGLING SHOW/HIDE BUTTON
+        let defaultShowTableHeaderFunctions = SHOW_TABLE_HEADER_FUNCTIONS;
+        if (this.props.hasOwnProperty("showTableHeaderFunctions")) {
+            if (typeof this.props.showTableHeaderFunctions !== "boolean") {
+                throw new Error("defaultLimitOverride property must be a bool.")
+            }
+            defaultShowTableHeaderFunctions = this.props.showTableHeaderFunctions;
+        }
+
         this.state = {
             sortColumn: null,
             sortDirection: null,
             offset: 0,
+            defaultShowTableHeaderFunctions: defaultShowTableHeaderFunctions,
             defaultLimit,
             limit: defaultLimit,
             limitInput: defaultLimit.toString(),
@@ -246,7 +257,8 @@ export default class GenericTable extends Component {
             columnToggle,
             data,
             filters,
-            offset
+            offset,
+            defaultShowTableHeaderFunctions
         } = this.state
 
         let visibleColumns = columns.filter(c => visibleColumnsList.indexOf(c.prop) !== -1);
@@ -498,9 +510,9 @@ export default class GenericTable extends Component {
             columnToggleButton = null;
             toggleColumnsRow = null;
         }
-
-        return (
-            <div className="generic table">
+        var grid;
+        if (defaultShowTableHeaderFunctions) {
+            grid = (
                 <Grid>
                     <Grid.Row>
                         <Grid.Column floated='left' width={6}>
@@ -529,7 +541,7 @@ export default class GenericTable extends Component {
                                         fluid
                                         size="small"
                                         name="showColumnFilters"
-                                        
+
                                         onClick={this.handleStateToggle}
                                         compact
                                         content={showColumnFilters ? 'Hide Column Filters' : 'Show Column Filters'}
@@ -546,6 +558,14 @@ export default class GenericTable extends Component {
                     </Grid.Row>
                     {toggleColumnsRow}
                 </Grid>
+            )
+        }
+        else {
+            grid = null
+        }
+        return (
+            <div className="generic table">
+                {grid}
                 <Table selectable sortable celled basic='very'>
                     <Table.Header>
                         <Table.Row>{headerCells}</Table.Row>

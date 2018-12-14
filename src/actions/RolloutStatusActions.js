@@ -1,6 +1,6 @@
 import {
     GET_DISME_APPLICATIONS, GET_SERVICE_DETAILS_BY_SHORTCUTS, REMOVE_SERVICE_DETAILS,
-    GET_ROLLOUT_STATUS
+    GET_ROLLOUT_STATUS, DELETE_ALL_ROLLOUT_STATUSES
 } from '../constants/RolloutStatusConstants';
 
 export function getDismeApplicationsAction(payload) {
@@ -28,5 +28,11 @@ export function getRolloutStatusAction(payload) {
     return {
         payload,
         type: GET_ROLLOUT_STATUS
+    }
+}
+
+export function deleteAllRoloutStatusesAction() {
+    return {
+        type: DELETE_ALL_ROLLOUT_STATUSES
     }
 }

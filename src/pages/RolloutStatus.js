@@ -3,7 +3,10 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 
-import { getDismeApplicationsAction, getServiceDetailsByShortcutsAction, removeServiceDetailsAction, getRolloutStatusAction } from '../actions/RolloutStatusActions';
+import {
+    getDismeApplicationsAction, getServiceDetailsByShortcutsAction, removeServiceDetailsAction, getRolloutStatusAction,
+    deleteAllRoloutStatusesAction
+} from '../actions/RolloutStatusActions';
 import { getDismeApplications, getServiceByShortcut } from '../requests/ServiceAxios';
 import { Grid, Header, Segment, Dropdown, Input, Table, Button, Message, Icon } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
@@ -14,6 +17,7 @@ import { searchServiceShortcut } from '../requests/HeaderAxios';
 import { searchServiceShortcutAction } from '../actions/HeaderActions';
 import { debounce, sleep } from '../utils/HelperFunction';
 import { getRolloutStatus } from '../requests/RolloutStatusAxios';
+import RolloutStatusTable from '../components/RolloutStatusTable';
 
 class RolloutStatus extends React.Component {
 
@@ -21,13 +25,20 @@ class RolloutStatus extends React.Component {
         super(props);
 
         this.state = {
+            showAllSegments: true,
             dismeApplicationsFiltered: [],
             inputProductsValues: "",
             selectedServices: [],
             loadingServiceDetails: false,
-            dropdownValue: "",
-            getServiceDetailsError: {}
-
+            applicationDropdownValue: "",
+            getServiceDetailsError: {},
+            rolloutLoadingStatuses: [],
+            segments: [
+                {
+                    segmentName: "serviceDetails",
+                    isShowing: true
+                }
+            ]
         }
 
         this.getServiceDetailsAndRolloutStatus = this.getServiceDetailsAndRolloutStatus.bind(this);
@@ -48,9 +59,9 @@ class RolloutStatus extends React.Component {
             })
     }
 
-    handleDropdownOnChange = (e, { value }) => {
-
-        this.setState({ loadingServiceDetails: true, dropdownValue: value });
+    handleApplicationDropdownOnChange = (e, { value }) => {
+        this.props.deleteAllRoloutStatusesAction()
+        this.setState({ loadingServiceDetails: true, applicationDropdownValue: value });
         var filteredApps = this.props.rolloutStatusStore.dismeApplications.filter(x => x.value === value);
 
         var shortcuts = filteredApps.map(x => x.services.map(y => y.Shortcut))[0];
@@ -59,15 +70,12 @@ class RolloutStatus extends React.Component {
 
         this.setState({
             inputProductsValues: joinedShortcuts
-            // selectedProducts: filteredApps[0].services
         });
 
         this.getServiceDetailsAndRolloutStatus(joinedShortcuts)
-
-        // this.getRolloutStatus(filteredApps[0].services);
     }
 
-    handleOnSearchChange = (e) => {
+    handleApplicationDropdownOnSearchChange = (e) => {
         if (e.target.value.length > 1) {
 
             var filtered = this.props.rolloutStatusStore.dismeApplications.filter(x => x.text.toString().search(new RegExp(x.text, "i")) >= 0)
@@ -98,50 +106,61 @@ class RolloutStatus extends React.Component {
 
                 this.setState({ loadingServiceDetails: false });
             })
-            // .catch(err => {
-            //     this.setState({
-            //         loadingServiceDetails: false,
-            //         getServiceDetailsError: err
-            //     });
-            // })
             .then(() => {
-                var split = services.split(",")
-
-                for (let i = 0; i < split.length; i++) {
-
-                    sleep(500).then(() => {
-                        getRolloutStatus(split[i])
-                            .then(res => {
-                                // console.log(this.props.rolloutStatusStore.serviceDetails)
-                                for (let i = 0; i < this.props.rolloutStatusStore.serviceDetails.length; i++) {
-                                    var found = false;
-                                    var element = this.props.rolloutStatusStore.serviceDetails[i];
-                                    if (element !== null) {
-                                        if (element.Service[0].Shortcut.search(new RegExp(split[i], "i")) >= 0) {
-                                            found = true;
-                                            break;
-                                        }
-                                    }
-                                }
-
-                                if (res.data && found) {
-                                    var object = {
-                                        serviceName: split[i],
-                                        rolloutStatus: res.data
-                                    }
-                                    this.props.getRolloutStatusAction(object)
-                                }
-                            })
-                            .catch(err => {
-                                var object = {
-                                    serviceName: split[i],
-                                    err: err
-                                }
-                                this.props.getRolloutStatusAction(object)
-                            })
-                    })
-                }
+                this.handleGetRolloutStatusOnClick()
             })
+        // .catch(err => {
+        //     this.setState({
+        //         loadingServiceDetails: false,
+        //         getServiceDetailsError: err
+        //     });
+        // })
+        // .then(() => {
+        //     var a = this.props.rolloutStatusStore.serviceDetails;
+        //     var split = this.props.rolloutStatusStore.serviceDetails.filter(x => x !== null).map(x => x.Service[0].Shortcut)
+
+        //     for (let i = 0; i < split.length; i++) {
+
+        //         sleep(1000).then(() => {
+        //             getRolloutStatus(split[i])
+        //                 .then(res => {
+
+        //                     var object = {
+        //                         serviceName: split[i],
+        //                         rolloutStatus: res.data
+        //                     }
+        //                     this.props.getRolloutStatusAction(object)
+
+        //                 })
+        //                 .catch(err => {
+        //                     var object = {
+        //                         serviceName: split[i],
+        //                         err: err
+        //                     }
+        //                     this.props.getRolloutStatusAction(object)
+        //                 })
+        //         })
+        //     }
+        // })
+        // .then(() => {
+        //     this.getHealthsAndVersions(this.props.rolloutStatusStore.rolloutStatuses)
+        // })
+    }
+
+    getHealthsAndVersions = (rolloutStatuses) => {
+        sleep(1000).then(() => {
+            rolloutStatuses.forEach(element => {
+                // getHealth()
+                //     .then(res => {
+                //         element.rolloutStatus.health = res.data;
+                //     })
+
+                // getVersion()
+                //     .then(res => {
+                //         element.version = res.data
+                //     })
+            });
+        });
     }
 
     handleSearchServiceShortcut(value) {
@@ -164,13 +183,104 @@ class RolloutStatus extends React.Component {
         this.getServiceDetailsAndRolloutStatus(this.state.inputProductsValues)
     }
 
-    handleGetRolloutStatusOnClick = () => {
-        // var splitted = this.state.inputProductsValues.split(",")
+    handleToggleShowAllSegments = () => {
 
-        getServiceByShortcut(this.state.inputProductsValues)
-            .then(res => {
-                this.props.getServiceDetailsByShortcutsAction(res.data)
+        if (this.state.showAllSegments && this.state.segments.findIndex(x => x.isShowing === true) > -1) {
+            var mapped = this.state.segments.map(x => {
+                x.isShowing = false
+                return x
             })
+            this.setState({ mapped });
+        }
+        else {
+            var mapped = this.state.segments.map(x => {
+                x.isShowing = true
+                return x
+            })
+            this.setState({ mapped });
+        }
+    }
+
+    handleToggleShowingContent = (segment) => {
+        this.setState({
+            segments: [...this.state.segments], ...this.state.segments.map(x => {
+                if (x.segmentName === segment) {
+                    x.isShowing = !x.isShowing
+                }
+
+                return x
+            }
+            )
+        });
+    }
+
+    handleGetRolloutStatusOnClick = () => {
+        this.props.deleteAllRoloutStatusesAction()
+
+        var segments = Object.assign([], this.state.segments)
+
+        this.props.rolloutStatusStore.serviceDetails.forEach(x => {
+            if (x === null) {
+                return
+            }
+
+            var obj = {
+                segmentName: x.Service[0].Shortcut,
+                isShowing: true
+            }
+
+            segments.push(obj)
+        })
+
+
+        this.setState({
+            segments: segments
+        });
+
+        this.props.rolloutStatusStore.serviceDetails.forEach(x => {
+            if (x === null) {
+                return
+            }
+
+            var shortcut = x.Service[0].Shortcut
+
+            var object = {
+                serviceName: shortcut,
+                rolloutStatus: null,
+                isLoading: true
+            }
+
+            this.props.getRolloutStatusAction(object)
+
+            sleep(1000).then(() => {
+                getRolloutStatus(shortcut)
+                    .then(res => {
+
+                        var object = {
+                            serviceName: shortcut,
+                            rolloutStatus: res.data,
+                            isLoading: false
+                        }
+                        this.props.getRolloutStatusAction(object)
+                    })
+                    .catch(err => {
+                        var object = {
+                            serviceName: shortcut,
+                            rolloutStatus: [],
+                            err: err,
+                            isLoading: false
+                        }
+                        this.props.getRolloutStatusAction(object)
+                    })
+            })
+        });
+
+
+        // .then(() => {
+        //     this.getHealthsAndVersions(this.props.rolloutStatusStore.rolloutStatuses)
+        // })
+
+        // var splitted = this.state.inputProductsValues.split(",")
     }
 
     removeServiceFromSearch = (service) => {
@@ -183,7 +293,39 @@ class RolloutStatus extends React.Component {
         this.props.removeServiceDetailsAction(service);
     }
 
+    handleRefreshRolloutStatus = (shortcut) => {
+
+        var object = {
+            serviceName: shortcut,
+            rolloutStatus: null,
+            isLoading: true
+        }
+
+        this.props.getRolloutStatusAction(object)
+
+        getRolloutStatus(shortcut)
+            .then(res => {
+
+                var object = {
+                    serviceName: shortcut,
+                    rolloutStatus: res.data,
+                    isLoading: false
+                }
+                this.props.getRolloutStatusAction(object)
+            })
+            .catch(err => {
+                var object = {
+                    serviceName: shortcut,
+                    rolloutStatus: [],
+                    err: err,
+                    isLoading: false
+                }
+                this.props.getRolloutStatusAction(object)
+            })
+    }
+
     render() {
+        var { showAllSegments } = this.state;
         // console.log(this.props.rolloutStatusStore.serviceDetails)
         console.log(this.props.rolloutStatusStore.rolloutStatuses)
 
@@ -257,7 +399,7 @@ class RolloutStatus extends React.Component {
                 }
                 else {
                     return (
-                        <Table.Row error>
+                        <Table.Row key={index} error>
                             <Table.Cell colSpan={6}>Could not get {this.state.inputProductsValues.split(",")[index]}</Table.Cell>
                         </Table.Row>
                     )
@@ -265,7 +407,6 @@ class RolloutStatus extends React.Component {
             })
         }
 
-        console.log("pica", this.props.headerStore.searchServiceShortcutsResult)
         servicesTableRows.push(
             <Table.Row key={-1}>
                 <Table.Cell colSpan={6}>
@@ -287,12 +428,73 @@ class RolloutStatus extends React.Component {
             </Table.Row>
         )
 
+        var segments = this.props.rolloutStatusStore.rolloutStatuses.map((x, i) => {
+            var segmentContent;
+            if (x.err) {
+                segmentContent = (
+                    <Message error>
+                        <Message.Header>{x.err.message}</Message.Header>
+                    </Message>
+                )
+            }
+            else {
+                if (x.rolloutStatus !== null) {
 
-        // TODO: render only these which are in table service details. in Reducer there can be also the previous ones
-        // 
+                    if (x.rolloutStatus.length === 0) {
+                        segmentContent = (
+                            <Message warning>
+                                <Message.Header>No data</Message.Header>
+                            </Message>
+                        )
+                    }
+                    else {
+                        segmentContent = (
+                            <RolloutStatusTable showTableHeaderFunctions={false} data={x.rolloutStatus} defaultLimitOverride={0} />
+                        )
+                    }
 
-        var segments; // segment for every application 
-        // console.log(this.props.rolloutStatusStore.dismeApplications)
+                }
+                else {
+                    segmentContent = (
+                        <RolloutStatusTable showTableHeaderFunctions={false} data={x.rolloutStatus} defaultLimitOverride={0} />
+                    )
+                }
+            }
+
+            return (
+                <Grid.Row key={i}>
+                    <Grid.Column>
+                        <Header block attached='top' as='h4'>
+                            {x.serviceName}
+                            <Button
+                                basic
+                                size="tiny"
+                                style={{ padding: '0em', marginRight: '0.5em', marginLeft: '0.5em' }}
+                                onClick={() => this.handleRefreshRolloutStatus(x.serviceName)}
+                                icon='refresh' />
+                            <Button
+                                basic
+                                style={{ padding: '0em', marginRight: '0.5em' }}
+                                onClick={() => this.handleToggleShowingContent(x.serviceName)}
+                                floated='right'
+                                icon='content' />
+                        </Header>
+                        <Segment attached='bottom' >
+                            {
+                                this.state.segments.filter(y => y.segmentName === x.serviceName)[0] ? (
+                                    this.state.segments.filter(y => y.segmentName === x.serviceName)[0].isShowing ? (
+                                        segmentContent
+                                    ) : (
+                                            null
+                                        )
+                                ) : (null)
+                            }
+                        </Segment>
+                    </Grid.Column>
+                </Grid.Row>
+            )
+        })
+
         var serviceDetails;
         if (this.state.inputProductsValues) {
             serviceDetails = (
@@ -300,7 +502,13 @@ class RolloutStatus extends React.Component {
                     <Grid.Column>
                         <Header block attached='top' as='h4'>
                             Service details
-                            </Header>
+                            <Button
+                                basic
+                                style={{ padding: '0em', marginRight: '0.5em' }}
+                                onClick={() => this.handleToggleShowingContent("serviceDetails")}
+                                floated='right'
+                                icon='content' />
+                        </Header>
                         <Segment attached='bottom'>
                             {
                                 this.state.loadingServiceDetails ? (
@@ -311,7 +519,11 @@ class RolloutStatus extends React.Component {
                                         </Message.Content>
                                     </Message>
                                 ) : (
-                                        <SimpleTable columnProperties={serviceTableColumnProperties} body={servicesTableRows} />
+                                        this.state.segments.filter(x => x.segmentName === "serviceDetails")[0].isShowing ? (
+                                            <SimpleTable columnProperties={serviceTableColumnProperties} body={servicesTableRows} />
+                                        ) : (
+                                                null
+                                            )
                                     )
                             }
                         </Segment>
@@ -323,13 +535,19 @@ class RolloutStatus extends React.Component {
             serviceDetails = null
         }
 
-
         return (
             <Grid stackable>
                 <Grid.Row>
                     <Grid.Column>
                         <Header block attached='top' as='h4'>
                             Rollout Status
+                            <Button
+                                floated='right'
+                                onClick={() => this.handleToggleShowAllSegments()}
+                                content={showAllSegments && this.state.segments.every(x => x.isShowing === true) ? 'Hide All Segments' : 'Show All Segments'}
+                                icon='content'
+                                labelPosition='right'
+                                style={{ fontSize: 'medium', padding: '0.3em', bottom: '0.1em' }} />
                         </Header>
                         <Segment attached='bottom' >
                             <Grid stackable>
@@ -338,29 +556,16 @@ class RolloutStatus extends React.Component {
                                         <Dropdown
                                             icon='search'
                                             selection
-                                            onChange={this.handleDropdownOnChange}
+                                            onChange={this.handleApplicationDropdownOnChange}
                                             options={this.state.dismeApplicationsFiltered.length === 0 ? this.props.rolloutStatusStore.dismeApplications : this.state.dismeApplicationsFiltered}
                                             fluid
                                             selectOnBlur={false}
                                             selectOnNavigation={false}
                                             placeholder='Type to search an application'
-                                            onSearchChange={this.handleOnSearchChange}
+                                            onSearchChange={this.handleApplicationDropdownOnSearchChange}
                                             search
-                                            value={this.state.inputProductsValues === "" ? "" : this.state.dropdownValue}
+                                            value={this.state.inputProductsValues === "" ? "" : this.state.applicationDropdownValue}
                                         />
-                                        {/* <Dropdown
-                                            icon='search'
-                                            selection
-                                            onChange={(e) => this.handleServiceChange(e)}
-                                            options={this.props.headerStore.searchServiceShortcutsResult.slice(0, 10)}
-                                            fluid
-                                            selectOnBlur={false}
-                                            selectOnNavigation={false}
-                                            placeholder='Type to search a service'
-                                            value=""
-                                            onSearchChange={this.handleServiceShortcutSearchChange}
-                                            search
-                                        /> */}
                                     </Grid.Column>
                                     <Grid.Column width={13} >
                                         <Input onChange={this.handleInputOnChange} fluid value={this.state.inputProductsValues} />
@@ -373,10 +578,10 @@ class RolloutStatus extends React.Component {
                                 </Grid.Row> */}
                             </Grid>
                         </Segment>
-                        {segments}
                     </Grid.Column>
                 </Grid.Row>
                 {serviceDetails}
+                {segments}
             </Grid>
         )
     }
@@ -395,7 +600,8 @@ function mapDispatchToProps(dispatch) {
         searchServiceShortcutAction,
         getServiceDetailsByShortcutsAction,
         removeServiceDetailsAction,
-        getRolloutStatusAction
+        getRolloutStatusAction,
+        deleteAllRoloutStatusesAction
     }, dispatch);
 }
 
