@@ -92,4 +92,8 @@ export default class RolloutStatusTable extends GenericTable {
 
         return data;
     }
+
+    getDataKey(data) {
+        return data.Lbid + "-" + data.Pool + "-" + data.Ip + "-" + data.Port;
+    }
 }

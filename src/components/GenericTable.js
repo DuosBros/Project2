@@ -468,7 +468,7 @@ export default class GenericTable extends Component {
             tableBody.push((
                 <Table.Row positive={isEdit && isAdd === true && toAdd.map(x => x.Id).indexOf(data.Id) > -1}
                     negative={isEdit && isAdd === false && toRemove.map(x => x.Id).indexOf(data.Id) > -1}
-                    key={"data-" + data.Id}>
+                    key={"data-" + this.getDataKey(data)}>
                     {cells}
                 </Table.Row>
             ));
@@ -607,5 +607,9 @@ export default class GenericTable extends Component {
 
     applyCustomFilter(filteredData) {
         return filteredData;
+    }
+
+    getDataKey(data) {
+        return data.Id
     }
 }
