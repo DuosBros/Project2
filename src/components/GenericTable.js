@@ -114,7 +114,11 @@ export default class GenericTable extends Component {
 
     componentWillReceiveProps(nextProps) {
         if (this.props.data !== nextProps.data) {
-            let data = this.sort(nextProps.data, null);
+            let data;
+            if(nextProps.data !== null) {
+                data = this.sort(nextProps.data, null);
+            }
+
             this.setState({ data });
         }
     }
