@@ -231,13 +231,18 @@ export default class GenericTable extends Component {
                 return res;
             }
         }
-        if (prop === null || a[prop] === null || b[prop] === null) {
+        if (prop === null) {
             return res;
         }
         return sortFactor * this.compareBase(a[prop], b[prop]);
     }
 
     compareBase(a, b) {
+        if(a === null) {
+            return b === null ? 0 : -1;
+        } else if(b === null) {
+            return 1;
+        }
         if (typeof a === "number" && typeof b === "number") {
             return a < b ? -1 : (a > b ? 1 : 0);
         }
