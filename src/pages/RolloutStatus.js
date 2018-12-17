@@ -7,7 +7,9 @@ import {
     getDismeApplicationsAction, getServiceDetailsByShortcutsAction, removeServiceDetailsAction, getRolloutStatusAction,
     deleteAllRoloutStatusesAction, deleteRolloutStatusAction
 } from '../actions/RolloutStatusActions';
-import { getDismeApplications, getServiceByShortcut } from '../requests/ServiceAxios';
+import { getHealthAction, getVersionAction } from '../actions/ServiceActions';
+
+import { getDismeApplications, getServiceByShortcut, getHealth, getVersion } from '../requests/ServiceAxios';
 import { Grid, Header, Segment, Dropdown, Input, Table, Button, Message, Icon } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import DismeStatus from '../components/DismeStatus';
@@ -15,7 +17,7 @@ import { DISME_SERVICE_URL, DISME_SERVICE_PLACEHOLDER } from '../appConfig';
 import SimpleTable from '../components/SimpleTable';
 import { searchServiceShortcut } from '../requests/HeaderAxios';
 import { searchServiceShortcutAction } from '../actions/HeaderActions';
-import { debounce, sleep } from '../utils/HelperFunction';
+import { debounce, sleep, groupBy } from '../utils/HelperFunction';
 import { getRolloutStatus } from '../requests/RolloutStatusAxios';
 import RolloutStatusTable from '../components/RolloutStatusTable';
 
@@ -107,58 +109,44 @@ class RolloutStatus extends React.Component {
                 this.setState({ loadingServiceDetails: false });
             })
             .then(() => {
-                this.handleGetRolloutStatusOnClick()
+                this.getRolloutStatuses()
             })
-        // .catch(err => {
-        //     this.setState({
-        //         loadingServiceDetails: false,
-        //         getServiceDetailsError: err
-        //     });
-        // })
-        // .then(() => {
-        //     var a = this.props.rolloutStatusStore.serviceDetails;
-        //     var split = this.props.rolloutStatusStore.serviceDetails.filter(x => x !== null).map(x => x.Service[0].Shortcut)
-
-        //     for (let i = 0; i < split.length; i++) {
-
-        //         sleep(1000).then(() => {
-        //             getRolloutStatus(split[i])
-        //                 .then(res => {
-
-        //                     var object = {
-        //                         serviceName: split[i],
-        //                         rolloutStatus: res.data
-        //                     }
-        //                     this.props.getRolloutStatusAction(object)
-
-        //                 })
-        //                 .catch(err => {
-        //                     var object = {
-        //                         serviceName: split[i],
-        //                         err: err
-        //                     }
-        //                     this.props.getRolloutStatusAction(object)
-        //                 })
-        //         })
-        //     }
-        // })
-        // .then(() => {
-        //     this.getHealthsAndVersions(this.props.rolloutStatusStore.rolloutStatuses)
-        // })
     }
 
-    getHealthsAndVersions = (rolloutStatuses) => {
-        sleep(1000).then(() => {
-            rolloutStatuses.forEach(element => {
-                // getHealth()
-                //     .then(res => {
-                //         element.rolloutStatus.health = res.data;
-                //     })
+    getHealthsAndVersions = () => {
 
-                // getVersion()
-                //     .then(res => {
-                //         element.version = res.data
-                //     })
+        var cloned = Object.assign([], this.props.rolloutStatusStore.rolloutStatuses);
+
+        cloned.forEach(element => {
+            sleep(1000).then(() => {
+                var grouped = groupBy(element.rolloutStatus, "Server")
+                var keys = Object.keys(grouped);
+
+                keys.forEach(e => {
+                    getHealth(element.serviceId, grouped[e][0].Ip)
+                        .then(res => {
+                            var o = {
+                                serviceName: element.serviceName,
+                                serviceId: element.serviceId,
+                                ip: grouped[e][0].Ip,
+                                health: res.data
+                            }
+
+                            this.props.getHealthAction(o)
+                        })
+
+                    getVersion(element.serviceId, grouped[e][0].Serverid)
+                        .then(res => {
+                            var o = {
+                                serviceName: element.serviceName,
+                                serviceId: element.serviceId,
+                                serverId: grouped[e][0].Serverid,
+                                version: res.data
+                            }
+
+                            this.props.getVersionAction(o)
+                        })
+                })
             });
         });
     }
@@ -214,7 +202,7 @@ class RolloutStatus extends React.Component {
         });
     }
 
-    handleGetRolloutStatusOnClick = () => {
+    getRolloutStatuses = () => {
         this.props.deleteAllRoloutStatusesAction()
 
         var segments = Object.assign([], this.state.segments)
@@ -243,9 +231,11 @@ class RolloutStatus extends React.Component {
             }
 
             var shortcut = x.Service[0].Shortcut
+            var serviceId = x.Service[0].Id
 
             var object = {
                 serviceName: shortcut,
+                serviceId: serviceId,
                 rolloutStatus: null,
                 isLoading: true
             }
@@ -258,29 +248,26 @@ class RolloutStatus extends React.Component {
 
                         var object = {
                             serviceName: shortcut,
+                            serviceId: serviceId,
                             rolloutStatus: res.data,
                             isLoading: false
                         }
                         this.props.getRolloutStatusAction(object)
+                        this.getHealthsAndVersions()
                     })
                     .catch(err => {
                         var object = {
                             serviceName: shortcut,
+                            serviceId: serviceId,
                             rolloutStatus: [],
                             err: err,
                             isLoading: false
                         }
                         this.props.getRolloutStatusAction(object)
                     })
+
             })
         });
-
-
-        // .then(() => {
-        //     this.getHealthsAndVersions(this.props.rolloutStatusStore.rolloutStatuses)
-        // })
-
-        // var splitted = this.state.inputProductsValues.split(",")
     }
 
     removeServiceFromSearch = (service) => {
@@ -293,9 +280,10 @@ class RolloutStatus extends React.Component {
         this.props.removeServiceDetailsAction(service);
     }
 
-    handleRefreshRolloutStatus = (shortcut) => {
+    handleRefreshRolloutStatus = (shortcut, serviceId) => {
         var object = {
             serviceName: shortcut,
+            serviceId: serviceId,
             rolloutStatus: null,
             isLoading: true
         }
@@ -307,6 +295,7 @@ class RolloutStatus extends React.Component {
 
                 var object = {
                     serviceName: shortcut,
+                    serviceId: serviceId,
                     rolloutStatus: res.data,
                     isLoading: false
                 }
@@ -315,6 +304,7 @@ class RolloutStatus extends React.Component {
             .catch(err => {
                 var object = {
                     serviceName: shortcut,
+                    serviceId: serviceId,
                     rolloutStatus: [],
                     err: err,
                     isLoading: false
@@ -325,7 +315,7 @@ class RolloutStatus extends React.Component {
 
     render() {
         var { showAllSegments } = this.state;
-        // console.log(this.props.rolloutStatusStore.serviceDetails)
+        console.log(this.props.rolloutStatusStore.serviceDetails)
         console.log(this.props.rolloutStatusStore.rolloutStatuses)
 
         var serviceTableColumnProperties = [
@@ -469,7 +459,7 @@ class RolloutStatus extends React.Component {
                                 basic
                                 size="tiny"
                                 style={{ padding: '0em', marginRight: '0.5em', marginLeft: '0.5em' }}
-                                onClick={() => this.handleRefreshRolloutStatus(x.serviceName)}
+                                onClick={() => this.handleRefreshRolloutStatus(x.serviceName, x.serviceId)}
                                 icon='refresh' />
                             <Button
                                 basic
@@ -607,7 +597,9 @@ function mapDispatchToProps(dispatch) {
         removeServiceDetailsAction,
         getRolloutStatusAction,
         deleteAllRoloutStatusesAction,
-        deleteRolloutStatusAction
+        deleteRolloutStatusAction,
+        getHealthAction,
+        getVersionAction
     }, dispatch);
 }
 
