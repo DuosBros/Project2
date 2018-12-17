@@ -5,7 +5,7 @@ import _ from 'lodash';
 
 import {
     getDismeApplicationsAction, getServiceDetailsByShortcutsAction, removeServiceDetailsAction, getRolloutStatusAction,
-    deleteAllRoloutStatusesAction
+    deleteAllRoloutStatusesAction, deleteRolloutStatusAction
 } from '../actions/RolloutStatusActions';
 import { getDismeApplications, getServiceByShortcut } from '../requests/ServiceAxios';
 import { Grid, Header, Segment, Dropdown, Input, Table, Button, Message, Icon } from 'semantic-ui-react';
@@ -294,7 +294,6 @@ class RolloutStatus extends React.Component {
     }
 
     handleRefreshRolloutStatus = (shortcut) => {
-
         var object = {
             serviceName: shortcut,
             rolloutStatus: null,
@@ -391,7 +390,7 @@ class RolloutStatus extends React.Component {
                             <Table.Cell>
                                 {service.Servers.filter(x => x.Environment.toLowerCase() === "production").length}
                             </Table.Cell>
-                            <Table.Cell textAlign="center">
+                            <Table.Cell textAlign="left">
                                 <Button onClick={() => this.removeServiceFromSearch(service.Service[0])} style={{ padding: '0.3em' }} icon="close"></Button>
                             </Table.Cell>
                         </Table.Row>
@@ -541,13 +540,19 @@ class RolloutStatus extends React.Component {
                     <Grid.Column>
                         <Header block attached='top' as='h4'>
                             Rollout Status
-                            <Button
-                                floated='right'
-                                onClick={() => this.handleToggleShowAllSegments()}
-                                content={showAllSegments && this.state.segments.every(x => x.isShowing === true) ? 'Hide All Segments' : 'Show All Segments'}
-                                icon='content'
-                                labelPosition='right'
-                                style={{ fontSize: 'medium', padding: '0.3em', bottom: '0.1em' }} />
+                            {
+                                serviceDetails || segments.length > 0 ? (
+                                    <Button
+                                        floated='right'
+                                        onClick={() => this.handleToggleShowAllSegments()}
+                                        content={showAllSegments && this.state.segments.every(x => x.isShowing === true) ? 'Hide All Segments' : 'Show All Segments'}
+                                        icon='content'
+                                        labelPosition='right'
+                                        style={{ fontSize: 'medium', padding: '0.3em', bottom: '0.1em' }} />
+                                ) : (
+                                        null
+                                    )
+                            }
                         </Header>
                         <Segment attached='bottom' >
                             <Grid stackable>
@@ -568,14 +573,14 @@ class RolloutStatus extends React.Component {
                                         />
                                     </Grid.Column>
                                     <Grid.Column width={13} >
-                                        <Input onChange={this.handleInputOnChange} fluid value={this.state.inputProductsValues} />
+                                        <Input
+                                            onChange={this.handleInputOnChange}
+                                            fluid
+                                            value={this.state.inputProductsValues}
+                                            placeholder='Insert coma delimited service shortcuts or select from the dropdown on the left'
+                                        />
                                     </Grid.Column>
                                 </Grid.Row>
-                                {/* <Grid.Row textAlign="right">
-                                    <Grid.Column>
-                                        <Button onClick={() => this.handleGetRolloutStatusOnClick()} primary>Get Rollout Status</Button>
-                                    </Grid.Column>
-                                </Grid.Row> */}
                             </Grid>
                         </Segment>
                     </Grid.Column>
@@ -601,7 +606,8 @@ function mapDispatchToProps(dispatch) {
         getServiceDetailsByShortcutsAction,
         removeServiceDetailsAction,
         getRolloutStatusAction,
-        deleteAllRoloutStatusesAction
+        deleteAllRoloutStatusesAction,
+        deleteRolloutStatusAction
     }, dispatch);
 }
 

@@ -36,6 +36,10 @@ export const KIBANA_PERFCOUNTER_SERVICE_URL = "https://kibana.prod.env.works/app
 
 // generic table
 // sorting with nulls
+// expendable row
 // in rolloutstatus
 // index.js:1452 Warning: Encountered two children with the same key, `data-undefined`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+// add coloring if some condition is not met
+
 // when refreshing the non home page it returns 404
+// use getAvailabiltyAndEnabledState to get color of row in rolloutstatus page

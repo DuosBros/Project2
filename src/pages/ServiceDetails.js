@@ -12,7 +12,7 @@ import WebsitesTable from '../components/WebsitesTable';
 import { isAdmin } from '../utils/HelperFunction';
 import LoadBalancerFarmsTable from '../components/LoadBalancerFarmsTable';
 import DismeStatus from '../components/DismeStatus';
-import { KIBANA_SERVICE_URL_PLACEHOLDER, KIBANA_WINLOGBEAT_SERVICE_URL, KIBANA_PERFCOUNTER_SERVICE_URL } from '../appConfig';
+import { KIBANA_SERVICE_URL_PLACEHOLDER, KIBANA_WINLOGBEAT_SERVICE_URL, KIBANA_PERFCOUNTER_SERVICE_URL, DISME_SERVICE_URL, DISME_SERVICE_PLACEHOLDER } from '../appConfig';
 
 class ServiceDetails extends React.Component {
     constructor(props) {
@@ -107,7 +107,7 @@ class ServiceDetails extends React.Component {
                                                 <dd>{serviceDetails.Service[0].Name}</dd>
                                             </dl>
                                             <dl className="dl-horizontal">
-                                                <dt>Disme:</dt>
+                                                <dt>Disme Status:</dt>
                                                 <dd><DismeStatus dismeStatus={serviceDetails.Service[0].Status} /></dd>
                                             </dl>
                                             <dl className="dl-horizontal">
@@ -145,6 +145,10 @@ class ServiceDetails extends React.Component {
                                                 <dt>AppDynamics:</dt>
                                                 <dd>
                                                     <a target="_blank" href={"https://apm.bwinparty.corp/controller/#/location=APP_COMPONENT_MANAGER&timeRange=last_15_minutes.BEFORE_NOW.-1.-1.15&application=" + serviceDetails.Service[0].ApmAppId + "&component=" + serviceDetails.Service[0].ApmTierId + ")"} rel="noopener noreferrer"> Dashboard</a>
+                                                </dd>
+                                                <dt>Disme:</dt>
+                                                <dd>
+                                                    <a target="_blank" href={_.replace(DISME_SERVICE_URL, new RegExp(DISME_SERVICE_PLACEHOLDER, "g"), serviceDetails.Service[0].DismeID)} rel="noopener noreferrer">Details</a>
                                                 </dd>
                                             </dl>
                                         </Grid.Column>
