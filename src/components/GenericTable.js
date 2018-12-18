@@ -13,6 +13,7 @@ const DEFAULT_COLUMN_PROPS = {
 
 const DEFAULT_PAGE_SIZE = 15;
 const SHOW_TABLE_HEADER_FUNCTIONS = true;
+const DEFAULT_IS_COMPACT = false;
 
 export default class GenericTable extends Component {
 
@@ -47,11 +48,20 @@ export default class GenericTable extends Component {
             defaultShowTableHeaderFunctions = this.props.showTableHeaderFunctions;
         }
 
+        let isCompact = DEFAULT_IS_COMPACT;
+        if (this.props.hasOwnProperty("compact")) {
+            if (typeof this.props.compact !== "boolean" && typeof this.props.compact !== "string") {
+                throw new Error("compact property must be a bool or string.")
+            }
+            isCompact = this.props.compact;
+        }
+
         this.state = {
             sortColumn: null,
             sortDirection: null,
             offset: 0,
             defaultShowTableHeaderFunctions: defaultShowTableHeaderFunctions,
+            isCompact: isCompact,
             defaultLimit,
             limit: defaultLimit,
             limitInput: defaultLimit.toString(),
@@ -267,7 +277,8 @@ export default class GenericTable extends Component {
             data,
             filters,
             offset,
-            defaultShowTableHeaderFunctions
+            defaultShowTableHeaderFunctions,
+            isCompact
         } = this.state
 
         let visibleColumns = columns.filter(c => visibleColumnsList.indexOf(c.prop) !== -1);
@@ -575,7 +586,7 @@ export default class GenericTable extends Component {
         return (
             <div className="generic table">
                 {grid}
-                <Table selectable sortable celled basic='very'>
+                <Table compact={isCompact} selectable sortable celled basic='very'>
                     <Table.Header>
                         <Table.Row>{headerCells}</Table.Row>
                     </Table.Header>
