@@ -93,7 +93,9 @@ class RolloutStatus extends React.Component {
 
         this.setState({ inputProductsValues: value });
 
-        this.getServiceDetailsAndRolloutStatus(value)
+        var valueToSearch = value.replace(/[^a-zA-Z0-9\,_.-]/g, "")
+        var uniqueValueToSearch = Array.from(new Set(valueToSearch.split(',')))
+        this.getServiceDetailsAndRolloutStatus(uniqueValueToSearch)
     }
 
     getServiceDetailsAndRolloutStatus(services) {
@@ -299,6 +301,7 @@ class RolloutStatus extends React.Component {
                     rolloutStatus: res.data,
                     isLoading: false
                 }
+                this.getHealthsAndVersions()
                 this.props.getRolloutStatusAction(object)
             })
             .catch(err => {
@@ -509,7 +512,7 @@ class RolloutStatus extends React.Component {
                                     </Message>
                                 ) : (
                                         this.state.segments.filter(x => x.segmentName === "serviceDetails")[0].isShowing ? (
-                                            <SimpleTable columnProperties={serviceTableColumnProperties} body={servicesTableRows} />
+                                            <SimpleTable columnProperties={serviceTableColumnProperties} body={servicesTableRows} compact="very" />
                                         ) : (
                                                 null
                                             )

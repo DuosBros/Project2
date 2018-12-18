@@ -38,7 +38,7 @@ class Services extends React.Component {
                                 Services
                             </Header>
                             <Segment attached='bottom' >
-                                <ServiceTable defaultLimitOverride={50} data={this.props.serviceStore.services} />
+                                <ServiceTable defaultLimitOverride={50} data={this.props.serviceStore.services} compact="very" />
                             </Segment>
                         </Grid.Column>
                     </Grid.Row>

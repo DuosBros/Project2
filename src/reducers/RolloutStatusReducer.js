@@ -189,7 +189,6 @@ const RolloutStatusReducer = (state = initialState, action) => {
         // case DELETE_ROLLOUT_STATUS:
         //     return Object.assign({}, state, { rolloutStatuses: state.rolloutStatuses.filter(x => x.serviceName !== action.payload) })
         case GET_HEALTH:
-            debugger
             var copy = Object.assign([], state.rolloutStatuses);
 
             var index = copy.findIndex(x => x.serviceId === action.payload.serviceId);
@@ -211,7 +210,25 @@ const RolloutStatusReducer = (state = initialState, action) => {
             return Object.assign({}, state, { rolloutStatuses: copy })
 
         case GET_VERSION:
+            var copy = Object.assign([], state.rolloutStatuses);
 
+            var index = copy.findIndex(x => x.serviceId === action.payload.serviceId);
+
+            if (index < 0) {
+                throw "Could not find"
+            }
+
+            var mappedRolloutStatuses = copy[index].rolloutStatus.map(x => {
+                if (x.Serverid === action.payload.serverId) {
+                    x.version = action.payload.version;
+                }
+
+                return x;
+            })
+
+            copy[index].rolloutStatus = mappedRolloutStatuses
+
+            return Object.assign({}, state, { rolloutStatuses: copy })
 
         default:
             return state;

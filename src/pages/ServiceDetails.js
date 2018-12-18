@@ -209,7 +209,7 @@ class ServiceDetails extends React.Component {
                             {
                                 servers ? (
                                     <Segment attached='bottom'>
-                                        <ServerTable data={serviceDetails.Servers} />
+                                        <ServerTable data={serviceDetails.Servers} compact={true} />
                                     </Segment>
                                 ) : (
                                         <div></div>

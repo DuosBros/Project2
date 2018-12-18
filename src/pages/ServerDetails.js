@@ -376,7 +376,7 @@ class ServerDetails extends React.Component {
                             {
                                 webchecks ? (
                                     <Segment attached='bottom'>
-                                        <SimpleTable columnProperties={webChecksTableColumnProperties} body={webChecksTableRows} />
+                                        <SimpleTable columnProperties={webChecksTableColumnProperties} body={webChecksTableRows} compact="very" />
                                     </Segment>
                                 ) : (
                                         <div></div>
@@ -393,7 +393,7 @@ class ServerDetails extends React.Component {
                             {
                                 dismeservices ? (
                                     <Segment attached='bottom'>
-                                        <SimpleTable columnProperties={serviceTableColumnProperties} body={servicesTableRows} />
+                                        <SimpleTable columnProperties={serviceTableColumnProperties} body={servicesTableRows} compact="very"/>
                                     </Segment>
                                 ) : (
                                         <div></div>
@@ -430,7 +430,7 @@ class ServerDetails extends React.Component {
                             {
                                 websites ? (
                                     <Segment attached='bottom'>
-                                        <SimpleTable columnProperties={websitesTableColumnProperties} body={websitesTableRows} />
+                                        <SimpleTable columnProperties={websitesTableColumnProperties} body={websitesTableRows} compact={true} />
                                     </Segment>
                                 ) : (
                                         <div></div>
@@ -466,7 +466,7 @@ class ServerDetails extends React.Component {
                             {
                                 windowsservices ? (
                                     <Segment attached='bottom'>
-                                        <SimpleTable columnProperties={windowsServicesTableColumnProperties} body={windowsServicesTableRows} />
+                                        <SimpleTable columnProperties={windowsServicesTableColumnProperties} body={windowsServicesTableRows} compact={true}/>
                                     </Segment>
                                 ) : (
                                         <div></div>

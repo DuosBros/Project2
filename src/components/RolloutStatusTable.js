@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom';
 import GenericTable from './GenericTable';
 import AvailabilityStatus from '../components/AvailabilityStatus';
 import EnabledStatus from '../components/EnabledStatus';
+import VanillaHealthStatus from './VanillaHealthStatus';
+import { Icon } from 'semantic-ui-react';
+import { LBNAME_SUFFIX } from '../appConfig';
 
 export default class RolloutStatusTable extends GenericTable {
 
@@ -23,7 +26,7 @@ export default class RolloutStatusTable extends GenericTable {
             {
                 name: "LbName",
                 prop: "LbName",
-                collapsing: true,
+                width: 1,
                 // visibleByDefault: false
             },
             {
@@ -57,12 +60,13 @@ export default class RolloutStatusTable extends GenericTable {
             {
                 name: "Version",
                 prop: "Version",
-                width: 1
+                collapsing: true
             },
             {
                 name: "Health",
                 prop: "Health",
-                width: 1
+                display: "HealthLabel",
+                collapsing: true
             },
             {
                 name: "LB ID",
@@ -89,6 +93,17 @@ export default class RolloutStatusTable extends GenericTable {
         data.ServerLink = (<Link to={'/server/' + data.Serverid}>{data.Server}</Link>);
         data.AvailabilityLabel = (<AvailabilityStatus status={data.Availability} size='small' />);
         data.EnabledLabel = (<EnabledStatus status={data.Enabled} size='small' />);
+        data.HealthLabel = (data.health ? <VanillaHealthStatus status={data.health} size='small' /> : <Icon loading name='spinner' />);
+
+        if (data.LbName.indexOf(LBNAME_SUFFIX)) {
+            data.LbName.replace(LBNAME_SUFFIX, '');
+        }
+        if ('version' in data) {
+            data.Version = data.Version ? data.Version : "No data"
+        }
+        else {
+            data.Version = <Icon loading name='spinner' />
+        }
 
         return data;
     }
