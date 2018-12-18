@@ -14,10 +14,27 @@ const ServiceReducer = (state = serviceInitialState, action) => {
                 var mappedServers = action.payload.Servers.map(server => {
                     server.ServerState = getServerState(server.ServerStateID)
                     server.Disme = getDismeState(server.Disme)
+                    
                     return server
                 })
 
                 action.payload.Servers = mappedServers;
+            }
+
+            if(action.payload.Websites) {
+                var mappedWebsites = action.payload.Websites.map(web => {
+                    if(action.payload.Service[0].SiteID !== web.SiteId) {
+                        web.SiteIdAlertType = "error"
+                    }
+
+                    if(web.State !== "Started") {
+                        web.StateAlertType = "error"
+                    }
+
+                    return web;
+                })
+
+                action.payload.Websites = mappedWebsites;
             }
 
             return Object.assign({}, state, { serviceDetails: action.payload })

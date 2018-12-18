@@ -96,7 +96,7 @@ export default class RolloutStatusTable extends GenericTable {
         data.HealthLabel = (data.health ? <VanillaHealthStatus status={data.health} size='small' /> : <Icon loading name='spinner' />);
 
         if (data.LbName.indexOf(LBNAME_SUFFIX)) {
-            data.LbName.replace(LBNAME_SUFFIX, '');
+            data.LbName = data.LbName.replace(LBNAME_SUFFIX, '');
         }
         if ('version' in data) {
             data.Version = data.Version ? data.Version : "No data"

@@ -136,7 +136,7 @@ class RolloutStatus extends React.Component {
 
                             this.props.getHealthAction(o)
                         })
-
+                        
                     getVersion(element.serviceId, grouped[e][0].Serverid)
                         .then(res => {
                             var o = {
@@ -148,6 +148,17 @@ class RolloutStatus extends React.Component {
 
                             this.props.getVersionAction(o)
                         })
+                        .catch(err => {
+                            var o = {
+                                serviceName: element.serviceName,
+                                serviceId: element.serviceId,
+                                serverId: grouped[e][0].Serverid,
+                                version: JSON.stringify(err)
+                            }
+
+                            this.props.getHealthAction(o)
+                        })
+
                 })
             });
         });

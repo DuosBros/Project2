@@ -37,8 +37,6 @@ export const LBNAME_SUFFIX = ".is.icepor.com"
 // 14.12. 6989
 
 // expendable row
-// add coloring if some condition is not met
-// todo for me - add in reducer the property if I want to colorize smth. in reducer the logic of condition will be handled
 // proper error handling
 
 // use getAvailabiltyAndEnabledState to get color of row in rolloutstatus page
