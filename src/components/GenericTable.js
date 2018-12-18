@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { Component } from 'react'
-import { Table, Grid, Message, Input, Button, Icon, Label } from 'semantic-ui-react'
+import { Table, Grid, Message, Input, Button, Icon, Label, Divider } from 'semantic-ui-react'
 import Pagination from 'semantic-ui-react-button-pagination';
 import { filterInArrayOfObjects, isNum, debounce } from '../utils/HelperFunction';
 
@@ -125,7 +125,7 @@ export default class GenericTable extends Component {
     componentWillReceiveProps(nextProps) {
         if (this.props.data !== nextProps.data) {
             let data;
-            if(nextProps.data !== null) {
+            if (nextProps.data !== null) {
                 data = this.sort(nextProps.data, null);
             }
 
@@ -248,9 +248,9 @@ export default class GenericTable extends Component {
     }
 
     compareBase(a, b) {
-        if(a === null) {
+        if (a === null) {
             return b === null ? 0 : -1;
-        } else if(b === null) {
+        } else if (b === null) {
             return 1;
         }
         if (typeof a === "number" && typeof b === "number") {
@@ -542,7 +542,12 @@ export default class GenericTable extends Component {
                                 fluid
                                 value={multiSearchInput} placeholder="Type to search..." name="multiSearchInput" onChange={this.handleMultiFilterChange} ></Input>
                         </Grid.Column>
-                        <Grid.Column width={7}>
+                        <Grid.Column width={3}>
+                            <div style={{ float: "right", margin: "0 20px", display: defaultLimit === 0 ? "none" : "visible" }}>
+                                <span>Showing {filteredData.length > 0 ? this.state.offset + 1 : 0} to {filteredData.length < limit ? filteredData.length : this.state.offset + limit} of {filteredData.length} entries</span>
+                            </div>
+                        </Grid.Column>
+                        <Grid.Column width={3}>
                             <div style={{ float: "left", margin: "0 20px", display: defaultLimit === 0 ? "none" : "visible" }}>
                                 <Input
                                     label='Records per page:'
@@ -553,26 +558,23 @@ export default class GenericTable extends Component {
                                     onChange={this.handleChangeRecordsPerPage} />
                             </div>
                         </Grid.Column>
-                        <Grid.Column floated='right' width={3} textAlign="right">
-                            <div style={{ float: "right" }}>
-                                <p>Showing {filteredData.length > 0 ? this.state.offset + 1 : 0} to {filteredData.length < limit ? filteredData.length : this.state.offset + limit} of {filteredData.length} entries</p>
-                                <div>
-                                    <Button
-                                        fluid
-                                        size="small"
-                                        name="showColumnFilters"
+                        <Grid.Column floated='right' width={2} textAlign="right">
+                            <>
+                                <Button
+                                    fluid
+                                    size="small"
+                                    name="showColumnFilters"
 
-                                        onClick={this.handleStateToggle}
-                                        compact
-                                        content={showColumnFilters ? 'Hide Column Filters' : 'Show Column Filters'}
-                                        style={{ padding: '0.3em', marginTop: '0.5em', textAlign: 'right' }}
-                                        id="secondaryButton"
-                                        icon={showColumnFilters ? 'eye slash' : 'eye'}
-                                        labelPosition='left' />
-                                </div>
+                                    onClick={this.handleStateToggle}
+                                    compact
+                                    content={showColumnFilters ? 'Hide Column Filters' : 'Show Column Filters'}
+                                    style={{ padding: '0.3em', marginTop: '0.5em', textAlign: 'right' }}
+                                    id="secondaryButton"
+                                    icon={showColumnFilters ? 'eye slash' : 'eye'}
+                                    labelPosition='left' />
                                 {columnToggleButton}
                                 {this.renderCustomFilter()}
-                            </div>
+                            </>
 
                         </Grid.Column>
                     </Grid.Row>
