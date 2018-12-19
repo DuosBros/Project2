@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { Component } from 'react'
-import { Table, Grid, Message, Input, Button, Icon, Label, Divider } from 'semantic-ui-react'
+import { Table, Grid, Message, Input, Button, Icon, Label } from 'semantic-ui-react'
 import Pagination from 'semantic-ui-react-button-pagination';
 import { filterInArrayOfObjects, isNum, debounce } from '../utils/HelperFunction';
 

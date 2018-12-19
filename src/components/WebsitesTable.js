@@ -94,6 +94,10 @@ export default class WebsitesTable extends GenericTable {
             data.BindingsDisplay = "";
         }
 
+        data.Framework = data.AppPool.FrameWork
+        data.AutoStart = data.AppPool.AutoStart.toString()
+        data.User = data.AppPool.User
+
         return data;
     }
 }

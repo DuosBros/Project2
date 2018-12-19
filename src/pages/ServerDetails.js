@@ -47,8 +47,8 @@ class ServerDetails extends React.Component {
                 }
             })
             .catch(() => {
-                    return;
-                })
+                return;
+            })
             .then(res => {
                 if (!_.isEmpty(res)) {
                     this.props.getServerScomAlertsAction(res.data)
@@ -393,7 +393,7 @@ class ServerDetails extends React.Component {
                             {
                                 dismeservices ? (
                                     <Segment attached='bottom'>
-                                        <SimpleTable columnProperties={serviceTableColumnProperties} body={servicesTableRows} compact="very"/>
+                                        <SimpleTable columnProperties={serviceTableColumnProperties} body={servicesTableRows} compact="very" />
                                     </Segment>
                                 ) : (
                                         <div></div>
@@ -466,7 +466,7 @@ class ServerDetails extends React.Component {
                             {
                                 windowsservices ? (
                                     <Segment attached='bottom'>
-                                        <SimpleTable columnProperties={windowsServicesTableColumnProperties} body={windowsServicesTableRows} compact={true}/>
+                                        <SimpleTable columnProperties={windowsServicesTableColumnProperties} body={windowsServicesTableRows} compact={true} />
                                     </Segment>
                                 ) : (
                                         <div></div>

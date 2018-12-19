@@ -5,7 +5,7 @@ import AvailabilityStatus from '../components/AvailabilityStatus';
 import EnabledStatus from '../components/EnabledStatus';
 import VanillaHealthStatus from './VanillaHealthStatus';
 import { Icon } from 'semantic-ui-react';
-import { LBNAME_SUFFIX } from '../appConfig';
+import { LBNAME_SUFFIX_WITH_IS, NWTOOLS_URL, LBNAME_SUFFIX } from '../appConfig';
 
 export default class RolloutStatusTable extends GenericTable {
 
@@ -65,8 +65,8 @@ export default class RolloutStatusTable extends GenericTable {
             {
                 name: "Health",
                 prop: "Health",
-                display: "HealthLabel",
-                collapsing: true
+                collapsing: true,
+                sortable: false
             },
             {
                 name: "LB ID",
@@ -93,17 +93,45 @@ export default class RolloutStatusTable extends GenericTable {
         data.ServerLink = (<Link to={'/server/' + data.Serverid}>{data.Server}</Link>);
         data.AvailabilityLabel = (<AvailabilityStatus status={data.Availability} size='small' />);
         data.EnabledLabel = (<EnabledStatus status={data.Enabled} size='small' />);
-        data.HealthLabel = (data.health ? <VanillaHealthStatus status={data.health} size='small' /> : <Icon loading name='spinner' />);
+
+        if ('health' in data) {
+            if (data.health) {
+                data.Health = Array.isArray(data.health) ?
+                    <VanillaHealthStatus
+                        url={NWTOOLS_URL + 'f5_curl.php?url=/Common/' + data.Pool + "&host=" + data.Ip}
+                        status={data.health}
+                        size='small' />
+                    : "No data"
+            }
+            else {
+                data.Health = "No data"
+            }
+        }
+        else {
+            data.Health = <Icon loading name='spinner' />
+        }
+
+        if (data.LbName.indexOf(LBNAME_SUFFIX_WITH_IS)) {
+            data.LbName = data.LbName.replace(LBNAME_SUFFIX_WITH_IS, '');
+        }
 
         if (data.LbName.indexOf(LBNAME_SUFFIX)) {
             data.LbName = data.LbName.replace(LBNAME_SUFFIX, '');
         }
+
         if ('version' in data) {
-            data.Version = data.Version ? data.Version : "No data"
+            if (data.version) {
+                data.Version = data.version.Version ? data.version.Version : "No data"
+            }
+            else {
+                data.Version = "No data"
+            }
         }
         else {
             data.Version = <Icon loading name='spinner' />
         }
+
+
 
         return data;
     }

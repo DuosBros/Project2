@@ -3,7 +3,7 @@ import GenericTable from './GenericTable';
 import { Link } from 'react-router-dom';
 import DismeStatus from './DismeStatus';
 import { DISME_SERVICE_URL, DISME_SERVICE_PLACEHOLDER, KIBANA_WINLOGBEAT_SERVICE_URL, KIBANA_SERVICE_URL_PLACEHOLDER, KIBANA_PERFCOUNTER_SERVICE_URL } from '../appConfig';
-import { Button } from 'semantic-ui-react';
+import { Button, Popup } from 'semantic-ui-react';
 import _ from 'lodash';
 
 export default class ServiceTable extends GenericTable {
@@ -50,6 +50,8 @@ export default class ServiceTable extends GenericTable {
                 name: "Links",
                 prop: "Links",
                 width: 1,
+                sortable: false,
+                searchable: false
             },
             {
                 name: "Poolname",
@@ -112,33 +114,39 @@ export default class ServiceTable extends GenericTable {
     transformDataRow(data) {
         data.Links = (
             <>
-                <Button
-                    onClick={() =>
-                        window.open(
-                            _.replace(DISME_SERVICE_URL, new RegExp(DISME_SERVICE_PLACEHOLDER, "g"),
-                                data.DismeID))}
-                    style={{ padding: '0.3em' }}
-                    size='medium'
-                    icon='external' />
+                <Popup trigger={
+                    <Button
+                        onClick={() =>
+                            window.open(
+                                _.replace(DISME_SERVICE_URL, new RegExp(DISME_SERVICE_PLACEHOLDER, "g"),
+                                    data.DismeID))}
+                        style={{ padding: '0.3em' }}
+                        size='medium'
+                        icon='external' />
+                } content='Go to Disme details' inverted />
 
-                <Button
-                    onClick={() =>
-                        window.open(
-                            _.replace(KIBANA_WINLOGBEAT_SERVICE_URL, new RegExp(KIBANA_SERVICE_URL_PLACEHOLDER, "g"),
-                                data.Shortcut))}
-                    style={{ padding: '0.3em' }}
-                    size='medium'
-                    icon='external' />
 
-                <Button
-                    onClick={() =>
-                        window.open(
-                            _.replace(KIBANA_PERFCOUNTER_SERVICE_URL, new RegExp(KIBANA_SERVICE_URL_PLACEHOLDER, "g"),
-                                data.Shortcut))}
-                    style={{ padding: '0.3em' }}
-                    size='medium'
-                    icon='external' />
+                <Popup trigger={
+                    <Button
+                        onClick={() =>
+                            window.open(
+                                _.replace(KIBANA_WINLOGBEAT_SERVICE_URL, new RegExp(KIBANA_SERVICE_URL_PLACEHOLDER, "g"),
+                                    data.Shortcut))}
+                        style={{ padding: '0.3em' }}
+                        size='medium'
+                        icon='external' />
+                } content='Go to Kibana winlogbeat' inverted />
 
+                <Popup trigger={
+                    <Button
+                        onClick={() =>
+                            window.open(
+                                _.replace(KIBANA_PERFCOUNTER_SERVICE_URL, new RegExp(KIBANA_SERVICE_URL_PLACEHOLDER, "g"),
+                                    data.Shortcut))}
+                        style={{ padding: '0.3em' }}
+                        size='medium'
+                        icon='external' />
+                } content='Go to Kibana perfcounter' inverted />
                 {/* <a target="_blank" rel="noopener noreferrer" href={_.replace(KIBANA_WINLOGBEAT_SERVICE_URL, new RegExp(KIBANA_SERVICE_URL_PLACEHOLDER, "g"), serviceDetails.Service[0].Shortcut)}>Eventlog</a><br />
                 <a target="_blank" rel="noopener noreferrer" href={_.replace(KIBANA_PERFCOUNTER_SERVICE_URL, new RegExp(KIBANA_SERVICE_URL_PLACEHOLDER, "g"), serviceDetails.Service[0].Shortcut)}>PerfCounter</a> */}
             </>

@@ -27,6 +27,24 @@ export const isNum = (value) => {
     }
 }
 
+const REGEX = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+export const isValidIPv4 = (value) => {
+    if (value === null || value === undefined) {
+        return false;
+    }
+    const valueString = value.toString();
+
+    const length = valueString.length;
+    var isNum = REGEX.test(valueString);
+
+    if (length > 0 && isNum) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
 export const getServerState = (id) => {
     switch (id) {
         case 1:

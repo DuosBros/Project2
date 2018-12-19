@@ -17,7 +17,7 @@ import { DISME_SERVICE_URL, DISME_SERVICE_PLACEHOLDER } from '../appConfig';
 import SimpleTable from '../components/SimpleTable';
 import { searchServiceShortcut } from '../requests/HeaderAxios';
 import { searchServiceShortcutAction } from '../actions/HeaderActions';
-import { debounce, sleep, groupBy } from '../utils/HelperFunction';
+import { debounce, sleep, groupBy, isValidIPv4 } from '../utils/HelperFunction';
 import { getRolloutStatus } from '../requests/RolloutStatusAxios';
 import RolloutStatusTable from '../components/RolloutStatusTable';
 
@@ -50,6 +50,14 @@ class RolloutStatus extends React.Component {
     }
 
     componentDidMount() {
+        var params = new URLSearchParams(this.props.location.search).get('services');
+        if (params) {
+            this.handleInputOnChange({}, { value: params })
+        }
+        else {
+            this.props.history.push("/rolloutstatus")
+        }
+
         getDismeApplications()
             .then(res => {
                 this.props.getDismeApplicationsAction(res.data.map(x =>
@@ -58,6 +66,10 @@ class RolloutStatus extends React.Component {
                         value: x.Application,
                         services: x.Service
                     })))
+            })
+            .then(() => {
+                this.props.getServiceDetailsByShortcutsAction([])
+                this.props.deleteAllRoloutStatusesAction()
             })
     }
 
@@ -93,7 +105,14 @@ class RolloutStatus extends React.Component {
 
         this.setState({ inputProductsValues: value });
 
-        var valueToSearch = value.replace(/[^a-zA-Z0-9\,_.-]/g, "")
+        if (value) {
+            this.props.history.push("/rolloutstatus?services=" + value)
+        }
+        else {
+            this.props.history.push("/rolloutstatus")
+        }
+
+        var valueToSearch = value.replace(/[^a-zA-Z0-9,_.-]/g, "")
         var uniqueValueToSearch = Array.from(new Set(valueToSearch.split(',')))
         this.getServiceDetailsAndRolloutStatus(uniqueValueToSearch)
     }
@@ -125,18 +144,40 @@ class RolloutStatus extends React.Component {
                 var keys = Object.keys(grouped);
 
                 keys.forEach(e => {
-                    getHealth(element.serviceId, grouped[e][0].Ip)
-                        .then(res => {
-                            var o = {
-                                serviceName: element.serviceName,
-                                serviceId: element.serviceId,
-                                ip: grouped[e][0].Ip,
-                                health: res.data
-                            }
+                    if (isValidIPv4(grouped[e][0].Ip)) {
+                        getHealth(element.serviceId, grouped[e][0].Ip)
+                            .then(res => {
+                                var o = {
+                                    serviceName: element.serviceName,
+                                    serviceId: element.serviceId,
+                                    ip: grouped[e][0].Ip,
+                                    health: res.data
+                                }
 
-                            this.props.getHealthAction(o)
-                        })
-                        
+                                this.props.getHealthAction(o)
+                            })
+                            .catch(err => {
+                                var o = {
+                                    serviceName: element.serviceName,
+                                    serviceId: element.serviceId,
+                                    ip: grouped[e][0].Ip,
+                                    health: null
+                                }
+
+                                this.props.getHealthAction(o)
+                            })
+                    }
+                    else {
+                        var o = {
+                            serviceName: element.serviceName,
+                            serviceId: element.serviceId,
+                            ip: grouped[e][0].Ip,
+                            health: null
+                        }
+
+                        this.props.getHealthAction(o)
+                    }
+
                     getVersion(element.serviceId, grouped[e][0].Serverid)
                         .then(res => {
                             var o = {
@@ -153,7 +194,7 @@ class RolloutStatus extends React.Component {
                                 serviceName: element.serviceName,
                                 serviceId: element.serviceId,
                                 serverId: grouped[e][0].Serverid,
-                                version: JSON.stringify(err)
+                                version: null
                             }
 
                             this.props.getHealthAction(o)
@@ -186,15 +227,16 @@ class RolloutStatus extends React.Component {
 
     handleToggleShowAllSegments = () => {
 
+        var mapped;
         if (this.state.showAllSegments && this.state.segments.findIndex(x => x.isShowing === true) > -1) {
-            var mapped = this.state.segments.map(x => {
+            mapped = this.state.segments.map(x => {
                 x.isShowing = false
                 return x
             })
             this.setState({ mapped });
         }
         else {
-            var mapped = this.state.segments.map(x => {
+            mapped = this.state.segments.map(x => {
                 x.isShowing = true
                 return x
             })
@@ -202,11 +244,11 @@ class RolloutStatus extends React.Component {
         }
     }
 
-    handleToggleShowingContent = (segment) => {
+    handleToggleShowingContent = (segment, isShowing) => {
         this.setState({
             segments: [...this.state.segments], ...this.state.segments.map(x => {
                 if (x.segmentName === segment) {
-                    x.isShowing = !x.isShowing
+                    x.isShowing = isShowing ? isShowing : !x.isShowing
                 }
 
                 return x
@@ -294,6 +336,8 @@ class RolloutStatus extends React.Component {
     }
 
     handleRefreshRolloutStatus = (shortcut, serviceId) => {
+        this.handleToggleShowingContent(shortcut, true)
+
         var object = {
             serviceName: shortcut,
             serviceId: serviceId,
@@ -475,6 +519,14 @@ class RolloutStatus extends React.Component {
                                 style={{ padding: '0em', marginRight: '0.5em', marginLeft: '0.5em' }}
                                 onClick={() => this.handleRefreshRolloutStatus(x.serviceName, x.serviceId)}
                                 icon='refresh' />
+                            {/* <Popup trigger={
+                                <Button
+                                    basic
+                                    size="tiny"
+                                    style={{ padding: '0em', marginRight: '0.5em', marginLeft: '0.5em' }}
+                                    onClick={() => this.removeServiceFromSearch(x.serviceName)}
+                                    icon='minus' />
+                            } content={"Remove " + x.serviceName + " from input"} inverted /> */}
                             <Button
                                 basic
                                 style={{ padding: '0em', marginRight: '0.5em' }}
