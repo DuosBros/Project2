@@ -25,7 +25,7 @@ class PatchGroups extends React.Component {
                             Patch groups
                         </Header>
                         <Segment attached='bottom' >
-                            <PatchGroupsTable defaultLimitOverride={45} data={this.props.patchGroupStore.patchGroups} />
+                            <PatchGroupsTable compact="very" defaultLimitOverride={45} data={this.props.patchGroupStore.patchGroups} />
                         </Segment>
                     </Grid.Column>
                 </Grid.Row>

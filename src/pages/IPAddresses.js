@@ -28,7 +28,8 @@ class IPAddresses extends React.Component {
                             <IPAddressesTable 
                                 defaultLimitOverride={45} 
                                 data={this.props.ipAddressStore.ipAddresses}
-                                placeholder="Fetching ip addresses" />
+                                placeholder="Fetching ip addresses"
+                                compact="very" />
                         </Segment>
                     </Grid.Column>
                 </Grid.Row>

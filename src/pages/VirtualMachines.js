@@ -37,7 +37,7 @@ class VirtualMachines extends React.Component {
                                 Virtual Machines
                             </Header>
                             <Segment attached='bottom' >
-                                <VirtualMachinesTable defaultLimitOverride={50} data={this.props.virtualMachineStore.virtualMachines} />
+                                <VirtualMachinesTable compact="very" defaultLimitOverride={50} data={this.props.virtualMachineStore.virtualMachines} />
                             </Segment>
                         </Grid.Column>
                     </Grid.Row>
