@@ -43,7 +43,7 @@ export default class GenericTable extends Component {
         let defaultShowTableHeaderFunctions = SHOW_TABLE_HEADER_FUNCTIONS;
         if (this.props.hasOwnProperty("showTableHeaderFunctions")) {
             if (typeof this.props.showTableHeaderFunctions !== "boolean") {
-                throw new Error("defaultLimitOverride property must be a bool.")
+                throw new Error("showTableHeaderFunctions property must be a bool.")
             }
             defaultShowTableHeaderFunctions = this.props.showTableHeaderFunctions;
         }
