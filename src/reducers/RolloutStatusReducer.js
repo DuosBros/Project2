@@ -60,7 +60,7 @@ const RolloutStatusReducer = (state = initialState, action) => {
             index = copy.findIndex(x => x.serviceId === action.payload.serviceId);
 
             if (index < 0) {
-                throw "Could not find"
+                throw new Error("Could not find");
             }
 
             mappedRolloutStatuses = copy[index].rolloutStatus.map(x => {
@@ -81,7 +81,7 @@ const RolloutStatusReducer = (state = initialState, action) => {
             index = copy.findIndex(x => x.serviceId === action.payload.serviceId);
 
             if (index < 0) {
-                throw "Could not find"
+                throw new Error("Could not find")
             }
 
             mappedRolloutStatuses = copy[index].rolloutStatus.map(x => {
