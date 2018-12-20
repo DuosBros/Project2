@@ -201,6 +201,7 @@ dd {
 
 .links.column {
     display: inline-block;
+    float: left;
 }
 
 .links.section img {

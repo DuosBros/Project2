@@ -17,7 +17,7 @@ export default [
                 {
                     "title": "Beholder QA Environments",
                     "url": "http://beholder.bwin.func/#/",
-                    "icon": "http://beholder.test.env.works/favicon.ico"
+                    "icon": "beholder.png"
                 },
                 {
                     "title": "Dashboard | GitLab",
@@ -161,13 +161,13 @@ export default [
             "items": [
                 {
                     "title": "Sitecore - Login",
-                    "url": "http://cms.bwin.prod/sitecore/login/Default.aspx",
-                    "icon": "http://cms.bwin.prod/sitecore/images/favicon.ico"
+                    "url": "http://cms.bwin.prod/sitecore/login/Defaultatran1   .aspx",
+                    "icon": "cms.png"
                 },
                 {
                     "title": "Sitecore - Audit Log",
                     "url": "http://cms.bwin.prod/sitecore/client/bwinparty/Apps/AuditLog/AuditLogResults",
-                    "icon": "http://cms.bwin.prod/sitecore/images/favicon.ico"
+                    "icon": "cms.png"
                 },
                 {
                     "title": "Web Watcher",
