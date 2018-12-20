@@ -26,7 +26,7 @@ export default class GenericTable extends Component {
         // generate empty filters and filterInputs objects
         let filterInputs = {},
             filters = {};
-        for (let col in columns) {
+        for (let col of columns) {
             filterInputs[col.prop] = "";
             filters[col.prop] = "";
         }
@@ -357,15 +357,20 @@ export default class GenericTable extends Component {
         filteredData = this.applyCustomFilter(filteredData);
 
         if (showColumnFilters) {
+            var filterValid = [];
             for (let col of Object.getOwnPropertyNames(filters)) {
-                if (!_.isEmpty(filters[col])) {
-                    filteredData = filteredData.filter(data => {
-                        if (data[col]) {
-                            return data[col].toString().search(new RegExp(filters[col], "i")) >= 0
-                        }
-                        return false;
-                    })
-                }
+                filterValid[col] = false;
+                try {
+                    if (!_.isEmpty(filters[col])) {
+                        filteredData = filteredData.filter(data => {
+                            if (data[col]) {
+                                return data[col].toString().search(new RegExp(filters[col], "i")) >= 0
+                            }
+                            return false;
+                        })
+                    }
+                    filterValid[col] = true;
+                } catch(e) {}
             }
         }
 
@@ -401,7 +406,7 @@ export default class GenericTable extends Component {
             let headerFilterCells = visibleColumns.map(c => {
                 let filterInput = null;
                 if (c.searchable) {
-                    filterInput = (<Input fluid name={c.prop} onChange={this.handleColumnFilterChange} value={this.state.filterInputs[c.prop]} />)
+                    filterInput = (<Input fluid name={c.prop} onChange={this.handleColumnFilterChange} value={this.state.filterInputs[c.prop]} error={!filterValid[c.prop]} />)
                 }
                 return (
                     <Table.HeaderCell collapsing={c.collapsing} width={c.collapsing ? null : c.width} key={c.prop}>
