@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, List, Header, Image, Input, Button } from 'semantic-ui-react';
+import { Grid, List, Popup, Divider, Header, Image, Flag, Input, Button } from 'semantic-ui-react';
 import keyboardKey from 'keyboard-key'
 import _ from 'lodash'
 
@@ -33,7 +33,7 @@ export default class Home extends React.Component {
         }
 
     }
-    
+
     handleKeyPressVersion1 = (e) => {
         const isEnter = keyboardKey.getKey(e) === 'Enter'
 
@@ -45,18 +45,53 @@ export default class Home extends React.Component {
         }
     }
 
-    renderLinks(filter) {
-        let columns = links.map((e, i) => (<div key={"links-column-" + i} className="links column">{this.renderLinksColumn(e, filter)}</div>));
+    renderLinksButtons() {
+        let buttons = links.buttons.map((e, i) => (<Button key={"link-button-" + i} color={e.color} as="a" href={e.url} target="_blank" rel="noopener noreferrer">{e.title}</Button>))
+        return (<div>{buttons}</div>);
+    }
+
+    renderLoadBalancers() {
+        const LB_PER_ROW = 2;
+        let rows = [];
+        const rreq = Math.ceil(links.loadbalancers.length / (LB_PER_ROW * 1.0))
+        for(let i = 0; i < rreq; i++) {
+            let row = [];
+            for(let j = 0; j < LB_PER_ROW; j++) {
+                let lb = links.loadbalancers[(i * LB_PER_ROW) + j];
+                if(!lb) {
+                    continue;
+                }
+                row.push((
+                    <Grid.Column>
+                        <Popup trigger={
+                            <a href={lb.url} target="_blank" rel="noopener noreferrer">
+                                <Flag name={lb.country} /> {lb.title}
+                            </a>
+                        } content={lb.tooltip} />
+                    </Grid.Column>
+                ));
+            }
+            rows.push((
+                <Grid.Row key={i} columns={LB_PER_ROW}>
+                    {row}
+                </Grid.Row>
+            ));
+        }
+        return (<Grid>{rows}</Grid>);
+    }
+
+    renderLinksList(filter) {
+        let columns = links.list.map((e, i) => (<div key={"links-column-" + i} className="links column">{this.renderLinksListColumn(e, filter)}</div>));
         return (<div className="links listing">{columns}</div>);
     }
 
-    renderLinksColumn(column, filter) {
-        let sections = column.map((e, i) => (<div key={"links-section-" + i} className="links section">{this.renderLinksSection(e, filter)}</div>));
+    renderLinksListColumn(column, filter) {
+        let sections = column.map((e, i) => (<div key={"links-section-" + i} className="links section">{this.renderLinksListSection(e, filter)}</div>));
         return sections;
     }
 
-    renderLinksSection(section, filter) {
-        let items = section.items.map((e, i) => this.renderLinksItem(e, i, filter))
+    renderLinksListSection(section, filter) {
+        let items = section.items.map((e, i) => this.renderLinksListItem(e, i, filter))
         if (items.every((val) => val === null)) {
             return null
         }
@@ -71,7 +106,7 @@ export default class Home extends React.Component {
         }
     }
 
-    renderLinksItem(item, i, filter) {
+    renderLinksListItem(item, i, filter) {
         let icon = item.icon;
         if (!icon) {
             icon = null;
@@ -97,12 +132,16 @@ export default class Home extends React.Component {
     }
 
     render() {
-        let links = this.renderLinks(this.state.filterLinks);
+        let links = this.renderLinksList(this.state.filterLinks);
+        let buttons = this.renderLinksButtons();
+        let loadbalancers = this.renderLoadBalancers();
 
         return (
             <Grid>
                 <Grid.Row>
                     <Grid.Column width={8}>
+                        {buttons}
+                        <Divider hidden />
                         <div>
                             <Input onChange={this.handleChange} name="filterLinks" placeholder='Search...'></Input>
                         </div>
@@ -119,8 +158,11 @@ export default class Home extends React.Component {
                     </Grid.Column>
                 </Grid.Row>
                 <Grid.Row>
-                    <Grid.Column width={16}>
+                    <Grid.Column width={10}>
                         {links}
+                    </Grid.Column>
+                    <Grid.Column width={6}>
+                        {loadbalancers}
                     </Grid.Column>
                 </Grid.Row>
             </Grid>
