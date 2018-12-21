@@ -1,6 +1,5 @@
 import React from 'react';
-import keyboardKey from 'keyboard-key'
-import { Menu, Dropdown, Ref } from 'semantic-ui-react'
+import { Menu, Dropdown } from 'semantic-ui-react'
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -9,6 +8,7 @@ import { searchServersAction, searchServiceShortcutAction, toggleVerticalMenuAct
 import { searchServers, searchServiceShortcut } from '../requests/HeaderAxios';
 
 import { isNum, debounce } from '../utils/HelperFunction';
+import ShortcutFocus from '../components/ShortcutFocus';
 
 class Header extends React.Component {
 
@@ -19,26 +19,6 @@ class Header extends React.Component {
         this.handleSearchServiceShortcut = this.handleSearchServiceShortcut.bind(this);
         this.handleSearchServers = debounce(this.handleSearchServers, 150);
         this.handleSearchServiceShortcut = debounce(this.handleSearchServiceShortcut, 150);
-    }
-
-    componentDidMount() {
-        document.addEventListener('keydown', this.handleDocumentKeyDown)
-    }
-
-    componentWillUnmount() {
-        document.removeEventListener('keydown', this.handleDocumentKeyDown)
-    }
-
-    handleDocumentKeyDown = (e) => {
-        const isq = keyboardKey.getKey(e) === 'q'
-        const isw = keyboardKey.getKey(e) === 'w'
-        const hasModifier = e.altKey || e.ctrlKey || e.metaKey
-        const isOnInputAlready = document.activeElement.className === "search" ? true : false
-
-        if (!e.currentTarget.activeElement.name && !isOnInputAlready) {
-            if (!hasModifier && isq) { this._searchServerInput.focus(); e.preventDefault(); }
-            if (!hasModifier && isw) { this._searchServiceShortcutInput.focus(); e.preventDefault(); }
-        }
     }
 
     handleSearchServers(value) {
@@ -55,7 +35,6 @@ class Header extends React.Component {
     }
 
     handleServerChange = (e, { value }) => {
-
         if (isNum(value)) {
             var route = "/server/" + value;
             this.props.history.push(route);
@@ -82,21 +61,13 @@ class Header extends React.Component {
         }
     }
 
-    handleSearchServerRef = (c) => {
-        this._searchServerInput = c && c.querySelector('input')
-    }
-
-    handleSearchServiceShortcutRef = (c) => {
-        this._searchServiceShortcutInput = c && c.querySelector('input')
-    }
-
     render() {
         return (
             <div id="header">
                 <Menu stackable >
                     <Menu.Item header content='LeanOpsConfigurationOverview' onClick={() => this.props.history.push('/')} />
                     <Menu.Item className='headerSearchInput'>
-                        <Ref innerRef={this.handleSearchServerRef}>
+                        <ShortcutFocus shortcut="q" focusSelector="input">
                             <Dropdown
                                 icon='search'
                                 selection
@@ -110,10 +81,10 @@ class Header extends React.Component {
                                 onSearchChange={this.handleServerSearchChange}
                                 search
                             />
-                        </Ref>
+                        </ShortcutFocus>
                     </Menu.Item>
                     <Menu.Item className='headerSearchInput'>
-                        <Ref innerRef={this.handleSearchServiceShortcutRef}>
+                        <ShortcutFocus shortcut="w" focusSelector="input">
                             <Dropdown
                                 icon='search'
                                 selection
@@ -127,7 +98,7 @@ class Header extends React.Component {
                                 onSearchChange={this.handleServiceShortcutSearchChange}
                                 search
                             />
-                        </Ref>
+                        </ShortcutFocus>
                     </Menu.Item>
                     <Menu.Menu position='right'>
                         <Menu.Item content={this.props.baseStore.currentUser.Identity} onClick={() => this.props.toggleUserDetailsAction()} />
