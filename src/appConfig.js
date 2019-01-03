@@ -26,18 +26,3 @@ export const LBNAME_SUFFIX_WITH_IS = ".is.icepor.com"
 export const LBNAME_SUFFIX = ".icepor.com"
 
 export const NWTOOLS_URL = 'http://nwtools.intranet/'
-// $files = gci "C:\Users\atran1\Desktop\work\bwin\src\loco\frontend\bwin.loco.client\src\" -Recurse -File | ?{$_.Fullname -notlike "*assets*"};$b = 0;foreach($file in $files){$a = Get-content $file.Fullname;$b = $b + $a.length;};$b
-
-// 15.11. 3422
-// 22.11. 4265 
-// 28.11. 5110
-// 03.12. 5522
-// 07.12. 6148 
-// 12.12. 6495
-// 14.12. 6989
-// 19.12. 7187
-
-// expendable row
-// proper error handling
-
-// use getAvailabiltyAndEnabledState to get color of row in rolloutstatus page
