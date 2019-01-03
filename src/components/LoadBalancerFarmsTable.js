@@ -8,6 +8,12 @@ export default class LoadBalancerFarmsTable extends GenericTable {
     getColumns() {
         return [
             {
+                name: "Data Center",
+                prop: "DataCenter",
+                visibleByDefault: false,
+                width: 1
+            },
+            {
                 name: "Name",
                 prop: "Name",
                 width: 3
@@ -51,8 +57,14 @@ export default class LoadBalancerFarmsTable extends GenericTable {
                 width: 2
             },
             {
+                name: "Host",
+                prop: "Label",
+                width: 2
+            },
+            {
                 name: "Env",
                 prop: "Environment",
+                visibleByDefault: false,
                 width: 1
             }
         ];
