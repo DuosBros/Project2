@@ -37,7 +37,7 @@ class ServiceDetails extends React.Component {
             })
     }
 
-    componentDidUpdate(prevProps, prevState) {
+    componentDidUpdate(prevProps) {
         if (this.props.match && this.props.match.params) {
             const params = this.props.match.params;
             if (params.id && params.id !== prevProps.match.params.id) {
@@ -74,7 +74,6 @@ class ServiceDetails extends React.Component {
     }
 
     render() {
-        console.log(this.props.serviceStore.serviceDetails)
 
         var serviceDetails = this.props.serviceStore.serviceDetails;
         var serviceDetailsBody;

@@ -156,7 +156,7 @@ class RolloutStatus extends React.Component {
 
                                 this.props.getHealthAction(o)
                             })
-                            .catch(err => {
+                            .catch(() => {
                                 var o = {
                                     serviceName: element.serviceName,
                                     serviceId: element.serviceId,
@@ -189,7 +189,7 @@ class RolloutStatus extends React.Component {
 
                             this.props.getVersionAction(o)
                         })
-                        .catch(err => {
+                        .catch(() => {
                             var o = {
                                 serviceName: element.serviceName,
                                 serviceId: element.serviceId,
@@ -373,8 +373,6 @@ class RolloutStatus extends React.Component {
 
     render() {
         var { showAllSegments } = this.state;
-        console.log(this.props.rolloutStatusStore.serviceDetails)
-        console.log(this.props.rolloutStatusStore.rolloutStatuses)
 
         var serviceTableColumnProperties = [
             {
@@ -406,7 +404,6 @@ class RolloutStatus extends React.Component {
         var servicesTableRows;
 
         if (!_.isEmpty(this.state.getServiceDetailsError)) {
-            console.log(this.state.getServiceDetailsError)
             servicesTableRows = (
                 <Table.Row error>
                     <Table.Cell colSpan={6}>Error fetching data</Table.Cell>

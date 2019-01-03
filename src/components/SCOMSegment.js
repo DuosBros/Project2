@@ -12,8 +12,7 @@ export default class SCOMSegment extends Component {
         showScomModal: false
     }
 
-    handleOpenScomAlerts = (data) => {
-        console.log(data)
+    handleOpenScomAlerts = () => {
         this.setState({ showScomModal: !this.state.showScomModal });
     }
 
@@ -22,7 +21,6 @@ export default class SCOMSegment extends Component {
 
         var data = this.props.data;
         var mappedData, tableHeader, tableBody, scomModal;
-        console.log(data)
 
         if (this.state.showScomModal) {
 

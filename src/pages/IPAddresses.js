@@ -13,7 +13,6 @@ class IPAddresses extends React.Component {
         getIPAddresses()
             .then(res => {
                 this.props.getIPAddressesAction(res.data)
-                console.log(res.data)
             })
     }
     render() {
@@ -25,8 +24,8 @@ class IPAddresses extends React.Component {
                             IP addresses
                         </Header>
                         <Segment attached='bottom' >
-                            <IPAddressesTable 
-                                defaultLimitOverride={45} 
+                            <IPAddressesTable
+                                defaultLimitOverride={45}
                                 data={this.props.ipAddressStore.ipAddresses}
                                 placeholder="Fetching ip addresses"
                                 compact="very" />

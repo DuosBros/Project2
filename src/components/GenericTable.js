@@ -167,7 +167,7 @@ export default class GenericTable extends Component {
         this.setState((prev) => ({ filters: prev.filterInputs }));
     }
 
-    handleMultiFilterChange = (e, { name, value }) => {
+    handleMultiFilterChange = (e, { value }) => {
         this.setState({ multiSearchInput: value });
     }
 
@@ -359,7 +359,6 @@ export default class GenericTable extends Component {
         if (showColumnFilters) {
             var filterValid = [];
             for (let col of Object.getOwnPropertyNames(filters)) {
-                filterValid[col] = false;
                 try {
                     if (!_.isEmpty(filters[col])) {
                         filteredData = filteredData.filter(data => {
@@ -370,7 +369,9 @@ export default class GenericTable extends Component {
                         })
                     }
                     filterValid[col] = true;
-                } catch(e) {}
+                } catch(e) {
+                    filterValid[col] = false;
+                }
             }
         }
 

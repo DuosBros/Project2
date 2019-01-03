@@ -13,7 +13,6 @@ class PatchGroups extends React.Component {
         getPatchGroups()
             .then(res => {
                 this.props.getPatchGroupsAction(res.data)
-                console.log(res.data)
             })
     }
     render() {

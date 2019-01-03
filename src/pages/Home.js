@@ -84,7 +84,9 @@ export default class Home extends React.Component {
         } else if (icon.startsWith("data:") || icon.startsWith("http:") || icon.startsWith("https:")) {
             icon = (<Image src={icon} />);
         } else {
+            /*global process*/
             icon = (<Image src={process.env.PUBLIC_URL + "icons/" + icon} />);
+            /*global process:false*/
         }
 
         if (item.title.toLowerCase().indexOf(filter) > -1) {

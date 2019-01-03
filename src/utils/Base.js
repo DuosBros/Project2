@@ -71,7 +71,7 @@ class Base extends React.Component {
 
     handleWindowSizeChange() {
         this.setState({ width: window.innerWidth });
-    };
+    }
 
     render() {
 

@@ -13,7 +13,6 @@ class LoadBalancerFarms extends React.Component {
         getAllLoadBalancerFarms()
             .then(res => {
                 this.props.getAllLoadBalancerFarmsAction(res.data)
-                console.log(res.data)
             })
     }
     render() {
@@ -46,7 +45,7 @@ class LoadBalancerFarms extends React.Component {
             )
         }
 
-        
+
     }
 }
 

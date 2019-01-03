@@ -37,8 +37,7 @@ export default class ShortcutFocus extends React.Component {
         }
 
         if(!target) {
-            console.log("Can't set focus on target element. Element not found.");
-            return;
+            throw new Error("Can't set focus on target element. Element not found.");
         }
         target.focus();
         e.preventDefault();

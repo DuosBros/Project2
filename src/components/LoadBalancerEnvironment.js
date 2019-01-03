@@ -1,13 +1,10 @@
 import React, { Component } from 'react';
 import { Label } from 'semantic-ui-react';
-
-import config from '../config.json';
-
+import { getAvailabiltyAndEnabledState } from '../utils/HelperFunction';
 
 export default class LoadBalancerEnvironment extends Component {
 
     render() {
-        console.log(config)
         var { loadBalancerName } = this.props
         return (
             <Label
@@ -19,4 +16,3 @@ export default class LoadBalancerEnvironment extends Component {
         )
     }
 }
-

@@ -56,7 +56,7 @@ class ServerDetails extends React.Component {
             })
     }
 
-    componentDidUpdate(prevProps, prevState) {
+    componentDidUpdate(prevProps) {
         if (this.props.match && this.props.match.params) {
             const params = this.props.match.params;
             if (params.id && params.id !== prevProps.match.params.id) {
@@ -90,7 +90,6 @@ class ServerDetails extends React.Component {
 
         const { webchecks, dismeservices, loadbalancerfarms, windowsservices, websites, scomalerts } = this.state;
 
-        console.log(serverDetails)
         if (!_.isEmpty(serverDetails)) {
 
             if (!_.isEmpty(serverDetails.OperatingSystem)) {

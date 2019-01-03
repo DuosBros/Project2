@@ -16,7 +16,6 @@ class Services extends React.Component {
             })
     }
     render() {
-        console.log(this.props.serviceStore.services)
         if (this.props.serviceStore.services === null) {
             return (
                 <div className="messageBox">
