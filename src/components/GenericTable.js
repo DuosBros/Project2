@@ -254,7 +254,12 @@ export default class GenericTable extends Component {
             return 1;
         }
         if (typeof a === "number" && typeof b === "number") {
-            return a < b ? -1 : (a > b ? 1 : 0);
+            if(a < b) {
+                return -1;
+            } else if(a > b) {
+                return 1;
+            }
+            return 0;
         }
         return a.toString().localeCompare(b.toString());
     }
