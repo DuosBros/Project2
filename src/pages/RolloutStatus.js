@@ -21,6 +21,13 @@ import { debounce, sleep, groupBy, isValidIPv4 } from '../utils/HelperFunction';
 import { getRolloutStatus } from '../requests/RolloutStatusAxios';
 import RolloutStatusTable from '../components/RolloutStatusTable';
 
+const DEFAULT_SEGMENT = [
+    {
+        segmentName: "serviceDetails",
+        isShowing: true
+    }
+]
+
 class RolloutStatus extends React.Component {
 
     constructor(props) {
@@ -35,12 +42,7 @@ class RolloutStatus extends React.Component {
             applicationDropdownValue: "",
             getServiceDetailsError: {},
             rolloutLoadingStatuses: [],
-            segments: [
-                {
-                    segmentName: "serviceDetails",
-                    isShowing: true
-                }
-            ]
+            segments: DEFAULT_SEGMENT
         }
 
         this.getServiceDetailsAndRolloutStatus = this.getServiceDetailsAndRolloutStatus.bind(this);
@@ -109,7 +111,9 @@ class RolloutStatus extends React.Component {
             this.props.history.push("/rolloutstatus?services=" + value)
         }
         else {
+            this.props.deleteAllRoloutStatusesAction()
             this.props.history.push("/rolloutstatus")
+            this.setState({ segments: DEFAULT_SEGMENT });
         }
 
         var valueToSearch = value.replace(/[^a-zA-Z0-9,_.-]/g, "")
@@ -194,7 +198,7 @@ class RolloutStatus extends React.Component {
                                 serviceName: element.serviceName,
                                 serviceId: element.serviceId,
                                 serverId: grouped[e][0].Serverid,
-                                version: null
+                                version: ""
                             }
 
                             this.props.getHealthAction(o)
