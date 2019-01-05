@@ -322,7 +322,7 @@ class ServerDetails extends React.Component {
                                                 <dt>Server Owner:</dt>
                                                 <dd>{serverDetails.ServerOwner}</dd>
                                                 <dt>PatchGroup:</dt>
-                                                <dd>{serverDetails.PatchGroupName ? (serverDetails.PatchGroupName) : ('Exclude ') + serverDetails.PatchID}</dd>
+                                                <dd>{serverDetails.PatchGroupName ? (serverDetails.PatchGroupName) : ('Not assigned ') + serverDetails.PatchID}</dd>
                                             </dl>
 
                                             <dl className="dl-horizontal">
