@@ -203,7 +203,7 @@ class RolloutStatus extends React.Component {
                                 err: err
                             }
 
-                            this.props.getHealthAction(o)
+                            this.props.getVersionAction(o)
                         })
 
                 })

@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "axios": "^0.18.0",
+    "g": "^2.0.1",
     "keyboard-key": "^1.0.2",
     "lodash": "^4.17.11",
     "moment": "^2.22.2",
@@ -11,7 +12,7 @@
     "react-dom": "^16.5.2",
     "react-redux": "^5.0.7",
     "react-router-dom": "^4.3.1",
-    "react-scripts": "2.0.4",
+    "react-scripts": "^2.0.4",
     "react-static": "^5.9.12",
     "redux": "^4.0.0",
     "semantic-ui": "^2.4.0",
@@ -20,7 +21,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "npm version minor && react-scripts build",
+    "build": "react-scripts build",
+    "buildWithVersion": "npm version minor && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "eslint": "eslint",

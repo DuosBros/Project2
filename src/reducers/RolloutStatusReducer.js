@@ -65,7 +65,7 @@ const RolloutStatusReducer = (state = initialState, action) => {
 
             mappedRolloutStatuses = copy[index].rolloutStatus.map(x => {
                 if (x.Ip === action.payload.ip) {
-                    x.health = action.payload.health;
+                    x.healthInfo = action.payload;
                 }
 
                 return x;
@@ -86,7 +86,7 @@ const RolloutStatusReducer = (state = initialState, action) => {
 
             mappedRolloutStatuses = copy[index].rolloutStatus.map(x => {
                 if (x.Serverid === action.payload.serverId) {
-                    x.version = action.payload.version;
+                    x.versionInfo = action.payload;
                 }
 
                 return x;

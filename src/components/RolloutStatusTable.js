@@ -94,16 +94,16 @@ export default class RolloutStatusTable extends GenericTable {
         data.AvailabilityLabel = (<AvailabilityStatus status={data.Availability} size='small' />);
         data.EnabledLabel = (<EnabledStatus status={data.Enabled} size='small' />);
 
-        if ('health' in data) {
-            if (data.health) {
-                if(data.health.err) {
+        if ('healthInfo' in data) {
+            if (data.healthInfo) {
+                if(data.healthInfo.err) {
                     data.Health = ("Error occured - try again")
                 }
                 else {
-                    data.Health = Array.isArray(data.health) ?
+                    data.Health = Array.isArray(data.healthInfo.health) ?
                         <VanillaHealthStatus
                             url={NWTOOLS_URL + 'f5_curl.php?url=/Common/' + data.Pool + "&host=" + data.Ip}
-                            status={data.health}
+                            status={data.healthInfo.health}
                             size='small' />
                         : "No data"
                 }
@@ -124,13 +124,14 @@ export default class RolloutStatusTable extends GenericTable {
             data.LbName = data.LbName.replace(LBNAME_SUFFIX, '');
         }
 
-        if ('version' in data) {
-            if (data.version) {
-                if(data.version.err) {
+        if ('versionInfo' in data) {
+            if (data.versionInfo) {
+                
+                if(data.versionInfo.err) {
                     data.Version = ("Error occured - try again")
                 }
                 else {
-                    data.Version = data.version.Version ? data.version.Version : "No data"
+                    data.Version = data.versionInfo.version.Version ? data.versionInfo.version.Version : "No data"
                 }
             }
             else {
