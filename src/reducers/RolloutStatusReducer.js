@@ -13,9 +13,6 @@ const initialState = {
 
 const RolloutStatusReducer = (state = initialState, action) => {
     var copy, index, mappedRolloutStatuses;
-    if(state.rolloutStatuses.length > 0) {
-        console.log("rolloutstatusreducer", state.rolloutStatuses);
-    }
     
     switch (action.type) {
         case GET_DISME_APPLICATIONS:

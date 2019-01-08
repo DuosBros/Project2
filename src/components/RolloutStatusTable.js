@@ -4,7 +4,7 @@ import GenericTable from './GenericTable';
 import AvailabilityStatus from '../components/AvailabilityStatus';
 import EnabledStatus from '../components/EnabledStatus';
 import VanillaHealthStatus from './VanillaHealthStatus';
-import { Icon, Button } from 'semantic-ui-react';
+import { Icon } from 'semantic-ui-react';
 import { LBNAME_SUFFIX_WITH_IS, NWTOOLS_URL, LBNAME_SUFFIX } from '../appConfig';
 
 export default class RolloutStatusTable extends GenericTable {

@@ -118,7 +118,6 @@ class RolloutStatus extends React.Component {
 
         var valueToSearch = value.replace(/[^a-zA-Z0-9,_.-]/g, "")
         var uniqueValueToSearch = Array.from(new Set(valueToSearch.split(',')))
-        console.log(uniqueValueToSearch)
         this.getServiceDetailsAndRolloutStatus(uniqueValueToSearch)
     }
 
@@ -157,23 +156,23 @@ class RolloutStatus extends React.Component {
 
     getHealthAndVersion = (refreshTriggered, ip, serverId, serviceId, serviceName) => {
         if (refreshTriggered) {
-            var o = {
+            var health = {
                 serviceName: serviceName,
                 serviceId: serviceId,
                 ip: ip,
                 refreshTriggered: refreshTriggered
             }
 
-            this.props.getHealthAction(o)
+            this.props.getHealthAction(health)
 
-            var o = {
+            var version = {
                 serviceName: serviceName,
                 serviceId: serviceId,
                 serverId: serverId,
                 refreshTriggered: refreshTriggered
             }
 
-            this.props.getVersionAction(o)
+            this.props.getVersionAction(version)
 
             return;
         }
