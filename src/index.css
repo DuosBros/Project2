@@ -224,3 +224,7 @@ div.content.noimg {
 .generic.table .column.toggles .label {
     cursor: pointer;
 }
+
+.pointerCursor:before {
+    cursor: pointer;
+}

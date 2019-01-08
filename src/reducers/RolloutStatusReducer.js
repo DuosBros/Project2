@@ -13,6 +13,10 @@ const initialState = {
 
 const RolloutStatusReducer = (state = initialState, action) => {
     var copy, index, mappedRolloutStatuses;
+    if(state.rolloutStatuses.length > 0) {
+        console.log("rolloutstatusreducer", state.rolloutStatuses);
+    }
+    
     switch (action.type) {
         case GET_DISME_APPLICATIONS:
             return Object.assign({}, state, { dismeApplications: action.payload })
@@ -65,7 +69,14 @@ const RolloutStatusReducer = (state = initialState, action) => {
 
             mappedRolloutStatuses = copy[index].rolloutStatus.map(x => {
                 if (x.Ip === action.payload.ip) {
-                    x.healthInfo = action.payload;
+                    if(action.payload.refreshTriggered) {
+                        if ('healthInfo' in x) {
+                            delete x.healthInfo
+                        }
+                    }
+                    else {
+                        x.healthInfo = action.payload;
+                    }
                 }
 
                 return x;
@@ -86,7 +97,14 @@ const RolloutStatusReducer = (state = initialState, action) => {
 
             mappedRolloutStatuses = copy[index].rolloutStatus.map(x => {
                 if (x.Serverid === action.payload.serverId) {
-                    x.versionInfo = action.payload;
+                    if(action.payload.refreshTriggered) {
+                        if ('versionInfo' in x) {
+                            delete x.versionInfo
+                        }
+                    }
+                    else {
+                        x.versionInfo = action.payload;
+                    }
                 }
 
                 return x;

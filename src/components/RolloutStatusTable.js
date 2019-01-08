@@ -9,6 +9,13 @@ import { LBNAME_SUFFIX_WITH_IS, NWTOOLS_URL, LBNAME_SUFFIX } from '../appConfig'
 
 export default class RolloutStatusTable extends GenericTable {
 
+    handleRefresh = (data) => {
+
+        // loading again
+        this.props.getHealthAndVersion(true, data.healthInfo.ip, data.versionInfo.serverId, data.healthInfo.serviceId, data.healthInfo.serviceName)
+        this.props.getHealthAndVersion(false, data.healthInfo.ip, data.versionInfo.serverId, data.healthInfo.serviceId, data.healthInfo.serviceName)
+    }
+
     getGrouping() {
         return [
             "LbName",
@@ -97,7 +104,7 @@ export default class RolloutStatusTable extends GenericTable {
         if ('healthInfo' in data) {
             if (data.healthInfo) {
                 if(data.healthInfo.err) {
-                    data.Health = ("Error occured - try again")
+                    data.Health = (<>{"Error occured - try again"} <Icon className="pointerCursor" onClick={() => this.handleRefresh(data)} name="refresh" /> </>)
                 }
                 else {
                     data.Health = Array.isArray(data.healthInfo.health) ?
@@ -128,10 +135,10 @@ export default class RolloutStatusTable extends GenericTable {
             if (data.versionInfo) {
                 
                 if(data.versionInfo.err) {
-                    data.Version = ("Error occured - try again")
+                    data.Version = (<>{"Error occured - try again"} <Icon className="pointerCursor" onClick={() => this.handleRefresh(data)} name="refresh" /> </>)
                 }
                 else {
-                    data.Version = data.versionInfo.version.Version ? data.versionInfo.version.Version : "No data"
+                    data.Version = data.versionInfo.version ? data.versionInfo.version.Version : "No data"
                 }
             }
             else {

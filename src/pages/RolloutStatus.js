@@ -118,6 +118,7 @@ class RolloutStatus extends React.Component {
 
         var valueToSearch = value.replace(/[^a-zA-Z0-9,_.-]/g, "")
         var uniqueValueToSearch = Array.from(new Set(valueToSearch.split(',')))
+        console.log(uniqueValueToSearch)
         this.getServiceDetailsAndRolloutStatus(uniqueValueToSearch)
     }
 
@@ -148,67 +149,92 @@ class RolloutStatus extends React.Component {
                 var keys = Object.keys(grouped);
 
                 keys.forEach(e => {
-                    if (isValidIPv4(grouped[e][0].Ip)) {
-                        getHealth(element.serviceId, grouped[e][0].Ip)
-                            .then(res => {
-                                var o = {
-                                    serviceName: element.serviceName,
-                                    serviceId: element.serviceId,
-                                    ip: grouped[e][0].Ip,
-                                    health: res.data
-                                }
-
-                                this.props.getHealthAction(o)
-                            })
-                            .catch((err) => {
-                                var o = {
-                                    serviceName: element.serviceName,
-                                    serviceId: element.serviceId,
-                                    ip: grouped[e][0].Ip,
-                                    health: null,
-                                    err: err
-                                }
-
-                                this.props.getHealthAction(o)
-                            })
-                    }
-                    else {
-                        var o = {
-                            serviceName: element.serviceName,
-                            serviceId: element.serviceId,
-                            ip: grouped[e][0].Ip,
-                            health: null
-                        }
-
-                        this.props.getHealthAction(o)
-                    }
-
-                    getVersion(element.serviceId, grouped[e][0].Serverid)
-                        .then(res => {
-                            var o = {
-                                serviceName: element.serviceName,
-                                serviceId: element.serviceId,
-                                serverId: grouped[e][0].Serverid,
-                                version: res.data
-                            }
-
-                            this.props.getVersionAction(o)
-                        })
-                        .catch((err) => {
-                            var o = {
-                                serviceName: element.serviceName,
-                                serviceId: element.serviceId,
-                                serverId: grouped[e][0].Serverid,
-                                version: "",
-                                err: err
-                            }
-
-                            this.props.getVersionAction(o)
-                        })
-
+                    this.getHealthAndVersion(false, grouped[e][0].Ip, grouped[e][0].Serverid, element.serviceId, element.serviceName)
                 })
             });
         });
+    }
+
+    getHealthAndVersion = (refreshTriggered, ip, serverId, serviceId, serviceName) => {
+        if (refreshTriggered) {
+            var o = {
+                serviceName: serviceName,
+                serviceId: serviceId,
+                ip: ip,
+                refreshTriggered: refreshTriggered
+            }
+
+            this.props.getHealthAction(o)
+
+            var o = {
+                serviceName: serviceName,
+                serviceId: serviceId,
+                serverId: serverId,
+                refreshTriggered: refreshTriggered
+            }
+
+            this.props.getVersionAction(o)
+
+            return;
+        }
+
+        if (isValidIPv4(ip)) {
+            getHealth(serviceId, ip)
+                .then(res => {
+                    var o = {
+                        serviceName: serviceName,
+                        serviceId: serviceId,
+                        ip: ip,
+                        health: res.data
+                    }
+
+                    this.props.getHealthAction(o)
+                })
+                .catch((err) => {
+                    var o = {
+                        serviceName: serviceName,
+                        serviceId: serviceId,
+                        ip: ip,
+                        health: "",
+                        err: err
+                    }
+
+                    this.props.getHealthAction(o)
+                })
+        }
+        else {
+            var o = {
+                serviceName: serviceName,
+                serviceId: serviceId,
+                ip: ip,
+                health: ""
+            }
+
+            this.props.getHealthAction(o)
+        }
+
+        getVersion(serviceId, serverId)
+            .then(res => {
+                var o = {
+                    serviceName: serviceName,
+                    serviceId: serviceId,
+                    serverId: serverId,
+                    version: res.data
+                }
+
+                this.props.getVersionAction(o)
+            })
+            .catch((err) => {
+                var o = {
+                    serviceName: serviceName,
+                    serviceId: serviceId,
+                    serverId: serverId,
+                    version: "",
+                    err: err
+                }
+
+                this.props.getVersionAction(o)
+            })
     }
 
     handleSearchServiceShortcut(value) {
@@ -314,7 +340,6 @@ class RolloutStatus extends React.Component {
                             isLoading: false
                         }
                         this.props.getRolloutStatusAction(object)
-                        this.getHealthsAndVersions()
                     })
                     .catch(err => {
                         var object = {
@@ -326,6 +351,9 @@ class RolloutStatus extends React.Component {
                         }
                         this.props.getRolloutStatusAction(object)
                     })
+                    .then(() => {
+                        this.getHealthsAndVersions()
+                    })
 
             })
         });
@@ -336,7 +364,16 @@ class RolloutStatus extends React.Component {
 
         var filtered = split.filter(x => x !== service.Shortcut)
 
-        this.setState({ inputProductsValues: filtered.join(",") });
+        var joined = filtered.join(",")
+
+        if (filtered.length > 0) {
+            this.props.history.push("/rolloutstatus?services=" + joined)
+        }
+        else {
+            this.props.history.push("/rolloutstatus")
+        }
+
+        this.setState({ inputProductsValues: joined });
 
         this.props.removeServiceDetailsAction(service);
     }
@@ -499,14 +536,14 @@ class RolloutStatus extends React.Component {
                     }
                     else {
                         segmentContent = (
-                            <RolloutStatusTable showTableHeaderFunctions={false} data={x.rolloutStatus} defaultLimitOverride={0} />
+                            <RolloutStatusTable getHealthAndVersion={this.getHealthAndVersion} showTableHeaderFunctions={false} data={x.rolloutStatus} defaultLimitOverride={0} />
                         )
                     }
 
                 }
                 else {
                     segmentContent = (
-                        <RolloutStatusTable showTableHeaderFunctions={false} data={x.rolloutStatus} defaultLimitOverride={0} />
+                        <RolloutStatusTable getHealthAndVersion={this.getHealthAndVersion} showTableHeaderFunctions={false} data={x.rolloutStatus} defaultLimitOverride={0} />
                     )
                 }
             }
