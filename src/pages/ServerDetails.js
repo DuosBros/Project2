@@ -8,8 +8,8 @@ import moment from 'moment'
 import SimpleTable from '../components/SimpleTable';
 import ServerStatus from '../components/ServerStatus';
 
-import { getServerDetailsAction, getVmDetailsAction, getServerScomAlertsAction } from '../actions/ServerActions';
-import { getServerDetails, getServerScomAlerts } from '../requests/ServerAxios';
+import { getServerDetailsAction, getVmDetailsAction, getServerScomAlertsAction, getDiskUsageDetailsAction } from '../actions/ServerActions';
+import { getServerDetails, getServerScomAlerts, getDiskUsageDetails } from '../requests/ServerAxios';
 
 import { KIBANA_WINLOGBEAT_SERVER_URL, KIBANA_SERVER_URL_PLACEHOLDER, KIBANA_PERFCOUNTER_SERVER_URL, DISME_SERVICE_PLACEHOLDER, DISME_SERVICE_URL, errorColor } from '../appConfig';
 
@@ -34,6 +34,7 @@ class ServerDetails extends React.Component {
         }
     }
     componentDidMount() {
+        
         this.updateServer(this.props.match.params.id);
     }
 
@@ -54,12 +55,20 @@ class ServerDetails extends React.Component {
                     this.props.getServerScomAlertsAction(res.data)
                 }
             })
+            .then(() => {
+                return getDiskUsageDetails(this.props.serverStore.serverDetails.ServerName)
+            })
+            .then(res => {
+                this.props.getDiskUsageDetailsAction(res)
+            })
     }
 
     componentDidUpdate(prevProps) {
+
         if (this.props.match && this.props.match.params) {
             const params = this.props.match.params;
             if (params.id && params.id !== prevProps.match.params.id) {
+
                 this.updateServer(this.props.match.params.id);
             }
         }
@@ -507,7 +516,8 @@ function mapDispatchToProps(dispatch) {
     return bindActionCreators({
         getServerDetailsAction,
         getVmDetailsAction,
-        getServerScomAlertsAction
+        getServerScomAlertsAction,
+        getDiskUsageDetailsAction
     }, dispatch);
 }
 
