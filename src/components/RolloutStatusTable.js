@@ -4,7 +4,7 @@ import GenericTable from './GenericTable';
 import AvailabilityStatus from '../components/AvailabilityStatus';
 import EnabledStatus from '../components/EnabledStatus';
 import VanillaHealthStatus from './VanillaHealthStatus';
-import { Icon } from 'semantic-ui-react';
+import { Icon, Button } from 'semantic-ui-react';
 import { LBNAME_SUFFIX_WITH_IS, NWTOOLS_URL, LBNAME_SUFFIX } from '../appConfig';
 
 export default class RolloutStatusTable extends GenericTable {
@@ -96,12 +96,17 @@ export default class RolloutStatusTable extends GenericTable {
 
         if ('health' in data) {
             if (data.health) {
-                data.Health = Array.isArray(data.health) ?
-                    <VanillaHealthStatus
-                        url={NWTOOLS_URL + 'f5_curl.php?url=/Common/' + data.Pool + "&host=" + data.Ip}
-                        status={data.health}
-                        size='small' />
-                    : "No data"
+                if(data.health.err) {
+                    data.Health = ("Error occured - try again")
+                }
+                else {
+                    data.Health = Array.isArray(data.health) ?
+                        <VanillaHealthStatus
+                            url={NWTOOLS_URL + 'f5_curl.php?url=/Common/' + data.Pool + "&host=" + data.Ip}
+                            status={data.health}
+                            size='small' />
+                        : "No data"
+                }
             }
             else {
                 data.Health = "No data"
@@ -121,7 +126,12 @@ export default class RolloutStatusTable extends GenericTable {
 
         if ('version' in data) {
             if (data.version) {
-                data.Version = data.version.Version ? data.version.Version : "No data"
+                if(data.version.err) {
+                    data.Version = ("Error occured - try again")
+                }
+                else {
+                    data.Version = data.version.Version ? data.version.Version : "No data"
+                }
             }
             else {
                 data.Version = "No data"

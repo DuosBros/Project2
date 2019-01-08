@@ -33,7 +33,7 @@ export default class Home extends React.Component {
                     continue;
                 }
                 row.push((
-                    <Grid.Column>
+                    <Grid.Column key={j}>
                         <Popup trigger={
                             <a href={lb.url} target="_blank" rel="noopener noreferrer">
                                 <Flag name={lb.country} /> {lb.title}

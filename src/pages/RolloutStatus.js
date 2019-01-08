@@ -160,12 +160,13 @@ class RolloutStatus extends React.Component {
 
                                 this.props.getHealthAction(o)
                             })
-                            .catch(() => {
+                            .catch((err) => {
                                 var o = {
                                     serviceName: element.serviceName,
                                     serviceId: element.serviceId,
                                     ip: grouped[e][0].Ip,
-                                    health: null
+                                    health: null,
+                                    err: err
                                 }
 
                                 this.props.getHealthAction(o)
@@ -193,12 +194,13 @@ class RolloutStatus extends React.Component {
 
                             this.props.getVersionAction(o)
                         })
-                        .catch(() => {
+                        .catch((err) => {
                             var o = {
                                 serviceName: element.serviceName,
                                 serviceId: element.serviceId,
                                 serverId: grouped[e][0].Serverid,
-                                version: ""
+                                version: "",
+                                err: err
                             }
 
                             this.props.getHealthAction(o)
