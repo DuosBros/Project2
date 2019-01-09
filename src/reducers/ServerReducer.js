@@ -2,18 +2,18 @@ import { GET_SERVER_DETAILS, GET_VM_DETAILS, GET_SERVER_SCOM_ALERTS, GET_SERVERS
 import { getServerState, getDismeState } from '../utils/HelperFunction';
 
 const serverInitialState = {
-    serverDetails: {},
+    serverDetails: { success: true },
     vmDetails: {},
-    scomAlerts: {},
+    scomAlerts: { success: true },
     servers: null
 }
 
 const ServerReducer = (state = serverInitialState, action) => {
     switch (action.type) {
         case GET_SERVER_DETAILS:
-            if (action.payload) {
-                action.payload.ServerState = getServerState(action.payload.ServerStateID)
-                action.payload.Disme = getDismeState(action.payload.Disme)
+            if (action.payload.data) {
+                action.payload.data.ServerState = getServerState(action.payload.data.ServerStateID)
+                action.payload.data.Disme = getDismeState(action.payload.data.Disme)
             }
 
             return Object.assign({}, state, { serverDetails: action.payload })

@@ -45,7 +45,7 @@ class ServiceDetails extends React.Component {
         if (this.props.match && this.props.match.params) {
             const params = this.props.match.params;
             if (params.id && params.id !== prevProps.match.params.id) {
-                this.updateService(this.props.match.params.id);
+                this.updateService();
             }
         }
     }
@@ -78,19 +78,19 @@ class ServiceDetails extends React.Component {
     }
 
     render() {
-        const servicesDetailsSuccess = this.props.serviceStore.serviceDetails.success;
-        const serviceDetails = this.props.serviceStore.serviceDetails.data;
+        const serviceDetailsSuccess = this.props.serviceStore.serviceDetails.success;
+        const serviceDetailsData = this.props.serviceStore.serviceDetails.data;
         const { showAllSegments, assignedLoadBalancerFarms, servers, websites } = this.state;
 
         // in case of error
-        if (!servicesDetailsSuccess) {
+        if (!serviceDetailsSuccess) {
             return (
                 <ErrorMessage handleRefresh={this.updateService} error={this.props.serviceStore.serviceDetails.error} />
             );
         }
 
         // in case it's still loading data
-        if (_.isEmpty(serviceDetails)) {
+        if (_.isEmpty(serviceDetailsData)) {
             return (
                 <div className="messageBox">
                     <Message info icon>
@@ -109,7 +109,7 @@ class ServiceDetails extends React.Component {
                 <Grid.Row>
                     <Grid.Column>
                         <Header block attached='top' as='h4'>
-                            Service Info - {serviceDetails.Service[0].Shortcut}
+                            Service Info - {serviceDetailsData.Service[0].Shortcut}
                             <Button
                                 floated='right'
                                 onClick={() => this.handleToggleShowAllSegments()}
@@ -124,29 +124,29 @@ class ServiceDetails extends React.Component {
                                     <Grid.Column width={8}>
                                         <dl className="dl-horizontal">
                                             <dt>Shortcut:</dt>
-                                            <dd>{serviceDetails.Service[0].Shortcut}</dd>
+                                            <dd>{serviceDetailsData.Service[0].Shortcut}</dd>
                                             <dt>Name:</dt>
-                                            <dd>{serviceDetails.Service[0].Name}</dd>
+                                            <dd>{serviceDetailsData.Service[0].Name}</dd>
                                         </dl>
                                         <dl className="dl-horizontal">
                                             <dt>Disme Status:</dt>
-                                            <dd><DismeStatus dismeStatus={serviceDetails.Service[0].Status} /></dd>
+                                            <dd><DismeStatus dismeStatus={serviceDetailsData.Service[0].Status} /></dd>
                                         </dl>
                                         <dl className="dl-horizontal">
                                             <dt>DevFramework:</dt>
-                                            <dd>{serviceDetails.Service[0].DevFramework}</dd>
+                                            <dd>{serviceDetailsData.Service[0].DevFramework}</dd>
                                             <dt>Framework:</dt>
-                                            <dd>{serviceDetails.Service[0].Framework}</dd>
+                                            <dd>{serviceDetailsData.Service[0].Framework}</dd>
                                             <dt>Poolname:</dt>
-                                            <dd>{serviceDetails.Service[0].Poolname}</dd>
+                                            <dd>{serviceDetailsData.Service[0].Poolname}</dd>
                                             <dt>SiteID:</dt>
-                                            <dd>{serviceDetails.Service[0].SiteID}</dd>
+                                            <dd>{serviceDetailsData.Service[0].SiteID}</dd>
                                             <dt>ServiceName:</dt>
-                                            <dd>{serviceDetails.Service[0].ServiceName}</dd>
+                                            <dd>{serviceDetailsData.Service[0].ServiceName}</dd>
                                             <dt>ServiceUser:</dt>
-                                            <dd>{serviceDetails.Service[0].ServiceUser}</dd>
+                                            <dd>{serviceDetailsData.Service[0].ServiceUser}</dd>
                                             <dt>HomeDir:</dt>
-                                            <dd>{serviceDetails.Service[0].HomeDir}</dd>
+                                            <dd>{serviceDetailsData.Service[0].HomeDir}</dd>
                                         </dl>
 
 
@@ -154,23 +154,23 @@ class ServiceDetails extends React.Component {
                                     <Grid.Column width={8}>
                                         <dl className="dl-horizontal">
                                             <dt>Owner:</dt>
-                                            <dd>{serviceDetails.Service[0].Owner}</dd>
+                                            <dd>{serviceDetailsData.Service[0].Owner}</dd>
                                             <dt>Responsible Team:</dt>
-                                            <dd>{serviceDetails.Service[0].ResponsibleTeam}</dd>
+                                            <dd>{serviceDetailsData.Service[0].ResponsibleTeam}</dd>
                                         </dl>
                                         <dl className="dl-horizontal">
                                             <dt>Kibana:</dt>
                                             <dd>
-                                                <a target="_blank" rel="noopener noreferrer" href={_.replace(KIBANA_WINLOGBEAT_SERVICE_URL, new RegExp(KIBANA_SERVICE_URL_PLACEHOLDER, "g"), serviceDetails.Service[0].Shortcut)}>Eventlog</a><br />
-                                                <a target="_blank" rel="noopener noreferrer" href={_.replace(KIBANA_PERFCOUNTER_SERVICE_URL, new RegExp(KIBANA_SERVICE_URL_PLACEHOLDER, "g"), serviceDetails.Service[0].Shortcut)}>PerfCounter</a>
+                                                <a target="_blank" rel="noopener noreferrer" href={_.replace(KIBANA_WINLOGBEAT_SERVICE_URL, new RegExp(KIBANA_SERVICE_URL_PLACEHOLDER, "g"), serviceDetailsData.Service[0].Shortcut)}>Eventlog</a><br />
+                                                <a target="_blank" rel="noopener noreferrer" href={_.replace(KIBANA_PERFCOUNTER_SERVICE_URL, new RegExp(KIBANA_SERVICE_URL_PLACEHOLDER, "g"), serviceDetailsData.Service[0].Shortcut)}>PerfCounter</a>
                                             </dd>
                                             <dt>AppDynamics:</dt>
                                             <dd>
-                                                <a target="_blank" href={"https://apm.bwinparty.corp/controller/#/location=APP_COMPONENT_MANAGER&timeRange=last_15_minutes.BEFORE_NOW.-1.-1.15&application=" + serviceDetails.Service[0].ApmAppId + "&component=" + serviceDetails.Service[0].ApmTierId + ")"} rel="noopener noreferrer"> Dashboard</a>
+                                                <a target="_blank" href={"https://apm.bwinparty.corp/controller/#/location=APP_COMPONENT_MANAGER&timeRange=last_15_minutes.BEFORE_NOW.-1.-1.15&application=" + serviceDetailsData.Service[0].ApmAppId + "&component=" + serviceDetailsData.Service[0].ApmTierId + ")"} rel="noopener noreferrer"> Dashboard</a>
                                             </dd>
                                             <dt>Disme:</dt>
                                             <dd>
-                                                <a target="_blank" href={_.replace(DISME_SERVICE_URL, new RegExp(DISME_SERVICE_PLACEHOLDER, "g"), serviceDetails.Service[0].DismeID)} rel="noopener noreferrer">Details</a>
+                                                <a target="_blank" href={_.replace(DISME_SERVICE_URL, new RegExp(DISME_SERVICE_PLACEHOLDER, "g"), serviceDetailsData.Service[0].DismeID)} rel="noopener noreferrer">Details</a>
                                             </dd>
                                         </dl>
                                     </Grid.Column>
@@ -180,8 +180,8 @@ class ServiceDetails extends React.Component {
                         <Header attached>
                             <List>
                                 <List.Item>
-                                    <List.Content floated='left'>Last Update: {moment(serviceDetails.Service.LastUpdate).local().format("HH:mm:ss DD.MM.YYYY")} </List.Content>
-                                    <List.Content floated='right'>Created: {moment(serviceDetails.Service.CreatedAt).local().format("HH:mm:ss DD.MM.YYYY")}</List.Content>
+                                    <List.Content floated='left'>Last Update: {moment(serviceDetailsData.Service.LastUpdate).local().format("HH:mm:ss DD.MM.YYYY")} </List.Content>
+                                    <List.Content floated='right'>Created: {moment(serviceDetailsData.Service.CreatedAt).local().format("HH:mm:ss DD.MM.YYYY")}</List.Content>
                                 </List.Item>
                             </List>
                         </Header>
@@ -208,7 +208,7 @@ class ServiceDetails extends React.Component {
                         {
                             assignedLoadBalancerFarms ? (
                                 <Segment attached='bottom'>
-                                    <LoadBalancerFarmsTable data={serviceDetails.LbFarms} />
+                                    <LoadBalancerFarmsTable data={serviceDetailsData.LbFarms} />
                                 </Segment>
                             ) : (
                                     <div></div>
@@ -225,7 +225,7 @@ class ServiceDetails extends React.Component {
                         {
                             servers ? (
                                 <Segment attached='bottom'>
-                                    <ServerTable data={serviceDetails.Servers} compact={true} />
+                                    <ServerTable data={serviceDetailsData.Servers} compact={true} />
                                 </Segment>
                             ) : (
                                     <div></div>
@@ -242,7 +242,7 @@ class ServiceDetails extends React.Component {
                         {
                             websites ? (
                                 <Segment attached='bottom' id="WebsitesTable">
-                                    <WebsitesTable data={serviceDetails.Websites} />
+                                    <WebsitesTable data={serviceDetailsData.Websites} />
                                 </Segment>
                             ) : (
                                     <div></div>
