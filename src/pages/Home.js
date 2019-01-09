@@ -25,11 +25,11 @@ export default class Home extends React.Component {
         const LB_PER_ROW = 2;
         let rows = [];
         const rreq = Math.ceil(links.loadbalancers.length / (LB_PER_ROW * 1.0))
-        for(let i = 0; i < rreq; i++) {
+        for (let i = 0; i < rreq; i++) {
             let row = [];
-            for(let j = 0; j < LB_PER_ROW; j++) {
+            for (let j = 0; j < LB_PER_ROW; j++) {
                 let lb = links.loadbalancers[(i * LB_PER_ROW) + j];
-                if(!lb) {
+                if (!lb) {
                     continue;
                 }
                 row.push((

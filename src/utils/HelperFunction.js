@@ -1,3 +1,10 @@
+export const buildErrorObject = (err) => {
+    return {
+        success: false,
+        err: err
+    }
+}
+
 export const groupBy = (items, key) => items.reduce(
     (result, item) => ({
         ...result,
