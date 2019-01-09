@@ -1,4 +1,4 @@
-import { GET_SERVICE_DETAILS, TOGGLE_LOADBALANCERFARMS_TASKS, GET_SERVICES, GET_HEALTH, GET_VERSION } from '../constants/ServiceConstatnts';
+import { GET_SERVICE_DETAILS, TOGGLE_LOADBALANCERFARMS_TASKS, GET_SERVICES, GET_HEALTH, GET_VERSION } from '../constants/ServiceConstants';
 
 export function getServiceDetailsAction(payload) {
     return {

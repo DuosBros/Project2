@@ -3,7 +3,7 @@ import {
     GET_ROLLOUT_STATUS, DELETE_ALL_ROLLOUT_STATUSES
 } from '../constants/RolloutStatusConstants';
 
-import { GET_HEALTH, GET_VERSION } from '../constants/ServiceConstatnts';
+import { GET_HEALTH, GET_VERSION } from '../constants/ServiceConstants';
 
 const initialState = {
     dismeApplications: [],
@@ -13,7 +13,7 @@ const initialState = {
 
 const RolloutStatusReducer = (state = initialState, action) => {
     var copy, index, mappedRolloutStatuses;
-    
+
     switch (action.type) {
         case GET_DISME_APPLICATIONS:
             return Object.assign({}, state, { dismeApplications: action.payload })
