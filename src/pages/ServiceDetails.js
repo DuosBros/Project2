@@ -9,7 +9,7 @@ import { getServiceDetailsAction, toggleLoadBalancerFarmsTasksModalAction } from
 import { getServiceDetails } from '../requests/ServiceAxios';
 import ServerTable from '../components/ServerTable';
 import WebsitesTable from '../components/WebsitesTable';
-import { isAdmin, buildErrorObject } from '../utils/HelperFunction';
+import { isAdmin } from '../utils/HelperFunction';
 import LoadBalancerFarmsTable from '../components/LoadBalancerFarmsTable';
 import DismeStatus from '../components/DismeStatus';
 import { KIBANA_SERVICE_URL_PLACEHOLDER, KIBANA_WINLOGBEAT_SERVICE_URL, KIBANA_PERFCOUNTER_SERVICE_URL, DISME_SERVICE_URL, DISME_SERVICE_PLACEHOLDER } from '../appConfig';
@@ -80,7 +80,6 @@ class ServiceDetails extends React.Component {
     render() {
         const servicesDetailsSuccess = this.props.serviceStore.serviceDetails.success;
         const serviceDetails = this.props.serviceStore.serviceDetails.data;
-        var serviceDetailsBody;
         const { showAllSegments, assignedLoadBalancerFarms, servers, websites } = this.state;
 
         // in case of error
