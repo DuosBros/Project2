@@ -54,7 +54,6 @@ class Base extends React.Component {
                 this.props.authenticateOKAction();
             })
             .catch((err) => {
-
                 if (err.response) {
                     this.setState({ authExceptionMessage: err.message ? err.message : '', authExceptionResponse: err.response ? err.response : '' })
                 }

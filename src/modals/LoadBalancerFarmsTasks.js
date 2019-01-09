@@ -91,9 +91,12 @@ class LoadBalancerFarmsTasks extends React.Component {
     }
 
     render() {
-        if (isAdmin(this.props.baseStore.currentUser)) {
+        if(!this.props.show) {
+            return null;
+        }
 
-            var serviceDetails = this.props.serviceStore.serviceDetails;
+        if (isAdmin(this.props.baseStore.currentUser)) {
+            var serviceDetails = this.props.serviceStore.serviceDetails.data;
 
             if (!_.isEmpty(serviceDetails)) {
                 var allLoadBalancerFarms = this.props.loadBalancerFarmsStore.loadBalancerFarms
