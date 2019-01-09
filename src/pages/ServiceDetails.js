@@ -28,13 +28,12 @@ class ServiceDetails extends React.Component {
     }
 
     componentDidMount() {
-        this.updateService(this.props.match.params.id);
+        this.updateService();
     }
 
-    updateService(id) {
-        getServiceDetails(id)
+    updateService = () => {
+        getServiceDetails(this.props.match.params.id)
             .then(res => {
-                throw new Error("test")
                 this.props.getServiceDetailsAction(res.data)
             })
             .catch(err => {
@@ -87,7 +86,7 @@ class ServiceDetails extends React.Component {
         // in case of error
         if (serviceDetails === false) {
             serviceDetailsBody = (
-                <ErrorMessage handleRefresh={this.updateService(this.props.match.params.id)} />
+                <ErrorMessage handleRefresh={this.updateService} />
             )
         }
         else {

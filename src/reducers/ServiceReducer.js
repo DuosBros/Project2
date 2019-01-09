@@ -11,14 +11,13 @@ const serviceInitialState = {
 const ServiceReducer = (state = serviceInitialState, action) => {
     switch (action.type) {
         case GET_SERVICE_DETAILS:
-debugger
             // in case of error
             if (action.payload.success === false || action.payload.err) {
                 action.payload.caller = GET_SERVICE_DETAILS;
 
-                return Object.assign({}, state, { 
-                    serviceDetails: action.payload.success, 
-                    errors: [...state.errors, action.payload] 
+                return Object.assign({}, state, {
+                    serviceDetails: action.payload.success,
+                    errors: [...state.errors, action.payload]
                 })
             }
             // remove the error from array
