@@ -74,14 +74,14 @@ export default class LoadBalancerFarmsTable extends GenericTable {
         this.setState({ showBETAPools: false });
     }
 
-    applyCustomFilter(filteredData) {
-        const { showBETAPools } = this.state;
+    // applyCustomFilter(filteredData) {
+    //     const { showBETAPools } = this.state;
 
-        if (!showBETAPools) {
-            filteredData = filteredData.filter(x => x.Pool.search(new RegExp("\\.beta\\.", "i")) < 0)
-        }
-        return filteredData;
-    }
+    //     if (!showBETAPools) {
+    //         filteredData = filteredData.filter(x => x.Pool.search(new RegExp("\\.beta\\.", "i")) < 0)
+    //     }
+    //     return filteredData;
+    // }
 
     transformDataRow(data) {
         data.VsStatus = (<VsStatus availabilityState={data.VsAvailabilityState} enabledState={data.VsEnabledState} />);
@@ -89,22 +89,22 @@ export default class LoadBalancerFarmsTable extends GenericTable {
         return data;
     }
 
-    renderCustomFilter() {
-        const { showBETAPools } = this.state;
-        return (
-            <div>
-                <Button
-                    fluid
-                    size="small"
-                    name="showBETAPools"
-                    onClick={this.handleStateToggle}
-                    compact
-                    content={showBETAPools ? 'Hide BETA Pools' : 'Show BETA Pools'}
-                    style={{ padding: '0.3em', marginTop: '0.5em', textAlign: 'right' }}
-                    id="secondaryButton"
-                    icon={showBETAPools ? 'eye slash' : 'eye'}
-                    labelPosition='left' />
-            </div>
-        );
-    }
+    // renderCustomFilter() {
+    //     const { showBETAPools } = this.state;
+    //     return (
+    //         <div>
+    //             <Button
+    //                 fluid
+    //                 size="small"
+    //                 name="showBETAPools"
+    //                 onClick={this.handleStateToggle}
+    //                 compact
+    //                 content={showBETAPools ? 'Hide BETA Pools' : 'Show BETA Pools'}
+    //                 style={{ padding: '0.3em', marginTop: '0.5em', textAlign: 'right' }}
+    //                 id="secondaryButton"
+    //                 icon={showBETAPools ? 'eye slash' : 'eye'}
+    //                 labelPosition='left' />
+    //         </div>
+    //     );
+    // }
 }
