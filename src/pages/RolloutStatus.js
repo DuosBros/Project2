@@ -144,12 +144,14 @@ class RolloutStatus extends React.Component {
 
         cloned.forEach(element => {
             sleep(1000).then(() => {
-                var grouped = groupBy(element.rolloutStatus, "Server")
-                var keys = Object.keys(grouped);
+                if (element.rolloutStatus) {
+                    var grouped = groupBy(element.rolloutStatus, "Server")
+                    var keys = Object.keys(grouped);
 
-                keys.forEach(e => {
-                    this.getHealthAndVersion(false, grouped[e][0].Ip, grouped[e][0].Serverid, element.serviceId, element.serviceName)
-                })
+                    keys.forEach(e => {
+                        this.getHealthAndVersion(false, grouped[e][0].Ip, grouped[e][0].Serverid, element.serviceId, element.serviceName)
+                    })
+                }
             });
         });
     }
@@ -535,14 +537,14 @@ class RolloutStatus extends React.Component {
                     }
                     else {
                         segmentContent = (
-                            <RolloutStatusTable getHealthAndVersion={this.getHealthAndVersion} showTableHeaderFunctions={false} data={x.rolloutStatus} defaultLimitOverride={0} />
+                            <RolloutStatusTable getHealthAndVersion={this.getHealthAndVersion} showTableHeaderFunctions={false} showTableHeader={false} data={x.rolloutStatus} defaultLimitOverride={0} />
                         )
                     }
 
                 }
                 else {
                     segmentContent = (
-                        <RolloutStatusTable getHealthAndVersion={this.getHealthAndVersion} showTableHeaderFunctions={false} data={x.rolloutStatus} defaultLimitOverride={0} />
+                        <RolloutStatusTable getHealthAndVersion={this.getHealthAndVersion} showTableHeaderFunctions={false} showTableHeader={false} data={x.rolloutStatus} defaultLimitOverride={0} />
                     )
                 }
             }

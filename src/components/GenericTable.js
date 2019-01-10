@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { Component } from 'react'
-import { Table, Grid, Message, Input, Button, Icon, Label } from 'semantic-ui-react'
+import { Table, Grid, Message, Input, Button, Icon, Label, Popup } from 'semantic-ui-react'
 import Pagination from 'semantic-ui-react-button-pagination';
 import { filterInArrayOfObjects, isNum, debounce } from '../utils/HelperFunction';
 
@@ -13,6 +13,7 @@ const DEFAULT_COLUMN_PROPS = {
 
 const DEFAULT_PAGE_SIZE = 15;
 const SHOW_TABLE_HEADER_FUNCTIONS = true;
+const SHOW_TABLE_HEADER = true;
 const DEFAULT_IS_COMPACT = false;
 
 export default class GenericTable extends Component {
@@ -39,13 +40,20 @@ export default class GenericTable extends Component {
             defaultLimit = parseInt(this.props.defaultLimitOverride);
         }
 
-        // TODO ADD TOGGLING SHOW/HIDE BUTTON
         let defaultShowTableHeaderFunctions = SHOW_TABLE_HEADER_FUNCTIONS;
         if (this.props.hasOwnProperty("showTableHeaderFunctions")) {
             if (typeof this.props.showTableHeaderFunctions !== "boolean") {
                 throw new Error("showTableHeaderFunctions property must be a bool.")
             }
             defaultShowTableHeaderFunctions = this.props.showTableHeaderFunctions;
+        }
+
+        let defaultShowTableHeader = SHOW_TABLE_HEADER;
+        if (this.props.hasOwnProperty("showTableHeader")) {
+            if (typeof this.props.showTableHeader !== "boolean") {
+                throw new Error("showTableHeader property must be a bool.")
+            }
+            defaultShowTableHeader = this.props.showTableHeader;
         }
 
         let isCompact = DEFAULT_IS_COMPACT;
@@ -60,7 +68,8 @@ export default class GenericTable extends Component {
             sortColumn: null,
             sortDirection: null,
             offset: 0,
-            defaultShowTableHeaderFunctions: defaultShowTableHeaderFunctions,
+            showTableHeaderFunctions: defaultShowTableHeaderFunctions,
+            showTableHeader: defaultShowTableHeader,
             isCompact: isCompact,
             defaultLimit,
             limit: defaultLimit,
@@ -254,9 +263,9 @@ export default class GenericTable extends Component {
             return 1;
         }
         if (typeof a === "number" && typeof b === "number") {
-            if(a < b) {
+            if (a < b) {
                 return -1;
-            } else if(a > b) {
+            } else if (a > b) {
                 return 1;
             }
             return 0;
@@ -282,7 +291,8 @@ export default class GenericTable extends Component {
             data,
             filters,
             offset,
-            defaultShowTableHeaderFunctions,
+            showTableHeaderFunctions,
+            showTableHeader,
             isCompact
         } = this.state
 
@@ -374,7 +384,7 @@ export default class GenericTable extends Component {
                         })
                     }
                     filterValid[col] = true;
-                } catch(e) {
+                } catch (e) {
                     filterValid[col] = false;
                 }
             }
@@ -541,64 +551,83 @@ export default class GenericTable extends Component {
             columnToggleButton = null;
             toggleColumnsRow = null;
         }
-        var grid;
-        if (defaultShowTableHeaderFunctions) {
-            grid = (
-                <Grid>
-                    <Grid.Row>
-                        <Grid.Column floated='left' width={6}>
-                            <Input
-                                label='Filter:'
-                                id="multiSearchFilterInBuffedTable"
-                                fluid
-                                value={multiSearchInput} placeholder="Type to search..." name="multiSearchInput" onChange={this.handleMultiFilterChange} ></Input>
-                        </Grid.Column>
-                        <Grid.Column width={3}>
-                            <div style={{ float: "right", margin: "0 20px", display: defaultLimit === 0 ? "none" : "visible" }}>
-                                <span>Showing {filteredData.length > 0 ? this.state.offset + 1 : 0} to {filteredData.length < limit ? filteredData.length : this.state.offset + limit} of {filteredData.length} entries</span>
-                            </div>
-                        </Grid.Column>
-                        <Grid.Column width={3}>
-                            <div style={{ float: "left", margin: "0 20px", display: defaultLimit === 0 ? "none" : "visible" }}>
+        var tableFunctionsGrid;
+        if (showTableHeader) {
+            if(showTableHeaderFunctions) {
+                tableFunctionsGrid = (
+                    <Grid>
+                        <Grid.Row>
+                            <Grid.Column floated='left' width={6}>
                                 <Input
-                                    label='Records per page:'
-                                    className="RecordsPerPage"
-                                    error={!limitInputValid}
-                                    value={limitInput}
-                                    name="inputRecordsPerPage"
-                                    onChange={this.handleChangeRecordsPerPage} />
-                            </div>
-                        </Grid.Column>
-                        <Grid.Column floated='right' width={2} textAlign="right">
-                            <>
-                                <Button
+                                    label='Filter:'
+                                    id="multiSearchFilterInBuffedTable"
                                     fluid
-                                    size="small"
-                                    name="showColumnFilters"
-
-                                    onClick={this.handleStateToggle}
-                                    compact
-                                    content={showColumnFilters ? 'Hide Column Filters' : 'Show Column Filters'}
-                                    style={{ padding: '0.3em', marginTop: '0.5em', textAlign: 'right' }}
-                                    id="secondaryButton"
-                                    icon={showColumnFilters ? 'eye slash' : 'eye'}
-                                    labelPosition='left' />
-                                {columnToggleButton}
-                                {this.renderCustomFilter()}
-                            </>
-
-                        </Grid.Column>
-                    </Grid.Row>
-                    {toggleColumnsRow}
-                </Grid>
-            )
+                                    value={multiSearchInput} placeholder="Type to search..." name="multiSearchInput" onChange={this.handleMultiFilterChange} ></Input>
+                            </Grid.Column>
+                            <Grid.Column width={3}>
+                                <div style={{ float: "right", margin: "0 20px", display: defaultLimit === 0 ? "none" : "visible" }}>
+                                    <span>Showing {filteredData.length > 0 ? this.state.offset + 1 : 0} to {filteredData.length < limit ? filteredData.length : this.state.offset + limit} of {filteredData.length} entries</span>
+                                </div>
+                            </Grid.Column>
+                            <Grid.Column width={3}>
+                                <div style={{ float: "left", margin: "0 20px", display: defaultLimit === 0 ? "none" : "visible" }}>
+                                    <Input
+                                        label='Records per page:'
+                                        className="RecordsPerPage"
+                                        error={!limitInputValid}
+                                        value={limitInput}
+                                        name="inputRecordsPerPage"
+                                        onChange={this.handleChangeRecordsPerPage} />
+                                </div>
+                            </Grid.Column>
+                            <Grid.Column floated='right' width={2} textAlign="right">
+                                <>
+                                    <Button
+                                        fluid
+                                        size="small"
+                                        name="showColumnFilters"
+    
+                                        onClick={this.handleStateToggle}
+                                        compact
+                                        content={showColumnFilters ? 'Hide Column Filters' : 'Show Column Filters'}
+                                        style={{ padding: '0.3em', marginTop: '0.5em', textAlign: 'right' }}
+                                        id="secondaryButton"
+                                        icon={showColumnFilters ? 'eye slash' : 'eye'}
+                                        labelPosition='left' />
+                                    {columnToggleButton}
+                                    {this.renderCustomFilter()}
+                                </>
+    
+                            </Grid.Column>
+                        </Grid.Row>
+                        {toggleColumnsRow}
+                    </Grid>
+                )
+            }
+            else {
+                tableFunctionsGrid = (
+                    <Grid>
+                        <Grid.Row>
+                            <Grid.Column>
+                                <Popup trigger={
+                                    <Button onClick={() => this.setState({ showTableHeaderFunctions: !showTableHeaderFunctions })} icon floated="right">
+                                        <Icon name="setting"></Icon>
+                                    </Button>
+                                } content='Show table settings' inverted />
+    
+                            </Grid.Column>
+                        </Grid.Row>
+                    </Grid>
+                )
+            }
         }
         else {
-            grid = null
+            tableFunctionsGrid = null
         }
+
         return (
             <div className="generic table">
-                {grid}
+                {tableFunctionsGrid}
                 <Table compact={isCompact} selectable sortable celled basic='very'>
                     <Table.Header>
                         <Table.Row>{headerCells}</Table.Row>
