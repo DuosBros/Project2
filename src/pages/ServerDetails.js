@@ -62,7 +62,6 @@ class ServerDetails extends React.Component {
                 }
                 getServerScomAlerts(res.data.ServerName)
                     .then(res => {
-                        throw new Error("test")
                         if (!_.isEmpty(res)) {
                             this.props.getServerScomAlertsAction({ success: true, data: res.data })
                         }
