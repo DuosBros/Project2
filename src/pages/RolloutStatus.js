@@ -20,6 +20,7 @@ import { searchServiceShortcutAction } from '../actions/HeaderActions';
 import { debounce, sleep, groupBy, isValidIPv4 } from '../utils/HelperFunction';
 import { getRolloutStatus } from '../requests/RolloutStatusAxios';
 import RolloutStatusTable from '../components/RolloutStatusTable';
+import ErrorMessage from '../components/ErrorMessage';
 
 const DEFAULT_SEGMENT = [
     {
@@ -40,7 +41,6 @@ class RolloutStatus extends React.Component {
             selectedServices: [],
             loadingServiceDetails: false,
             applicationDropdownValue: "",
-            getServiceDetailsError: {},
             rolloutLoadingStatuses: [],
             segments: DEFAULT_SEGMENT
         }
@@ -52,6 +52,13 @@ class RolloutStatus extends React.Component {
     }
 
     componentDidMount() {
+
+        this.changeInputBasedOnUrl();
+
+        this.fechtAndHandleDismeApplications();
+    }
+
+    changeInputBasedOnUrl = () => {
         var params = new URLSearchParams(this.props.location.search).get('services');
         if (params) {
             this.handleInputOnChange({}, { value: params })
@@ -59,18 +66,28 @@ class RolloutStatus extends React.Component {
         else {
             this.props.history.push("/rolloutstatus")
         }
+    }
 
+    fechtAndHandleDismeApplications = () => {
         getDismeApplications()
             .then(res => {
-                this.props.getDismeApplicationsAction(res.data.map(x =>
-                    ({
-                        text: x.Application,
-                        value: x.Application,
-                        services: x.Service
-                    })))
+                throw new Error("test")
+                this.props.getDismeApplicationsAction({
+                    success: true,
+                    data: res.data.map(x =>
+                        ({
+                            text: x.Application,
+                            value: x.Application,
+                            services: x.Service
+
+                        }))
+                })
+            })
+            .catch(err => {
+                this.props.getDismeApplicationsAction({ success: false, error: err })
             })
             .then(() => {
-                this.props.getServiceDetailsByShortcutsAction([])
+                this.props.getServiceDetailsByShortcutsAction({ success: true, data: [] })
                 this.props.deleteAllRoloutStatusesAction()
             })
     }
@@ -78,7 +95,7 @@ class RolloutStatus extends React.Component {
     handleApplicationDropdownOnChange = (e, { value }) => {
         this.props.deleteAllRoloutStatusesAction()
         this.setState({ loadingServiceDetails: true, applicationDropdownValue: value });
-        var filteredApps = this.props.rolloutStatusStore.dismeApplications.filter(x => x.value === value);
+        var filteredApps = this.props.rolloutStatusStore.dismeApplications.data.filter(x => x.value === value);
 
         var shortcuts = filteredApps.map(x => x.services.map(y => y.Shortcut))[0];
 
@@ -94,7 +111,7 @@ class RolloutStatus extends React.Component {
     handleApplicationDropdownOnSearchChange = (e) => {
         if (e.target.value.length > 1) {
 
-            var filtered = this.props.rolloutStatusStore.dismeApplications.filter(x => x.text.toString().search(new RegExp(x.text, "i")) >= 0)
+            var filtered = this.props.rolloutStatusStore.dismeApplications.data.filter(x => x.text.toString().search(new RegExp(x.text, "i")) >= 0)
             this.setState({ dismeApplicationsFiltered: filtered });
         }
     }
@@ -125,16 +142,23 @@ class RolloutStatus extends React.Component {
         getServiceByShortcut(services)
             .then(res => {
                 if (res.data) {
-                    this.props.getServiceDetailsByShortcutsAction(res.data)
+                    this.props.getServiceDetailsByShortcutsAction({ success: true, data: res.data })
                 }
                 else {
-                    this.props.getServiceDetailsByShortcutsAction([])
+                    this.props.getServiceDetailsByShortcutsAction({ success: true, data: [] })
                 }
 
                 this.setState({ loadingServiceDetails: false });
+
+                return true;
             })
-            .then(() => {
-                this.getRolloutStatuses()
+            .catch(err => {
+                this.props.getServiceDetailsByShortcutsAction({ success: false, error: err })
+            })
+            .then((res) => {
+                if(res) {
+                    this.getRolloutStatuses()
+                }
             })
     }
 
@@ -243,6 +267,7 @@ class RolloutStatus extends React.Component {
             .then(res => {
                 this.props.searchServiceShortcutAction(res.data.map(e => ({ text: e.Name, value: e.Id })))
             })
+        // no catch because it can throw errors while user is typing
     }
 
     handleServiceShortcutSearchChange = (e) => {
@@ -295,7 +320,7 @@ class RolloutStatus extends React.Component {
 
         var segments = Object.assign([], this.state.segments)
 
-        this.props.rolloutStatusStore.serviceDetails.forEach(x => {
+        this.props.rolloutStatusStore.serviceDetails.data.forEach(x => {
             if (x === null) {
                 return
             }
@@ -313,7 +338,7 @@ class RolloutStatus extends React.Component {
             segments: segments
         });
 
-        this.props.rolloutStatusStore.serviceDetails.forEach(x => {
+        this.props.rolloutStatusStore.serviceDetails.data.forEach(x => {
             if (x === null) {
                 return
             }
@@ -445,17 +470,17 @@ class RolloutStatus extends React.Component {
             }
         ];
 
-        var servicesTableRows;
+        var servicesTableRows = [];
 
-        if (!_.isEmpty(this.state.getServiceDetailsError)) {
-            servicesTableRows = (
+        if (!this.props.rolloutStatusStore.serviceDetails.success) {
+            servicesTableRows.push(
                 <Table.Row error>
                     <Table.Cell colSpan={6}>Error fetching data</Table.Cell>
                 </Table.Row>
             )
         }
         else {
-            servicesTableRows = this.props.rolloutStatusStore.serviceDetails.map((service, index) => {
+            servicesTableRows = this.props.rolloutStatusStore.serviceDetails.data.map((service, index) => {
                 if (service) {
                     return (
                         <Table.Row key={service.Service[0].Id}>
@@ -631,6 +656,30 @@ class RolloutStatus extends React.Component {
             serviceDetails = null
         }
 
+        var dismeApplicationsDropdown;
+        if (this.props.rolloutStatusStore.dismeApplications.success) {
+            dismeApplicationsDropdown = (
+                <Dropdown
+                    icon='search'
+                    selection
+                    onChange={this.handleApplicationDropdownOnChange}
+                    options={this.state.dismeApplicationsFiltered.length === 0 ? this.props.rolloutStatusStore.dismeApplications.data : this.state.dismeApplicationsFiltered}
+                    fluid
+                    selectOnBlur={false}
+                    selectOnNavigation={false}
+                    placeholder='Type to search an application'
+                    onSearchChange={this.handleApplicationDropdownOnSearchChange}
+                    search
+                    value={this.state.inputProductsValues === "" ? "" : this.state.applicationDropdownValue}
+                />
+            )
+        }
+        else {
+            dismeApplicationsDropdown = (
+                <ErrorMessage title="Failed to get disme applications" message="" handleRefresh={this.fechtAndHandleDismeApplications} error={this.props.rolloutStatusStore.dismeApplications.error} />
+            )
+        }
+
         return (
             <Grid stackable>
                 <Grid.Row>
@@ -655,19 +704,7 @@ class RolloutStatus extends React.Component {
                             <Grid stackable>
                                 <Grid.Row>
                                     <Grid.Column width={3} >
-                                        <Dropdown
-                                            icon='search'
-                                            selection
-                                            onChange={this.handleApplicationDropdownOnChange}
-                                            options={this.state.dismeApplicationsFiltered.length === 0 ? this.props.rolloutStatusStore.dismeApplications : this.state.dismeApplicationsFiltered}
-                                            fluid
-                                            selectOnBlur={false}
-                                            selectOnNavigation={false}
-                                            placeholder='Type to search an application'
-                                            onSearchChange={this.handleApplicationDropdownOnSearchChange}
-                                            search
-                                            value={this.state.inputProductsValues === "" ? "" : this.state.applicationDropdownValue}
-                                        />
+                                        {dismeApplicationsDropdown}
                                     </Grid.Column>
                                     <Grid.Column width={13} >
                                         <Input

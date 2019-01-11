@@ -6,8 +6,8 @@ import {
 import { GET_HEALTH, GET_VERSION } from '../constants/ServiceConstants';
 
 const initialState = {
-    dismeApplications: [],
-    serviceDetails: [],
+    dismeApplications: { success: true, data: [] },
+    serviceDetails: { success: true, data: [] },
     rolloutStatuses: []
 }
 
@@ -21,13 +21,14 @@ const RolloutStatusReducer = (state = initialState, action) => {
             return Object.assign({}, state, { serviceDetails: action.payload })
         case REMOVE_SERVICE_DETAILS:
             return Object.assign({}, state, {
-                serviceDetails: state.serviceDetails.filter(x => {
-                    return x.Service[0].Shortcut !== action.payload.Shortcut
+                serviceDetails: state.serviceDetails.data.filter(x => {
+                    return x.Service[0].Shortcut !== action.payload.data.Shortcut
                 }),
                 rolloutStatuses: state.rolloutStatuses.filter(x => {
-                    return x.serviceName !== action.payload.Shortcut
+                    return x.serviceName !== action.payload.data.Shortcut
                 })
             })
+        // this doesn't have standard error handling
         case GET_ROLLOUT_STATUS:
             var isAlreadyThere = false;
             mappedRolloutStatuses = state.rolloutStatuses.map(x => {
@@ -53,8 +54,7 @@ const RolloutStatusReducer = (state = initialState, action) => {
             return copy;
         case DELETE_ALL_ROLLOUT_STATUSES:
             return Object.assign({}, state, { rolloutStatuses: [] })
-        // case DELETE_ROLLOUT_STATUS:
-        //     return Object.assign({}, state, { rolloutStatuses: state.rolloutStatuses.filter(x => x.serviceName !== action.payload) })
+        // this doesn't have standard error handling
         case GET_HEALTH:
             copy = Object.assign([], state.rolloutStatuses);
 
@@ -66,7 +66,7 @@ const RolloutStatusReducer = (state = initialState, action) => {
 
             mappedRolloutStatuses = copy[index].rolloutStatus.map(x => {
                 if (x.Ip === action.payload.ip) {
-                    if(action.payload.refreshTriggered) {
+                    if (action.payload.refreshTriggered) {
                         if ('healthInfo' in x) {
                             delete x.healthInfo
                         }
@@ -82,7 +82,7 @@ const RolloutStatusReducer = (state = initialState, action) => {
             copy[index].rolloutStatus = mappedRolloutStatuses
 
             return Object.assign({}, state, { rolloutStatuses: copy })
-
+        // this doesn't have standard error handling
         case GET_VERSION:
             copy = Object.assign([], state.rolloutStatuses);
 
@@ -94,7 +94,7 @@ const RolloutStatusReducer = (state = initialState, action) => {
 
             mappedRolloutStatuses = copy[index].rolloutStatus.map(x => {
                 if (x.Serverid === action.payload.serverId) {
-                    if(action.payload.refreshTriggered) {
+                    if (action.payload.refreshTriggered) {
                         if ('versionInfo' in x) {
                             delete x.versionInfo
                         }
