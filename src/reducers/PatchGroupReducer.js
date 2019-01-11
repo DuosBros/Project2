@@ -1,7 +1,7 @@
 import { GET_PATCHGROUPS } from '../constants/PatchGroupConstants';
 
 const initialState = {
-    patchGroups: null
+    patchGroups: { success: true }
 }
 
 const PatchGroupReducer = (state = initialState, action) => {

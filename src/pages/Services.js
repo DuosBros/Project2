@@ -1,22 +1,53 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import _ from 'lodash';
 
 import { Grid, Header, Segment, Message, Icon } from 'semantic-ui-react';
 import { getServices } from '../requests/ServiceAxios';
 import { getServicesAction } from '../actions/ServiceActions';
 import ServiceTable from '../components/ServiceTable';
+import ErrorMessage from '../components/ErrorMessage';
 
 class Services extends React.Component {
 
     componentDidMount() {
+        this.fetchServicesAndHandleResult()
+    }
+
+    fetchServicesAndHandleResult = () => {
         getServices()
             .then(res => {
-                this.props.getServicesAction(res.data)
+                this.props.getServicesAction({ success: true, data: res.data })
+            })
+            .catch(err => {
+                this.props.getServicesAction({ success: false, error: err })
             })
     }
+
     render() {
-        if (this.props.serviceStore.services === null) {
+
+        // in case of error
+        if (!this.props.serviceStore.services.success) {
+            return (
+                <Grid stackable>
+                    <Grid.Row>
+                        <Grid.Column>
+                            <Header block attached='top' as='h4'>
+                                Services
+                            </Header>
+                            <Segment attached='bottom' >
+                                <ErrorMessage handleRefresh={this.fetchServicesAndHandleResult} error={this.props.serviceStore.services.error} />
+                            </Segment>
+                        </Grid.Column>
+                    </Grid.Row>
+                </Grid>
+
+            );
+        }
+
+        // in case it's still loading data
+        if (_.isEmpty(this.props.serviceStore.services.data)) {
             return (
                 <div className="messageBox">
                     <Message info icon>
@@ -28,22 +59,22 @@ class Services extends React.Component {
                 </div>
             )
         }
-        else {
-            return (
-                <Grid stackable>
-                    <Grid.Row>
-                        <Grid.Column>
-                            <Header block attached='top' as='h4'>
-                                Services
+
+        // render page
+        return (
+            <Grid stackable>
+                <Grid.Row>
+                    <Grid.Column>
+                        <Header block attached='top' as='h4'>
+                            Services
                             </Header>
-                            <Segment attached='bottom' >
-                                <ServiceTable defaultLimitOverride={50} data={this.props.serviceStore.services} compact="very" />
-                            </Segment>
-                        </Grid.Column>
-                    </Grid.Row>
-                </Grid>
-            )
-        }
+                        <Segment attached='bottom' >
+                            <ServiceTable defaultLimitOverride={50} data={this.props.serviceStore.services.data} compact="very" />
+                        </Segment>
+                    </Grid.Column>
+                </Grid.Row>
+            </Grid>
+        )
     }
 }
 

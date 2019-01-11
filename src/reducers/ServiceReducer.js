@@ -4,7 +4,7 @@ import { getServerState, getDismeState } from '../utils/HelperFunction';
 const serviceInitialState = {
     serviceDetails: { success: true },
     showLoadBalancerFarmsTasksModal: false,
-    services: null
+    services: { success: true }
 }
 
 const ServiceReducer = (state = serviceInitialState, action) => {

@@ -1,7 +1,7 @@
 import { GET_LOADBALANCER_FARMS } from '../constants/LoadBalancerFarmsConstants';
 
 const initialState = {
-    loadBalancerFarms: null
+    loadBalancerFarms: { success: true }
 }
 
 const LoadBalancerFarmsTasksReducer = (state = initialState, action) => {

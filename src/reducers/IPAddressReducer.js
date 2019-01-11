@@ -1,7 +1,7 @@
 import { GET_IPADDRESSES } from '../constants/IPAddressConstants';
 
 const initialState = {
-    ipAddresses: null
+    ipAddresses: { success: true }
 }
 
 const IPAddressReducer = (state = initialState, action) => {

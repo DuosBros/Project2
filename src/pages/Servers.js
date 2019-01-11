@@ -1,27 +1,62 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import _ from 'lodash';
 
 import { Grid, Header, Segment, Message, Icon } from 'semantic-ui-react';
 import { getServers } from '../requests/ServerAxios';
 import { getServersAction } from '../actions/ServerActions';
 import ServersTable from '../components/ServersTable';
 import { getServerState, getDismeState } from '../utils/HelperFunction';
+import ErrorMessage from '../components/ErrorMessage';
 
 class Servers extends React.Component {
 
     componentDidMount() {
+        this.fetchServersAndHandleResult()
+    }
+
+    fetchServersAndHandleResult = () => {
         getServers()
             .then(res => {
-                this.props.getServersAction(res.data.map(server => {
-                    server.ServerState = getServerState(server.ServerStateID)
-                    server.Disme = getDismeState(server.Disme)
-                    return server
-                }))
+                this.props.getServersAction(
+                    {
+                        success: true,
+                        data: res.data.map(server => {
+                            server.ServerState = getServerState(server.ServerStateID)
+                            server.Disme = getDismeState(server.Disme)
+                            return server
+                        })
+                    })
+            })
+            .catch(err => {
+                this.props.getServersAction({ success: false, error: err })
             })
     }
+
     render() {
-        if (this.props.serverStore.servers === null) {
+
+        // in case of error
+        if (!this.props.serverStore.servers.success) {
+            return (
+                <Grid stackable>
+                    <Grid.Row>
+                        <Grid.Column>
+                            <Header block attached='top' as='h4'>
+                                Servers
+                            </Header>
+                            <Segment attached='bottom' >
+                                <ErrorMessage handleRefresh={this.fetchServersAndHandleResult} error={this.props.serverStore.servers.error} />
+                            </Segment>
+                        </Grid.Column>
+                    </Grid.Row>
+                </Grid>
+
+            );
+        }
+
+        // in case it's still loading data
+        if (_.isEmpty(this.props.serverStore.servers.data)) {
             return (
                 <div className="messageBox">
                     <Message info icon>
@@ -33,22 +68,22 @@ class Servers extends React.Component {
                 </div>
             )
         }
-        else {
-            return (
-                <Grid stackable>
-                    <Grid.Row>
-                        <Grid.Column>
-                            <Header block attached='top' as='h4'>
-                                Servers
+
+        // render page
+        return (
+            <Grid stackable>
+                <Grid.Row>
+                    <Grid.Column>
+                        <Header block attached='top' as='h4'>
+                            Servers
                             </Header>
-                            <Segment attached='bottom' >
-                                <ServersTable defaultLimitOverride={50} data={this.props.serverStore.servers} compact="very" />
-                            </Segment>
-                        </Grid.Column>
-                    </Grid.Row>
-                </Grid>
-            )
-        }
+                        <Segment attached='bottom' >
+                            <ServersTable defaultLimitOverride={50} data={this.props.serverStore.servers.data} compact="very" />
+                        </Segment>
+                    </Grid.Column>
+                </Grid.Row>
+            </Grid>
+        )
     }
 }
 

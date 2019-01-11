@@ -5,7 +5,7 @@ const serverInitialState = {
     serverDetails: { success: true },
     vmDetails: {},
     scomAlerts: { success: true },
-    servers: null
+    servers: { success: true }
 }
 
 const ServerReducer = (state = serverInitialState, action) => {

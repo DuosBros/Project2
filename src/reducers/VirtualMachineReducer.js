@@ -1,7 +1,7 @@
 import { GET_VIRTUALMACHINES } from '../constants/VirtualMachineConstants';
 
 const initialState = {
-    virtualMachines: null
+    virtualMachines: { success: true }
 }
 
 const VirtualMachineReducer = (state = initialState, action) => {

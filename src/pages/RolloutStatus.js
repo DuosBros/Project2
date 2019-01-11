@@ -71,7 +71,6 @@ class RolloutStatus extends React.Component {
     fechtAndHandleDismeApplications = () => {
         getDismeApplications()
             .then(res => {
-                throw new Error("test")
                 this.props.getDismeApplicationsAction({
                     success: true,
                     data: res.data.map(x =>

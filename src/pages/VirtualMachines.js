@@ -1,22 +1,52 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import _ from 'lodash';
 
 import { Grid, Header, Segment, Message, Icon } from 'semantic-ui-react';
 import { getVirtualMachines } from '../requests/VirtualMachineAxios';
 import { getVirtualMachinesAction } from '../actions/VirtualMachineAction';
 import VirtualMachinesTable from '../components/VirtualMachinesTable';
+import ErrorMessage from '../components/ErrorMessage';
 
 class VirtualMachines extends React.Component {
 
     componentDidMount() {
+        this.fetchVirtualMachinesAndHandleResult()
+    }
+
+    fetchVirtualMachinesAndHandleResult = () => {
         getVirtualMachines()
             .then(res => {
-                this.props.getVirtualMachinesAction(res.data)
+                this.props.getVirtualMachinesAction({ success: true, data: res.data })
+            })
+            .catch(err => {
+                this.props.getVirtualMachinesAction({ success: false, error: err })
             })
     }
+
     render() {
-        if (this.props.virtualMachineStore.virtualMachines === null) {
+
+        // in case of error
+        if (!this.props.virtualMachineStore.virtualMachines.success) {
+            return (
+                <Grid stackable>
+                    <Grid.Row>
+                        <Grid.Column>
+                            <Header block attached='top' as='h4'>
+                                Virtual Machines
+                            </Header>
+                            <Segment attached='bottom' >
+                                <ErrorMessage handleRefresh={this.fetchVirtualMachinesAndHandleResult} error={this.props.virtualMachineStore.virtualMachines.error} />
+                            </Segment>
+                        </Grid.Column>
+                    </Grid.Row>
+                </Grid>
+            );
+        }
+
+        // in case it's still loading data
+        if (_.isEmpty(this.props.virtualMachineStore.virtualMachines.data)) {
             return (
                 <div className="messageBox">
                     <Message info icon>
@@ -28,22 +58,23 @@ class VirtualMachines extends React.Component {
                 </div>
             )
         }
-        else {
-            return (
-                <Grid stackable>
-                    <Grid.Row>
-                        <Grid.Column>
-                            <Header block attached='top' as='h4'>
-                                Virtual Machines
+
+        // render page
+        return (
+            <Grid stackable>
+                <Grid.Row>
+                    <Grid.Column>
+                        <Header block attached='top' as='h4'>
+                            Virtual Machines
                             </Header>
-                            <Segment attached='bottom' >
-                                <VirtualMachinesTable compact="very" defaultLimitOverride={50} data={this.props.virtualMachineStore.virtualMachines} />
-                            </Segment>
-                        </Grid.Column>
-                    </Grid.Row>
-                </Grid>
-            )
-        }
+                        <Segment attached='bottom' >
+                            <VirtualMachinesTable compact="very" defaultLimitOverride={50} data={this.props.virtualMachineStore.virtualMachines.data} />
+                        </Segment>
+                    </Grid.Column>
+                </Grid.Row>
+            </Grid>
+        )
+
     }
 }
 
