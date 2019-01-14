@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Modal, Header, Segment, Grid } from 'semantic-ui-react';
+import { Button, Modal, Header, Segment, Grid, Message, Icon } from 'semantic-ui-react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -14,6 +14,7 @@ import LoadBalancerFarmsTable from '../components/LoadBalancerFarmsTable';
 import { getAllLoadBalancerFarms, saveLoadBalancerFarmsChanges } from '../requests/LoadBalancerFarmsAxios';
 import { getServiceDetails } from '../requests/ServiceAxios';
 import { getServiceDetailsAction } from '../actions/ServiceActions';
+import ErrorMessage from '../components/ErrorMessage';
 
 class LoadBalancerFarmsTasks extends React.Component {
 
@@ -29,15 +30,23 @@ class LoadBalancerFarmsTasks extends React.Component {
     componentWillReceiveProps(next) {
         if (this.props.show !== next.show) {
             this.setState({ loadBalancerFarmsToAdd: [], loadBalancerFarmsToRemove: [] });
-            getAllLoadBalancerFarms()
-                .then(res => {
-                    this.props.getAllLoadBalancerFarmsAction(res.data)
-                })
+
+            this.fetchLoadBalancerFarmsAndHandleData();
         }
     }
 
+    fetchLoadBalancerFarmsAndHandleData = () => {
+        getAllLoadBalancerFarms()
+            .then(res => {
+                this.props.getAllLoadBalancerFarmsAction({ success: true, data: res.data })
+            })
+            .catch(err => {
+                this.props.getAllLoadBalancerFarmsAction({ success: false, error: err })
+            })
+    }
+
     handleSave = () => {
-        var serviceDetails = this.props.serviceStore.serviceDetails.Service[0]
+        var serviceDetails = this.props.serviceStore.serviceDetails.data.Service[0]
         var merged = this.state.loadBalancerFarmsToAdd.concat(this.state.loadBalancerFarmsToRemove)
         var grouped = groupBy(merged, "LbId")
         var keys = Object.keys(grouped);
@@ -54,7 +63,10 @@ class LoadBalancerFarmsTasks extends React.Component {
                     that.props.toggleLoadBalancerFarmsTasksModalAction()
                     getServiceDetails(serviceDetails.Id)
                         .then(res => {
-                            this.props.getServiceDetailsAction(res.data)
+                            this.props.getServiceDetailsAction({ success: true, data: res.data })
+                        })
+                        .catch(err => {
+                            this.props.getServiceDetailsAction({ success: false, error: err })
                         })
                 })
         }
@@ -91,21 +103,108 @@ class LoadBalancerFarmsTasks extends React.Component {
     }
 
     render() {
-        if(!this.props.show) {
+        if (!this.props.show) {
             return null;
         }
 
-        if (isAdmin(this.props.baseStore.currentUser)) {
-            var serviceDetails = this.props.serviceStore.serviceDetails.data;
+        var serviceDetails = this.props.serviceStore.serviceDetails.data;
 
+        // in case of error
+        if (!this.props.loadBalancerFarmsStore.loadBalancerFarms.success) {
+            return (
+                <Modal
+                    size='fullscreen'
+                    open={this.props.show}
+                    closeOnEscape={true}
+                    closeOnDimmerClick={false}
+                    closeIcon={true}
+                    onClose={() => this.props.toggleLoadBalancerFarmsTasksModalAction()}
+                >
+                    <React.Fragment>
+                        <Modal.Header>Add or Remove LoadBalancerFarm - {serviceDetails.Service[0].Shortcut}</Modal.Header>
+                        <Modal.Content>
+                            <Grid>
+                                <Grid.Row>
+                                    <Grid.Column>
+                                        <Header block attached='top' as='h4'>
+                                            Assign LoadBalancerFarms to Service
+                                        </Header>
+                                        <Segment attached='bottom'>
+                                            <ErrorMessage handleRefresh={this.fetchLoadBalancerFarmsAndHandleData} error={this.props.loadBalancerFarmsStore.loadBalancerFarms.error} />
+                                        </Segment>
+                                    </Grid.Column>
+                                </Grid.Row>
+                            </Grid>
+                        </Modal.Content>
+                    </React.Fragment>
+                    <Modal.Actions>
+                        <Button
+                            onClick={() => this.props.toggleLoadBalancerFarmsTasksModalAction()}
+                            positive
+                            labelPosition='right'
+                            icon='checkmark'
+                            content='Close'
+                        />
+                    </Modal.Actions>
+                </Modal>
+            );
+        }
+
+        // in case it's still loading data
+        if (_.isEmpty(this.props.loadBalancerFarmsStore.loadBalancerFarms.data)) {
+            return (
+                <Modal
+                    size='fullscreen'
+                    open={this.props.show}
+                    closeOnEscape={true}
+                    closeOnDimmerClick={false}
+                    closeIcon={true}
+                    onClose={() => this.props.toggleLoadBalancerFarmsTasksModalAction()}
+                >
+                    <React.Fragment>
+                        <Modal.Header>Add or Remove LoadBalancerFarm - {serviceDetails.Service[0].Shortcut}</Modal.Header>
+                        <Modal.Content>
+                            <Grid>
+                                <Grid.Row>
+                                    <Grid.Column>
+                                        <Header block attached='top' as='h4'>
+                                            Assign LoadBalancerFarms to Service
+                                    </Header>
+                                        <Segment attached='bottom'>
+                                            <Message info icon>
+                                                <Icon name='circle notched' loading />
+                                                <Message.Content>
+                                                    <Message.Header>Fetching server details</Message.Header>
+                                                </Message.Content>
+                                            </Message>
+                                        </Segment>
+                                    </Grid.Column>
+                                </Grid.Row>
+                            </Grid>
+                        </Modal.Content>
+                    </React.Fragment>
+                    <Modal.Actions>
+                        <Button
+                            onClick={() => this.props.toggleLoadBalancerFarmsTasksModalAction()}
+                            positive
+                            labelPosition='right'
+                            icon='checkmark'
+                            content='Close'
+                        />
+                    </Modal.Actions>
+                </Modal>
+            );
+        }
+
+        // render modal
+        if (isAdmin(this.props.baseStore.currentUser)) {
             if (!_.isEmpty(serviceDetails)) {
-                var allLoadBalancerFarms = this.props.loadBalancerFarmsStore.loadBalancerFarms
+                var allLoadBalancerFarms = this.props.loadBalancerFarmsStore.loadBalancerFarms.data
                 var filteredLoadBalancerFarms = null;
 
                 if (allLoadBalancerFarms !== null) {
                     filteredLoadBalancerFarms = allLoadBalancerFarms.filter((el) => !serviceDetails.LbFarms.map(x => x.Id).includes(el.Id));
                 }
-
 
                 var modalBody = (
                     <React.Fragment>
