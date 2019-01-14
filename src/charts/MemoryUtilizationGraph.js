@@ -1,5 +1,5 @@
 import React from 'react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ComposedChart, LineChart, Line } from 'recharts';
 
 class MemoryUtilizationGraph extends React.Component {
 
@@ -12,19 +12,19 @@ class MemoryUtilizationGraph extends React.Component {
             { name: 'Page E', uv: 1890, pv: 4800, amt: 2181 },
             { name: 'Page F', uv: 2390, pv: 3800, amt: 2500 },
             { name: 'Page G', uv: 3490, pv: 4300, amt: 2100 },
-        ];
+        ].map(e => ({ name: e.name, area1: [e.uv, e.pv], amt: e.amt}));
 
         return (
-            <ResponsiveContainer>
-                <AreaChart data={data}
-                // margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-                >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Area type='monotone' dataKey='uv' stroke='#8884d8' fill='#8884d8' />
-                </AreaChart>
+            <ResponsiveContainer height={125}>
+                <ComposedChart data={data}
+                margin={{top: 10, right: 30, left: 0, bottom: 0}}>
+                    <CartesianGrid strokeDasharray="3 3"/>
+                    <XAxis dataKey="name"/>
+                    <YAxis/>
+                    <Tooltip/>
+                    <Area type='monotone' dataKey='area1' stroke='#8884d8' fill='#8884d8' />
+                    <Line type="monotone" dataKey="amt" stroke="#ff0000" />
+                </ComposedChart>
             </ResponsiveContainer>
         );
     }
