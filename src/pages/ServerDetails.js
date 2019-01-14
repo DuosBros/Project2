@@ -8,8 +8,8 @@ import moment from 'moment'
 import SimpleTable from '../components/SimpleTable';
 import ServerStatus from '../components/ServerStatus';
 
-import { getServerDetailsAction, getVmDetailsAction, getServerScomAlertsAction } from '../actions/ServerActions';
-import { getServerDetails, getServerScomAlerts } from '../requests/ServerAxios';
+import { getServerDetailsAction, getVmDetailsAction, getServerScomAlertsAction, getServerStatsAction } from '../actions/ServerActions';
+import { getServerDetails, getServerScomAlerts, getDiskUsageDetails } from '../requests/ServerAxios';
 
 import { KIBANA_WINLOGBEAT_SERVER_URL, KIBANA_SERVER_URL_PLACEHOLDER, KIBANA_PERFCOUNTER_SERVER_URL, DISME_SERVICE_PLACEHOLDER, DISME_SERVICE_URL, errorColor } from '../appConfig';
 
@@ -69,13 +69,34 @@ class ServerDetails extends React.Component {
                     .catch((err) => {
                         this.props.getServerScomAlertsAction({ success: false, error: err });
                     })
+
+                return res
             })
             .catch((err) => {
                 this.props.getServerScomAlertsAction({ success: false, error: err });
             })
+            .then((res) => {
+                if (!res) {
+                    return
+                }
+
+                if (_.isEmpty(res.data)) {
+                    return
+                }
+
+                return getDiskUsageDetails(res.data.ServerName)
+            })
+            .then(res => {
+                this.props.getServerStatsAction({ success: true, data: res.data })
+            })
+            .catch(err => {
+                this.props.getServerStatsAction({ success: false, error: err })
+            })
+
     }
 
     componentDidUpdate(prevProps) {
+
         if (this.props.match && this.props.match.params) {
             const params = this.props.match.params;
             if (params.id && params.id !== prevProps.match.params.id) {
@@ -102,6 +123,8 @@ class ServerDetails extends React.Component {
     }
 
     render() {
+        console.log(this.props.serverStore.serverDetails.data);
+        
         var serverDetailsSuccess = this.props.serverStore.serverDetails.success;
         var serverDetailsData = this.props.serverStore.serverDetails.data;
 
@@ -349,7 +372,7 @@ class ServerDetails extends React.Component {
                         <Segment attached>
                             <Grid stackable>
                                 <Grid.Row>
-                                    <Grid.Column width={8}>
+                                    <Grid.Column width={6}>
                                         <dl className="dl-horizontal">
                                             <dt>Server Name:</dt>
                                             <dd>{serverDetailsData.ServerName}</dd>
@@ -384,7 +407,7 @@ class ServerDetails extends React.Component {
                                             <dd>{serverDetailsData.Domain}</dd>
                                         </dl>
                                     </Grid.Column>
-                                    <Grid.Column width={8}>
+                                    <Grid.Column width={6}>
                                         <dl className="dl-horizontal">
                                             <dt>OS:</dt>
                                             <dd>{OSIcon} {serverDetailsData.OperatingSystem}</dd>
@@ -415,6 +438,12 @@ class ServerDetails extends React.Component {
                                                 <a target="_blank" rel="noopener noreferrer" href={_.replace(KIBANA_WINLOGBEAT_SERVER_URL, new RegExp(KIBANA_SERVER_URL_PLACEHOLDER, "g"), serverDetailsData.ServerName)}>Eventlog</a><br />
                                                 <a target="_blank" rel="noopener noreferrer" href={_.replace(KIBANA_PERFCOUNTER_SERVER_URL, new RegExp(KIBANA_SERVER_URL_PLACEHOLDER, "g"), serverDetailsData.ServerName)}>PerfCounter</a>
                                             </dd>
+                                        </dl>
+                                    </Grid.Column>
+                                    <Grid.Column width={4}>
+                                        <dl className="dl-horizontal">
+                                            <dt>Disk usage:</dt>
+                                            {/* <dd>{serverDetailsData.serverStats.success ? "success" : "fail"}</dd> */}
                                         </dl>
                                     </Grid.Column>
                                     <Grid.Column width={16}>
@@ -562,7 +591,8 @@ function mapDispatchToProps(dispatch) {
     return bindActionCreators({
         getServerDetailsAction,
         getVmDetailsAction,
-        getServerScomAlertsAction
+        getServerScomAlertsAction,
+        getServerStatsAction
     }, dispatch);
 }
 

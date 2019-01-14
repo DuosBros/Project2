@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { LOCO_API } from '../appConfig';
+import { LOCO_API, PM_API, DEFAULT_TIME_FRAME, DEFAULT_INTERVAL } from '../appConfig';
 
 export function getServerDetails(serverId) {
     return axios.get(LOCO_API + 'server/' + serverId + '/full', { withCredentials: true });
@@ -15,4 +15,9 @@ export function getServerScomAlerts(serverName) {
 
 export function getServers() {
     return axios.get(LOCO_API + 'server/');
+}
+
+export function getDiskUsageDetails(serverName) {
+    // TODO    
+    return axios.get(PM_API + 'serverStats/' + serverName + "/" + DEFAULT_TIME_FRAME + "/" + DEFAULT_INTERVAL)
 }

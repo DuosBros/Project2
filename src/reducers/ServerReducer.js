@@ -1,4 +1,4 @@
-import { GET_SERVER_DETAILS, GET_VM_DETAILS, GET_SERVER_SCOM_ALERTS, GET_SERVERS } from '../constants/ServerConstants';
+import { GET_SERVER_DETAILS, GET_VM_DETAILS, GET_SERVER_SCOM_ALERTS, GET_SERVERS, GET_SERVER_STATS } from '../constants/ServerConstants';
 import { getServerState, getDismeState } from '../utils/HelperFunction';
 
 const serverInitialState = {
@@ -23,6 +23,10 @@ const ServerReducer = (state = serverInitialState, action) => {
             return Object.assign({}, state, { scomAlerts: action.payload })
         case GET_SERVERS:
             return Object.assign({}, state, { servers: action.payload })
+        case GET_SERVER_STATS:
+            var temp = Object.assign({}, state.serverDetails)
+            temp.data.serverStats = action.payload
+            return Object.assign({}, state, { serverDetails: temp })
         default:
             return state;
     }

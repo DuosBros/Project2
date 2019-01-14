@@ -6,3 +6,5 @@ export const GET_SERVER_SCOM_ALERTS = 'GET_SERVER_SCOM_ALERTS';
 
 export const GET_SERVERS = 'GET_SERVERS';
 
+export const GET_SERVER_STATS = 'GET_SERVER_STATS';
+
