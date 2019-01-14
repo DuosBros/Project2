@@ -229,3 +229,7 @@ div.content.noimg {
     cursor: pointer;
     margin: 0 0 0 0.5em
 }
+
+.leftMargin {
+    margin-left: 0.5em
+}

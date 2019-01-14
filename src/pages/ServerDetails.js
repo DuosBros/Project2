@@ -92,7 +92,6 @@ class ServerDetails extends React.Component {
             .catch(err => {
                 this.props.getServerStatsAction({ success: false, error: err })
             })
-
     }
 
     componentDidUpdate(prevProps) {
@@ -124,7 +123,7 @@ class ServerDetails extends React.Component {
 
     render() {
         console.log(this.props.serverStore.serverDetails.data);
-        
+
         var serverDetailsSuccess = this.props.serverStore.serverDetails.success;
         var serverDetailsData = this.props.serverStore.serverDetails.data;
 
@@ -354,6 +353,58 @@ class ServerDetails extends React.Component {
             )
         })
 
+        var serverStatsSegment;
+
+        if (_.isEmpty(serverDetailsData.serverStats)) {
+            serverStatsSegment = (
+                <Message info icon>
+                    <Icon name='circle notched' loading />
+                    <Message.Content>
+                        <Message.Header>Fetching server stats</Message.Header>
+                    </Message.Content>
+                </Message>
+            )
+        }
+        else {
+            if (!serverDetailsData.serverStats.success) {
+                serverStatsSegment = (
+                    <ErrorMessage />
+                )
+            }
+            else {
+                serverStatsSegment = (
+                    <>
+                        <dl className="dl-horizontal">
+                            <dt>Disk Usage:</dt>
+                            <dd>{serverDetailsData.serverStats.data.diskUsage.mounts.map((x, i) => {
+                                var mountInfo = (
+                                    <React.Fragment key={i}>
+                                        <strong>
+                                            {x.mount}
+                                        </strong>
+                                        <span className="leftMargin">
+                                            {x.pct * 100 + "%"}
+                                        </span>
+                                        <br />
+                                    </React.Fragment>
+                                )
+                                return mountInfo
+                            })}</dd>
+                        </dl>
+                        {/* <dl className="dl-horizontal">
+                            <dt>CPU Usage:</dt>
+                            <dd>{}</dd>
+                        </dl>
+                        <dl className="dl-horizontal">
+                            <dt>Memory Usage:</dt>
+                            <dd>{}</dd>
+                        </dl> */}
+                    </>
+                )
+            }
+        }
+
+
         // render page
         return (
             <Grid stackable>
@@ -372,7 +423,7 @@ class ServerDetails extends React.Component {
                         <Segment attached>
                             <Grid stackable>
                                 <Grid.Row>
-                                    <Grid.Column width={6}>
+                                    <Grid.Column width={5}>
                                         <dl className="dl-horizontal">
                                             <dt>Server Name:</dt>
                                             <dd>{serverDetailsData.ServerName}</dd>
@@ -407,7 +458,7 @@ class ServerDetails extends React.Component {
                                             <dd>{serverDetailsData.Domain}</dd>
                                         </dl>
                                     </Grid.Column>
-                                    <Grid.Column width={6}>
+                                    <Grid.Column width={5}>
                                         <dl className="dl-horizontal">
                                             <dt>OS:</dt>
                                             <dd>{OSIcon} {serverDetailsData.OperatingSystem}</dd>
@@ -440,11 +491,9 @@ class ServerDetails extends React.Component {
                                             </dd>
                                         </dl>
                                     </Grid.Column>
-                                    <Grid.Column width={4}>
-                                        <dl className="dl-horizontal">
-                                            <dt>Disk usage:</dt>
-                                            {/* <dd>{serverDetailsData.serverStats.success ? "success" : "fail"}</dd> */}
-                                        </dl>
+                                    <Grid.Column width={6}>
+                                        {serverStatsSegment}
+
                                     </Grid.Column>
                                     <Grid.Column width={16}>
                                         <dl className="dl-horizontal">
