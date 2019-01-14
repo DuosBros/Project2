@@ -373,24 +373,30 @@ class ServerDetails extends React.Component {
                 )
             }
             else {
+                let diskUsageDetails = null, diskUsageTs = "No data available";
+                if(serverDetailsData.serverStats.data.diskUsage) {
+                    diskUsageTs = moment(serverDetailsData.serverStats.data.diskUsage.ts).format("DD.MM.YYYY HH:mm");
+                    diskUsageDetails = serverDetailsData.serverStats.data.diskUsage.mounts.map((x, i) => {
+                        var mountInfo = (
+                            <React.Fragment key={i}>
+                                <strong>
+                                    {x.mount}
+                                </strong>
+                                <span className="leftMargin">
+                                    {Math.round((x.pct) * 100) + " %"}
+                                </span>
+                                <br />
+                            </React.Fragment>
+                        )
+                        return mountInfo
+                    });
+                }
+
                 serverStatsSegment = (
                     <>
                         <dl className="dl-horizontal">
-                            <dt>Disk Usage: <br /> {moment(serverDetailsData.serverStats.data.diskUsage.ts).format("DD.MM.YYYY HH:mm")}</dt>
-                            <dd>{serverDetailsData.serverStats.data.diskUsage.mounts.map((x, i) => {
-                                var mountInfo = (
-                                    <React.Fragment key={i}>
-                                        <strong>
-                                            {x.mount}
-                                        </strong>
-                                        <span className="leftMargin">
-                                            {Math.round((x.pct) * 100) + " %"}
-                                        </span>
-                                        <br />
-                                    </React.Fragment>
-                                )
-                                return mountInfo
-                            })}</dd>
+                            <dt>Disk Usage: <br />{diskUsageTs}</dt>
+                            <dd>{diskUsageDetails}</dd>
                         </dl>
                         <dl className="dl-horizontal">
                             <dt>CPU Usage:</dt>
