@@ -18,6 +18,7 @@ import SCOMSegment from '../components/SCOMSegment';
 import DismeStatus from '../components/DismeStatus';
 import { Link } from 'react-router-dom';
 import ErrorMessage from '../components/ErrorMessage';
+import MemoryUtilizationGraph from '../charts/MemoryUtilizationGraph';
 
 class ServerDetails extends React.Component {
 
@@ -375,7 +376,7 @@ class ServerDetails extends React.Component {
                 serverStatsSegment = (
                     <>
                         <dl className="dl-horizontal">
-                            <dt>Disk Usage:</dt>
+                            <dt>Disk Usage: <br /> {moment(serverDetailsData.serverStats.data.diskUsage.ts).format("DD.MM.YYYY HH:mm")}</dt>
                             <dd>{serverDetailsData.serverStats.data.diskUsage.mounts.map((x, i) => {
                                 var mountInfo = (
                                     <React.Fragment key={i}>
@@ -383,7 +384,7 @@ class ServerDetails extends React.Component {
                                             {x.mount}
                                         </strong>
                                         <span className="leftMargin">
-                                            {x.pct * 100 + "%"}
+                                            {Math.round((x.pct) * 100) + " %"}
                                         </span>
                                         <br />
                                     </React.Fragment>
@@ -391,14 +392,16 @@ class ServerDetails extends React.Component {
                                 return mountInfo
                             })}</dd>
                         </dl>
-                        {/* <dl className="dl-horizontal">
+                        <dl className="dl-horizontal">
                             <dt>CPU Usage:</dt>
                             <dd>{}</dd>
                         </dl>
                         <dl className="dl-horizontal">
                             <dt>Memory Usage:</dt>
-                            <dd>{}</dd>
-                        </dl> */}
+                            <dd>
+                                <MemoryUtilizationGraph />
+                            </dd>
+                        </dl>
                     </>
                 )
             }
