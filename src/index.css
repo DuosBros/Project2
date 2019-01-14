@@ -231,5 +231,6 @@ div.content.noimg {
 }
 
 .leftMargin {
-    margin-left: 0.5em
+    margin-left: 1.5em;
+    margin-right: 0.5em
 }

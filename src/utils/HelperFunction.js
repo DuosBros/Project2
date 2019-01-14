@@ -1,3 +1,12 @@
+import moment from 'moment'
+
+export const mapDataForMinMaxAvgChart = (data) => {
+    return data.map(e => ({
+        name: moment(e.ts).format("HH:mm"),
+        "Min-Max": [+e.min.toFixed(2), +e.max.toFixed(2)],
+        avg: + e.avg.toFixed(2)
+    }))
+}
 
 export const groupBy = (items, key) => items.reduce(
     (result, item) => ({

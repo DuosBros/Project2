@@ -18,7 +18,8 @@ import SCOMSegment from '../components/SCOMSegment';
 import DismeStatus from '../components/DismeStatus';
 import { Link } from 'react-router-dom';
 import ErrorMessage from '../components/ErrorMessage';
-import MemoryUtilizationGraph from '../charts/MemoryUtilizationGraph';
+import MinMaxAvgAreaChart from '../charts/MinMaxAvgAreaChart';
+import { mapDataForMinMaxAvgChart } from '../utils/HelperFunction';
 
 class ServerDetails extends React.Component {
 
@@ -373,13 +374,14 @@ class ServerDetails extends React.Component {
                 )
             }
             else {
-                let diskUsageDetails = null, diskUsageTs = "No data available";
-                if(serverDetailsData.serverStats.data.diskUsage) {
+                let diskUsageDetails = "No data available"
+                let diskUsageTs;
+                if (serverDetailsData.serverStats.data.diskUsage) {
                     diskUsageTs = moment(serverDetailsData.serverStats.data.diskUsage.ts).format("DD.MM.YYYY HH:mm");
                     diskUsageDetails = serverDetailsData.serverStats.data.diskUsage.mounts.map((x, i) => {
                         var mountInfo = (
                             <React.Fragment key={i}>
-                                <strong>
+                                <strong className="leftMargin">
                                     {x.mount}
                                 </strong>
                                 <span className="leftMargin">
@@ -392,6 +394,22 @@ class ServerDetails extends React.Component {
                     });
                 }
 
+                let cpuUsageDetails = "No data available"
+
+                if (serverDetailsData.serverStats.data.cpuUtilization.length !== 0) {
+                    cpuUsageDetails = (
+                        <MinMaxAvgAreaChart data={mapDataForMinMaxAvgChart(serverDetailsData.serverStats.data.cpuUtilization)} />
+                    )
+                }
+
+                let memoryUsageDetails = "No data available";
+
+                if (serverDetailsData.serverStats.data.memoryUsage.length !== 0) {
+                    memoryUsageDetails = (
+                        <MinMaxAvgAreaChart toYAxis="dataMax" data={mapDataForMinMaxAvgChart(serverDetailsData.serverStats.data.memoryUsage)} />
+                    )
+                }
+
                 serverStatsSegment = (
                     <>
                         <dl className="dl-horizontal">
@@ -400,13 +418,11 @@ class ServerDetails extends React.Component {
                         </dl>
                         <dl className="dl-horizontal">
                             <dt>CPU Usage:</dt>
-                            <dd>{}</dd>
+                            <dd>{cpuUsageDetails}</dd>
                         </dl>
                         <dl className="dl-horizontal">
                             <dt>Memory Usage:</dt>
-                            <dd>
-                                <MemoryUtilizationGraph />
-                            </dd>
+                            <dd>{memoryUsageDetails}</dd>
                         </dl>
                     </>
                 )
