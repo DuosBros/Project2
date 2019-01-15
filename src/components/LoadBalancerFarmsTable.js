@@ -5,6 +5,14 @@ import VsStatus from './VsStatus';
 import LBPoolStatus from './LBPoolStatus';
 
 export default class LoadBalancerFarmsTable extends GenericTable {
+    constructor(props) {
+        super(props);
+        if(props.hasOwnProperty("defaultShowBETAPools")) {
+            this.state.showBETAPools = props.defaultShowBETAPools;
+        } else {
+            this.state.showBETAPools = true;
+        }
+    }
     getColumns() {
         return [
             {

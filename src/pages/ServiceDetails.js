@@ -208,7 +208,7 @@ class ServiceDetails extends React.Component {
                         {
                             assignedLoadBalancerFarms ? (
                                 <Segment attached='bottom'>
-                                    <LoadBalancerFarmsTable data={serviceDetailsData.LbFarms} />
+                                    <LoadBalancerFarmsTable data={serviceDetailsData.LbFarms} showTableHeaderFunctions={false} />
                                 </Segment>
                             ) : (
                                     <div></div>

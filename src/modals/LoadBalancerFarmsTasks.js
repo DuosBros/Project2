@@ -221,6 +221,7 @@ class LoadBalancerFarmsTasks extends React.Component {
                                                 isEdit={true}
                                                 isAdd={true}
                                                 data={filteredLoadBalancerFarms}
+                                                defaultShowBETAPools={false}
                                                 multiSearchInput={serviceDetails.Service[0].Name}
                                                 handleAdd={this.handleAdd}
                                                 handleRemove={this.handleRemove}
@@ -237,6 +238,7 @@ class LoadBalancerFarmsTasks extends React.Component {
                                         </Header>
                                         <Segment attached='bottom'>
                                             <LoadBalancerFarmsTable data={serviceDetails.LbFarms}
+                                                defaultShowBETAPools={false}
                                                 isEdit={true}
                                                 isAdd={false}
                                                 handleAdd={this.handleAdd}
