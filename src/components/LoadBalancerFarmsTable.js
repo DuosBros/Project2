@@ -1,17 +1,22 @@
-import React from 'react'
+import React from 'react';
+import PropTypes from 'prop-types';
 import { Button } from 'semantic-ui-react';
 import GenericTable from './GenericTable';
 import VsStatus from './VsStatus';
 import LBPoolStatus from './LBPoolStatus';
 
 export default class LoadBalancerFarmsTable extends GenericTable {
+    static defaultProps = {
+        defaultShowBETAPools: true
+    }
+
+    static propTypes = {
+        defaultShowBETAPools: PropTypes.bool
+    }
+
     constructor(props) {
         super(props);
-        if(props.hasOwnProperty("defaultShowBETAPools")) {
-            this.state.showBETAPools = props.defaultShowBETAPools;
-        } else {
-            this.state.showBETAPools = true;
-        }
+        this.state.showBETAPools = props.defaultShowBETAPools;
     }
     getColumns() {
         return [

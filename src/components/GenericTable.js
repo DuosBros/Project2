@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import React, { Component } from 'react'
+import PropTypes from 'prop-types';
 import { Table, Grid, Message, Input, Button, Icon, Label, Popup } from 'semantic-ui-react'
 import Pagination from 'semantic-ui-react-button-pagination';
 import { filterInArrayOfObjects, isNum, debounce } from '../utils/HelperFunction';
@@ -11,12 +12,23 @@ const DEFAULT_COLUMN_PROPS = {
     visibleByDefault: true
 }
 
-const DEFAULT_PAGE_SIZE = 15;
-const SHOW_TABLE_HEADER_FUNCTIONS = true;
-const SHOW_TABLE_HEADER = true;
-const DEFAULT_IS_COMPACT = false;
-
 export default class GenericTable extends Component {
+    static defaultProps = {
+        defaultLimitOverride: 15,
+        showTableHeaderFunctions: true,
+        showTableHeader: true,
+        compact: false
+    }
+
+    static propTypes = {
+        defaultLimitOverride: PropTypes.number,
+        showTableHeaderFunctions: PropTypes.bool,
+        showTableHeader: PropTypes.bool,
+        compact: PropTypes.oneOfType([
+            PropTypes.bool,
+            PropTypes.string
+        ])
+    }
 
     constructor(props) {
         super(props);
@@ -32,45 +44,15 @@ export default class GenericTable extends Component {
             filters[col.prop] = "";
         }
 
-        let defaultLimit = DEFAULT_PAGE_SIZE;
-        if (this.props.hasOwnProperty("defaultLimitOverride")) {
-            if (typeof this.props.defaultLimitOverride !== "number") {
-                throw new Error("defaultLimitOverride property must be a number.")
-            }
-            defaultLimit = parseInt(this.props.defaultLimitOverride);
-        }
-
-        let defaultShowTableHeaderFunctions = SHOW_TABLE_HEADER_FUNCTIONS;
-        if (this.props.hasOwnProperty("showTableHeaderFunctions")) {
-            if (typeof this.props.showTableHeaderFunctions !== "boolean") {
-                throw new Error("showTableHeaderFunctions property must be a bool.")
-            }
-            defaultShowTableHeaderFunctions = this.props.showTableHeaderFunctions;
-        }
-
-        let defaultShowTableHeader = SHOW_TABLE_HEADER;
-        if (this.props.hasOwnProperty("showTableHeader")) {
-            if (typeof this.props.showTableHeader !== "boolean") {
-                throw new Error("showTableHeader property must be a bool.")
-            }
-            defaultShowTableHeader = this.props.showTableHeader;
-        }
-
-        let isCompact = DEFAULT_IS_COMPACT;
-        if (this.props.hasOwnProperty("compact")) {
-            if (typeof this.props.compact !== "boolean" && typeof this.props.compact !== "string") {
-                throw new Error("compact property must be a bool or string.")
-            }
-            isCompact = this.props.compact;
-        }
+        let defaultLimit = parseInt(this.props.defaultLimitOverride);
 
         this.state = {
             sortColumn: null,
             sortDirection: null,
             offset: 0,
-            showTableHeaderFunctions: defaultShowTableHeaderFunctions,
-            showTableHeader: defaultShowTableHeader,
-            isCompact: isCompact,
+            showTableHeaderFunctions: this.props.showTableHeaderFunctions,
+            showTableHeader: this.props.showTableHeader,
+            isCompact: this.props.compact,
             defaultLimit,
             limit: defaultLimit,
             limitInput: defaultLimit.toString(),
@@ -586,7 +568,7 @@ export default class GenericTable extends Component {
                                         fluid
                                         size="small"
                                         name="showColumnFilters"
-    
+
                                         onClick={this.handleStateToggle}
                                         compact
                                         content={showColumnFilters ? 'Hide Column Filters' : 'Show Column Filters'}
@@ -597,7 +579,7 @@ export default class GenericTable extends Component {
                                     {columnToggleButton}
                                     {this.renderCustomFilter()}
                                 </>
-    
+
                             </Grid.Column>
                         </Grid.Row>
                         {toggleColumnsRow}
@@ -614,7 +596,7 @@ export default class GenericTable extends Component {
                                         <Icon name="setting"></Icon>
                                     </Button>
                                 } content='Show table settings' inverted />
-    
+
                             </Grid.Column>
                         </Grid.Row>
                     </Grid>
