@@ -1,5 +1,5 @@
 import React from 'react';
-import { Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ComposedChart, LineChart, Line } from 'recharts';
+import { Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ComposedChart, Line } from 'recharts';
 
 const DEFAULT_FROM_Y_AXIS = 0;
 const DEFAULT_TO_Y_AXIS = 100;

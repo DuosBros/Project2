@@ -124,8 +124,6 @@ class ServerDetails extends React.Component {
     }
 
     render() {
-        console.log(this.props.serverStore.serverDetails.data);
-
         var serverDetailsSuccess = this.props.serverStore.serverDetails.success;
         var serverDetailsData = this.props.serverStore.serverDetails.data;
 
