@@ -370,7 +370,7 @@ class ServerDetails extends React.Component {
         else {
             if (!serverDetailsData.serverStats.success) {
                 serverStatsSegment = (
-                    <ErrorMessage />
+                    <ErrorMessage message="Could not fetch server stats from elastic" />
                 )
             }
             else {
@@ -406,7 +406,7 @@ class ServerDetails extends React.Component {
 
                 if (serverDetailsData.serverStats.data.memoryUsage.length !== 0) {
                     memoryUsageDetails = (
-                        <MinMaxAvgAreaChart toYAxis="dataMax" data={mapDataForMinMaxAvgChart(serverDetailsData.serverStats.data.memoryUsage)} />
+                        <MinMaxAvgAreaChart data={mapDataForMinMaxAvgChart(serverDetailsData.serverStats.data.memoryUsage)} />
                     )
                 }
 

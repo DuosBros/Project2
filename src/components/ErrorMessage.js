@@ -19,7 +19,7 @@ class ErrorMessage extends React.Component {
                 <Image src={pikachu} size='tiny' spaced />
                 <Message.Content>
                     <Message.Header>{(this.props.title || "Ooops something went wrong")}</Message.Header>
-                    {this.props.message === "" ? null : <>Failed to load data. <br /></>}
+                    {this.props.message === "" ? null : <>{this.props.message} <br /></>}
 
                     {
                         this.props.handleRefresh ?
