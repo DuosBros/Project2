@@ -46,6 +46,8 @@ class LoadBalancerFarmsTasks extends React.Component {
     }
 
     handleSave = () => {
+        this.setState({ isErrorOnSave: false });
+
         var serviceDetails = this.props.serviceStore.serviceDetails.data.Service[0]
         var merged = this.state.loadBalancerFarmsToAdd.concat(this.state.loadBalancerFarmsToRemove)
         var grouped = groupBy(merged, "LbId")
@@ -59,7 +61,7 @@ class LoadBalancerFarmsTasks extends React.Component {
         saveChanges.then((result) => {
             let errors = false;
             result.forEach((e, i) => {
-                if(!(e instanceof Error)) {
+                if (!(e instanceof Error)) {
                     let lbid = keys[i];
                     this.setState(prev => {
                         let loadBalancerFarmsToAdd = prev.loadBalancerFarmsToAdd;
@@ -79,14 +81,17 @@ class LoadBalancerFarmsTasks extends React.Component {
             });
             // refresh the service details to get re-render this modal
             getServiceDetails(serviceDetails.Id)
-            .then(res => {
-                return this.props.getServiceDetailsAction({ success: true, data: res.data })
-            })
-            .catch(err => {
-                this.props.getServiceDetailsAction({ success: false, error: err })
-            });
-            if(!errors) {
+                .then(res => {
+                    return this.props.getServiceDetailsAction({ success: true, data: res.data })
+                })
+                .catch(err => {
+                    this.props.getServiceDetailsAction({ success: false, error: err })
+                });
+            if (!errors) {
                 this.props.toggleLoadBalancerFarmsTasksModalAction();
+            }
+            else {
+                this.setState({ isErrorOnSave: true });
             }
         })
     }
@@ -273,6 +278,18 @@ class LoadBalancerFarmsTasks extends React.Component {
                         </Modal.Content>
                     </React.Fragment>
                 )
+                var errorMessage;
+                if (this.state.isErrorOnSave) {
+                    errorMessage = (
+                        <Grid>
+                            <Grid.Row className="bottomMargin">
+                                <Grid.Column floated="right" width={3}>
+                                    <ErrorMessage />
+                                </Grid.Column>
+                            </Grid.Row>
+                        </Grid>
+                    )
+                }
             }
 
             return (
@@ -286,7 +303,7 @@ class LoadBalancerFarmsTasks extends React.Component {
                 >
                     {modalBody}
                     <Modal.Actions>
-
+                        {errorMessage}
                         {
                             this.state.loadBalancerFarmsToAdd.length > 0 || this.state.loadBalancerFarmsToRemove.length > 0 ?
                                 (<>
