@@ -8,7 +8,7 @@ import { toggleLoadBalancerFarmsTasksModalAction } from '../actions/ServiceActio
 import { toggleNotAuthorizedModalAction } from '../actions/BaseAction'
 import { getAllLoadBalancerFarmsAction } from '../actions/LoadBalancerFarmsAction'
 
-import { isAdmin, groupBy } from '../utils/HelperFunction';
+import { isAdmin, groupBy, promiseMap } from '../utils/HelperFunction';
 import NotAuthorized from './NotAuthorized';
 import LoadBalancerFarmsTable from '../components/LoadBalancerFarmsTable';
 import { getAllLoadBalancerFarms, saveLoadBalancerFarmsChanges } from '../requests/LoadBalancerFarmsAxios';
@@ -51,25 +51,44 @@ class LoadBalancerFarmsTasks extends React.Component {
         var grouped = groupBy(merged, "LbId")
         var keys = Object.keys(grouped);
 
-        var promises = []
-        keys.forEach((e, i) => {
-            promises.push(saveLoadBalancerFarmsChanges(serviceDetails.Id, grouped[keys[i]].map(x => x.Id).join(','), keys[i]))
-        })
+        var saveChanges = promiseMap(1, keys, (key) => {
+            let res = saveLoadBalancerFarmsChanges(serviceDetails.Id, grouped[key].map(x => x.Id).join(','), key);
+            return res;
+        });
 
-        // run promises sequentially
-        promises.reduce((promiseChain) => {
-            promiseChain.then()
-            Promise.resolve()
-        })
+        saveChanges.then((result) => {
+            let errors = false;
+            result.forEach((e, i) => {
+                if(!(e instanceof Error)) {
+                    let lbid = keys[i];
+                    this.setState(prev => {
+                        let loadBalancerFarmsToAdd = prev.loadBalancerFarmsToAdd;
+                        let loadBalancerFarmsToRemove = prev.loadBalancerFarmsToRemove;
 
-        // refresh the service details to get re-render this modal
-        getServiceDetails(serviceDetails.Id)
+                        loadBalancerFarmsToAdd = loadBalancerFarmsToAdd.filter(e => e.LbId !== lbid);
+                        loadBalancerFarmsToRemove = loadBalancerFarmsToRemove.filter(e => e.LbId !== lbid);
+
+                        return {
+                            loadBalancerFarmsToAdd,
+                            loadBalancerFarmsToRemove
+                        }
+                    });
+                } else {
+                    errors = true;
+                }
+            });
+            // refresh the service details to get re-render this modal
+            getServiceDetails(serviceDetails.Id)
             .then(res => {
-                this.props.getServiceDetailsAction({ success: true, data: res.data })
+                return this.props.getServiceDetailsAction({ success: true, data: res.data })
             })
             .catch(err => {
                 this.props.getServiceDetailsAction({ success: false, error: err })
-            })
+            });
+            if(!errors) {
+                this.props.toggleLoadBalancerFarmsTasksModalAction();
+            }
+        })
     }
 
     handleAdd = (item) => {

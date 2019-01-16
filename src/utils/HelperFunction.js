@@ -167,3 +167,33 @@ export const isAdmin = (user) => {
 export const sleep = (milliseconds) => {
     return new Promise(resolve => setTimeout(resolve, milliseconds))
 }
+
+export const promiseMap = function(n, arr, transformer, ignoreErrors) {
+    var res = new Array(arr.length);
+    var last = 0;
+    var tranformOrFinish = function(runner, idx) {
+        if(idx >= arr.length) {
+            return res;
+        }
+        return Promise.resolve(transformer(arr[idx], idx))
+        .then((ret) => {
+            res[idx] = ret;
+            return tranformOrFinish(runner, last++);
+        }, (err) => {
+            if(ignoreErrors === false) {
+                last = arr.length;
+                throw err;
+            }
+            res[idx] = err;
+            return tranformOrFinish(runner, last++);
+        });
+    };
+
+    var tasks = [];
+    for(let i = 0; i < n && i < arr.length; i++) {
+        tasks.push(tranformOrFinish(i, last++));
+    }
+
+    return Promise.all(tasks)
+    .then(() => res);
+};
