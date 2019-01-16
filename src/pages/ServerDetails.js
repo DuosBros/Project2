@@ -236,7 +236,7 @@ class ServerDetails extends React.Component {
                 <Table.Row key={service.Id}>
                     <Table.Cell>{service.Name}</Table.Cell>
                     <Table.Cell>
-                        <Link to={'/service/' + service.Id} target="_blank">{service.Shortcut}</Link>
+                        <Link to={'/service/' + service.Id}>{service.Shortcut}</Link>
                     </Table.Cell>
                     <Table.Cell>
                         <DismeStatus dismeStatus={service.Status} />
