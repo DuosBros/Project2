@@ -12,6 +12,16 @@ const DEFAULT_COLUMN_PROPS = {
     visibleByDefault: true
 }
 
+export const GenericTablePropTypes = {
+    defaultLimitOverride: PropTypes.number,
+    showTableHeaderFunctions: PropTypes.bool,
+    showTableHeader: PropTypes.bool,
+    compact: PropTypes.oneOfType([
+        PropTypes.bool,
+        PropTypes.string
+    ])
+};
+
 export default class GenericTable extends Component {
     static defaultProps = {
         defaultLimitOverride: 15,
@@ -20,15 +30,7 @@ export default class GenericTable extends Component {
         compact: false
     }
 
-    static propTypes = {
-        defaultLimitOverride: PropTypes.number,
-        showTableHeaderFunctions: PropTypes.bool,
-        showTableHeader: PropTypes.bool,
-        compact: PropTypes.oneOfType([
-            PropTypes.bool,
-            PropTypes.string
-        ])
-    }
+    static propTypes = GenericTablePropTypes
 
     constructor(props) {
         super(props);
