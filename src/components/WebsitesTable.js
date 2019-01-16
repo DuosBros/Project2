@@ -31,8 +31,8 @@ export default class WebsitesTable extends GenericTable {
                 collapsing: true
             },
             {
-                name: "AppPool Name",
-                prop: "AppPoolName",
+                name: "Site Name",
+                prop: "SiteName",
                 width: 3,
                 collapsing: true
             },

@@ -56,18 +56,37 @@ class LoadBalancerFarmsTasks extends React.Component {
             promises.push(saveLoadBalancerFarmsChanges(serviceDetails.Id, grouped[keys[i]].map(x => x.Id).join(','), keys[i]))
         })
 
-        Promise.all(promises)
-            .catch(err => console.log(err))
-            .finally(() => {
-                this.props.toggleLoadBalancerFarmsTasksModalAction()
-                getServiceDetails(serviceDetails.Id)
-                    .then(res => {
-                        this.props.getServiceDetailsAction({ success: true, data: res.data })
-                    })
-                    .catch(err => {
-                        this.props.getServiceDetailsAction({ success: false, error: err })
-                    })
+        var a = promises.reduce((promiseChain, currentTask) => {
+            return promiseChain.then(chainResults =>
+                currentTask.then(currentResult =>
+                    [ ...chainResults, currentResult ]
+                )
+            );
+
+        }, Promise.resolve([])).then(arrayOfResults => {
+            debugger
+            // Do something with all results
         });
+
+        // Promise.all(promises)
+        //     .then(res => {
+        //         debugger
+        //         this.props.toggleLoadBalancerFarmsTasksModalAction()
+        //     })
+        //     .catch(err => {
+        //         // TODO set the stat again accordingly to what failed
+        //         debugger
+        //     })
+        //     .finally(() => {
+        //         debugger
+        //         getServiceDetails(serviceDetails.Id)
+        //             .then(res => {
+        //                 this.props.getServiceDetailsAction({ success: true, data: res.data })
+        //             })
+        //             .catch(err => {
+        //                 this.props.getServiceDetailsAction({ success: false, error: err })
+        //             })
+        //     });
     }
 
     handleAdd = (item) => {
