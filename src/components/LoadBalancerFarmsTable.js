@@ -6,13 +6,13 @@ import VsStatus from './VsStatus';
 import LBPoolStatus from './LBPoolStatus';
 
 export default class LoadBalancerFarmsTable extends GenericTable {
-    static defaultProps = {
+    static defaultProps = Object.assign({
         defaultShowBETAPools: true
-    }
+    }, GenericTable.defaultProps)
 
-    static propTypes = {
+    static propTypes = Object.assign({
         defaultShowBETAPools: PropTypes.bool
-    }
+    }, GenericTable.propTypes)
 
     constructor(props) {
         super(props);
