@@ -1,18 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Button } from 'semantic-ui-react';
-import GenericTable from './GenericTable';
+import GenericTable, { GenericTablePropTypes } from './GenericTable';
 import VsStatus from './VsStatus';
 import LBPoolStatus from './LBPoolStatus';
 
 export default class LoadBalancerFarmsTable extends GenericTable {
-    static defaultProps = Object.assign({
+    static defaultProps = {
+        ...GenericTable.defaultProps,
         defaultShowBETAPools: true
-    }, GenericTable.defaultProps)
+    }
 
-    static propTypes = Object.assign({
+    static propTypes = {
+        ...GenericTablePropTypes,
         defaultShowBETAPools: PropTypes.bool
-    }, GenericTable.propTypes)
+    }
 
     constructor(props) {
         super(props);
