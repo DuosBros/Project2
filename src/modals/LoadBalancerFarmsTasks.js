@@ -51,25 +51,23 @@ class LoadBalancerFarmsTasks extends React.Component {
         var grouped = groupBy(merged, "LbId")
         var keys = Object.keys(grouped);
 
-        for (let i = 0; i < keys.length; i = i + 2) {
-            var that = this;
-            saveLoadBalancerFarmsChanges(serviceDetails.Id, grouped[keys[i]].map(x => x.Id).join(','), keys[i])
-                .then(() => {
-                    if (i + 1 < keys.length) {
-                        return saveLoadBalancerFarmsChanges(serviceDetails.Id, grouped[keys[i + 1]].map(x => x.Id).join(','), keys[i + 1])
-                    }
-                })
-                .then(() => {
-                    that.props.toggleLoadBalancerFarmsTasksModalAction()
-                    getServiceDetails(serviceDetails.Id)
-                        .then(res => {
-                            this.props.getServiceDetailsAction({ success: true, data: res.data })
-                        })
-                        .catch(err => {
-                            this.props.getServiceDetailsAction({ success: false, error: err })
-                        })
-                })
-        }
+        var promises = []
+        keys.forEach((e, i) => {
+            promises.push(saveLoadBalancerFarmsChanges(serviceDetails.Id, grouped[keys[i]].map(x => x.Id).join(','), keys[i]))
+        })
+
+        Promise.all(promises)
+            .catch(err => console.log(err))
+            .finally(() => {
+                this.props.toggleLoadBalancerFarmsTasksModalAction()
+                getServiceDetails(serviceDetails.Id)
+                    .then(res => {
+                        this.props.getServiceDetailsAction({ success: true, data: res.data })
+                    })
+                    .catch(err => {
+                        this.props.getServiceDetailsAction({ success: false, error: err })
+                    })
+        });
     }
 
     handleAdd = (item) => {
@@ -237,8 +235,10 @@ class LoadBalancerFarmsTasks extends React.Component {
                                             Assigned LoadBalancer Farms
                                         </Header>
                                         <Segment attached='bottom'>
-                                            <LoadBalancerFarmsTable data={serviceDetails.LbFarms}
-                                                defaultShowBETAPools={false}
+                                            <LoadBalancerFarmsTable
+                                                showTableHeaderFunctions={false}
+                                                data={serviceDetails.LbFarms}
+                                                defaultShowBETAPools={true}
                                                 isEdit={true}
                                                 isAdd={false}
                                                 handleAdd={this.handleAdd}
