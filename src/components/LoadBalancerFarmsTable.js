@@ -109,7 +109,6 @@ export default class LoadBalancerFarmsTable extends GenericTable {
         return (
             <div>
                 <Button
-                    fluid
                     size="small"
                     name="showBETAPools"
                     onClick={this.handleStateToggle}
@@ -118,7 +117,7 @@ export default class LoadBalancerFarmsTable extends GenericTable {
                     style={{ padding: '0.3em', marginTop: '0.5em', textAlign: 'right' }}
                     id="secondaryButton"
                     icon={showBETAPools ? 'eye slash' : 'eye'}
-                    labelPosition='left' />
+                    labelPosition='right' />
             </div>
         );
     }
