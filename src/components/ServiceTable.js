@@ -2,7 +2,8 @@ import React from 'react'
 import GenericTable from './GenericTable';
 import { Link } from 'react-router-dom';
 import DismeStatus from './DismeStatus';
-import { DISME_SERVICE_URL, DISME_SERVICE_PLACEHOLDER, KIBANA_WINLOGBEAT_SERVICE_URL, KIBANA_SERVICE_URL_PLACEHOLDER, KIBANA_PERFCOUNTER_SERVICE_URL } from '../appConfig';
+import { DISME_SERVICE_URL, DISME_SERVICE_PLACEHOLDER } from '../appConfig';
+import Kibana from '../utils/Kibana';
 import { Button, Popup, Image } from 'semantic-ui-react';
 import _ from 'lodash';
 
@@ -130,10 +131,10 @@ export default class ServiceTable extends GenericTable {
 
                 <Popup trigger={
                     <Button
-                        onClick={() =>
-                            window.open(
-                                _.replace(KIBANA_WINLOGBEAT_SERVICE_URL, new RegExp(KIBANA_SERVICE_URL_PLACEHOLDER, "g"),
-                                    data.Shortcut))}
+                        as="a"
+                        href={Kibana.dashboardLinkBuilder("prod", "winlogbeat2").addFilter("app", data.Shortcut).build()}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         style={{ padding: '0.3em' }}
                         size='medium'
                         icon={
@@ -143,18 +144,16 @@ export default class ServiceTable extends GenericTable {
 
                 <Popup trigger={
                     <Button
-                        onClick={() =>
-                            window.open(
-                                _.replace(KIBANA_PERFCOUNTER_SERVICE_URL, new RegExp(KIBANA_SERVICE_URL_PLACEHOLDER, "g"),
-                                    data.Shortcut))}
+                        as="a"
+                        href={Kibana.dashboardLinkBuilder("prod", "cpuAndRam").addFilter("app", data.Shortcut).setQuery("NOT beat.hostname:*PRE*").build()}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         style={{ padding: '0.3em' }}
                         size='medium'
                         icon={
                             <Image src={window.location.protocol + '//' + window.location.host + "/icons/kibana.png"} />
                         } />
                 } content='Go to Kibana perfcounter' inverted />
-                {/* <a target="_blank" rel="noopener noreferrer" href={_.replace(KIBANA_WINLOGBEAT_SERVICE_URL, new RegExp(KIBANA_SERVICE_URL_PLACEHOLDER, "g"), serviceDetails.Service[0].Shortcut)}>Eventlog</a><br />
-                <a target="_blank" rel="noopener noreferrer" href={_.replace(KIBANA_PERFCOUNTER_SERVICE_URL, new RegExp(KIBANA_SERVICE_URL_PLACEHOLDER, "g"), serviceDetails.Service[0].Shortcut)}>PerfCounter</a> */}
             </>
         );
         data.Status = (

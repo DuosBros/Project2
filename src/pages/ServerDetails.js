@@ -11,8 +11,9 @@ import ServerStatus from '../components/ServerStatus';
 import { getServerDetailsAction, getVmDetailsAction, getServerScomAlertsAction, getServerStatsAction } from '../actions/ServerActions';
 import { getServerDetails, getServerScomAlerts, getDiskUsageDetails } from '../requests/ServerAxios';
 
-import { KIBANA_WINLOGBEAT_SERVER_URL, KIBANA_SERVER_URL_PLACEHOLDER, KIBANA_PERFCOUNTER_SERVER_URL, DISME_SERVICE_PLACEHOLDER, DISME_SERVICE_URL, errorColor } from '../appConfig';
+import { DISME_SERVICE_PLACEHOLDER, DISME_SERVICE_URL, errorColor } from '../appConfig';
 
+import Kibana from '../utils/Kibana';
 import LoadBalancerFarmsTable from '../components/LoadBalancerFarmsTable';
 import SCOMSegment from '../components/SCOMSegment';
 import DismeStatus from '../components/DismeStatus';
@@ -509,8 +510,8 @@ class ServerDetails extends React.Component {
                                         <dl className="dl-horizontal">
                                             <dt>Kibana:</dt>
                                             <dd>
-                                                <a target="_blank" rel="noopener noreferrer" href={_.replace(KIBANA_WINLOGBEAT_SERVER_URL, new RegExp(KIBANA_SERVER_URL_PLACEHOLDER, "g"), serverDetailsData.ServerName)}>Eventlog</a><br />
-                                                <a target="_blank" rel="noopener noreferrer" href={_.replace(KIBANA_PERFCOUNTER_SERVER_URL, new RegExp(KIBANA_SERVER_URL_PLACEHOLDER, "g"), serverDetailsData.ServerName)}>PerfCounter</a>
+                                                <a target="_blank" rel="noopener noreferrer" href={Kibana.dashboardLinkBuilder("prod", "winlogbeat2").addFilter("beat.hostname", serverDetailsData.ServerName).build()}>Eventlog</a><br />
+                                                <a target="_blank" rel="noopener noreferrer" href={Kibana.dashboardLinkBuilder("prod", "metricsWindows").addFilter("beat.hostname", serverDetailsData.ServerName).build()}>PerfCounter</a>
                                             </dd>
                                         </dl>
                                     </Grid.Column>

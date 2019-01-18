@@ -12,7 +12,8 @@ import WebsitesTable from '../components/WebsitesTable';
 import { isAdmin } from '../utils/HelperFunction';
 import LoadBalancerFarmsTable from '../components/LoadBalancerFarmsTable';
 import DismeStatus from '../components/DismeStatus';
-import { KIBANA_SERVICE_URL_PLACEHOLDER, KIBANA_WINLOGBEAT_SERVICE_URL, KIBANA_PERFCOUNTER_SERVICE_URL, DISME_SERVICE_URL, DISME_SERVICE_PLACEHOLDER } from '../appConfig';
+import { DISME_SERVICE_URL, DISME_SERVICE_PLACEHOLDER } from '../appConfig';
+import Kibana from '../utils/Kibana';
 import ErrorMessage from '../components/ErrorMessage';
 
 class ServiceDetails extends React.Component {
@@ -161,8 +162,8 @@ class ServiceDetails extends React.Component {
                                         <dl className="dl-horizontal">
                                             <dt>Kibana:</dt>
                                             <dd>
-                                                <a target="_blank" rel="noopener noreferrer" href={_.replace(KIBANA_WINLOGBEAT_SERVICE_URL, new RegExp(KIBANA_SERVICE_URL_PLACEHOLDER, "g"), serviceDetailsData.Service[0].Shortcut)}>Eventlog</a><br />
-                                                <a target="_blank" rel="noopener noreferrer" href={_.replace(KIBANA_PERFCOUNTER_SERVICE_URL, new RegExp(KIBANA_SERVICE_URL_PLACEHOLDER, "g"), serviceDetailsData.Service[0].Shortcut)}>PerfCounter</a>
+                                                <a target="_blank" rel="noopener noreferrer" href={Kibana.dashboardLinkBuilder("prod", "winlogbeat2").addFilter("env", "PROD").addFilter("app", serviceDetailsData.Service[0].Shortcut).build()}>Eventlog</a><br />
+                                                <a target="_blank" rel="noopener noreferrer" href={Kibana.dashboardLinkBuilder("prod", "cpuAndRam").addFilter("app", serviceDetailsData.Service[0].Shortcut).setQuery("NOT beat.hostname:*PRE*").build()}>PerfCounter</a>
                                             </dd>
                                             <dt>AppDynamics:</dt>
                                             <dd>
