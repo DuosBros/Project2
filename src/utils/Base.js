@@ -19,7 +19,7 @@ import { debounce } from '../utils/HelperFunction';
 
 import { LOCO_API } from '../appConfig';
 import LoadBalancerFarmsTasks from '../modals/LoadBalancerFarmsTasks';
-import ServerTable from '../components/ServerTable';
+import ServersTable from '../components/ServersTable';
 import PatchGroups from '../pages/PatchGroups';
 import RolloutStatus from '../pages/RolloutStatus';
 import VirtualMachines from '../pages/VirtualMachines';
@@ -115,7 +115,7 @@ class Base extends React.Component {
                                 <Route exact path='/' component={Home} />
                                 <Route exact path='/login' component={Login} />
                                 <Route path='/server/:id' component={ServerDetails} />
-                                <Route path='/server' component={ServerTable} />
+                                <Route path='/server' component={ServersTable} />
                                 <Route path='/rolloutstatus' component={RolloutStatus} />
                                 <Route path='/patchgroups' component={PatchGroups} />
                                 <Route path='/service/:id' component={ServiceDetails} />

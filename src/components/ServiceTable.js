@@ -117,10 +117,10 @@ export default class ServiceTable extends GenericTable {
             <>
                 <Popup trigger={
                     <Button
-                        onClick={() =>
-                            window.open(
-                                _.replace(DISME_SERVICE_URL, new RegExp(DISME_SERVICE_PLACEHOLDER, "g"),
-                                    data.DismeID))}
+                        as="a"
+                        href={_.replace(DISME_SERVICE_URL, new RegExp(DISME_SERVICE_PLACEHOLDER, "g"), data.DismeID)}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         style={{ padding: '0.3em' }}
                         size='medium'
                         icon={

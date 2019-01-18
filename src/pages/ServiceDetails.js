@@ -7,7 +7,7 @@ import moment from 'moment';
 
 import { getServiceDetailsAction, toggleLoadBalancerFarmsTasksModalAction } from '../actions/ServiceActions';
 import { getServiceDetails } from '../requests/ServiceAxios';
-import ServerTable from '../components/ServerTable';
+import ServersTable from '../components/ServersTable';
 import WebsitesTable from '../components/WebsitesTable';
 import { isAdmin } from '../utils/HelperFunction';
 import LoadBalancerFarmsTable from '../components/LoadBalancerFarmsTable';
@@ -226,7 +226,7 @@ class ServiceDetails extends React.Component {
                         {
                             servers ? (
                                 <Segment attached='bottom'>
-                                    <ServerTable data={serviceDetailsData.Servers} compact={true} />
+                                    <ServersTable data={serviceDetailsData.Servers} compact={true} />
                                 </Segment>
                             ) : (
                                     <div></div>

@@ -34,6 +34,8 @@ export const VERSION1_SEARCH_URL = "https://www52.v1host.com/GVCGroup/Search.mvc
 
 export const DISME_SERVICE_PLACEHOLDER = "#DISME_SERVICE_PLACEHOLDER"
 export const DISME_SERVICE_URL = "https://disme.bwin.corp/out/out.ServiceMgr.php?serviceid=#DISME_SERVICE_PLACEHOLDER"
+export const DISME_SERVER_PLACEHOLDER = "#DISME_SERVER_PLACEHOLDER"
+export const DISME_SERVER_URL = "https://disme.bwin.corp/out/out.SrvMgr.php?serverid=#DISME_SERVER_PLACEHOLDER"
 
 export const warningColor = '#f7ead89c'
 export const successColor = '#f5fbe7'

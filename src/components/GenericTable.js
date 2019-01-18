@@ -56,7 +56,6 @@ export default class GenericTable extends Component {
             offset: 0,
             showTableHeaderFunctions: this.props.showTableHeaderFunctions,
             showTableHeader: this.props.showTableHeader,
-            isCompact: this.props.compact,
             defaultLimit,
             limit: defaultLimit,
             limitInput: defaultLimit.toString(),
@@ -278,9 +277,12 @@ export default class GenericTable extends Component {
             filters,
             offset,
             showTableHeaderFunctions,
-            showTableHeader,
-            isCompact
-        } = this.state
+            showTableHeader
+        } = this.state;
+
+        const {
+            compact
+        } = this.props;
 
         let visibleColumns = columns.filter(c => visibleColumnsList.indexOf(c.prop) !== -1);
 
@@ -593,7 +595,7 @@ export default class GenericTable extends Component {
                         <Grid.Row>
                             <Grid.Column>
                                 <Popup trigger={
-                                    <Button onClick={() => this.setState({ showTableHeaderFunctions: !showTableHeaderFunctions })} icon floated="right">
+                                    <Button compact onClick={() => this.setState({ showTableHeaderFunctions: !showTableHeaderFunctions })} icon floated="right">
                                         <Icon name="setting"></Icon>
                                     </Button>
                                 } content='Show table settings' inverted />
@@ -611,7 +613,7 @@ export default class GenericTable extends Component {
         return (
             <div className="generic table">
                 {tableFunctionsGrid}
-                <Table compact={isCompact} selectable sortable celled basic='very'>
+                <Table compact={compact} selectable sortable celled basic='very'>
                     <Table.Header>
                         <Table.Row>{headerCells}</Table.Row>
                     </Table.Header>
