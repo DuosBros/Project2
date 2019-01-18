@@ -16,6 +16,7 @@ export const GenericTablePropTypes = {
     defaultLimitOverride: PropTypes.number,
     showTableHeaderFunctions: PropTypes.bool,
     showTableHeader: PropTypes.bool,
+    disableGrouping: PropTypes.bool,
     compact: PropTypes.oneOfType([
         PropTypes.bool,
         PropTypes.string
@@ -27,6 +28,7 @@ export default class GenericTable extends Component {
         defaultLimitOverride: 15,
         showTableHeaderFunctions: true,
         showTableHeader: true,
+        disableGrouping: false,
         compact: false
     }
 
@@ -97,7 +99,7 @@ export default class GenericTable extends Component {
             }
         }
 
-        let grouping = this.getGrouping();
+        let grouping = props.disableGrouping ? [] : this.getGrouping();
         grouping = grouping.map(gp => {
             let match = columns.filter(c => c.prop === gp);
             if (match.length > 1) {
