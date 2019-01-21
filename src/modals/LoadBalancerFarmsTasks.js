@@ -8,7 +8,7 @@ import { toggleLoadBalancerFarmsTasksModalAction } from '../actions/ServiceActio
 import { toggleNotAuthorizedModalAction } from '../actions/BaseAction'
 import { getAllLoadBalancerFarmsAction } from '../actions/LoadBalancerFarmsAction'
 
-import { isAdmin, groupBy, promiseMap } from '../utils/HelperFunction';
+import { isAdmin, groupBy } from '../utils/HelperFunction';
 import NotAuthorized from './NotAuthorized';
 import LoadBalancerFarmsTable from '../components/LoadBalancerFarmsTable';
 import { getAllLoadBalancerFarms, saveLoadBalancerFarmsChanges } from '../requests/LoadBalancerFarmsAxios';
@@ -45,7 +45,7 @@ class LoadBalancerFarmsTasks extends React.Component {
             })
     }
 
-    handleSave = () => {
+    handleSave = async () => {
         this.setState({ isErrorOnSave: false });
 
         var serviceDetails = this.props.serviceStore.serviceDetails.data.Service[0]
@@ -53,47 +53,42 @@ class LoadBalancerFarmsTasks extends React.Component {
         var grouped = groupBy(merged, "LbId")
         var keys = Object.keys(grouped);
 
-        var saveChanges = promiseMap(1, keys, (key) => {
-            let res = saveLoadBalancerFarmsChanges(serviceDetails.Id, grouped[key].map(x => x.Id).join(','), key);
-            return res;
-        });
+        let errors = false;
+        for(let key of keys) {
+            try {
+                await saveLoadBalancerFarmsChanges(serviceDetails.Id, grouped[key].map(x => x.Id).join(','), key);
+            } catch(err) {
+                errors = true;
 
-        saveChanges.then((result) => {
-            let errors = false;
-            result.forEach((e, i) => {
-                if (!(e instanceof Error)) {
-                    let lbid = keys[i];
-                    this.setState(prev => {
-                        let loadBalancerFarmsToAdd = prev.loadBalancerFarmsToAdd;
-                        let loadBalancerFarmsToRemove = prev.loadBalancerFarmsToRemove;
+                let lbid = parseInt(key);
+                this.setState(prev => {
+                    let loadBalancerFarmsToAdd = prev.loadBalancerFarmsToAdd;
+                    let loadBalancerFarmsToRemove = prev.loadBalancerFarmsToRemove;
 
-                        loadBalancerFarmsToAdd = loadBalancerFarmsToAdd.filter(e => e.LbId !== lbid);
-                        loadBalancerFarmsToRemove = loadBalancerFarmsToRemove.filter(e => e.LbId !== lbid);
+                    loadBalancerFarmsToAdd = loadBalancerFarmsToAdd.filter(e => e.LbId !== lbid);
+                    loadBalancerFarmsToRemove = loadBalancerFarmsToRemove.filter(e => e.LbId !== lbid);
 
-                        return {
-                            loadBalancerFarmsToAdd,
-                            loadBalancerFarmsToRemove
-                        }
-                    });
-                } else {
-                    errors = true;
-                }
-            });
-            // refresh the service details to get re-render this modal
-            getServiceDetails(serviceDetails.Id)
-                .then(res => {
-                    return this.props.getServiceDetailsAction({ success: true, data: res.data })
-                })
-                .catch(err => {
-                    this.props.getServiceDetailsAction({ success: false, error: err })
+                    return {
+                        loadBalancerFarmsToAdd,
+                        loadBalancerFarmsToRemove
+                    }
                 });
-            if (!errors) {
-                this.props.toggleLoadBalancerFarmsTasksModalAction();
             }
-            else {
-                this.setState({ isErrorOnSave: true });
-            }
-        })
+        }
+
+        // refresh the service details to get re-render this modal
+        try {
+            let res = await getServiceDetails(serviceDetails.Id);
+            this.props.getServiceDetailsAction({ success: true, data: res.data });
+        } catch(err) {
+            this.props.getServiceDetailsAction({ success: false, error: err });
+        }
+
+        if(!errors) {
+            this.props.toggleLoadBalancerFarmsTasksModalAction();
+        } else {
+            this.setState({ isErrorOnSave: true });
+        }
     }
 
     handleAdd = (item) => {
