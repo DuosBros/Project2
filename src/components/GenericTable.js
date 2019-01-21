@@ -16,6 +16,7 @@ export const GenericTablePropTypes = {
     defaultLimitOverride: PropTypes.number,
     showTableHeaderFunctions: PropTypes.bool,
     showTableHeader: PropTypes.bool,
+    disableGrouping: PropTypes.bool,
     compact: PropTypes.oneOfType([
         PropTypes.bool,
         PropTypes.string
@@ -27,6 +28,7 @@ export default class GenericTable extends Component {
         defaultLimitOverride: 15,
         showTableHeaderFunctions: true,
         showTableHeader: true,
+        disableGrouping: false,
         compact: false
     }
 
@@ -54,7 +56,6 @@ export default class GenericTable extends Component {
             offset: 0,
             showTableHeaderFunctions: this.props.showTableHeaderFunctions,
             showTableHeader: this.props.showTableHeader,
-            isCompact: this.props.compact,
             defaultLimit,
             limit: defaultLimit,
             limitInput: defaultLimit.toString(),
@@ -97,7 +98,7 @@ export default class GenericTable extends Component {
             }
         }
 
-        let grouping = this.getGrouping();
+        let grouping = props.disableGrouping ? [] : this.getGrouping();
         grouping = grouping.map(gp => {
             let match = columns.filter(c => c.prop === gp);
             if (match.length > 1) {
@@ -276,9 +277,12 @@ export default class GenericTable extends Component {
             filters,
             offset,
             showTableHeaderFunctions,
-            showTableHeader,
-            isCompact
-        } = this.state
+            showTableHeader
+        } = this.state;
+
+        const {
+            compact
+        } = this.props;
 
         let visibleColumns = columns.filter(c => visibleColumnsList.indexOf(c.prop) !== -1);
 
@@ -495,7 +499,6 @@ export default class GenericTable extends Component {
             columnToggleButton = (
                 <div>
                     <Button
-                        fluid
                         size="small"
                         name="showColumnToggles"
                         onClick={this.handleStateToggle}
@@ -504,7 +507,7 @@ export default class GenericTable extends Component {
                         style={{ padding: '0.3em', marginTop: '0.5em', textAlign: 'right' }}
                         id="secondaryButton"
                         icon={showColumnToggles ? 'eye slash' : 'eye'}
-                        labelPosition='left' />
+                        labelPosition='right' />
                 </div>
             )
 
@@ -541,19 +544,19 @@ export default class GenericTable extends Component {
                 tableFunctionsGrid = (
                     <Grid>
                         <Grid.Row>
-                            <Grid.Column floated='left' width={6}>
+                            <Grid.Column floated='left' width={4}>
                                 <Input
                                     label='Filter:'
                                     id="multiSearchFilterInBuffedTable"
                                     fluid
                                     value={multiSearchInput} placeholder="Type to search..." name="multiSearchInput" onChange={this.handleMultiFilterChange} ></Input>
                             </Grid.Column>
-                            <Grid.Column width={3}>
+                            <Grid.Column width={4}>
                                 <div style={{ float: "right", margin: "0 20px", display: defaultLimit === 0 ? "none" : "visible" }}>
                                     <span>Showing {filteredData.length > 0 ? this.state.offset + 1 : 0} to {filteredData.length < limit ? filteredData.length : this.state.offset + limit} of {filteredData.length} entries</span>
                                 </div>
                             </Grid.Column>
-                            <Grid.Column width={3}>
+                            <Grid.Column width={4}>
                                 <div style={{ float: "left", margin: "0 20px", display: defaultLimit === 0 ? "none" : "visible" }}>
                                     <Input
                                         label='Records per page:'
@@ -564,20 +567,18 @@ export default class GenericTable extends Component {
                                         onChange={this.handleChangeRecordsPerPage} />
                                 </div>
                             </Grid.Column>
-                            <Grid.Column floated='right' width={2} textAlign="right">
+                            <Grid.Column floated='right' width={4} textAlign="right">
                                 <>
                                     <Button
-                                        fluid
                                         size="small"
                                         name="showColumnFilters"
-
                                         onClick={this.handleStateToggle}
                                         compact
                                         content={showColumnFilters ? 'Hide Column Filters' : 'Show Column Filters'}
                                         style={{ padding: '0.3em', marginTop: '0.5em', textAlign: 'right' }}
                                         id="secondaryButton"
                                         icon={showColumnFilters ? 'eye slash' : 'eye'}
-                                        labelPosition='left' />
+                                        labelPosition='right' />
                                     {columnToggleButton}
                                     {this.renderCustomFilter()}
                                 </>
@@ -594,7 +595,7 @@ export default class GenericTable extends Component {
                         <Grid.Row>
                             <Grid.Column>
                                 <Popup trigger={
-                                    <Button onClick={() => this.setState({ showTableHeaderFunctions: !showTableHeaderFunctions })} icon floated="right">
+                                    <Button compact onClick={() => this.setState({ showTableHeaderFunctions: !showTableHeaderFunctions })} icon floated="right">
                                         <Icon name="setting"></Icon>
                                     </Button>
                                 } content='Show table settings' inverted />
@@ -612,7 +613,7 @@ export default class GenericTable extends Component {
         return (
             <div className="generic table">
                 {tableFunctionsGrid}
-                <Table compact={isCompact} selectable sortable celled basic='very'>
+                <Table compact={compact} selectable sortable celled basic='very'>
                     <Table.Header>
                         <Table.Row>{headerCells}</Table.Row>
                     </Table.Header>

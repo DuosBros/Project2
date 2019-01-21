@@ -1,22 +1,25 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Grid, Header, Segment, Icon, List, Table, Button, Message } from 'semantic-ui-react';
+import { Grid, Header, Segment, Icon, List, Button, Message } from 'semantic-ui-react';
 import _ from 'lodash';
 import moment from 'moment'
 
-import SimpleTable from '../components/SimpleTable';
+import GenericTable from '../components/GenericTable';
+import ServiceTable from '../components/ServiceTable';
 import ServerStatus from '../components/ServerStatus';
+import WebsitesTable from '../components/WebsitesTable';
+import WebChecksTable from '../components/WebChecksTable';
 
 import { getServerDetailsAction, getVmDetailsAction, getServerScomAlertsAction, getServerStatsAction } from '../actions/ServerActions';
 import { getServerDetails, getServerScomAlerts, getDiskUsageDetails } from '../requests/ServerAxios';
 
-import { KIBANA_WINLOGBEAT_SERVER_URL, KIBANA_SERVER_URL_PLACEHOLDER, KIBANA_PERFCOUNTER_SERVER_URL, DISME_SERVICE_PLACEHOLDER, DISME_SERVICE_URL, errorColor } from '../appConfig';
+import { DISME_SERVICE_PLACEHOLDER, DISME_SERVICE_URL, errorColor } from '../appConfig';
 
+import Kibana from '../utils/Kibana';
 import LoadBalancerFarmsTable from '../components/LoadBalancerFarmsTable';
 import SCOMSegment from '../components/SCOMSegment';
 import DismeStatus from '../components/DismeStatus';
-import { Link } from 'react-router-dom';
 import ErrorMessage from '../components/ErrorMessage';
 import MinMaxAvgAreaChart from '../charts/MinMaxAvgAreaChart';
 import { mapDataForMinMaxAvgChart } from '../utils/HelperFunction';
@@ -129,8 +132,7 @@ class ServerDetails extends React.Component {
 
         var scomAlertsSuccess = this.props.serverStore.scomAlerts.success;
         var scomAlertsData = this.props.serverStore.scomAlerts.data;
-        var OSIcon, servicesTableRows, serviceTableColumnProperties, websitesTableRows, websitesTableColumnProperties, windowsServicesTableColumnProperties,
-            windowsServicesTableRows, webChecksTableColumnProperties, webChecksTableRows, scomAlertsSegment;
+        var OSIcon, windowsServicesTableColumnProperties, scomAlertsSegment;
 
         const { webchecks, dismeservices, loadbalancerfarms, windowsservices, websites, scomalerts } = this.state;
 
@@ -194,122 +196,6 @@ class ServerDetails extends React.Component {
             }
         }
 
-        webChecksTableColumnProperties = [
-            {
-                name: "Name",
-                width: 4,
-            },
-            {
-                name: "Url",
-                width: 8,
-            },
-            {
-                name: "Expected Text",
-                width: 3,
-            },
-            {
-                name: "KB article",
-                width: 1,
-            }
-        ];
-
-        webChecksTableRows = serverDetailsData.WebChecks.map(webcheck => {
-            return (
-                <Table.Row key={webcheck.Id}>
-                    <Table.Cell >{webcheck.Title}</Table.Cell>
-                    <Table.Cell ><a href={webcheck.Url} target="_blank" rel="noopener noreferrer">{webcheck.Url}</a></Table.Cell>
-                    <Table.Cell >{webcheck.ExpectedText}</Table.Cell>
-                    <Table.Cell>
-                        <Button
-                            onClick={() =>
-                                window.open(webcheck.Knowledgebasearticle)}
-                            style={{ padding: '0.3em' }}
-                            size='medium'
-                            icon='external' />
-                    </Table.Cell>
-                </Table.Row>
-            )
-        })
-
-        servicesTableRows = serverDetailsData.ServicesFull.map(service => {
-            return (
-                <Table.Row key={service.Id}>
-                    <Table.Cell>{service.Name}</Table.Cell>
-                    <Table.Cell>
-                        <Link to={'/service/' + service.Id}>{service.Shortcut}</Link>
-                    </Table.Cell>
-                    <Table.Cell>
-                        <DismeStatus dismeStatus={service.Status} />
-                    </Table.Cell>
-                    <Table.Cell>
-                        <Button
-                            onClick={() =>
-                                window.open(
-                                    _.replace(DISME_SERVICE_URL, new RegExp(DISME_SERVICE_PLACEHOLDER, "g"),
-                                        service.DismeID))}
-                            style={{ padding: '0.3em' }}
-                            size='medium'
-                            icon='external' />
-                    </Table.Cell>
-                </Table.Row>
-            )
-        })
-
-        serviceTableColumnProperties = [
-            {
-                name: "Name",
-                width: 3,
-            },
-            {
-                name: "Shortcut",
-                width: 3,
-            },
-            {
-                name: "Status",
-                width: 2
-            },
-            {
-                name: "Disme",
-                width: 1,
-            }
-        ];
-
-        websitesTableRows = serverDetailsData.Websites.map(website => {
-            return (
-                <Table.Row key={website.Id}>
-                    <Table.Cell >{website.SiteName}</Table.Cell>
-                    <Table.Cell >{website.Id}</Table.Cell>
-                    <Table.Cell>
-                        {website.AppPoolName}
-                    </Table.Cell>
-                    <Table.Cell >{website.Bindings.map(binding => {
-                        return (
-                            <span key={binding.Id}>{binding.IpAddress + ":" + binding.Port + ":" + binding.Binding} <br /></span>
-                        )
-                    })}</Table.Cell>
-                </Table.Row>
-            )
-        })
-
-        websitesTableColumnProperties = [
-            {
-                name: "Site Name",
-                width: 3,
-            },
-            {
-                name: "SiteId",
-                width: 1,
-            },
-            {
-                name: "AppPool Name",
-                width: 3,
-            },
-            {
-                name: "Bindings",
-                width: 4,
-            }
-        ];
-
         var ips = serverDetailsData.IPs.map(ip => {
             return (
                 <span key={ip.Id}>{ip.IpAddress} <br /></span>
@@ -319,39 +205,30 @@ class ServerDetails extends React.Component {
         windowsServicesTableColumnProperties = [
             {
                 name: "Service Name",
+                prop: "ServiceName",
                 width: 3,
             },
             {
                 name: "Display Name",
+                prop: "DisplayName",
                 width: 1,
             },
             {
                 name: "Startup Type",
+                prop: "StartupType",
                 width: 2,
             },
             {
                 name: "State",
+                prop: "State",
                 width: 2,
             },
             {
                 name: "User",
+                prop: "User",
                 width: 4,
             }
         ]
-
-        windowsServicesTableRows = serverDetailsData.WindowsServices.map(service => {
-            return (
-                <Table.Row key={service.Id}>
-                    <Table.Cell >{service.ServiceName}</Table.Cell>
-                    <Table.Cell >{service.DisplayName}</Table.Cell>
-                    <Table.Cell>
-                        {service.StartupType}
-                    </Table.Cell>
-                    <Table.Cell >{service.State}</Table.Cell>
-                    <Table.Cell >{service.User}</Table.Cell>
-                </Table.Row>
-            )
-        })
 
         var serverStatsSegment;
 
@@ -509,8 +386,8 @@ class ServerDetails extends React.Component {
                                         <dl className="dl-horizontal">
                                             <dt>Kibana:</dt>
                                             <dd>
-                                                <a target="_blank" rel="noopener noreferrer" href={_.replace(KIBANA_WINLOGBEAT_SERVER_URL, new RegExp(KIBANA_SERVER_URL_PLACEHOLDER, "g"), serverDetailsData.ServerName)}>Eventlog</a><br />
-                                                <a target="_blank" rel="noopener noreferrer" href={_.replace(KIBANA_PERFCOUNTER_SERVER_URL, new RegExp(KIBANA_SERVER_URL_PLACEHOLDER, "g"), serverDetailsData.ServerName)}>PerfCounter</a>
+                                                <a target="_blank" rel="noopener noreferrer" href={Kibana.dashboardLinkBuilder("prod", "winlogbeat2").addFilter("beat.hostname", serverDetailsData.ServerName).build()}>Eventlog</a><br />
+                                                <a target="_blank" rel="noopener noreferrer" href={Kibana.dashboardLinkBuilder("prod", "metricsWindows").addFilter("beat.hostname", serverDetailsData.ServerName).build()}>PerfCounter</a>
                                             </dd>
                                         </dl>
                                     </Grid.Column>
@@ -547,7 +424,7 @@ class ServerDetails extends React.Component {
                         {
                             webchecks ? (
                                 <Segment attached='bottom'>
-                                    <SimpleTable columnProperties={webChecksTableColumnProperties} body={webChecksTableRows} compact="very" />
+                                    <WebChecksTable data={serverDetailsData.WebChecks} showTableHeader={false} compact="very" />
                                 </Segment>
                             ) : (
                                     null
@@ -564,7 +441,7 @@ class ServerDetails extends React.Component {
                         {
                             dismeservices ? (
                                 <Segment attached='bottom'>
-                                    <SimpleTable columnProperties={serviceTableColumnProperties} body={servicesTableRows} compact="very" />
+                                    <ServiceTable data={serverDetailsData.ServicesFull} showTableHeaderFunctions={false} compact="very" />
                                 </Segment>
                             ) : (
                                     null
@@ -603,7 +480,7 @@ class ServerDetails extends React.Component {
                         {
                             websites ? (
                                 <Segment attached='bottom'>
-                                    <SimpleTable columnProperties={websitesTableColumnProperties} body={websitesTableRows} compact={true} />
+                                    <WebsitesTable data={serverDetailsData.Websites} disableGrouping={true} showTableHeaderFunctions={false}/>
                                 </Segment>
                             ) : (
                                     null
@@ -639,7 +516,7 @@ class ServerDetails extends React.Component {
                         {
                             windowsservices ? (
                                 <Segment attached='bottom'>
-                                    <SimpleTable columnProperties={windowsServicesTableColumnProperties} body={windowsServicesTableRows} compact={true} />
+                                    <GenericTable columns={windowsServicesTableColumnProperties} data={serverDetailsData.WindowsServices} showTableHeader={false} compact="very" />
                                 </Segment>
                             ) : (
                                     null

@@ -2,8 +2,7 @@ import React from 'react'
 import GenericTable from './GenericTable';
 import { Popup, Button, Image } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
-import { KIBANA_WINLOGBEAT_SERVER_URL, KIBANA_SERVER_URL_PLACEHOLDER, KIBANA_PERFCOUNTER_SERVER_URL } from '../appConfig';
-import _ from 'lodash';
+import Kibana from '../utils/Kibana';
 import ServerStatus from './ServerStatus';
 import DismeStatus from './DismeStatus';
 
@@ -17,16 +16,11 @@ export default class ServersTable extends GenericTable {
                 width: 3
             },
             {
-                name: "State",
-                prop: "ServerState",
-                display: "StateLabel",
-                width: 1
-            },
-            {
-                name: "Disme",
-                prop: "Disme",
-                display: "DismeLabel",
-                collapsing: true
+                name: "Status | Disme",
+                prop: "state",
+                width: 2,
+                sortable: false,
+                searchable: false
             },
             {
                 name: "Owner",
@@ -109,12 +103,27 @@ export default class ServersTable extends GenericTable {
     transformDataRow(data) {
         data.Links = (
             <>
+                {/* TODO: once loco provider server.DismeId, uncomment below code
                 <Popup trigger={
                     <Button
-                        onClick={() =>
-                            window.open(
-                                _.replace(KIBANA_WINLOGBEAT_SERVER_URL, new RegExp(KIBANA_SERVER_URL_PLACEHOLDER, "g"),
-                                    data.ServerName))}
+                        as="a"
+                        href={_.replace(DISME_SERVER_URL, new RegExp(DISME_SERVER_PLACEHOLDER, "g"), data.DismeID)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ padding: '0.3em' }}
+                        size='medium'
+                        icon={
+                            <Image src={window.location.protocol + '//' + window.location.host + "/icons/disme.png"} />
+                        } />
+                } content='Go to Disme details' inverted />
+                */}
+
+                <Popup trigger={
+                    <Button
+                        as="a"
+                        href={Kibana.dashboardLinkBuilder("prod", "winlogbeat2").addFilter("beat.hostname", data.ServerName).build()}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         style={{ padding: '0.3em' }}
                         size='medium'
                         icon={
@@ -124,27 +133,25 @@ export default class ServersTable extends GenericTable {
 
                 <Popup trigger={
                     <Button
-                        onClick={() =>
-                            window.open(
-                                _.replace(KIBANA_PERFCOUNTER_SERVER_URL, new RegExp(KIBANA_SERVER_URL_PLACEHOLDER, "g"),
-                                    data.ServerName))}
+                        as="a"
+                        href={Kibana.dashboardLinkBuilder("prod", "metricsWindows").addFilter("beat.hostname",data.ServerName).build()}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         style={{ padding: '0.3em' }}
                         size='medium'
                         icon={
                             <Image src={window.location.protocol + '//' + window.location.host + "/icons/kibana.png"} />
                         } />
                 } content='Go to Kibana perfcounter' inverted />
-                {/* <a target="_blank" rel="noopener noreferrer" href={_.replace(KIBANA_WINLOGBEAT_SERVICE_URL, new RegExp(KIBANA_SERVICE_URL_PLACEHOLDER, "g"), serviceDetails.Service[0].Shortcut)}>Eventlog</a><br />
-                <a target="_blank" rel="noopener noreferrer" href={_.replace(KIBANA_PERFCOUNTER_SERVICE_URL, new RegExp(KIBANA_SERVICE_URL_PLACEHOLDER, "g"), serviceDetails.Service[0].Shortcut)}>PerfCounter</a> */}
             </>
         );
 
         data.ServerLink = (<Link to={'/server/' + data.Id}>{data.ServerName}</Link>);
-        data.StateLabel = (
-            <ServerStatus size='small' serverState={data.ServerState} />
-        );
-        data.DismeLabel = (
-            <DismeStatus size='small' dismeStatus={data.Disme} />
+        data.state = (
+            <>
+                <ServerStatus size='small' serverState={data.ServerState} />
+                <DismeStatus size='small' dismeStatus={data.Disme} />
+            </>
         );
         return data;
     }
