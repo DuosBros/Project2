@@ -16,6 +16,10 @@ export default class Home extends React.Component {
         }
     }
 
+    handleChange = (e, { name, value }) => {
+        this.setState({ [name]: value })
+    }
+
     renderLinksButtons() {
         let buttons = links.buttons.map((e, i) => (<Button key={"link-button-" + i} color={e.color} as="a" href={e.url} target="_blank" rel="noopener noreferrer">{e.title}</Button>))
         return (<div>{buttons}</div>);
