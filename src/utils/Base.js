@@ -28,6 +28,7 @@ import Services from '../pages/Services';
 import LoadBalancerFarms from '../pages/LoadBalancerFarms';
 import IPAddresses from '../pages/IPAddresses';
 import Admin from '../pages/Admin';
+import VersionStatus from '../pages/VersionStatus';
 
 class Base extends React.Component {
     constructor(props) {
@@ -125,6 +126,7 @@ class Base extends React.Component {
                                 <Route path='/lbfarms' component={LoadBalancerFarms} />
                                 <Route path='/ipaddresses' component={IPAddresses} />
                                 <Route path='/admin' component={Admin} />
+                                <Route path='/versionstatus' component={VersionStatus} />
                             </Switch>
                         </div>
                         <Footer id="footer" {...wideClass} />

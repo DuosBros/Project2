@@ -4,10 +4,12 @@ import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 
 import {
-    getDismeApplicationsAction, getServiceDetailsByShortcutsAction, removeServiceDetailsAction, getRolloutStatusAction,
+    getDismeApplicationsAction, removeServiceDetailsAction, getRolloutStatusAction,
     deleteAllRoloutStatusesAction, deleteRolloutStatusAction
 } from '../actions/RolloutStatusActions';
-import { getHealthAction, getVersionAction } from '../actions/ServiceActions';
+
+
+import { getHealthAction, getVersionAction, getServiceDetailsByShortcutsAction } from '../actions/ServiceActions';
 
 import { getDismeApplications, getServiceByShortcut, getHealth, getVersion } from '../requests/ServiceAxios';
 import { Grid, Header, Segment, Dropdown, Input, Table, Button, Message, Icon } from 'semantic-ui-react';
@@ -68,7 +70,7 @@ class RolloutStatus extends React.Component {
         }
     }
 
-    fechtAndHandleDismeApplications = () => {
+    fechtAndHandleDismeApplications = (resetServices) => {
         getDismeApplications()
             .then(res => {
                 this.props.getDismeApplicationsAction({
@@ -86,7 +88,9 @@ class RolloutStatus extends React.Component {
                 this.props.getDismeApplicationsAction({ success: false, error: err })
             })
             .then(() => {
-                this.props.getServiceDetailsByShortcutsAction({ success: true, data: [] })
+                if (resetServices) {
+                    this.props.getServiceDetailsByShortcutsAction({ success: true, data: [] })
+                }
                 this.props.deleteAllRoloutStatusesAction()
             })
     }
@@ -155,7 +159,7 @@ class RolloutStatus extends React.Component {
                 this.props.getServiceDetailsByShortcutsAction({ success: false, error: err })
             })
             .then((res) => {
-                if(res) {
+                if (res) {
                     this.getRolloutStatuses()
                 }
             })
@@ -309,8 +313,7 @@ class RolloutStatus extends React.Component {
                 }
 
                 return x
-            }
-            )
+            })
         });
     }
 
@@ -319,7 +322,7 @@ class RolloutStatus extends React.Component {
 
         var segments = Object.assign([], this.state.segments)
 
-        this.props.rolloutStatusStore.serviceDetails.data.forEach(x => {
+        this.props.serviceStore.serviceDetails.data.forEach(x => {
             if (x === null) {
                 return
             }
@@ -337,7 +340,7 @@ class RolloutStatus extends React.Component {
             segments: segments
         });
 
-        this.props.rolloutStatusStore.serviceDetails.data.forEach(x => {
+        this.props.serviceStore.serviceDetails.data.forEach(x => {
             if (x === null) {
                 return
             }
@@ -471,7 +474,7 @@ class RolloutStatus extends React.Component {
 
         var servicesTableRows = [];
 
-        if (!this.props.rolloutStatusStore.serviceDetails.success) {
+        if (!this.props.serviceStore.serviceDetails.success) {
             servicesTableRows.push(
                 <Table.Row error>
                     <Table.Cell colSpan={6}>Error fetching data</Table.Cell>
@@ -479,7 +482,7 @@ class RolloutStatus extends React.Component {
             )
         }
         else {
-            servicesTableRows = this.props.rolloutStatusStore.serviceDetails.data.map((service, index) => {
+            servicesTableRows = this.props.serviceStore.serviceDetails.data.map((service, index) => {
                 if (service) {
                     return (
                         <Table.Row key={service.Service[0].Id}>
@@ -584,14 +587,6 @@ class RolloutStatus extends React.Component {
                                 style={{ padding: '0em', marginRight: '0.5em', marginLeft: '0.5em' }}
                                 onClick={() => this.handleRefreshRolloutStatus(x.serviceName, x.serviceId)}
                                 icon='refresh' />
-                            {/* <Popup trigger={
-                                <Button
-                                    basic
-                                    size="tiny"
-                                    style={{ padding: '0em', marginRight: '0.5em', marginLeft: '0.5em' }}
-                                    onClick={() => this.removeServiceFromSearch(x.serviceName)}
-                                    icon='minus' />
-                            } content={"Remove " + x.serviceName + " from input"} inverted /> */}
                             <Button
                                 basic
                                 style={{ padding: '0em', marginRight: '0.5em' }}
@@ -728,7 +723,8 @@ class RolloutStatus extends React.Component {
 function mapStateToProps(state) {
     return {
         rolloutStatusStore: state.RolloutStatusReducer,
-        headerStore: state.HeaderReducer
+        headerStore: state.HeaderReducer,
+        serviceStore: state.ServiceReducer
     };
 }
 

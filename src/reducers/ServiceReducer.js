@@ -1,14 +1,16 @@
-import { GET_SERVICE_DETAILS, TOGGLE_LOADBALANCERFARMS_TASKS, GET_SERVICES } from '../constants/ServiceConstants';
+import { GET_SERVICE_DETAILS, TOGGLE_LOADBALANCERFARMS_TASKS, GET_SERVICES, GET_SERVICE_DETAILS_BY_SHORTCUTS } from '../constants/ServiceConstants';
 import { getServerState, getDismeState } from '../utils/HelperFunction';
 
 const serviceInitialState = {
-    serviceDetails: { success: true },
     showLoadBalancerFarmsTasksModal: false,
+    serviceDetails: { success: true, data: [] },
     services: { success: true }
 }
 
 const ServiceReducer = (state = serviceInitialState, action) => {
     switch (action.type) {
+        case GET_SERVICE_DETAILS_BY_SHORTCUTS:
+            return Object.assign({}, state, { serviceDetails: action.payload })
         case GET_SERVICE_DETAILS:
             if (action.payload.success && action.payload.data.Servers) {
                 var mappedServers = action.payload.data.Servers.map(server => {

@@ -14,7 +14,7 @@ import WebChecksTable from '../components/WebChecksTable';
 import { getServerDetailsAction, getVmDetailsAction, getServerScomAlertsAction, getServerStatsAction } from '../actions/ServerActions';
 import { getServerDetails, getServerScomAlerts, getDiskUsageDetails } from '../requests/ServerAxios';
 
-import { DISME_SERVICE_PLACEHOLDER, DISME_SERVICE_URL, errorColor } from '../appConfig';
+import { errorColor } from '../appConfig';
 
 import Kibana from '../utils/Kibana';
 import LoadBalancerFarmsTable from '../components/LoadBalancerFarmsTable';

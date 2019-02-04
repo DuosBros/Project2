@@ -28,10 +28,10 @@ class Sidebar extends React.Component {
                         <Menu.Header as={Link} to='/servers'>Server</Menu.Header>
                         <Menu.Menu>
                             <Menu.Item as={Link} to='/patchgroups'>
-                                PatchGroups
+                                Patch Groups
                             </Menu.Item>
                             <Menu.Item as={Link} to='/virtualmachines' >
-                                VirtualMachines
+                                Virtual Machines
                             </Menu.Item>
                         </Menu.Menu>
                     </Menu.Item>
@@ -39,11 +39,12 @@ class Sidebar extends React.Component {
                         <Menu.Header as={Link} to='/services'>Services</Menu.Header>
                         <Menu.Menu>
                             <Menu.Item as={Link} to='/rolloutstatus' >
-                                RolloutStatus
+                                Rollout Status
                             </Menu.Item>
-                            {/* <Menu.Item as={Link} to='/usage' >
-                                VersionStatus
+                            <Menu.Item as={Link} to='/versionstatus' >
+                                Version Status
                             </Menu.Item>
+                            {/*
                             <Menu.Item as={Link} to='/theming' >
                                 HealthChecks
                             </Menu.Item>

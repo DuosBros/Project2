@@ -13,7 +13,7 @@ export default class ServerStatus extends Component {
         else {
             return 'red'
         }
-    
+
     }
 
     render() {
