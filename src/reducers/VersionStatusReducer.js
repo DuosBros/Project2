@@ -10,7 +10,6 @@ const VersionStatusReducer = (state = serverInitialState, action) => {
         case GET_STAGES:
             return Object.assign({}, state, { stages: action.payload })
         case GET_VERSIONS:
-        debugger
             return Object.assign({}, state, { versions: action.payload })
         default:
             return state;

@@ -52,9 +52,17 @@ class VersionStatus extends React.Component {
     }
 
     changeInputBasedOnUrl = () => {
-        var params = new URLSearchParams(this.props.location.search).get('services');
-        if (params) {
-            this.handleInputOnChange({}, { value: params })
+        var servicesParam = new URLSearchParams(this.props.location.search).get('services');
+        var envParam = new URLSearchParams(this.props.location.search).get('env');
+
+        if (servicesParam || envParam) {
+            if (servicesParam) {
+                this.handleInputOnChange(null, { value: servicesParam })
+            }
+
+            if (envParam) {
+                this.handleEnvironmentDropdownOnChange(null, { value: envParam.split(',') })
+            }
         }
         else {
             this.props.history.push("/versionstatus")
@@ -133,13 +141,30 @@ class VersionStatus extends React.Component {
     }
 
     handleEnvironmentDropdownOnChange = (e, { value }) => {
+
+        var url = new URL(document.location.href)
+        if (value) {
+            if (url.searchParams.get("env")) {
+                url.searchParams.set("env", value)
+            }
+            else {
+                url.searchParams.append('env', value);
+            }
+
+            this.props.history.push(url.pathname + url.search)
+        }
+        else {
+            url.searchParams.delete("env")
+            this.props.history.push(url.search)
+        }
+
+
         this.setState({ selectedEnvironments: value, alertNoEnvironmentsSelected: false });
-        console.log(this)
-        console.log(this.props.serviceStore.serviceDetails);
 
         if (this.props.serviceStore.serviceDetails.success) {
             var shortcuts = this.props.serviceStore.serviceDetails.data.map(x => x.Service[0].Shortcut)
-            this.getServiceDetailsAndVersions(shortcuts);
+            if (shortcuts.length !== 0)
+                this.getServiceDetailsAndVersions(shortcuts);
         }
     }
 
@@ -155,11 +180,22 @@ class VersionStatus extends React.Component {
 
         this.setState({ inputProductsValues: value });
 
+        var url = new URL(document.location.href)
         if (value) {
-            this.props.history.push("/versionstatus?services=" + value)
+            if (url.searchParams.get("services")) {
+                url.searchParams.set("services", value)
+            }
+            else {
+                url.searchParams.append('services', value);
+            }
+
+            this.props.history.push(url.pathname + url.search)
+
+            // this.props.history.push("/versionstatus?services=" + value)
         }
         else {
-            this.props.history.push("/rolloutstatus")
+            url.searchParams.delete("services")
+            this.props.history.push(url.search)
             this.setState({ segments: DEFAULT_SEGMENT });
         }
 
@@ -410,7 +446,7 @@ class VersionStatus extends React.Component {
                     placeholder='Select one or more environments'
                     // onSearchChange={this.handleApplicationDropdownOnSearchChange}
                     search
-                // value={this.state.inputProductsValues === "" ? "" : this.state.applicationDropdownValue}
+                    value={this.state.selectedEnvironments === "" ? "" : this.state.selectedEnvironments}
                 />
             )
         }
@@ -520,7 +556,7 @@ class VersionStatus extends React.Component {
                     </Grid.Column>
                 </Grid.Row>
                 {serviceDetails}
-                { this.state.segments.filter(x => x.segmentName === "versionStatus")[0].isShowing ? (versionStatusSegment) : (null)}
+                {this.state.segments.filter(x => x.segmentName === "versionStatus")[0].isShowing ? (versionStatusSegment) : (null)}
             </Grid>
         )
     }
