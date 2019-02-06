@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 
 import { getDismeApplications, getServiceByShortcut } from '../requests/ServiceAxios';
 import { getServiceDetailsByShortcutsAction, removeServiceDetailsAction, removeAllServiceDetailsAction } from '../actions/ServiceActions';
-import { getStagesAction, getVersionsAction } from '../actions/VersionStatusActions';
+import { getStagesAction, getVersionsAction, removeAllVersionsAction } from '../actions/VersionStatusActions';
 import { searchServiceShortcutAction } from '../actions/HeaderActions';
 import { getDismeApplicationsAction } from '../actions/RolloutStatusActions';
 import { DISME_SERVICE_URL, DISME_SERVICE_PLACEHOLDER } from '../appConfig';
@@ -231,6 +231,8 @@ class VersionStatus extends React.Component {
     }
 
     getServiceDetailsAndVersions(services) {
+        this.props.removeAllVersionsAction();
+        
         getServiceByShortcut(services)
             .then(res => {
                 if (res.data) {
@@ -657,7 +659,8 @@ function mapDispatchToProps(dispatch) {
         getVersionsAction,
         searchServiceShortcutAction,
         removeServiceDetailsAction,
-        removeAllServiceDetailsAction
+        removeAllServiceDetailsAction,
+        removeAllVersionsAction
     }, dispatch);
 }
 
