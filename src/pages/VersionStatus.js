@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import { getDismeApplications, getServiceByShortcut } from '../requests/ServiceAxios';
 import { getServiceDetailsByShortcutsAction } from '../actions/ServiceActions';
 import { getStagesAction, getVersionsAction } from '../actions/VersionStatusActions';
+import { searchServiceShortcutAction } from '../actions/HeaderActions';
 import { getDismeApplicationsAction } from '../actions/RolloutStatusActions';
 import { DISME_SERVICE_URL, DISME_SERVICE_PLACEHOLDER } from '../appConfig';
 import DismeStatus from '../components/DismeStatus';
@@ -15,6 +16,7 @@ import ErrorMessage from '../components/ErrorMessage';
 import SimpleTable from '../components/SimpleTable';
 import { getStages, getVersions } from '../requests/VersionStatusAxios';
 import VersionStatusTable from '../components/VersionStatusTable';
+import { searchServiceShortcut } from '../requests/HeaderAxios';
 
 const DEFAULT_SEGMENT = [
     {
@@ -267,6 +269,28 @@ class VersionStatus extends React.Component {
                 })
         }
     }
+
+    handleServiceChange = (e, m) => {
+        var value = m.options.find(x => x.value === m.value).text;
+
+        this.setState({ inputProductsValues: this.state.inputProductsValues + "," + value });
+        this.getServiceDetailsAndVersions(this.state.inputProductsValues)
+    }
+
+    handleServiceShortcutSearchChange = (e) => {
+        if (e.target.value.length > 1) {
+            this.handleSearchServiceShortcut(e.target.value)
+        }
+    }
+
+    handleSearchServiceShortcut(value) {
+        searchServiceShortcut(value)
+            .then(res => {
+                this.props.searchServiceShortcutAction(res.data.map(e => ({ text: e.Name, value: e.Id })))
+            })
+        // no catch because it can throw errors while user is typing
+    }
+
 
     render() {
         var { showAllSegments, selectedEnvironments } = this.state;
@@ -576,7 +600,8 @@ function mapDispatchToProps(dispatch) {
         getServiceDetailsByShortcutsAction,
         getDismeApplicationsAction,
         getStagesAction,
-        getVersionsAction
+        getVersionsAction,
+        searchServiceShortcutAction
     }, dispatch);
 }
 

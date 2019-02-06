@@ -44,6 +44,10 @@ export default class VersionStatusTable extends GenericTable {
         ];
     }
 
+    getDataKey(data) {
+        return data.ServerName;
+     }
+
     getGrouping() {
         return [
             "Environment"
