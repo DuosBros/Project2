@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
-import { Grid, Header, Segment, Icon, List, Button, Message } from 'semantic-ui-react';
+import { Grid, Header, Segment, Icon, List, Button, Message, Image } from 'semantic-ui-react';
 import moment from 'moment';
 
 import { getServiceDetailsAction, toggleLoadBalancerFarmsTasksModalAction } from '../actions/ServiceActions';
@@ -35,7 +35,7 @@ class ServiceDetails extends React.Component {
     updateService = () => {
         getServiceDetails(this.props.match.params.id)
             .then(res => {
-                this.props.getServiceDetailsAction({ success: true, data: res.data})
+                this.props.getServiceDetailsAction({ success: true, data: res.data })
             })
             .catch(err => {
                 this.props.getServiceDetailsAction({ success: false, error: err })
@@ -105,7 +105,7 @@ class ServiceDetails extends React.Component {
         }
 
         // render page
-        return  (
+        return (
             <Grid stackable>
                 <Grid.Row>
                     <Grid.Column>
@@ -160,16 +160,25 @@ class ServiceDetails extends React.Component {
                                             <dd>{serviceDetailsData.Service[0].ResponsibleTeam}</dd>
                                         </dl>
                                         <dl className="dl-horizontal">
-                                            <dt>Kibana:</dt>
+                                            <dt>
+                                                <Image inline src={window.location.protocol + '//' + window.location.host + "/icons/kibana.png"} />
+                                                Kibana:
+                                            </dt>
                                             <dd>
                                                 <a target="_blank" rel="noopener noreferrer" href={Kibana.dashboardLinkBuilder("prod", "winlogbeat2").addFilter("env", "PROD").addFilter("app", serviceDetailsData.Service[0].Shortcut).build()}>Eventlog</a><br />
                                                 <a target="_blank" rel="noopener noreferrer" href={Kibana.dashboardLinkBuilder("prod", "cpuAndRam").addFilter("app", serviceDetailsData.Service[0].Shortcut).setQuery("NOT beat.hostname:*PRE*").build()}>PerfCounter</a>
                                             </dd>
-                                            <dt>AppDynamics:</dt>
+                                            <dt>
+                                                <Image inline src={window.location.protocol + '//' + window.location.host + "/icons/apm.png"} />
+                                                AppDynamics:
+                                            </dt>
                                             <dd>
                                                 <a target="_blank" href={"https://apm.bwinparty.corp/controller/#/location=APP_COMPONENT_MANAGER&timeRange=last_15_minutes.BEFORE_NOW.-1.-1.15&application=" + serviceDetailsData.Service[0].ApmAppId + "&component=" + serviceDetailsData.Service[0].ApmTierId + ")"} rel="noopener noreferrer"> Dashboard</a>
                                             </dd>
-                                            <dt>Disme:</dt>
+                                            <dt>
+                                                <Image inline src={window.location.protocol + '//' + window.location.host + "/icons/disme.png"} />
+                                                Disme:
+                                            </dt>
                                             <dd>
                                                 <a target="_blank" href={_.replace(DISME_SERVICE_URL, new RegExp(DISME_SERVICE_PLACEHOLDER, "g"), serviceDetailsData.Service[0].DismeID)} rel="noopener noreferrer">Details</a>
                                             </dd>
