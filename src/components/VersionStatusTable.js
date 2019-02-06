@@ -9,12 +9,12 @@ export default class VersionStatusTable extends GenericTable {
             {
                 name: "Shortcut",
                 prop: "Shortcut",
-                collapsing: true
+                width: 2
             },
             {
                 name: "Environment",
                 prop: "Environment",
-                width: 1,
+                width: 2,
             },
             {
                 name: "Datacenter",
@@ -29,7 +29,7 @@ export default class VersionStatusTable extends GenericTable {
             {
                 name: "Server State",
                 prop: "ServerState",
-                collapsing: true
+                width: 1
             },
             {
                 name: "Server Name",
@@ -39,7 +39,6 @@ export default class VersionStatusTable extends GenericTable {
             {
                 name: "Version",
                 prop: "Version",
-                width: 3
             }
         ];
     }

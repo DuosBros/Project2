@@ -1,4 +1,13 @@
-import { GET_SERVICE_DETAILS, TOGGLE_LOADBALANCERFARMS_TASKS, GET_SERVICES, GET_HEALTH, GET_VERSION, GET_SERVICE_DETAILS_BY_SHORTCUTS } from '../constants/ServiceConstants';
+import {
+    GET_SERVICE_DETAILS, TOGGLE_LOADBALANCERFARMS_TASKS, GET_SERVICES, GET_HEALTH, GET_VERSION,
+    GET_SERVICE_DETAILS_BY_SHORTCUTS, REMOVE_SERVICE_DETAILS, REMOVE_ALL_SERVICE_DETAILS
+} from '../constants/ServiceConstants';
+
+export function removeAllServiceDetailsAction() {
+    return {
+        type: REMOVE_ALL_SERVICE_DETAILS
+    }
+}
 
 export function getServiceDetailsByShortcutsAction(payload) {
     return {
@@ -7,6 +16,12 @@ export function getServiceDetailsByShortcutsAction(payload) {
     }
 }
 
+export function removeServiceDetailsAction(payload) {
+    return {
+        payload,
+        type: REMOVE_SERVICE_DETAILS
+    }
+}
 
 export function getServiceDetailsAction(payload) {
     return {

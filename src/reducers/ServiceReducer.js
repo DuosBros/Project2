@@ -1,4 +1,8 @@
-import { GET_SERVICE_DETAILS, TOGGLE_LOADBALANCERFARMS_TASKS, GET_SERVICES, GET_SERVICE_DETAILS_BY_SHORTCUTS } from '../constants/ServiceConstants';
+import {
+    GET_SERVICE_DETAILS, TOGGLE_LOADBALANCERFARMS_TASKS,
+    GET_SERVICES, GET_SERVICE_DETAILS_BY_SHORTCUTS, REMOVE_SERVICE_DETAILS,
+    REMOVE_ALL_SERVICE_DETAILS
+} from '../constants/ServiceConstants';
 import { getServerState, getDismeState } from '../utils/HelperFunction';
 
 const serviceInitialState = {
@@ -9,6 +13,16 @@ const serviceInitialState = {
 
 const ServiceReducer = (state = serviceInitialState, action) => {
     switch (action.type) {
+        case REMOVE_ALL_SERVICE_DETAILS:
+            return Object.assign({}, state, { serviceDetails: { success: true, data: [] } })
+        case REMOVE_SERVICE_DETAILS:
+            return Object.assign({}, state, {
+                serviceDetails: {
+                    success: true, data: state.serviceDetails.data.filter(x => {
+                        return x.Service[0].Shortcut !== action.payload.Shortcut
+                    })
+                }
+            })
         case GET_SERVICE_DETAILS_BY_SHORTCUTS:
             return Object.assign({}, state, { serviceDetails: action.payload })
         case GET_SERVICE_DETAILS:

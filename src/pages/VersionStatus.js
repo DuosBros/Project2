@@ -6,7 +6,7 @@ import { Grid, Header, Segment, Table, Button, Input, Dropdown, Message, Icon } 
 import { Link } from 'react-router-dom';
 
 import { getDismeApplications, getServiceByShortcut } from '../requests/ServiceAxios';
-import { getServiceDetailsByShortcutsAction } from '../actions/ServiceActions';
+import { getServiceDetailsByShortcutsAction, removeServiceDetailsAction, removeAllServiceDetailsAction } from '../actions/ServiceActions';
 import { getStagesAction, getVersionsAction } from '../actions/VersionStatusActions';
 import { searchServiceShortcutAction } from '../actions/HeaderActions';
 import { getDismeApplicationsAction } from '../actions/RolloutStatusActions';
@@ -51,6 +51,10 @@ class VersionStatus extends React.Component {
         this.fetchAndHandleStages();
 
         this.changeInputBasedOnUrl();
+    }
+
+    componentWillUnmount() {
+        this.props.removeAllServiceDetailsAction();
     }
 
     changeInputBasedOnUrl = () => {
@@ -147,6 +151,7 @@ class VersionStatus extends React.Component {
         var url = new URL(document.location.href)
         if (value) {
             if (url.searchParams.get("env")) {
+
                 url.searchParams.set("env", value)
             }
             else {
@@ -272,9 +277,27 @@ class VersionStatus extends React.Component {
 
     handleServiceChange = (e, m) => {
         var value = m.options.find(x => x.value === m.value).text;
+        var servicesString = this.state.inputProductsValues + "," + value
 
-        this.setState({ inputProductsValues: this.state.inputProductsValues + "," + value });
-        this.getServiceDetailsAndVersions(this.state.inputProductsValues)
+        var url = new URL(document.location.href)
+        if (value) {
+            if (url.searchParams.get("services")) {
+                url.searchParams.set('services', servicesString);
+            }
+            else {
+                url.searchParams.apend("services", value)
+            }
+
+            this.props.history.push(url.pathname + url.search)
+        }
+        else {
+            url.searchParams.delete("services")
+            this.props.history.push(url.search)
+            this.setState({ segments: DEFAULT_SEGMENT });
+        }
+
+        this.setState({ inputProductsValues: servicesString });
+        this.getServiceDetailsAndVersions(servicesString.split(","))
     }
 
     handleServiceShortcutSearchChange = (e) => {
@@ -291,6 +314,34 @@ class VersionStatus extends React.Component {
         // no catch because it can throw errors while user is typing
     }
 
+    removeServiceFromSearch = (service) => {
+        var split = this.state.inputProductsValues.split(",")
+
+        var filtered = split.filter(x => x !== service.Shortcut)
+        this.getServiceDetailsAndVersions(filtered);
+
+        var joined = filtered.join(",")
+        var url = new URL(document.location.href)
+
+        if (filtered.length > 0) {
+            if (url.searchParams.get("services")) {
+                url.searchParams.set('services', joined);
+            }
+            else {
+                url.searchParams.apend("services", joined)
+            }
+
+            this.props.history.push(url.pathname + url.search)
+        }
+        else {
+            url.searchParams.delete("services")
+            this.props.history.push(url.search)
+        }
+
+        this.setState({ inputProductsValues: joined });
+
+        this.props.removeServiceDetailsAction(service);
+    }
 
     render() {
         var { showAllSegments, selectedEnvironments } = this.state;
@@ -515,7 +566,7 @@ class VersionStatus extends React.Component {
                                 icon='content' />
                         </Header>
                         <Segment attached='bottom' >
-                            <VersionStatusTable compact="very" data={this.props.versionStatusStore.versions.data} />
+                            <VersionStatusTable showTableHeader={false} compact="very" data={this.props.versionStatusStore.versions.data} />
                         </Segment>
                     </Grid.Column>
                 </Grid.Row>
@@ -556,9 +607,11 @@ class VersionStatus extends React.Component {
                             <Grid stackable>
                                 <Grid.Row>
                                     <Grid.Column width={3} >
+                                        <strong>Disme Application</strong>
                                         {dismeApplicationsDropdown}
                                     </Grid.Column>
                                     <Grid.Column width={13} >
+                                        <strong>List of services</strong>
                                         <Input
                                             onChange={this.handleInputOnChange}
                                             fluid
@@ -569,6 +622,7 @@ class VersionStatus extends React.Component {
                                 </Grid.Row>
                                 <Grid.Row >
                                     <Grid.Column width={10} >
+                                        <strong>Environment</strong>
                                         {environmentsDropdown}
                                     </Grid.Column>
                                     {/* <Grid.Column width={4} textAlign="right" >
@@ -601,7 +655,9 @@ function mapDispatchToProps(dispatch) {
         getDismeApplicationsAction,
         getStagesAction,
         getVersionsAction,
-        searchServiceShortcutAction
+        searchServiceShortcutAction,
+        removeServiceDetailsAction,
+        removeAllServiceDetailsAction
     }, dispatch);
 }
 
