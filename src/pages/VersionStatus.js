@@ -573,10 +573,7 @@ class VersionStatus extends React.Component {
                     </Grid.Column>
                 </Grid.Row>
             )
-
         }
-
-
 
         if (this.props.serviceStore.serviceDetails.data) {
             if (this.props.serviceStore.serviceDetails.data.length === 0 || selectedEnvironments.length === 0) {

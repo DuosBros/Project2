@@ -1,16 +1,14 @@
 import GenericTable from './GenericTable';
+import React from 'react';
+import { Link } from 'react-router-dom';
 
 export default class PatchGroupsTable extends GenericTable {
     getColumns() {
         return [
             {
-                name: "ID",
-                prop: "Id",
-                width: 1
-            },
-            {
                 name: "Name",
                 prop: "Name",
+                display: "NameLink",
                 width: 4,
                 collapsing: true
             },
@@ -42,5 +40,11 @@ export default class PatchGroupsTable extends GenericTable {
                 collapsing: true
             }
         ];
+    }
+
+    transformDataRow(data) {
+        data.NameLink = (<Link to={'/patchgroup/' + data.Id}>{data.Name}</Link>);
+
+        return data;
     }
 }

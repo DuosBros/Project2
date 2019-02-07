@@ -29,6 +29,7 @@ import LoadBalancerFarms from '../pages/LoadBalancerFarms';
 import IPAddresses from '../pages/IPAddresses';
 import Admin from '../pages/Admin';
 import VersionStatus from '../pages/VersionStatus';
+import PatchGroupDetails from '../pages/PatchGroupDetails';
 
 class Base extends React.Component {
     constructor(props) {
@@ -119,6 +120,7 @@ class Base extends React.Component {
                                 <Route path='/server' component={ServersTable} />
                                 <Route path='/rolloutstatus' component={RolloutStatus} />
                                 <Route path='/patchgroups' component={PatchGroups} />
+                                <Route path='/patchgroup/:id' component={PatchGroupDetails} />
                                 <Route path='/service/:id' component={ServiceDetails} />
                                 <Route path='/virtualmachines' component={VirtualMachines} />
                                 <Route path='/servers' component={Servers} />
