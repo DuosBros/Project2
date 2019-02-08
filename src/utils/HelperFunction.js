@@ -8,6 +8,33 @@ export const mapDataForMinMaxAvgChart = (data) => {
     }))
 }
 
+export const mapDataForGenericBarChart = (data, key, filter, filterZeroCount) => {
+    var grouped = groupBy(data, key);
+    var keys = Object.keys(grouped);
+
+    var mapped = keys.map(x => {
+        var count = grouped[x].length
+
+        if (filterZeroCount) {
+            if (count !== 0 && grouped[x].filter(x => x.Status !== "removed").length !== 0) {
+                return ({
+                    name: x && x !== "null" ? x : "Unknown",
+                    count: filter ? grouped[x].filter(x => x.Status !== "removed").length : count
+                })
+            }
+        }
+        else {
+            return ({
+                name: x && x !== "null" ? x : "Unknown",
+                count: filter ? grouped[x].filter(x => x.Status !== "removed").length : count
+            })
+        }
+
+    })
+
+    return mapped.filter(x => x).sort((a, b) => b.count - a.count)
+}
+
 export const groupBy = (items, key) => items.reduce(
     (result, item) => ({
         ...result,
@@ -168,32 +195,32 @@ export const sleep = (milliseconds) => {
     return new Promise(resolve => setTimeout(resolve, milliseconds))
 }
 
-export const promiseMap = function(n, arr, transformer, ignoreErrors) {
+export const promiseMap = function (n, arr, transformer, ignoreErrors) {
     var res = new Array(arr.length);
     var last = 0;
-    var tranformOrFinish = function(runner, idx) {
-        if(idx >= arr.length) {
+    var tranformOrFinish = function (runner, idx) {
+        if (idx >= arr.length) {
             return res;
         }
         return Promise.resolve(transformer(arr[idx], idx))
-        .then((ret) => {
-            res[idx] = ret;
-            return tranformOrFinish(runner, last++);
-        }, (err) => {
-            if(ignoreErrors === false) {
-                last = arr.length;
-                throw err;
-            }
-            res[idx] = err;
-            return tranformOrFinish(runner, last++);
-        });
+            .then((ret) => {
+                res[idx] = ret;
+                return tranformOrFinish(runner, last++);
+            }, (err) => {
+                if (ignoreErrors === false) {
+                    last = arr.length;
+                    throw err;
+                }
+                res[idx] = err;
+                return tranformOrFinish(runner, last++);
+            });
     };
 
     var tasks = [];
-    for(let i = 0; i < n && i < arr.length; i++) {
+    for (let i = 0; i < n && i < arr.length; i++) {
         tasks.push(tranformOrFinish(i, last++));
     }
 
     return Promise.all(tasks)
-    .then(() => res);
+        .then(() => res);
 };

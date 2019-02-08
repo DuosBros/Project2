@@ -84,6 +84,20 @@ class Sidebar extends React.Component {
                         </Menu.Menu>
                     </Menu.Item> */}
                     <Menu.Item>
+                        <Menu.Header>Statistics</Menu.Header>
+                        <Menu.Menu>
+                            {/* <Menu.Item as={Link} to='/statistics/servers' >
+                                Servers
+                            </Menu.Item> */}
+                            <Menu.Item as={Link} to='/statistics/services' >
+                                Services
+                            </Menu.Item>
+                            {/* <Menu.Item as={Link} to='/statistics/loadbalancerfarms' >
+                                LoadBalancer Farms
+                            </Menu.Item> */}
+                        </Menu.Menu>
+                    </Menu.Item>
+                    <Menu.Item>
                         <Menu.Header as={Link} to='/admin'>Admin</Menu.Header>
                     </Menu.Item>
                     {/* <Menu.Item>
@@ -112,7 +126,7 @@ class Sidebar extends React.Component {
 
         return (
             <div id={this.props.headerStore.showVerticalMenu ? "verticalMenu" : "hiddenVerticalMenu"}>
-                <Menu  inverted fluid vertical borderless>
+                <Menu inverted fluid vertical borderless>
                     {NavMenu}
                 </Menu>
                 <div className="sidebarCollapser">

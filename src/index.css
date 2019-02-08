@@ -230,6 +230,10 @@ div.content.noimg {
     margin: 0 0 0 0.5em
 }
 
+.iconMargin:before {
+    margin-left: 0.5em;
+    margin-right: 0.3em;
+}
 .leftMargin {
     margin-left: 1.5em;
 }

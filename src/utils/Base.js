@@ -30,6 +30,9 @@ import IPAddresses from '../pages/IPAddresses';
 import Admin from '../pages/Admin';
 import VersionStatus from '../pages/VersionStatus';
 import PatchGroupDetails from '../pages/PatchGroupDetails';
+import ServicesStatistics from '../pages/ServicesStatistics';
+import ServersStatistics from '../pages/ServersStatistics';
+import LoadBalancerFarmsStatistics from '../pages/LoadBalancerFarmsStatistics';
 
 class Base extends React.Component {
     constructor(props) {
@@ -129,6 +132,9 @@ class Base extends React.Component {
                                 <Route path='/ipaddresses' component={IPAddresses} />
                                 <Route path='/admin' component={Admin} />
                                 <Route path='/versionstatus' component={VersionStatus} />
+                                <Route path='/statistics/services' component={ServicesStatistics} />
+                                <Route path='/statistics/servers' component={ServersStatistics} />
+                                <Route path='/statistics/loadbalancerfarms' component={LoadBalancerFarmsStatistics} />
                             </Switch>
                         </div>
                         <Footer id="footer" {...wideClass} />
