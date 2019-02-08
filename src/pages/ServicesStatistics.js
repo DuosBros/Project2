@@ -129,7 +129,7 @@ class ServicesStatistics extends React.Component {
 
         var labelExpandCollapseButton;
         if (!this.state.expandLabel) {
-            var half_length = Math.ceil(mappedDataLabel.length / 2);
+            half_length = Math.ceil(mappedDataLabel.length / 2);
 
             mappedDataLabel = mappedDataLabel.splice(0, half_length);
 
@@ -174,7 +174,7 @@ class ServicesStatistics extends React.Component {
 
         var frameworkExpandCollapseButton;
         if (!this.state.expandFramework) {
-            var half_length = Math.ceil(mappedDataFramework.length / 2);
+            half_length = Math.ceil(mappedDataFramework.length / 2);
 
             mappedDataFramework = mappedDataFramework.splice(0, half_length);
 
