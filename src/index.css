@@ -219,7 +219,7 @@ div.content.noimg {
 }
 
 .generic.table .RecordsPerPage > input {
-    width: 4em;
+    width: 5em;
 }
 .generic.table .column.toggles .label {
     cursor: pointer;
