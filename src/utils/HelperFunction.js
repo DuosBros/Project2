@@ -29,7 +29,6 @@ export const mapDataForGenericBarChart = (data, key, filter, filterZeroCount) =>
                 count: filter ? grouped[x].filter(x => x.Status !== "removed").length : count
             })
         }
-
     })
 
     return mapped.filter(x => x).sort((a, b) => b.count - a.count)

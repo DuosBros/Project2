@@ -86,9 +86,9 @@ class Sidebar extends React.Component {
                     <Menu.Item>
                         <Menu.Header>Statistics</Menu.Header>
                         <Menu.Menu>
-                            {/* <Menu.Item as={Link} to='/statistics/servers' >
+                            <Menu.Item as={Link} to='/statistics/servers' >
                                 Servers
-                            </Menu.Item> */}
+                            </Menu.Item>
                             <Menu.Item as={Link} to='/statistics/services' >
                                 Services
                             </Menu.Item>

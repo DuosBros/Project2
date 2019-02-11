@@ -51,7 +51,6 @@ class Servers extends React.Component {
                         </Grid.Column>
                     </Grid.Row>
                 </Grid>
-
             );
         }
 

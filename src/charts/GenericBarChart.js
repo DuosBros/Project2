@@ -15,12 +15,13 @@ class GenericBarChart extends React.Component {
         }
 
         return (
-            <ResponsiveContainer minHeight={250} minWidth={800} >
+            <ResponsiveContainer minHeight={230} minWidth={800} >
                 <BarChart layout='vertical' data={filterZeroCount ? this.props.data.filter(x => x.count !== 0) : this.props.data}
-                    margin={{ top: 5, right: 180, left: 150, bottom: 5 }}>
+                    margin={{ top: 5, right: 120, left: 150, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="count" type="number" />
-                    <YAxis type="category" dataKey="name" />
+                    <YAxis width={250} type="category" dataKey="name">
+                    </YAxis>
                     <Tooltip />
                     <Bar dataKey="count" fill="#8884d8" />
                 </BarChart>

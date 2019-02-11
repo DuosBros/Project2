@@ -4,8 +4,8 @@ import { bindActionCreators } from 'redux';
 import { Grid, Header, Segment, Message, Icon } from 'semantic-ui-react';
 import _ from 'lodash';
 
-import { getServices } from '../requests/ServiceAxios';
-import { getServicesAction } from '../actions/ServiceActions';
+import { getServers } from '../requests/ServerAxios';
+import { getServersAction } from '../actions/ServerActions';
 import GenericBarChart from '../charts/GenericBarChart';
 import ErrorMessage from '../components/ErrorMessage';
 import { mapDataForGenericBarChart } from '../utils/HelperFunction';
@@ -13,54 +13,57 @@ import { mapDataForGenericBarChart } from '../utils/HelperFunction';
 class ServersStatistics extends React.Component {
 
     componentDidMount() {
-        this.fetchServicesAndHandleResult()
+        this.fetchServersAndHandleResult()
     }
 
-    fetchServicesAndHandleResult = () => {
-        getServices()
+    fetchServersAndHandleResult = () => {
+        getServers()
             .then(res => {
-                this.props.getServicesAction({ success: true, data: res.data })
+                this.props.getServersAction(
+                    {
+                        success: true,
+                        data: res.data
+                    })
             })
             .catch(err => {
-                this.props.getServicesAction({ success: false, error: err })
+                this.props.getServersAction({ success: false, error: err })
             })
     }
 
     render() {
         // in case of error
-        if (!this.props.serviceStore.services.success) {
+        if (!this.props.serverStore.servers.success) {
             return (
                 <Grid stackable>
                     <Grid.Row>
                         <Grid.Column>
                             <Header block attached='top' as='h4'>
-                                Services Statistics
+                                Servers
                             </Header>
                             <Segment attached='bottom' >
-                                <ErrorMessage handleRefresh={this.fetchServicesAndHandleResult} error={this.props.serviceStore.services.error} />
+                                <ErrorMessage handleRefresh={this.fetchServersAndHandleResult} error={this.props.serverStore.servers.error} />
                             </Segment>
                         </Grid.Column>
                     </Grid.Row>
                 </Grid>
-
             );
         }
 
         // in case it's still loading data
-        if (_.isEmpty(this.props.serviceStore.services.data)) {
+        if (_.isEmpty(this.props.serverStore.servers.data)) {
             return (
                 <div className="messageBox">
                     <Message info icon>
                         <Icon name='circle notched' loading />
                         <Message.Content>
-                            <Message.Header>Fetching services</Message.Header>
+                            <Message.Header>Fetching servers</Message.Header>
                         </Message.Content>
                     </Message>
                 </div>
             )
         }
 
-        var mappedDataOwner = mapDataForGenericBarChart(this.props.serviceStore.services.data, 'Owner');
+        var mappedDataOwner = mapDataForGenericBarChart(this.props.serverStore.servers.data, 'ServerOwner');
 
         var rawDataOwner = mappedDataOwner.map((x, i) => {
             return (
@@ -71,9 +74,43 @@ class ServersStatistics extends React.Component {
             )
         })
 
-        var mappedDataResponsibleTeam = mapDataForGenericBarChart(this.props.serviceStore.services.data, 'ResponsibleTeam');
+        var mappedDataOperatingSystem = mapDataForGenericBarChart(this.props.serverStore.servers.data, 'OperatingSystem');
 
-        var rawDataResponsibleTeam = mappedDataResponsibleTeam.map((x, i) => {
+        var rawDataOperatingSystem = mappedDataOperatingSystem.map((x, i) => {
+            return (
+                <dl key={i} className="dl-horizontal">
+                    <dt>{x.name}</dt>
+                    <dd>{x.count}</dd>
+                </dl>
+            )
+        })
+
+        var mappedDataEnvironment = mapDataForGenericBarChart(this.props.serverStore.servers.data, 'Environment');
+
+        var rawDataEnvironment = mappedDataEnvironment.map((x, i) => {
+            return (
+                <dl key={i} className="dl-horizontal">
+                    <dt>{x.name}</dt>
+                    <dd>{x.count}</dd>
+                </dl>
+            )
+        })
+
+        var mappedDataDataCenter = mapDataForGenericBarChart(this.props.serverStore.servers.data, 'DataCenter');
+
+        var rawDataDataCenter = mappedDataDataCenter.map((x, i) => {
+            return (
+                <dl key={i} className="dl-horizontal">
+                    <dt>{x.name}</dt>
+                    <dd>{x.count}</dd>
+                </dl>
+            )
+        })
+
+        var mappedDataVirtualCloud = mapDataForGenericBarChart(
+            this.props.serverStore.servers.data.map(x => x.VM).filter(x => x !== null), 'Cloud');
+
+        var rawDataVirtualCloud = mappedDataVirtualCloud.map((x, i) => {
             return (
                 <dl key={i} className="dl-horizontal">
                     <dt>{x.name}</dt>
@@ -88,7 +125,7 @@ class ServersStatistics extends React.Component {
                 <Grid.Row>
                     <Grid.Column>
                         <Header block attached='top' as='h4'>
-                            Services Statistics - Owner
+                            Server Statistics - Owner
                             </Header>
                         <Segment attached='bottom' >
                             <Grid stackable>
@@ -103,22 +140,77 @@ class ServersStatistics extends React.Component {
                             </Grid>
                         </Segment>
                     </Grid.Column>
-
                 </Grid.Row>
                 <Grid.Row>
-
                     <Grid.Column>
                         <Header block attached='top' as='h4'>
-                            Services Statistics - Component Steward
+                            Server Statistics - Operating System
                         </Header>
                         <Segment attached='bottom' >
                             <Grid stackable>
                                 <Grid.Row>
                                     <Grid.Column width={13}>
-                                        <GenericBarChart data={mappedDataResponsibleTeam} />
+                                        <GenericBarChart data={mappedDataOperatingSystem} />
                                     </Grid.Column>
                                     <Grid.Column width={3} >
-                                        {rawDataResponsibleTeam}
+                                        {rawDataOperatingSystem}
+                                    </Grid.Column>
+                                </Grid.Row>
+                            </Grid>
+                        </Segment>
+                    </Grid.Column>
+                </Grid.Row>
+                <Grid.Row>
+                    <Grid.Column>
+                        <Header block attached='top' as='h4'>
+                            Server Statistics - Environment
+                        </Header>
+                        <Segment attached='bottom' >
+                            <Grid stackable>
+                                <Grid.Row>
+                                    <Grid.Column width={13}>
+                                        <GenericBarChart data={mappedDataEnvironment} />
+                                    </Grid.Column>
+                                    <Grid.Column width={3} >
+                                        {rawDataEnvironment}
+                                    </Grid.Column>
+                                </Grid.Row>
+                            </Grid>
+                        </Segment>
+                    </Grid.Column>
+                </Grid.Row>
+                <Grid.Row>
+                    <Grid.Column>
+                        <Header block attached='top' as='h4'>
+                            Server Statistics - DataCenter
+                        </Header>
+                        <Segment attached='bottom' >
+                            <Grid stackable>
+                                <Grid.Row>
+                                    <Grid.Column width={13}>
+                                        <GenericBarChart data={mappedDataDataCenter} />
+                                    </Grid.Column>
+                                    <Grid.Column width={3} >
+                                        {rawDataDataCenter}
+                                    </Grid.Column>
+                                </Grid.Row>
+                            </Grid>
+                        </Segment>
+                    </Grid.Column>
+                </Grid.Row>
+                <Grid.Row>
+                    <Grid.Column>
+                        <Header block attached='top' as='h4'>
+                            Server Statistics - Virtual Cloud
+                        </Header>
+                        <Segment attached='bottom' >
+                            <Grid stackable>
+                                <Grid.Row>
+                                    <Grid.Column width={13}>
+                                        <GenericBarChart data={mappedDataVirtualCloud} />
+                                    </Grid.Column>
+                                    <Grid.Column width={3} >
+                                        {rawDataVirtualCloud}
                                     </Grid.Column>
                                 </Grid.Row>
                             </Grid>
@@ -132,13 +224,13 @@ class ServersStatistics extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        serviceStore: state.ServiceReducer
+        serverStore: state.ServerReducer
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
-        getServicesAction
+        getServersAction
     }, dispatch);
 }
 
