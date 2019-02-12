@@ -33,6 +33,7 @@ import PatchGroupDetails from '../pages/PatchGroupDetails';
 import ServicesStatistics from '../pages/ServicesStatistics';
 import ServersStatistics from '../pages/ServersStatistics';
 import LoadBalancerFarmsStatistics from '../pages/LoadBalancerFarmsStatistics';
+import ErrorBoundary from '../components/ErrorBoundary';
 
 class Base extends React.Component {
     constructor(props) {
@@ -116,26 +117,28 @@ class Base extends React.Component {
                         <UserDetails userDetails={this.props.baseStore.currentUser} show={this.props.headerStore.showUserDetails} />
                         {/* <NotAuthorized userDetails={this.props.baseStore.currentUser} show={this.props.baseStore.showNotAuthorizedModal} /> */}
                         <div id="bodyWrapper" {...wideClass}>
-                            <Switch>
-                                <Route exact path='/' component={Home} />
-                                <Route exact path='/login' component={Login} />
-                                <Route path='/server/:id' component={ServerDetails} />
-                                <Route path='/server' component={ServersTable} />
-                                <Route path='/rolloutstatus' component={RolloutStatus} />
-                                <Route path='/patchgroups' component={PatchGroups} />
-                                <Route path='/patchgroup/:id' component={PatchGroupDetails} />
-                                <Route path='/service/:id' component={ServiceDetails} />
-                                <Route path='/virtualmachines' component={VirtualMachines} />
-                                <Route path='/servers' component={Servers} />
-                                <Route path='/services' component={Services} />
-                                <Route path='/lbfarms' component={LoadBalancerFarms} />
-                                <Route path='/ipaddresses' component={IPAddresses} />
-                                <Route path='/admin' component={Admin} />
-                                <Route path='/versionstatus' component={VersionStatus} />
-                                <Route path='/statistics/services' component={ServicesStatistics} />
-                                <Route path='/statistics/servers' component={ServersStatistics} />
-                                <Route path='/statistics/loadbalancerfarms' component={LoadBalancerFarmsStatistics} />
-                            </Switch>
+                            <ErrorBoundary>
+                                <Switch>
+                                    <Route exact path='/' component={Home} />
+                                    <Route exact path='/login' component={Login} />
+                                    <Route path='/server/:id' component={ServerDetails} />
+                                    <Route path='/server' component={ServersTable} />
+                                    <Route path='/rolloutstatus' component={RolloutStatus} />
+                                    <Route path='/patchgroups' component={PatchGroups} />
+                                    <Route path='/patchgroup/:id' component={PatchGroupDetails} />
+                                    <Route path='/service/:id' component={ServiceDetails} />
+                                    <Route path='/virtualmachines' component={VirtualMachines} />
+                                    <Route path='/servers' component={Servers} />
+                                    <Route path='/services' component={Services} />
+                                    <Route path='/lbfarms' component={LoadBalancerFarms} />
+                                    <Route path='/ipaddresses' component={IPAddresses} />
+                                    <Route path='/admin' component={Admin} />
+                                    <Route path='/versionstatus' component={VersionStatus} />
+                                    <Route path='/statistics/services' component={ServicesStatistics} />
+                                    <Route path='/statistics/servers' component={ServersStatistics} />
+                                    <Route path='/statistics/loadbalancerfarms' component={LoadBalancerFarmsStatistics} />
+                                </Switch>
+                            </ErrorBoundary>
                         </div>
                         <Footer id="footer" {...wideClass} />
                     </div>
