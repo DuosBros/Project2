@@ -6,6 +6,8 @@ import _ from 'lodash';
 
 import { getServers } from '../requests/ServerAxios';
 import { getServersAction } from '../actions/ServerActions';
+import { getVirtualMachines } from '../requests/VirtualMachineAxios';
+import { getVirtualMachinesAction } from '../actions/VirtualMachineAction';
 import GenericBarChart from '../charts/GenericBarChart';
 import ErrorMessage from '../components/ErrorMessage';
 import { mapDataForGenericBarChart } from '../utils/HelperFunction';
@@ -14,6 +16,7 @@ class ServersStatistics extends React.Component {
 
     componentDidMount() {
         this.fetchServersAndHandleResult()
+        this.fetchVirtualMachinesAndHandleResult()
     }
 
     fetchServersAndHandleResult = () => {
@@ -27,6 +30,16 @@ class ServersStatistics extends React.Component {
             })
             .catch(err => {
                 this.props.getServersAction({ success: false, error: err })
+            })
+    }
+
+    fetchVirtualMachinesAndHandleResult = () => {
+        getVirtualMachines()
+            .then(res => {
+                this.props.getVirtualMachinesAction({ success: true, data: res.data })
+            })
+            .catch(err => {
+                this.props.getVirtualMachinesAction({ success: false, error: err })
             })
     }
 
@@ -57,6 +70,20 @@ class ServersStatistics extends React.Component {
                         <Icon name='circle notched' loading />
                         <Message.Content>
                             <Message.Header>Fetching servers</Message.Header>
+                        </Message.Content>
+                    </Message>
+                </div>
+            )
+        }
+
+        // in case it's still loading data
+        if (!this.props.virtualMachineStore.virtualMachines.data && this.props.virtualMachineStore.virtualMachines.succes) {
+            return (
+                <div className="messageBox">
+                    <Message info icon>
+                        <Icon name='circle notched' loading />
+                        <Message.Content>
+                            <Message.Header>Fetching virtual machines</Message.Header>
                         </Message.Content>
                     </Message>
                 </div>
@@ -107,17 +134,20 @@ class ServersStatistics extends React.Component {
             )
         })
 
-        var mappedDataVirtualCloud = mapDataForGenericBarChart(
-            this.props.serverStore.servers.data.map(x => x.VM).filter(x => x !== null), 'Cloud');
+        var mappedDataVirtualCloud, rawDataVirtualCloud;
+        if (this.props.virtualMachineStore.virtualMachines.success) {
+            mappedDataVirtualCloud = mapDataForGenericBarChart(this.props.virtualMachineStore.virtualMachines.data, 'Cloud');
 
-        var rawDataVirtualCloud = mappedDataVirtualCloud.map((x, i) => {
-            return (
-                <dl key={i} className="dl-horizontal">
-                    <dt>{x.name}</dt>
-                    <dd>{x.count}</dd>
-                </dl>
-            )
-        })
+            rawDataVirtualCloud = mappedDataVirtualCloud.map((x, i) => {
+                return (
+                    <dl key={i} className="dl-horizontal">
+                        <dt>{x.name}</dt>
+                        <dd>{x.count}</dd>
+                    </dl>
+                )
+            })
+        }
+
 
         // render page
         return (
@@ -130,10 +160,10 @@ class ServersStatistics extends React.Component {
                         <Segment attached='bottom' >
                             <Grid stackable>
                                 <Grid.Row>
-                                    <Grid.Column width={13}>
+                                    <Grid.Column width={11}>
                                         <GenericBarChart data={mappedDataOwner} />
                                     </Grid.Column>
-                                    <Grid.Column width={3} >
+                                    <Grid.Column width={5} >
                                         {rawDataOwner}
                                     </Grid.Column>
                                 </Grid.Row>
@@ -149,10 +179,10 @@ class ServersStatistics extends React.Component {
                         <Segment attached='bottom' >
                             <Grid stackable>
                                 <Grid.Row>
-                                    <Grid.Column width={13}>
+                                    <Grid.Column width={11}>
                                         <GenericBarChart data={mappedDataOperatingSystem} />
                                     </Grid.Column>
-                                    <Grid.Column width={3} >
+                                    <Grid.Column width={5} >
                                         {rawDataOperatingSystem}
                                     </Grid.Column>
                                 </Grid.Row>
@@ -168,10 +198,10 @@ class ServersStatistics extends React.Component {
                         <Segment attached='bottom' >
                             <Grid stackable>
                                 <Grid.Row>
-                                    <Grid.Column width={13}>
+                                    <Grid.Column width={11}>
                                         <GenericBarChart data={mappedDataEnvironment} />
                                     </Grid.Column>
-                                    <Grid.Column width={3} >
+                                    <Grid.Column width={5} >
                                         {rawDataEnvironment}
                                     </Grid.Column>
                                 </Grid.Row>
@@ -187,10 +217,10 @@ class ServersStatistics extends React.Component {
                         <Segment attached='bottom' >
                             <Grid stackable>
                                 <Grid.Row>
-                                    <Grid.Column width={13}>
+                                    <Grid.Column width={11}>
                                         <GenericBarChart data={mappedDataDataCenter} />
                                     </Grid.Column>
-                                    <Grid.Column width={3} >
+                                    <Grid.Column width={5} >
                                         {rawDataDataCenter}
                                     </Grid.Column>
                                 </Grid.Row>
@@ -206,10 +236,16 @@ class ServersStatistics extends React.Component {
                         <Segment attached='bottom' >
                             <Grid stackable>
                                 <Grid.Row>
-                                    <Grid.Column width={13}>
-                                        <GenericBarChart data={mappedDataVirtualCloud} />
+                                    <Grid.Column width={11}>
+                                        {
+                                            !this.props.virtualMachineStore.virtualMachines.success ?
+                                                <ErrorMessage
+                                                    handleRefresh={this.fetchVirtualMachinesAndHandleResult}
+                                                    error={this.props.virtualMachineStore.virtualMachines.error} />
+                                                : <GenericBarChart data={mappedDataVirtualCloud} />
+                                        }
                                     </Grid.Column>
-                                    <Grid.Column width={3} >
+                                    <Grid.Column width={5} >
                                         {rawDataVirtualCloud}
                                     </Grid.Column>
                                 </Grid.Row>
@@ -224,13 +260,15 @@ class ServersStatistics extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        serverStore: state.ServerReducer
+        serverStore: state.ServerReducer,
+        virtualMachineStore: state.VirtualMachineReducer
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
-        getServersAction
+        getServersAction,
+        getVirtualMachinesAction
     }, dispatch);
 }
 
