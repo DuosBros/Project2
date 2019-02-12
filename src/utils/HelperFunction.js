@@ -12,21 +12,40 @@ export const mapDataForGenericBarChart = (data, key, filter, filterZeroCount) =>
     var grouped = groupBy(data, key);
     var keys = Object.keys(grouped);
 
+    if (filter) {
+        if (key === Object.keys(filter)[0]) {
+            keys = keys.filter(y => y.search(filter[Object.keys(filter)[0]], "i") >= 0)
+        }
+    }
     var mapped = keys.map(x => {
         var count = grouped[x].length
 
         if (filterZeroCount) {
-            if (count !== 0 && grouped[x].filter(x => x.Status !== "removed").length !== 0) {
-                return ({
-                    name: x && x !== "null" ? x : "Unknown",
-                    count: filter ? grouped[x].filter(x => x.Status !== "removed").length : count
-                })
+            if (filter) {
+                if (count !== 0 && grouped[x].filter(y =>
+                    y[Object.keys(filter)[0]].toString().search(filter[Object.keys(filter)[0]], "i") >= 0)) {
+                    return ({
+                        name: x && x !== "null" ? x : "Unknown",
+                        count: grouped[x].filter(y =>
+                            y[Object.keys(filter)[0]].toString().search(filter[Object.keys(filter)[0]], "i") >= 0).length
+                    })
+                }
             }
+            else {
+                if (count !== 0) {
+                    return ({
+                        name: x && x !== "null" ? x : "Unknown",
+                        count: count
+                    })
+                }
+            }
+
         }
         else {
             return ({
                 name: x && x !== "null" ? x : "Unknown",
-                count: filter ? grouped[x].filter(x => x.Status !== "removed").length : count
+                count: filter ? grouped[x].filter(y =>
+                    y[Object.keys(filter)[0]].toString().search(filter[Object.keys(filter)[0]], "i") >= 0).length : count
             })
         }
     })

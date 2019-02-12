@@ -17,7 +17,7 @@ class GenericBarChart extends React.Component {
         return (
             <ResponsiveContainer minHeight={230} minWidth={800} >
                 <BarChart layout='vertical' data={filterZeroCount ? this.props.data.filter(x => x.count !== 0) : this.props.data}
-                    margin={{ top: 5, right: 120, left: 150, bottom: 5 }}>
+                    margin={{ top: 5, right: 50, left: 50, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="count" type="number" />
                     <YAxis width={250} type="category" dataKey="name">

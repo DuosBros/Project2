@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Grid, Header, Segment, Message, Icon } from 'semantic-ui-react';
+import { Grid, Header, Segment, Message, Icon, Popup } from 'semantic-ui-react';
 import _ from 'lodash';
 
 import { getServers } from '../requests/ServerAxios';
@@ -11,6 +11,17 @@ import { getVirtualMachinesAction } from '../actions/VirtualMachineAction';
 import GenericBarChart from '../charts/GenericBarChart';
 import ErrorMessage from '../components/ErrorMessage';
 import { mapDataForGenericBarChart } from '../utils/HelperFunction';
+
+class ServersStatisticsRawDataRow extends React.PureComponent {
+    render() {
+        return (
+            <dl key={this.props.i} className="dl-horizontal">
+                <dt style={{ width: '240px' }}>{this.props.x.name}</dt>
+                <dd style={{ marginLeft: '260px' }}>{this.props.x.count}</dd>
+            </dl>
+        )
+    }
+}
 
 class ServersStatistics extends React.Component {
 
@@ -77,7 +88,7 @@ class ServersStatistics extends React.Component {
         }
 
         // in case it's still loading data
-        if (!this.props.virtualMachineStore.virtualMachines.data && this.props.virtualMachineStore.virtualMachines.succes) {
+        if (!this.props.virtualMachineStore.virtualMachines.data && this.props.virtualMachineStore.virtualMachines.success) {
             return (
                 <div className="messageBox">
                     <Message info icon>
@@ -94,10 +105,7 @@ class ServersStatistics extends React.Component {
 
         var rawDataOwner = mappedDataOwner.map((x, i) => {
             return (
-                <dl key={i} className="dl-horizontal">
-                    <dt>{x.name}</dt>
-                    <dd>{x.count}</dd>
-                </dl>
+                <ServersStatisticsRawDataRow i={i} x={x} />
             )
         })
 
@@ -105,10 +113,7 @@ class ServersStatistics extends React.Component {
 
         var rawDataOperatingSystem = mappedDataOperatingSystem.map((x, i) => {
             return (
-                <dl key={i} className="dl-horizontal">
-                    <dt>{x.name}</dt>
-                    <dd>{x.count}</dd>
-                </dl>
+                <ServersStatisticsRawDataRow i={i} x={x} />
             )
         })
 
@@ -116,10 +121,7 @@ class ServersStatistics extends React.Component {
 
         var rawDataEnvironment = mappedDataEnvironment.map((x, i) => {
             return (
-                <dl key={i} className="dl-horizontal">
-                    <dt>{x.name}</dt>
-                    <dd>{x.count}</dd>
-                </dl>
+                <ServersStatisticsRawDataRow i={i} x={x} />
             )
         })
 
@@ -127,23 +129,17 @@ class ServersStatistics extends React.Component {
 
         var rawDataDataCenter = mappedDataDataCenter.map((x, i) => {
             return (
-                <dl key={i} className="dl-horizontal">
-                    <dt>{x.name}</dt>
-                    <dd>{x.count}</dd>
-                </dl>
+                <ServersStatisticsRawDataRow i={i} x={x} />
             )
         })
 
         var mappedDataVirtualCloud, rawDataVirtualCloud;
         if (this.props.virtualMachineStore.virtualMachines.success) {
-            mappedDataVirtualCloud = mapDataForGenericBarChart(this.props.virtualMachineStore.virtualMachines.data, 'Cloud');
+            mappedDataVirtualCloud = mapDataForGenericBarChart(this.props.virtualMachineStore.virtualMachines.data, 'Cloud', { Cloud: /^LO_/i });
 
             rawDataVirtualCloud = mappedDataVirtualCloud.map((x, i) => {
                 return (
-                    <dl key={i} className="dl-horizontal">
-                        <dt>{x.name}</dt>
-                        <dd>{x.count}</dd>
-                    </dl>
+                    <ServersStatisticsRawDataRow i={i} x={x} />
                 )
             })
         }
@@ -160,10 +156,10 @@ class ServersStatistics extends React.Component {
                         <Segment attached='bottom' >
                             <Grid stackable>
                                 <Grid.Row>
-                                    <Grid.Column width={11}>
+                                    <Grid.Column width={12}>
                                         <GenericBarChart data={mappedDataOwner} />
                                     </Grid.Column>
-                                    <Grid.Column width={5} >
+                                    <Grid.Column width={4} >
                                         {rawDataOwner}
                                     </Grid.Column>
                                 </Grid.Row>
@@ -179,10 +175,10 @@ class ServersStatistics extends React.Component {
                         <Segment attached='bottom' >
                             <Grid stackable>
                                 <Grid.Row>
-                                    <Grid.Column width={11}>
+                                    <Grid.Column width={12}>
                                         <GenericBarChart data={mappedDataOperatingSystem} />
                                     </Grid.Column>
-                                    <Grid.Column width={5} >
+                                    <Grid.Column width={4} >
                                         {rawDataOperatingSystem}
                                     </Grid.Column>
                                 </Grid.Row>
@@ -198,10 +194,10 @@ class ServersStatistics extends React.Component {
                         <Segment attached='bottom' >
                             <Grid stackable>
                                 <Grid.Row>
-                                    <Grid.Column width={11}>
+                                    <Grid.Column width={12}>
                                         <GenericBarChart data={mappedDataEnvironment} />
                                     </Grid.Column>
-                                    <Grid.Column width={5} >
+                                    <Grid.Column width={4} >
                                         {rawDataEnvironment}
                                     </Grid.Column>
                                 </Grid.Row>
@@ -217,10 +213,10 @@ class ServersStatistics extends React.Component {
                         <Segment attached='bottom' >
                             <Grid stackable>
                                 <Grid.Row>
-                                    <Grid.Column width={11}>
+                                    <Grid.Column width={12}>
                                         <GenericBarChart data={mappedDataDataCenter} />
                                     </Grid.Column>
-                                    <Grid.Column width={5} >
+                                    <Grid.Column width={4} >
                                         {rawDataDataCenter}
                                     </Grid.Column>
                                 </Grid.Row>
@@ -232,11 +228,14 @@ class ServersStatistics extends React.Component {
                     <Grid.Column>
                         <Header block attached='top' as='h4'>
                             Server Statistics - Virtual Cloud
+                        <Popup trigger={
+                                <Icon name='question' />
+                            } content='Custom filter applied -> Cloud: /^LO_/i' inverted />
                         </Header>
                         <Segment attached='bottom' >
                             <Grid stackable>
                                 <Grid.Row>
-                                    <Grid.Column width={11}>
+                                    <Grid.Column width={12}>
                                         {
                                             !this.props.virtualMachineStore.virtualMachines.success ?
                                                 <ErrorMessage
@@ -245,7 +244,7 @@ class ServersStatistics extends React.Component {
                                                 : <GenericBarChart data={mappedDataVirtualCloud} />
                                         }
                                     </Grid.Column>
-                                    <Grid.Column width={5} >
+                                    <Grid.Column width={4} >
                                         {rawDataVirtualCloud}
                                     </Grid.Column>
                                 </Grid.Row>

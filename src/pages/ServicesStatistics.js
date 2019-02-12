@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Grid, Header, Segment, Message, Icon, Button } from 'semantic-ui-react';
+import { Grid, Header, Segment, Message, Icon, Button, Popup } from 'semantic-ui-react';
 import _ from 'lodash';
 
 import { getServices } from '../requests/ServiceAxios';
@@ -9,6 +9,18 @@ import { getServicesAction } from '../actions/ServiceActions';
 import GenericBarChart from '../charts/GenericBarChart';
 import ErrorMessage from '../components/ErrorMessage';
 import { mapDataForGenericBarChart } from '../utils/HelperFunction';
+import ExpandCollapseButtonRow from '../components/ExpandCollapseButtonRow';
+
+class ServicesStatisticsRawDataRow extends React.PureComponent {
+    render() {
+        return (
+            <dl className="dl-horizontal">
+                <dt>{this.props.x.name}</dt>
+                <dd>{this.props.x.count}</dd>
+            </dl>
+        )
+    }
+}
 
 class ServicesStatistics extends React.Component {
 
@@ -33,6 +45,10 @@ class ServicesStatistics extends React.Component {
             .catch(err => {
                 this.props.getServicesAction({ success: false, error: err })
             })
+    }
+
+    handleExpandCollapseButton = (prop) => {
+        this.setState({ [prop]: !this.state[prop] })
     }
 
     render() {
@@ -69,51 +85,20 @@ class ServicesStatistics extends React.Component {
             )
         }
 
-        var mappedDataOwner = mapDataForGenericBarChart(this.props.serviceStore.services.data, 'Owner', 'removed', true);
+        var mappedDataOwner = mapDataForGenericBarChart(this.props.serviceStore.services.data, 'Owner', { Status: /^(?!removed$)/i }, true);
 
         var rawDataOwner = mappedDataOwner.map((x, i) => {
             return (
-                <dl key={i} className="dl-horizontal">
-                    <dt>{x.name}</dt>
-                    <dd>{x.count}</dd>
-                </dl>
+                <ServicesStatisticsRawDataRow key={i} x={x} />
             )
         })
 
-        var mappedDataResponsibleTeam = mapDataForGenericBarChart(this.props.serviceStore.services.data, 'ResponsibleTeam', 'removed');
+        var mappedDataResponsibleTeam = mapDataForGenericBarChart(this.props.serviceStore.services.data, 'ResponsibleTeam', { Status: /^(?!removed$)/i });
 
-        var componentStewardExpandCollapseButton;
         if (!this.state.expandComponentSteward) {
             var half_length = Math.ceil(mappedDataResponsibleTeam.length / 2);
 
             mappedDataResponsibleTeam = mappedDataResponsibleTeam.splice(0, half_length);
-
-            componentStewardExpandCollapseButton = (
-                <Grid.Row>
-                    <Grid.Column width={13}>
-                    </Grid.Column>
-                    <Grid.Column width={3}>
-                        <Button icon onClick={() => this.setState({ expandComponentSteward: true })}>
-                            Expand
-                            <Icon className='iconMargin' name='expand' />
-                        </Button>
-                    </Grid.Column>
-                </Grid.Row>
-            )
-        }
-        else {
-            componentStewardExpandCollapseButton = (
-                <Grid.Row>
-                    <Grid.Column width={13}>
-                    </Grid.Column>
-                    <Grid.Column width={3}>
-                        <Button icon onClick={() => this.setState({ expandComponentSteward: false })}>
-                            Collapse
-                            <Icon className='iconMargin' name='compress' />
-                        </Button>
-                    </Grid.Column>
-                </Grid.Row>
-            )
         }
 
         var rawDataResponsibleTeam = mappedDataResponsibleTeam.map((x, i) => {
@@ -125,104 +110,41 @@ class ServicesStatistics extends React.Component {
             )
         })
 
-        var mappedDataLabel = mapDataForGenericBarChart(this.props.serviceStore.services.data, 'Label', 'removed', true);
+        var mappedDataLabel = mapDataForGenericBarChart(this.props.serviceStore.services.data, 'Label', { Status: /^(?!removed$)/i }, true);
 
-        var labelExpandCollapseButton;
         if (!this.state.expandLabel) {
             half_length = Math.ceil(mappedDataLabel.length / 2);
 
             mappedDataLabel = mappedDataLabel.splice(0, half_length);
+        }
 
-            labelExpandCollapseButton = (
-                <Grid.Row>
-                    <Grid.Column width={13}>
-                    </Grid.Column>
-                    <Grid.Column width={3}>
-                        <Button icon onClick={() => this.setState({ expandLabel: true })}>
-                            Expand
-                            <Icon className='iconMargin' name='expand' />
-                        </Button>
-                    </Grid.Column>
-                </Grid.Row>
-            )
-        }
-        else {
-            labelExpandCollapseButton = (
-                <Grid.Row>
-                    <Grid.Column width={13}>
-                    </Grid.Column>
-                    <Grid.Column width={3}>
-                        <Button icon onClick={() => this.setState({ expandLabel: false })}>
-                            Collapse
-                            <Icon className='iconMargin' name='compress' />
-                        </Button>
-                    </Grid.Column>
-                </Grid.Row>
-            )
-        }
 
         var rawDataLabel = mappedDataLabel.map((x, i) => {
             return (
-                <dl key={i} className="dl-horizontal">
-                    <dt>{x.name}</dt>
-                    <dd>{x.count}</dd>
-                </dl>
+                <ServicesStatisticsRawDataRow key={i} x={x} />
             )
         })
 
-        var mappedDataFramework = mapDataForGenericBarChart(this.props.serviceStore.services.data, 'Framework', 'removed');
+        var mappedDataFramework = mapDataForGenericBarChart(this.props.serviceStore.services.data, 'Framework', { Status: /^(?!removed$)/i });
 
-        var frameworkExpandCollapseButton;
         if (!this.state.expandFramework) {
             half_length = Math.ceil(mappedDataFramework.length / 2);
 
             mappedDataFramework = mappedDataFramework.splice(0, half_length);
+        }
 
-            frameworkExpandCollapseButton = (
-                <Grid.Row>
-                    <Grid.Column width={13}>
-                    </Grid.Column>
-                    <Grid.Column width={3}>
-                        <Button icon onClick={() => this.setState({ expandFramework: true })}>
-                            Expand
-                            <Icon className='iconMargin' name='expand' />
-                        </Button>
-                    </Grid.Column>
-                </Grid.Row>
-            )
-        }
-        else {
-            frameworkExpandCollapseButton = (
-                <Grid.Row>
-                    <Grid.Column width={13}>
-                    </Grid.Column>
-                    <Grid.Column width={3}>
-                        <Button icon onClick={() => this.setState({ expandFramework: false })}>
-                            Collapse
-                            <Icon className='iconMargin' name='compress' />
-                        </Button>
-                    </Grid.Column>
-                </Grid.Row>
-            )
-        }
 
         var rawDataFramework = mappedDataFramework.map((x, i) => {
             return (
-                <dl key={i} className="dl-horizontal">
-                    <dt>{x.name}</dt>
-                    <dd>{x.count}</dd>
-                </dl>
+                <ServicesStatisticsRawDataRow key={i} x={x} />
             )
         })
 
-        var mappedDataDevelopmentFramework = mapDataForGenericBarChart(this.props.serviceStore.services.data, 'DevFramework', 'removed');
+        var mappedDataDevelopmentFramework = mapDataForGenericBarChart(this.props.serviceStore.services.data, 'DevFramework', { Status: /^(?!removed$)/i });
 
         var rawDataDevelopmentFramework = mappedDataDevelopmentFramework.map((x, i) => {
             return (
-                <dl key={i} className="dl-horizontal">
-                    <dt>{x.name}</dt>
-                    <dd>{x.count}</dd>
-                </dl>
+                <ServicesStatisticsRawDataRow key={i} x={x} />
             )
         })
 
@@ -230,10 +152,7 @@ class ServicesStatistics extends React.Component {
 
         var rawDataStatus = mappedDataStatus.map((x, i) => {
             return (
-                <dl key={i} className="dl-horizontal">
-                    <dt>{x.name}</dt>
-                    <dd>{x.count}</dd>
-                </dl>
+                <ServicesStatisticsRawDataRow key={i} x={x} />
             )
         })
 
@@ -244,7 +163,10 @@ class ServicesStatistics extends React.Component {
                     <Grid.Column>
                         <Header block attached='top' as='h4'>
                             Services Statistics - Owner
-                            </Header>
+                        <Popup trigger={
+                                <Icon name='question' />
+                            } content='Custom filter applied -> Status: /^(?!removed$)/i' inverted />
+                        </Header>
                         <Segment attached='bottom' >
                             <Grid stackable>
                                 <Grid.Row>
@@ -263,6 +185,9 @@ class ServicesStatistics extends React.Component {
                     <Grid.Column>
                         <Header block attached='top' as='h4'>
                             Services Statistics - Component Steward
+                            <Popup trigger={
+                                <Icon name='question' />
+                            } content='Custom filter applied -> Status: /^(?!removed$)/i' inverted />
                         </Header>
                         <Segment attached='bottom' >
                             <Grid stackable>
@@ -274,7 +199,10 @@ class ServicesStatistics extends React.Component {
                                         {rawDataResponsibleTeam}
                                     </Grid.Column>
                                 </Grid.Row>
-                                {componentStewardExpandCollapseButton}
+                                <ExpandCollapseButtonRow
+                                    handleExpandCollapseButton={this.handleExpandCollapseButton}
+                                    property="expandComponentSteward"
+                                    currentPropertyState={this.state["expandComponentSteward"]} />
                             </Grid>
                         </Segment>
                     </Grid.Column>
@@ -283,6 +211,9 @@ class ServicesStatistics extends React.Component {
                     <Grid.Column>
                         <Header block attached='top' as='h4'>
                             Services Statistics - Label
+                            <Popup trigger={
+                                <Icon name='question' />
+                            } content='Custom filter applied -> Status: /^(?!removed$)/i' inverted />
                         </Header>
                         <Segment attached='bottom' >
                             <Grid stackable>
@@ -294,7 +225,10 @@ class ServicesStatistics extends React.Component {
                                         {rawDataLabel}
                                     </Grid.Column>
                                 </Grid.Row>
-                                {labelExpandCollapseButton}
+                                <ExpandCollapseButtonRow
+                                    handleExpandCollapseButton={this.handleExpandCollapseButton}
+                                    property="expandLabel"
+                                    currentPropertyState={this.state["expandLabel"]} />
                             </Grid>
                         </Segment>
                     </Grid.Column>
@@ -303,6 +237,9 @@ class ServicesStatistics extends React.Component {
                     <Grid.Column>
                         <Header block attached='top' as='h4'>
                             Services Statistics - Framework
+                            <Popup trigger={
+                                <Icon name='question' />
+                            } content='Custom filter applied -> Status: /^(?!removed$)/i' inverted />
                         </Header>
                         <Segment attached='bottom' >
                             <Grid stackable>
@@ -314,7 +251,10 @@ class ServicesStatistics extends React.Component {
                                         {rawDataFramework}
                                     </Grid.Column>
                                 </Grid.Row>
-                                {frameworkExpandCollapseButton}
+                                <ExpandCollapseButtonRow
+                                    handleExpandCollapseButton={this.handleExpandCollapseButton}
+                                    property="expandFramework"
+                                    currentPropertyState={this.state["expandFramework"]} />
                             </Grid>
                         </Segment>
                     </Grid.Column>
@@ -323,6 +263,9 @@ class ServicesStatistics extends React.Component {
                     <Grid.Column>
                         <Header block attached='top' as='h4'>
                             Services Statistics - Development Framework
+                            <Popup trigger={
+                                <Icon name='question' />
+                            } content='Custom filter applied -> Status: /^(?!removed$)/i' inverted />
                         </Header>
                         <Segment attached='bottom' >
                             <Grid stackable>

@@ -22,7 +22,7 @@ export default class ErrorBoundary extends React.Component {
         if (errorInfo) {
             return (
                 <>
-                    <ErrorMessage error={error} />
+                    <ErrorMessage handleRefresh={() => window.location.reload()}  error={error} />
                     <Accordion>
                         <Accordion.Title active={isActive} index={0} onClick={() => this.setState({ isActive: !isActive })}>
                             <Icon name='dropdown' />
