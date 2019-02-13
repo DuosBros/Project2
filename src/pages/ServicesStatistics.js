@@ -9,18 +9,7 @@ import { getServicesAction } from '../actions/ServiceActions';
 import GenericBarChart from '../charts/GenericBarChart';
 import ErrorMessage from '../components/ErrorMessage';
 import { mapDataForGenericBarChart } from '../utils/HelperFunction';
-import ExpandCollapseButtonRow from '../components/ExpandCollapseButtonRow';
-
-class ServicesStatisticsRawDataRow extends React.PureComponent {
-    render() {
-        return (
-            <dl className="dl-horizontal">
-                <dt>{this.props.x.name}</dt>
-                <dd>{this.props.x.count}</dd>
-            </dl>
-        )
-    }
-}
+import BarChartWithRawData from '../components/BarChartWithRawData';
 
 class ServicesStatistics extends React.Component {
 
@@ -87,28 +76,13 @@ class ServicesStatistics extends React.Component {
 
         var mappedDataOwner = mapDataForGenericBarChart(this.props.serviceStore.services.data, 'Owner', { Status: /^(?!removed$)/i }, true);
 
-        var rawDataOwner = mappedDataOwner.map((x, i) => {
-            return (
-                <ServicesStatisticsRawDataRow key={i} x={x} />
-            )
-        })
-
-        var mappedDataResponsibleTeam = mapDataForGenericBarChart(this.props.serviceStore.services.data, 'ResponsibleTeam', { Status: /^(?!removed$)/i });
+        var mappedDataComponentSteward = mapDataForGenericBarChart(this.props.serviceStore.services.data, 'ResponsibleTeam', { Status: /^(?!removed$)/i });
 
         if (!this.state.expandComponentSteward) {
-            var half_length = Math.ceil(mappedDataResponsibleTeam.length / 2);
+            var half_length = Math.ceil(mappedDataComponentSteward.length / 2);
 
-            mappedDataResponsibleTeam = mappedDataResponsibleTeam.splice(0, half_length);
+            mappedDataComponentSteward = mappedDataComponentSteward.splice(0, half_length);
         }
-
-        var rawDataResponsibleTeam = mappedDataResponsibleTeam.map((x, i) => {
-            return (
-                <dl key={i} className="dl-horizontal">
-                    <dt>{x.name}</dt>
-                    <dd>{x.count}</dd>
-                </dl>
-            )
-        })
 
         var mappedDataLabel = mapDataForGenericBarChart(this.props.serviceStore.services.data, 'Label', { Status: /^(?!removed$)/i }, true);
 
@@ -118,13 +92,6 @@ class ServicesStatistics extends React.Component {
             mappedDataLabel = mappedDataLabel.splice(0, half_length);
         }
 
-
-        var rawDataLabel = mappedDataLabel.map((x, i) => {
-            return (
-                <ServicesStatisticsRawDataRow key={i} x={x} />
-            )
-        })
-
         var mappedDataFramework = mapDataForGenericBarChart(this.props.serviceStore.services.data, 'Framework', { Status: /^(?!removed$)/i });
 
         if (!this.state.expandFramework) {
@@ -133,28 +100,9 @@ class ServicesStatistics extends React.Component {
             mappedDataFramework = mappedDataFramework.splice(0, half_length);
         }
 
-
-        var rawDataFramework = mappedDataFramework.map((x, i) => {
-            return (
-                <ServicesStatisticsRawDataRow key={i} x={x} />
-            )
-        })
-
         var mappedDataDevelopmentFramework = mapDataForGenericBarChart(this.props.serviceStore.services.data, 'DevFramework', { Status: /^(?!removed$)/i });
 
-        var rawDataDevelopmentFramework = mappedDataDevelopmentFramework.map((x, i) => {
-            return (
-                <ServicesStatisticsRawDataRow key={i} x={x} />
-            )
-        })
-
         var mappedDataStatus = mapDataForGenericBarChart(this.props.serviceStore.services.data, 'Status');
-
-        var rawDataStatus = mappedDataStatus.map((x, i) => {
-            return (
-                <ServicesStatisticsRawDataRow key={i} x={x} />
-            )
-        })
 
         // render page
         return (
@@ -168,16 +116,10 @@ class ServicesStatistics extends React.Component {
                             } content='Custom filter applied -> Status: /^(?!removed$)/i' inverted />
                         </Header>
                         <Segment attached='bottom' >
-                            <Grid stackable>
-                                <Grid.Row>
-                                    <Grid.Column width={13}>
-                                        <GenericBarChart data={mappedDataOwner} />
-                                    </Grid.Column>
-                                    <Grid.Column width={3} >
-                                        {rawDataOwner}
-                                    </Grid.Column>
-                                </Grid.Row>
-                            </Grid>
+                            <BarChartWithRawData
+                                barChartWidth={13}
+                                rawDataWidth={3}
+                                data={mappedDataOwner} />
                         </Segment>
                     </Grid.Column>
                 </Grid.Row>
@@ -190,20 +132,15 @@ class ServicesStatistics extends React.Component {
                             } content='Custom filter applied -> Status: /^(?!removed$)/i' inverted />
                         </Header>
                         <Segment attached='bottom' >
-                            <Grid stackable>
-                                <Grid.Row>
-                                    <Grid.Column width={13}>
-                                        <GenericBarChart data={mappedDataResponsibleTeam} />
-                                    </Grid.Column>
-                                    <Grid.Column width={3} >
-                                        {rawDataResponsibleTeam}
-                                    </Grid.Column>
-                                </Grid.Row>
-                                <ExpandCollapseButtonRow
-                                    handleExpandCollapseButton={this.handleExpandCollapseButton}
-                                    property="expandComponentSteward"
-                                    currentPropertyState={this.state["expandComponentSteward"]} />
-                            </Grid>
+                            <BarChartWithRawData
+                                barChartWidth={13}
+                                rawDataWidth={3}
+                                data={mappedDataComponentSteward}
+                                expandCollapseButtonProps={{
+                                    name: 'expandComponentSteward',
+                                    currentState: this.state["expandComponentSteward"],
+                                    handleExpandCollapseButton: this.handleExpandCollapseButton
+                                }} />
                         </Segment>
                     </Grid.Column>
                 </Grid.Row>
@@ -216,20 +153,16 @@ class ServicesStatistics extends React.Component {
                             } content='Custom filter applied -> Status: /^(?!removed$)/i' inverted />
                         </Header>
                         <Segment attached='bottom' >
-                            <Grid stackable>
-                                <Grid.Row>
-                                    <Grid.Column width={13}>
-                                        <GenericBarChart data={mappedDataLabel} />
-                                    </Grid.Column>
-                                    <Grid.Column width={3} >
-                                        {rawDataLabel}
-                                    </Grid.Column>
-                                </Grid.Row>
-                                <ExpandCollapseButtonRow
-                                    handleExpandCollapseButton={this.handleExpandCollapseButton}
-                                    property="expandLabel"
-                                    currentPropertyState={this.state["expandLabel"]} />
-                            </Grid>
+                            <BarChartWithRawData
+                                filterUnknown={true}
+                                barChartWidth={13}
+                                rawDataWidth={3}
+                                data={mappedDataLabel}
+                                expandCollapseButtonProps={{
+                                    name: 'expandLabel',
+                                    currentState: this.state["expandLabel"],
+                                    handleExpandCollapseButton: this.handleExpandCollapseButton
+                                }} />
                         </Segment>
                     </Grid.Column>
                 </Grid.Row>
@@ -242,20 +175,15 @@ class ServicesStatistics extends React.Component {
                             } content='Custom filter applied -> Status: /^(?!removed$)/i' inverted />
                         </Header>
                         <Segment attached='bottom' >
-                            <Grid stackable>
-                                <Grid.Row>
-                                    <Grid.Column width={13}>
-                                        <GenericBarChart data={mappedDataFramework} />
-                                    </Grid.Column>
-                                    <Grid.Column width={3} >
-                                        {rawDataFramework}
-                                    </Grid.Column>
-                                </Grid.Row>
-                                <ExpandCollapseButtonRow
-                                    handleExpandCollapseButton={this.handleExpandCollapseButton}
-                                    property="expandFramework"
-                                    currentPropertyState={this.state["expandFramework"]} />
-                            </Grid>
+                            <BarChartWithRawData
+                                barChartWidth={13}
+                                rawDataWidth={3}
+                                data={mappedDataFramework}
+                                expandCollapseButtonProps={{
+                                    name: 'expandFramework',
+                                    currentState: this.state["expandFramework"],
+                                    handleExpandCollapseButton: this.handleExpandCollapseButton
+                                }} />
                         </Segment>
                     </Grid.Column>
                 </Grid.Row>
@@ -268,16 +196,10 @@ class ServicesStatistics extends React.Component {
                             } content='Custom filter applied -> Status: /^(?!removed$)/i' inverted />
                         </Header>
                         <Segment attached='bottom' >
-                            <Grid stackable>
-                                <Grid.Row>
-                                    <Grid.Column width={13}>
-                                        <GenericBarChart data={mappedDataDevelopmentFramework} />
-                                    </Grid.Column>
-                                    <Grid.Column width={3} >
-                                        {rawDataDevelopmentFramework}
-                                    </Grid.Column>
-                                </Grid.Row>
-                            </Grid>
+                            <BarChartWithRawData
+                                barChartWidth={13}
+                                rawDataWidth={3}
+                                data={mappedDataDevelopmentFramework} />
                         </Segment>
                     </Grid.Column>
                 </Grid.Row>
@@ -287,16 +209,10 @@ class ServicesStatistics extends React.Component {
                             Services Statistics - Status
                         </Header>
                         <Segment attached='bottom' >
-                            <Grid stackable>
-                                <Grid.Row>
-                                    <Grid.Column width={13}>
-                                        <GenericBarChart data={mappedDataStatus} />
-                                    </Grid.Column>
-                                    <Grid.Column width={3} >
-                                        {rawDataStatus}
-                                    </Grid.Column>
-                                </Grid.Row>
-                            </Grid>
+                            <BarChartWithRawData
+                                barChartWidth={13}
+                                rawDataWidth={3}
+                                data={mappedDataStatus} />
                         </Segment>
                     </Grid.Column>
                 </Grid.Row>
