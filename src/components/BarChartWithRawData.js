@@ -23,7 +23,7 @@ const BarChartWithRawData = (props) => {
 
     var mappedRawData = rawData.map((x, i) => {
         return (
-            <RawDataRow key={i} x={x} />
+            <RawDataRow rawDataStyle={props.rawDataStyle} key={i} x={x} />
         )
     })
 
