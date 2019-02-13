@@ -57,6 +57,18 @@ export default {
             "url": "https://tsi-lb1.is.icepor.com/tmui/"
         },
         {
+            "country": "at",
+            "title": "TEST/LLT",
+            "tooltip": "ixi3-test-lb1",
+            "url": "https://ixi3-test-lb1.is.icepor.com/tmui/"
+        },
+        {
+            "country": "at",
+            "title": "DNS",
+            "tooltip": "ixi3-gtm1",
+            "url": "https://10.130.255.20/tmui/"
+        },
+        {
             "country": "be",
             "title": "BE/OOS",
             "tooltip": "oos-lb1",
@@ -85,18 +97,6 @@ export default {
             "title": "GG",
             "tooltip": "gci-lb2",
             "url": "https://10.169.222.56/tmui/"
-        },
-        {
-            "country": "at",
-            "title": "TEST/LLT",
-            "tooltip": "ixi3-test-lb1",
-            "url": "https://ixi3-test-lb1.is.icepor.com/tmui/"
-        },
-        {
-            "country": "at",
-            "title": "DNS",
-            "tooltip": "ixi3-gtm1",
-            "url": "https://10.130.255.20/tmui/"
         },
         {
             "country": "us",
