@@ -60,6 +60,54 @@ export const mapDataForGenericBarChart = (data, key, filter, filterZeroCount) =>
     return mapped.filter(x => x).sort((a, b) => b.count - a.count)
 }
 
+export const mapDataForStackedGenericBarChart = (data, key, categories, property, filter) => {
+    var grouped = groupBy(data, key);
+    var keys = Object.keys(grouped);
+
+    if (filter) {
+        if (key === Object.keys(filter)[0]) {
+            keys = keys.filter(y => y.search(filter[Object.keys(filter)[0]], "i") >= 0)
+        }
+    }
+    var mapped = keys.map(x => {
+        var count = grouped[x].length
+
+        if (filter) {
+            if (count !== 0 && grouped[x].filter(y =>
+                y[Object.keys(filter)[0]].toString().search(filter[Object.keys(filter)[0]], "i") >= 0)) {
+
+                var result = {
+                    name: x && x !== "null" ? x : "Unknown"
+                }
+
+                categories.forEach((z, i) => {
+                    result[z] = grouped[x].filter(y =>
+                        y[Object.keys(filter)[0]].toString().search(filter[Object.keys(filter)[0]], "i") >= 0
+                        && y[property] === z).length
+                })
+
+                return result;
+            }
+        }
+        else {
+            if (count !== 0) {
+                var result = {
+                    name: x && x !== "null" ? x : "Unknown"
+                }
+
+                categories.forEach((z, i) => {
+                    result[z] = grouped[x].filter(y => y[property] === z).length
+                })
+
+                return result;
+            }
+        }
+
+    })
+
+    return mapped;
+}
+
 export const groupBy = (items, key) => items.reduce(
     (result, item) => ({
         ...result,

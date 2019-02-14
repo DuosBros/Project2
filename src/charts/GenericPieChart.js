@@ -1,7 +1,7 @@
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { CHART_COLORS } from '../appConfig';
 
-let colors = ['#8884d8', '#82ca9d'];
 const GenericPieChart = (props) => {
     return (
         <ResponsiveContainer minHeight={500} minWidth={500} >
@@ -9,7 +9,7 @@ const GenericPieChart = (props) => {
                 <Pie dataKey="count" data={props.data}>
                     {
                         props.data.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+                            <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
                         ))
                     }
                 </Pie>

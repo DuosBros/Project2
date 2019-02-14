@@ -11,7 +11,6 @@ import { getVirtualMachinesAction } from '../actions/VirtualMachineAction';
 import ErrorMessage from '../components/ErrorMessage';
 import { mapDataForGenericBarChart, getUniqueValuesOfKey } from '../utils/HelperFunction';
 import BarChartWithRawData from '../charts/BarChartWithRawData';
-import GenericPieChart from '../charts/GenericPieChart';
 import PieChartWithRawData from '../charts/PieChartWIthRawData';
 
 const DropDownForCombinedPieChart = (props) => {
@@ -205,10 +204,18 @@ class ServersStatistics extends React.Component {
 
         var counter = 0;
         var mappedCombinedData = [];
+        var pieChart = null;
         this.state.inputs.forEach(x => counter++)
         if (counter === 3) {
             var data = this.props.serverStore.servers.data.filter(x => x[this.state.inputs[0]] === this.state.inputs[2])
             mappedCombinedData = mapDataForGenericBarChart(data, this.state.inputs[1]);
+
+            pieChart = (
+                <PieChartWithRawData
+                    barChartWidth={12}
+                    rawDataWidth={4}
+                    data={mappedCombinedData} />
+            )
         }
 
         var options = Object.keys(this.props.serverStore.servers.data[0]).map(x =>
@@ -274,7 +281,6 @@ class ServersStatistics extends React.Component {
                                 barChartWidth={12}
                                 rawDataWidth={4}
                                 data={mappedDataDataCenter} />
-
                         </Segment>
                     </Grid.Column>
                 </Grid.Row>
@@ -325,11 +331,7 @@ class ServersStatistics extends React.Component {
                                 options={options}
                                 index={1}
                                 label="Property Name" />
-
-                            <PieChartWithRawData
-                                barChartWidth={12}
-                                rawDataWidth={4}
-                                data={mappedCombinedData} />
+                            {pieChart}
                         </Segment>
                     </Grid.Column>
                 </Grid.Row>

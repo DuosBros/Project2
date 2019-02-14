@@ -23,7 +23,7 @@ const BarChartWithRawData = (props) => {
 
     var mappedRawData = rawData.map((x, i) => {
         return (
-            <RawDataRow rawDataStyle={props.rawDataStyle} key={i} x={x} />
+            <RawDataRow rawDataStyle={props.rawDataStyle} key={i} x={x} stack={props.stack} />
         )
     })
 
@@ -31,7 +31,7 @@ const BarChartWithRawData = (props) => {
         <Grid stackable>
             <Grid.Row>
                 <Grid.Column width={props.barChartWidth}>
-                    <GenericBarChart data={props.data} />
+                    <GenericBarChart data={props.data} stack={props.stack} />
                 </Grid.Column>
                 <Grid.Column width={props.rawDataWidth} >
                     {mappedRawData}
