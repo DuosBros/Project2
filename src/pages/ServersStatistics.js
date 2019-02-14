@@ -9,7 +9,7 @@ import { getServersAction } from '../actions/ServerActions';
 import { getVirtualMachines } from '../requests/VirtualMachineAxios';
 import { getVirtualMachinesAction } from '../actions/VirtualMachineAction';
 import ErrorMessage from '../components/ErrorMessage';
-import { mapDataForGenericBarChart, getUniqueValuesOfKey } from '../utils/HelperFunction';
+import { mapDataForGenericChart, getUniqueValuesOfKey } from '../utils/HelperFunction';
 import BarChartWithRawData from '../charts/BarChartWithRawData';
 import PieChartWithRawData from '../charts/PieChartWIthRawData';
 
@@ -189,17 +189,17 @@ class ServersStatistics extends React.Component {
             )
         }
 
-        var mappedDataOwner = mapDataForGenericBarChart(this.props.serverStore.servers.data, 'ServerOwner');
+        var mappedDataOwner = mapDataForGenericChart(this.props.serverStore.servers.data, 'ServerOwner');
 
-        var mappedDataOperatingSystem = mapDataForGenericBarChart(this.props.serverStore.servers.data, 'OperatingSystem');
+        var mappedDataOperatingSystem = mapDataForGenericChart(this.props.serverStore.servers.data, 'OperatingSystem');
 
-        var mappedDataEnvironment = mapDataForGenericBarChart(this.props.serverStore.servers.data, 'Environment');
+        var mappedDataEnvironment = mapDataForGenericChart(this.props.serverStore.servers.data, 'Environment');
 
-        var mappedDataDataCenter = mapDataForGenericBarChart(this.props.serverStore.servers.data, 'DataCenter');
+        var mappedDataDataCenter = mapDataForGenericChart(this.props.serverStore.servers.data, 'DataCenter');
 
         var mappedDataVirtualCloud;
         if (this.props.virtualMachineStore.virtualMachines.success) {
-            mappedDataVirtualCloud = mapDataForGenericBarChart(this.props.virtualMachineStore.virtualMachines.data, 'Cloud', { Cloud: /^LO_/i });
+            mappedDataVirtualCloud = mapDataForGenericChart(this.props.virtualMachineStore.virtualMachines.data, 'Cloud', { Cloud: /^LO_/i });
         }
 
         var counter = 0;
@@ -208,7 +208,7 @@ class ServersStatistics extends React.Component {
         this.state.inputs.forEach(x => counter++)
         if (counter === 3) {
             var data = this.props.serverStore.servers.data.filter(x => x[this.state.inputs[0]] === this.state.inputs[2])
-            mappedCombinedData = mapDataForGenericBarChart(data, this.state.inputs[1]);
+            mappedCombinedData = mapDataForGenericChart(data, this.state.inputs[1]);
 
             pieChart = (
                 <PieChartWithRawData

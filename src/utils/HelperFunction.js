@@ -15,7 +15,7 @@ export const getUniqueValuesOfKey = (array, key) => {
     }, []);
 }
 
-export const mapDataForGenericBarChart = (data, key, filter, filterZeroCount) => {
+export const mapDataForGenericChart = (data, key, filter, filterZeroCount) => {
     var grouped = groupBy(data, key);
     var keys = Object.keys(grouped);
 

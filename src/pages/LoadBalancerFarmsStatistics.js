@@ -6,9 +6,10 @@ import _ from 'lodash';
 
 import { getAllLoadBalancerFarms } from '../requests/LoadBalancerFarmsAxios';
 import { getAllLoadBalancerFarmsAction } from '../actions/LoadBalancerFarmsAction';
-import { mapDataForGenericBarChart, getUniqueValuesOfKey, mapDataForStackedGenericBarChart } from '../utils/HelperFunction';
+import { mapDataForGenericChart, getUniqueValuesOfKey, mapDataForStackedGenericBarChart } from '../utils/HelperFunction';
 import ErrorMessage from '../components/ErrorMessage';
 import BarChartWithRawData from '../charts/BarChartWithRawData';
+import PieChartWithRawData from '../charts/PieChartWIthRawData';
 
 let rawDataStyle = {
     dt: {
@@ -68,9 +69,11 @@ class LoadBalancerFarmsStatistics extends React.Component {
             )
         }
 
-        var mappedLbName = mapDataForGenericBarChart(this.props.loadbalancerFarmsStore.loadBalancerFarms.data, 'LbName');
+        var mappedLbName = mapDataForGenericChart(this.props.loadbalancerFarmsStore.loadBalancerFarms.data, 'LbName');
         var environments = getUniqueValuesOfKey(this.props.loadbalancerFarmsStore.loadBalancerFarms.data, 'Environment');
-        var a = mapDataForStackedGenericBarChart(this.props.loadbalancerFarmsStore.loadBalancerFarms.data, 'LbName', environments, 'Environment')
+        var mappedDataEnvironmentsPerLB = mapDataForStackedGenericBarChart(this.props.loadbalancerFarmsStore.loadBalancerFarms.data, 'LbName', environments, 'Environment')
+        var mappedDataPerDataCenter = mapDataForGenericChart(this.props.loadbalancerFarmsStore.loadBalancerFarms.data, 'DataCenter')
+        var mappedDataPerEnvironment = mapDataForGenericChart(this.props.loadbalancerFarmsStore.loadBalancerFarms.data, 'Environment')
         return (
             <Grid stackable>
                 <Grid.Row>
@@ -97,8 +100,34 @@ class LoadBalancerFarmsStatistics extends React.Component {
                                 rawDataStyle={rawDataStyle}
                                 barChartWidth={12}
                                 rawDataWidth={4}
-                                data={a}
+                                data={mappedDataEnvironmentsPerLB}
                                 stack={environments} />
+                        </Segment>
+                    </Grid.Column>
+                </Grid.Row>
+                <Grid.Row>
+                    <Grid.Column>
+                        <Header block attached='top' as='h4'>
+                            LoadBalancer Farms Statistics - Per Datacenter
+                            </Header>
+                        <Segment attached='bottom' >
+                            <PieChartWithRawData
+                                barChartWidth={12}
+                                rawDataWidth={4}
+                                data={mappedDataPerDataCenter} />
+                        </Segment>
+                    </Grid.Column>
+                </Grid.Row>
+                <Grid.Row>
+                    <Grid.Column>
+                        <Header block attached='top' as='h4'>
+                            LoadBalancer Farms Statistics - Per Environment
+                            </Header>
+                        <Segment attached='bottom' >
+                            <PieChartWithRawData
+                                barChartWidth={12}
+                                rawDataWidth={4}
+                                data={mappedDataPerEnvironment} />
                         </Segment>
                     </Grid.Column>
                 </Grid.Row>

@@ -7,7 +7,7 @@ import _ from 'lodash';
 import { getServices } from '../requests/ServiceAxios';
 import { getServicesAction } from '../actions/ServiceActions';
 import ErrorMessage from '../components/ErrorMessage';
-import { mapDataForGenericBarChart } from '../utils/HelperFunction';
+import { mapDataForGenericChart } from '../utils/HelperFunction';
 import BarChartWithRawData from '../charts/BarChartWithRawData';
 
 class ServicesStatistics extends React.Component {
@@ -73,9 +73,9 @@ class ServicesStatistics extends React.Component {
             )
         }
 
-        var mappedDataOwner = mapDataForGenericBarChart(this.props.serviceStore.services.data, 'Owner', { Status: /^(?!removed$)/i }, true);
+        var mappedDataOwner = mapDataForGenericChart(this.props.serviceStore.services.data, 'Owner', { Status: /^(?!removed$)/i }, true);
 
-        var mappedDataComponentSteward = mapDataForGenericBarChart(this.props.serviceStore.services.data, 'ResponsibleTeam', { Status: /^(?!removed$)/i });
+        var mappedDataComponentSteward = mapDataForGenericChart(this.props.serviceStore.services.data, 'ResponsibleTeam', { Status: /^(?!removed$)/i });
 
         if (!this.state.expandComponentSteward) {
             var half_length = Math.ceil(mappedDataComponentSteward.length / 2);
@@ -83,7 +83,7 @@ class ServicesStatistics extends React.Component {
             mappedDataComponentSteward = mappedDataComponentSteward.splice(0, half_length);
         }
 
-        var mappedDataLabel = mapDataForGenericBarChart(this.props.serviceStore.services.data, 'Label', { Status: /^(?!removed$)/i }, true);
+        var mappedDataLabel = mapDataForGenericChart(this.props.serviceStore.services.data, 'Label', { Status: /^(?!removed$)/i }, true);
 
         if (!this.state.expandLabel) {
             half_length = Math.ceil(mappedDataLabel.length / 2);
@@ -91,7 +91,7 @@ class ServicesStatistics extends React.Component {
             mappedDataLabel = mappedDataLabel.splice(0, half_length);
         }
 
-        var mappedDataFramework = mapDataForGenericBarChart(this.props.serviceStore.services.data, 'Framework', { Status: /^(?!removed$)/i });
+        var mappedDataFramework = mapDataForGenericChart(this.props.serviceStore.services.data, 'Framework', { Status: /^(?!removed$)/i });
 
         if (!this.state.expandFramework) {
             half_length = Math.ceil(mappedDataFramework.length / 2);
@@ -99,9 +99,9 @@ class ServicesStatistics extends React.Component {
             mappedDataFramework = mappedDataFramework.splice(0, half_length);
         }
 
-        var mappedDataDevelopmentFramework = mapDataForGenericBarChart(this.props.serviceStore.services.data, 'DevFramework', { Status: /^(?!removed$)/i });
+        var mappedDataDevelopmentFramework = mapDataForGenericChart(this.props.serviceStore.services.data, 'DevFramework', { Status: /^(?!removed$)/i });
 
-        var mappedDataStatus = mapDataForGenericBarChart(this.props.serviceStore.services.data, 'Status');
+        var mappedDataStatus = mapDataForGenericChart(this.props.serviceStore.services.data, 'Status');
 
         // render page
         return (
