@@ -8,6 +8,13 @@ export const mapDataForMinMaxAvgChart = (data) => {
     }))
 }
 
+export const getUniqueValuesOfKey = (array, key) => {
+    return array.reduce((carry, item) => {
+        if (item[key] && !~carry.indexOf(item[key])) carry.push(item[key]);
+        return carry;
+    }, []);
+}
+
 export const mapDataForGenericBarChart = (data, key, filter, filterZeroCount) => {
     var grouped = groupBy(data, key);
     var keys = Object.keys(grouped);

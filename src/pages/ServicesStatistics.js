@@ -1,15 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Grid, Header, Segment, Message, Icon, Button, Popup } from 'semantic-ui-react';
+import { Grid, Header, Segment, Message, Icon, Popup } from 'semantic-ui-react';
 import _ from 'lodash';
 
 import { getServices } from '../requests/ServiceAxios';
 import { getServicesAction } from '../actions/ServiceActions';
-import GenericBarChart from '../charts/GenericBarChart';
 import ErrorMessage from '../components/ErrorMessage';
 import { mapDataForGenericBarChart } from '../utils/HelperFunction';
-import BarChartWithRawData from '../components/BarChartWithRawData';
+import BarChartWithRawData from '../charts/BarChartWithRawData';
 
 class ServicesStatistics extends React.Component {
 

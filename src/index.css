@@ -238,6 +238,10 @@ div.content.noimg {
     margin-left: 1.5em;
 }
 
+.rightMargin {
+    margin-right: 1em;
+}
+
 .bottomMargin {
     margin-bottom: 1em;
 }

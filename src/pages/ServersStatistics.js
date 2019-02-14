@@ -1,18 +1,36 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Grid, Header, Segment, Message, Icon, Popup } from 'semantic-ui-react';
+import { Grid, Header, Segment, Message, Icon, Popup, Dropdown, Form } from 'semantic-ui-react';
 import _ from 'lodash';
 
 import { getServers } from '../requests/ServerAxios';
 import { getServersAction } from '../actions/ServerActions';
 import { getVirtualMachines } from '../requests/VirtualMachineAxios';
 import { getVirtualMachinesAction } from '../actions/VirtualMachineAction';
-import GenericBarChart from '../charts/GenericBarChart';
 import ErrorMessage from '../components/ErrorMessage';
-import { mapDataForGenericBarChart } from '../utils/HelperFunction';
-import BarChartWithRawData from '../components/BarChartWithRawData';
+import { mapDataForGenericBarChart, getUniqueValuesOfKey } from '../utils/HelperFunction';
+import BarChartWithRawData from '../charts/BarChartWithRawData';
+import GenericPieChart from '../charts/GenericPieChart';
+import PieChartWithRawData from '../charts/PieChartWIthRawData';
 
+const DropDownForCombinedPieChart = (props) => {
+    return (
+        <>
+            <label><Icon name='add' />{props.label}</label>
+            <Dropdown
+                className='leftMargin bottomMargin rightMargin'
+                selection
+                onChange={(e, m) => props.handlePropertyDropdownOnChange(e, m, props.index)}
+                options={props.options}
+                selectOnBlur={false}
+                selectOnNavigation={false}
+                placeholder='Type to search & add...'
+                search
+            />
+        </>
+    )
+}
 let rawDataStyle = {
     dt: {
         width: '240px'
@@ -23,6 +41,9 @@ let rawDataStyle = {
 }
 class ServersStatistics extends React.Component {
 
+    state = {
+        inputs: []
+    }
     componentDidMount() {
         this.fetchServersAndHandleResult()
         this.fetchVirtualMachinesAndHandleResult()
@@ -50,6 +71,76 @@ class ServersStatistics extends React.Component {
             .catch(err => {
                 this.props.getVirtualMachinesAction({ success: false, error: err })
             })
+    }
+
+    handlePropertyDropdownOnChange = (e, { value }, i) => {
+        var o = Object.assign([], this.state.inputs)
+        o[i] = value;
+        this.setState({ inputs: o });
+    }
+
+    renderInputsForCombinationBarChart = () => {
+        var result = [];
+
+        // map existing inputs
+        result = this.state.inputs.map((input, i) => {
+            return (
+                <React.Fragment key={i}>
+                    <Form.Field>
+                        <label><Icon name='add' />Property Name</label>
+                        <Dropdown
+                            className='leftMargin bottomMargin'
+                            value={input}
+                            selection
+                            onChange={(e, m) => this.handlePropertyDropdownOnChange(e, m, i)}
+                            options={Object.keys(this.props.serverStore.servers.data[0]).map(x =>
+                                ({
+                                    value: x,
+                                    text: x
+                                })
+                            )}
+
+                            selectOnBlur={false}
+                            selectOnNavigation={false}
+                            placeholder='Type to search & add...'
+                            search
+                        />
+                        <Popup trigger={
+                            <Icon name='remove' />
+                        } content='Remove property' inverted />
+
+                    </Form.Field>
+                </React.Fragment>
+            )
+        })
+
+        let i = this.state.inputs.length;
+
+        result.push(
+            <React.Fragment key={i}>
+                <Form.Field>
+                    <label><Icon name='add' />Property Name</label>
+                    <Dropdown
+                        className='leftMargin bottomMargin'
+                        selection
+                        onChange={(e, m) => this.handlePropertyDropdownOnChange(e, m, i)}
+                        options={Object.keys(this.props.serverStore.servers.data[0]).map(x =>
+                            ({
+                                value: x,
+                                text: x
+                            })
+                        )}
+
+                        selectOnBlur={false}
+                        selectOnNavigation={false}
+                        placeholder='Type to search & add...'
+                        search
+                    />
+                </Form.Field>
+            </React.Fragment>
+        )
+
+        return result;
     }
 
     render() {
@@ -112,6 +203,20 @@ class ServersStatistics extends React.Component {
             mappedDataVirtualCloud = mapDataForGenericBarChart(this.props.virtualMachineStore.virtualMachines.data, 'Cloud', { Cloud: /^LO_/i });
         }
 
+        var counter = 0;
+        var mappedCombinedData = [];
+        this.state.inputs.forEach(x => counter++)
+        if (counter === 3) {
+            var data = this.props.serverStore.servers.data.filter(x => x[this.state.inputs[0]] === this.state.inputs[2])
+            mappedCombinedData = mapDataForGenericBarChart(data, this.state.inputs[1]);
+        }
+
+        var options = Object.keys(this.props.serverStore.servers.data[0]).map(x =>
+            ({
+                value: x,
+                text: x
+            })
+        )
 
         // render page
         return (
@@ -187,22 +292,44 @@ class ServersStatistics extends React.Component {
                                 barChartWidth={12}
                                 rawDataWidth={4}
                                 data={mappedDataVirtualCloud} />
-                            {/* <Grid stackable>
-                                <Grid.Row>
-                                    <Grid.Column width={12}>
-                                        {
-                                            !this.props.virtualMachineStore.virtualMachines.success ?
-                                                <ErrorMessage
-                                                    handleRefresh={this.fetchVirtualMachinesAndHandleResult}
-                                                    error={this.props.virtualMachineStore.virtualMachines.error} />
-                                                : <GenericBarChart data={mappedDataVirtualCloud} />
-                                        }
-                                    </Grid.Column>
-                                    <Grid.Column width={4} >
-                                        {rawDataVirtualCloud}
-                                    </Grid.Column>
-                                </Grid.Row>
-                            </Grid> */}
+                        </Segment>
+                    </Grid.Column>
+                </Grid.Row>
+                <Grid.Row>
+                    <Grid.Column>
+                        <Header block attached='top' as='h4'>
+                            Server Statistics - Custom combination
+                        <Popup trigger={
+                                <Icon name='question' />
+                            } content='You can combine and draw the chart using more properties' inverted />
+                        </Header>
+                        <Segment attached='bottom' >
+                            <DropDownForCombinedPieChart
+                                handlePropertyDropdownOnChange={this.handlePropertyDropdownOnChange}
+                                options={options}
+                                index={0}
+                                label="Property Name" />
+                            <DropDownForCombinedPieChart
+                                handlePropertyDropdownOnChange={this.handlePropertyDropdownOnChange}
+                                options={getUniqueValuesOfKey(this.props.serverStore.servers.data, this.state.inputs[0]).slice(0, 15).map(x =>
+                                    ({
+                                        value: x,
+                                        text: x
+                                    })
+                                )}
+                                index={2}
+                                label="Property Value" />
+                            <br />
+                            <DropDownForCombinedPieChart
+                                handlePropertyDropdownOnChange={this.handlePropertyDropdownOnChange}
+                                options={options}
+                                index={1}
+                                label="Property Name" />
+
+                            <PieChartWithRawData
+                                barChartWidth={12}
+                                rawDataWidth={4}
+                                data={mappedCombinedData} />
                         </Segment>
                     </Grid.Column>
                 </Grid.Row>

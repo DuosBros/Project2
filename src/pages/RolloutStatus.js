@@ -496,7 +496,7 @@ class RolloutStatus extends React.Component {
                         <Table.Row key={service.Service[0].Id}>
                             <Table.Cell>{service.Service[0].Name}</Table.Cell>
                             <Table.Cell>
-                                <Link to={'/service/' + service.Service[0].Id} target="_blank">{service.Service[0].Shortcut}</Link>
+                                <Link to={'/service/' + service.Service[0].Id}>{service.Service[0].Shortcut}</Link>
                             </Table.Cell>
                             <Table.Cell>
                                 <DismeStatus dismeStatus={service.Service[0].Status} />

@@ -1,10 +1,10 @@
 import React from 'react';
 import { Grid } from 'semantic-ui-react';
-import GenericBarChart from '../charts/GenericBarChart';
 import ExpandCollapseButtonRow from './ExpandCollapseButtonRow';
 import RawDataRow from './RawDataRow';
+import GenericPieChart from './GenericPieChart';
 
-const BarChartWithRawData = (props) => {
+const PieChartWithRawData = (props) => {
 
     var expandCollapseButton = null;
     if (props.expandCollapseButtonProps) {
@@ -31,7 +31,7 @@ const BarChartWithRawData = (props) => {
         <Grid stackable>
             <Grid.Row>
                 <Grid.Column width={props.barChartWidth}>
-                    <GenericBarChart data={props.data} />
+                    <GenericPieChart data={props.data} />
                 </Grid.Column>
                 <Grid.Column width={props.rawDataWidth} >
                     {mappedRawData}
@@ -42,4 +42,4 @@ const BarChartWithRawData = (props) => {
     );
 }
 
-export default BarChartWithRawData;
+export default PieChartWithRawData;
