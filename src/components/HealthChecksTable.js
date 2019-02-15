@@ -40,14 +40,16 @@ export default class HealthChecksTable extends GenericTable {
                 prop: "Links",
                 width: 1,
                 sortable: false,
-                searchable: false
+                searchable: false,
+                exportableByDefault: false
             },
-            
+
             {
                 name: "Local IP",
                 prop: "LocalIP",
                 width: 1,
-                visibleByDefault: false
+                visibleByDefault: false,
+
             },
             {
                 name: "Port",

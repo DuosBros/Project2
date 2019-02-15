@@ -242,6 +242,10 @@ div.content.noimg {
     margin-right: 1em;
 }
 
+.rightMargin:before {
+    margin-right: 2.5em;
+}
+
 .bottomMargin {
     margin-bottom: 1em;
 }

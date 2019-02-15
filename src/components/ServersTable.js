@@ -53,7 +53,8 @@ export default class ServersTable extends GenericTable {
                 prop: "Links",
                 width: 1,
                 sortable: false,
-                searchable: false
+                searchable: false,
+                exportByDefault: false
             },
             {
                 name: "Patch Group",

@@ -1,15 +1,18 @@
 import _ from 'lodash'
 import React, { Component } from 'react'
 import PropTypes from 'prop-types';
-import { Table, Grid, Message, Input, Button, Icon, Label, Popup } from 'semantic-ui-react'
+import { Table, Grid, Message, Input, Button, Icon, Label, Popup, Dropdown } from 'semantic-ui-react'
 import Pagination from 'semantic-ui-react-button-pagination';
-import { filterInArrayOfObjects, isNum, debounce } from '../utils/HelperFunction';
+import { CSVLink } from "react-csv";
+import exportFromJSON from 'export-from-json'
+import { filterInArrayOfObjects, isNum, debounce, pick, exportToJsonFile } from '../utils/HelperFunction';
 
 const DEFAULT_COLUMN_PROPS = {
     collapsing: false,
     sortable: true,
     searchable: true,
-    visibleByDefault: true
+    visibleByDefault: true,
+    exportableByDefault: true
 }
 
 export const GenericTablePropTypes = {
@@ -69,7 +72,8 @@ export default class GenericTable extends Component {
             data: this.props.data,
             columnToggle: columns.filter(c => c.visibleByDefault === false).length > 0,
             showColumnToggles: false,
-            visibleColumnsList: columns.filter(c => c.visibleByDefault).map(c => c.prop)
+            visibleColumnsList: columns.filter(c => c.visibleByDefault).map(c => c.prop),
+            exportableColumnsList: columns.filter(c => c.exportableByDefault).map(c => c.prop)
         }
 
         if (Array.isArray(this.state.data)) {
@@ -258,11 +262,18 @@ export default class GenericTable extends Component {
         return a.toString().localeCompare(b.toString());
     }
 
+    handleJSONExport = (data, type) => {
+        const fileName = new Date().toISOString()
+
+        exportFromJSON({ data: data, fileName: fileName, exportType: type })
+    }
+
     render() {
         const {
             columns,
             grouping,
             visibleColumnsList,
+            exportableColumnsList,
             sortColumn,
             sortDirection,
             multiSearchInput,
@@ -304,6 +315,11 @@ export default class GenericTable extends Component {
             return null;
         }
 
+        let exportableColumns = columns.filter(c => exportableColumnsList.indexOf(c.prop) !== -1);
+
+        // not exporting columns like Links (which contains buttons)
+        let columnsToExport = visibleColumns.filter(x => exportableColumns.includes(x)).map(x => { return { label: x.name, key: x.prop } });
+        let dataToExport = pick(data, columnsToExport.map(x => x.key))
         var renderData, tableFooter, filteredData,
             filterColumnsRow, toggleColumnsRow,
             columnToggleButton,
@@ -540,7 +556,7 @@ export default class GenericTable extends Component {
         }
         var tableFunctionsGrid;
         if (showTableHeader) {
-            if(showTableHeaderFunctions) {
+            if (showTableHeaderFunctions) {
                 tableFunctionsGrid = (
                     <Grid>
                         <Grid.Row>
@@ -551,12 +567,40 @@ export default class GenericTable extends Component {
                                     fluid
                                     value={multiSearchInput} placeholder="Type to search..." name="multiSearchInput" onChange={this.handleMultiFilterChange} ></Input>
                             </Grid.Column>
+                            <Grid.Column width={2}>
+                                <Dropdown icon={<Icon className="iconMargin" name='share' />} item text='Export'>
+                                    <Dropdown.Menu>
+                                        {/* <Dropdown.Item
+                                            onClick={() => this.handleJSONExport(dataToExport, 'txt')}
+                                            icon={<Icon name='file text outline' />}
+                                            text='Export to TXT' />
+                                        <Dropdown.Item
+                                            onClick={() => this.handleJSONExport(dataToExport, exportFromJSON.types.json)}
+                                            icon={<Icon name='file text outline' />}
+                                            text='Export to JSON' /> */}
+                                        <Dropdown.Item
+                                            onClick={() => this.handleJSONExport(dataToExport, exportFromJSON.types.csv)}
+                                            icon={<Icon name='file text outline' />}
+                                            text='Export to CSV' />
+                                        {/* <CSVLink
+                                            className="item"
+                                            filename={new Date().toISOString() + ".csv"}
+                                            data={dataToExport}>
+                                            <Dropdown.Item icon={<Icon name='file text outline' />} text='Export to CSV' />
+                                        </CSVLink> */}
+                                        <Dropdown.Item
+                                            onClick={() => this.handleJSONExport(dataToExport, exportFromJSON.types.xls)}
+                                            icon={<Icon name='file excel' />}
+                                            text='Export to XLS' />
+                                    </Dropdown.Menu>
+                                </Dropdown>
+                            </Grid.Column>
                             <Grid.Column width={4}>
                                 <div style={{ float: "right", margin: "0 20px", display: defaultLimit === 0 ? "none" : "visible" }}>
                                     <span>Showing {filteredData.length > 0 ? this.state.offset + 1 : 0} to {filteredData.length < limit ? filteredData.length : this.state.offset + limit} of {filteredData.length} entries</span>
                                 </div>
                             </Grid.Column>
-                            <Grid.Column width={4}>
+                            <Grid.Column width={2}>
                                 <div style={{ float: "left", margin: "0 20px", display: defaultLimit === 0 ? "none" : "visible" }}>
                                     <Input
                                         label='Records per page:'

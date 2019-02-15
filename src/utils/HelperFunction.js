@@ -108,6 +108,18 @@ export const mapDataForStackedGenericBarChart = (data, key, categories, property
     return mapped;
 }
 
+export const pick = (array, keys) => {
+    return array.map(x => {
+        return keys.map(k => k in x ? { [k]: x[k] } : {})
+            .reduce((res, o) => Object.assign(res, o), {})
+    })
+}
+
+export const exportToJsonFile = (data) => {
+    let dataStr = JSON.stringify(data);
+    return ('data:application/json;charset=utf-8,' + encodeURIComponent(dataStr));
+}
+
 export const groupBy = (items, key) => items.reduce(
     (result, item) => ({
         ...result,
