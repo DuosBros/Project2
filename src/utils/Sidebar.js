@@ -44,22 +44,13 @@ class Sidebar extends React.Component {
                             <Menu.Item as={Link} to='/versionstatus' >
                                 Version Status
                             </Menu.Item>
-                            {/*
-                            <Menu.Item as={Link} to='/theming' >
-                                HealthChecks
+                            <Menu.Item as={Link} to='/healthchecks' >
+                                Health Checks
                             </Menu.Item>
-                            <Menu.Item as={Link} to='/theming' >
-                                Availability
-                            </Menu.Item> */}
                         </Menu.Menu>
                     </Menu.Item>
                     <Menu.Item>
                         <Menu.Header as={Link} to='/lbfarms'>Loadbalancer Farms</Menu.Header>
-                        {/* <Menu.Menu>
-                            <Menu.Item as={Link} to='/' >
-                                Consistency
-                            </Menu.Item>
-                        </Menu.Menu> */}
                     </Menu.Item>
                     <Menu.Item>
                         <Menu.Header as={Link} to='/ipaddresses'>IPAddresses</Menu.Header>

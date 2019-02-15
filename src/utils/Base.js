@@ -34,6 +34,7 @@ import ServicesStatistics from '../pages/ServicesStatistics';
 import ServersStatistics from '../pages/ServersStatistics';
 import LoadBalancerFarmsStatistics from '../pages/LoadBalancerFarmsStatistics';
 import ErrorBoundary from '../components/ErrorBoundary';
+import HealthChecks from '../pages/HealthChecks';
 
 class Base extends React.Component {
     constructor(props) {
@@ -134,6 +135,7 @@ class Base extends React.Component {
                                     <Route path='/ipaddresses' component={IPAddresses} />
                                     <Route path='/admin' component={Admin} />
                                     <Route path='/versionstatus' component={VersionStatus} />
+                                    <Route path='/healthchecks' component={HealthChecks} />
                                     <Route path='/statistics/services' component={ServicesStatistics} />
                                     <Route path='/statistics/servers' component={ServersStatistics} />
                                     <Route path='/statistics/loadbalancerfarms' component={LoadBalancerFarmsStatistics} />

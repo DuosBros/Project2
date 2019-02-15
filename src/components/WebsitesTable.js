@@ -80,7 +80,7 @@ export default class WebsitesTable extends GenericTable {
     }
 
     transformDataRow(data) {
-        data.ServerLink = (<Link to={'/server/' + data.Id}>{data.ServerName}</Link>);
+        data.ServerLink = (<Link to={'/server/' + data.ServerId}>{data.ServerName}</Link>);
         if (data.Bindings) {
             data.BindingsDisplay = data.Bindings.map((binding, i) => {
                 return (
