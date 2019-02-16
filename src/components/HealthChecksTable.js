@@ -1,6 +1,6 @@
 import React from 'react'
 import GenericTable from './GenericTable';
-import { Button, Image, Popup } from 'semantic-ui-react';
+import { Button, Popup } from 'semantic-ui-react';
 
 export default class HealthChecksTable extends GenericTable {
     getColumns() {

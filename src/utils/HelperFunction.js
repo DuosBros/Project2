@@ -115,11 +115,6 @@ export const pick = (array, keys) => {
     })
 }
 
-export const exportToJsonFile = (data) => {
-    let dataStr = JSON.stringify(data);
-    return ('data:application/json;charset=utf-8,' + encodeURIComponent(dataStr));
-}
-
 export const groupBy = (items, key) => items.reduce(
     (result, item) => ({
         ...result,
