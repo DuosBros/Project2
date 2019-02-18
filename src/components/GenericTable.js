@@ -3,9 +3,8 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 import { Table, Grid, Message, Input, Button, Icon, Label, Popup, Dropdown } from 'semantic-ui-react'
 import Pagination from 'semantic-ui-react-button-pagination';
-import { CSVLink } from "react-csv";
-import exportFromJSON from 'export-from-json'
-import { filterInArrayOfObjects, isNum, debounce, pick, exportToJsonFile } from '../utils/HelperFunction';
+import ExportFromJSON from 'export-from-json'
+import { filterInArrayOfObjects, isNum, debounce, pick } from '../utils/HelperFunction';
 
 const DEFAULT_COLUMN_PROPS = {
     collapsing: false,
@@ -265,7 +264,7 @@ export default class GenericTable extends Component {
     handleJSONExport = (data, type) => {
         const fileName = new Date().toISOString()
 
-        exportFromJSON({ data: data, fileName: fileName, exportType: type })
+        ExportFromJSON({ data: data, fileName: fileName, exportType: type })
     }
 
     render() {
@@ -570,26 +569,12 @@ export default class GenericTable extends Component {
                             <Grid.Column width={2}>
                                 <Dropdown icon={<Icon className="iconMargin" name='share' />} item text='Export'>
                                     <Dropdown.Menu>
-                                        {/* <Dropdown.Item
-                                            onClick={() => this.handleJSONExport(dataToExport, 'txt')}
-                                            icon={<Icon name='file text outline' />}
-                                            text='Export to TXT' />
                                         <Dropdown.Item
-                                            onClick={() => this.handleJSONExport(dataToExport, exportFromJSON.types.json)}
-                                            icon={<Icon name='file text outline' />}
-                                            text='Export to JSON' /> */}
-                                        <Dropdown.Item
-                                            onClick={() => this.handleJSONExport(dataToExport, exportFromJSON.types.csv)}
+                                            onClick={() => this.handleJSONExport(dataToExport, ExportFromJSON.types.csv)}
                                             icon={<Icon name='file text outline' />}
                                             text='Export to CSV' />
-                                        {/* <CSVLink
-                                            className="item"
-                                            filename={new Date().toISOString() + ".csv"}
-                                            data={dataToExport}>
-                                            <Dropdown.Item icon={<Icon name='file text outline' />} text='Export to CSV' />
-                                        </CSVLink> */}
                                         <Dropdown.Item
-                                            onClick={() => this.handleJSONExport(dataToExport, exportFromJSON.types.xls)}
+                                            onClick={() => this.handleJSONExport(dataToExport, ExportFromJSON.types.xls)}
                                             icon={<Icon name='file excel' />}
                                             text='Export to XLS' />
                                     </Dropdown.Menu>

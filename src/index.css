@@ -218,6 +218,9 @@ div.content.noimg {
     padding-left: 7px;
 }
 
+div.generic.table {
+    overflow: auto;
+}
 .generic.table .RecordsPerPage > input {
     width: 5em;
 }
