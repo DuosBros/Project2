@@ -26,12 +26,12 @@ export const mapDataForGenericChart = (data, key, filter, filterZeroCount) => {
     }
     var mapped = keys.map(x => {
         var count = grouped[x].length
-
+        let result;
         if (filterZeroCount) {
             if (filter) {
                 if (count !== 0 && grouped[x].filter(y =>
                     y[Object.keys(filter)[0]].toString().search(filter[Object.keys(filter)[0]], "i") >= 0)) {
-                    return ({
+                    result = ({
                         name: x && x !== "null" ? x : "Unknown",
                         count: grouped[x].filter(y =>
                             y[Object.keys(filter)[0]].toString().search(filter[Object.keys(filter)[0]], "i") >= 0).length
@@ -40,7 +40,7 @@ export const mapDataForGenericChart = (data, key, filter, filterZeroCount) => {
             }
             else {
                 if (count !== 0) {
-                    return ({
+                    result = ({
                         name: x && x !== "null" ? x : "Unknown",
                         count: count
                     })
@@ -49,12 +49,14 @@ export const mapDataForGenericChart = (data, key, filter, filterZeroCount) => {
 
         }
         else {
-            return ({
+            result = ({
                 name: x && x !== "null" ? x : "Unknown",
                 count: filter ? grouped[x].filter(y =>
                     y[Object.keys(filter)[0]].toString().search(filter[Object.keys(filter)[0]], "i") >= 0).length : count
             })
         }
+
+        return result;
     })
 
     return mapped.filter(x => x).sort((a, b) => b.count - a.count)
@@ -70,39 +72,39 @@ export const mapDataForStackedGenericBarChart = (data, key, categories, property
         }
     }
     var mapped = keys.map(x => {
+        let result;
         var count = grouped[x].length
 
         if (filter) {
             if (count !== 0 && grouped[x].filter(y =>
                 y[Object.keys(filter)[0]].toString().search(filter[Object.keys(filter)[0]], "i") >= 0)) {
 
-                var result = {
+                result = {
                     name: x && x !== "null" ? x : "Unknown"
                 }
 
-                categories.forEach((z, i) => {
+                categories.forEach(z => {
                     result[z] = grouped[x].filter(y =>
                         y[Object.keys(filter)[0]].toString().search(filter[Object.keys(filter)[0]], "i") >= 0
                         && y[property] === z).length
                 })
 
-                return result;
+
             }
         }
         else {
             if (count !== 0) {
-                var result = {
+                result = {
                     name: x && x !== "null" ? x : "Unknown"
                 }
 
-                categories.forEach((z, i) => {
+                categories.forEach(z => {
                     result[z] = grouped[x].filter(y => y[property] === z).length
                 })
-
-                return result;
             }
         }
 
+        return result;
     })
 
     return mapped;

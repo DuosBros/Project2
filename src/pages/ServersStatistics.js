@@ -205,7 +205,7 @@ class ServersStatistics extends React.Component {
         var counter = 0;
         var mappedCombinedData = [];
         var pieChart = null;
-        this.state.inputs.forEach(x => counter++)
+        this.state.inputs.forEach(() => counter++)
         if (counter === 3) {
             var data = this.props.serverStore.servers.data.filter(x => x[this.state.inputs[0]] === this.state.inputs[2])
             mappedCombinedData = mapDataForGenericChart(data, this.state.inputs[1]);
