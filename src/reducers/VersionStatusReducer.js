@@ -1,4 +1,4 @@
-import { GET_STAGES, GET_VERSIONS } from '../constants/VersionStatusConstants';
+import { GET_STAGES, GET_VERSIONS, REMOVE_ALL_VERSIONS } from '../constants/VersionStatusConstants';
 
 const serverInitialState = {
     stages: { success: true, data: [] },
@@ -11,6 +11,8 @@ const VersionStatusReducer = (state = serverInitialState, action) => {
             return Object.assign({}, state, { stages: action.payload })
         case GET_VERSIONS:
             return Object.assign({}, state, { versions: action.payload })
+        case REMOVE_ALL_VERSIONS:
+            return Object.assign({}, state, { versions: { success: true } })
         default:
             return state;
     }

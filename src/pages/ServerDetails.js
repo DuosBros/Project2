@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Grid, Header, Segment, Icon, List, Button, Message } from 'semantic-ui-react';
+import { Grid, Header, Segment, Icon, List, Button, Message, Image } from 'semantic-ui-react';
 import _ from 'lodash';
 import moment from 'moment'
 
@@ -384,7 +384,10 @@ class ServerDetails extends React.Component {
                                         </dl>
 
                                         <dl className="dl-horizontal">
-                                            <dt>Kibana:</dt>
+                                            <dt>
+                                                <Image inline src={window.location.protocol + '//' + window.location.host + "/icons/kibana.png"} />
+                                                Kibana:
+                                            </dt>
                                             <dd>
                                                 <a target="_blank" rel="noopener noreferrer" href={Kibana.dashboardLinkBuilder("prod", "winlogbeat2").addFilter("beat.hostname", serverDetailsData.ServerName).build()}>Eventlog</a><br />
                                                 <a target="_blank" rel="noopener noreferrer" href={Kibana.dashboardLinkBuilder("prod", "metricsWindows").addFilter("beat.hostname", serverDetailsData.ServerName).build()}>PerfCounter</a>
@@ -480,7 +483,7 @@ class ServerDetails extends React.Component {
                         {
                             websites ? (
                                 <Segment attached='bottom'>
-                                    <WebsitesTable data={serverDetailsData.Websites} disableGrouping={true} showTableHeaderFunctions={false}/>
+                                    <WebsitesTable data={serverDetailsData.Websites} disableGrouping={true} showTableHeaderFunctions={false} />
                                 </Segment>
                             ) : (
                                     null

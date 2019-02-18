@@ -4,49 +4,44 @@ import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 
 import { Grid, Header, Segment, Message, Icon } from 'semantic-ui-react';
-import { getServers } from '../requests/ServerAxios';
-import { getServersAction } from '../actions/ServerActions';
-import ServersTable from '../components/ServersTable';
-import { getServerState, getDismeState } from '../utils/HelperFunction';
+import { getHealthChecks } from '../requests/HealthCheckAxios';
+import { getHealthChecksAction } from '../actions/HealthCheckAction';
 import ErrorMessage from '../components/ErrorMessage';
+import HealthChecksTable from '../components/HealthChecksTable';
 
-class Servers extends React.Component {
+class HealthChecks extends React.Component {
 
     componentDidMount() {
-        this.fetchServersAndHandleResult()
+        this.fetchHealthCheckssAndHandleResult()
     }
 
-    fetchServersAndHandleResult = () => {
-        getServers()
+    fetchHealthCheckssAndHandleResult = () => {
+        getHealthChecks()
             .then(res => {
-                this.props.getServersAction(
+                this.props.getHealthChecksAction(
                     {
                         success: true,
-                        data: res.data.map(server => {
-                            server.ServerState = getServerState(server.ServerStateID)
-                            server.Disme = getDismeState(server.Disme)
-                            return server
-                        })
+                        data: res.data
                     })
             })
             .catch(err => {
-                this.props.getServersAction({ success: false, error: err })
+                this.props.getHealthChecksAction({ success: false, error: err })
             })
     }
 
     render() {
 
         // in case of error
-        if (!this.props.serverStore.servers.success) {
+        if (!this.props.healthCheckStore.healthChecks.success) {
             return (
                 <Grid stackable>
                     <Grid.Row>
                         <Grid.Column>
                             <Header block attached='top' as='h4'>
-                                Servers
+                                HealthChecks
                             </Header>
                             <Segment attached='bottom' >
-                                <ErrorMessage handleRefresh={this.fetchServersAndHandleResult} error={this.props.serverStore.servers.error} />
+                                <ErrorMessage handleRefresh={this.fetchHealthCheckssAndHandleResult} error={this.props.healthCheckStore.healthChecks.error} />
                             </Segment>
                         </Grid.Column>
                     </Grid.Row>
@@ -55,13 +50,13 @@ class Servers extends React.Component {
         }
 
         // in case it's still loading data
-        if (_.isEmpty(this.props.serverStore.servers.data)) {
+        if (_.isEmpty(this.props.healthCheckStore.healthChecks.data)) {
             return (
                 <div className="messageBox">
                     <Message info icon>
                         <Icon name='circle notched' loading />
                         <Message.Content>
-                            <Message.Header>Fetching servers</Message.Header>
+                            <Message.Header>Fetching healthchecks</Message.Header>
                         </Message.Content>
                     </Message>
                 </div>
@@ -74,10 +69,10 @@ class Servers extends React.Component {
                 <Grid.Row>
                     <Grid.Column>
                         <Header block attached='top' as='h4'>
-                            Servers
+                            HealthChecks
                             </Header>
                         <Segment attached='bottom' >
-                            <ServersTable defaultLimitOverride={50} data={this.props.serverStore.servers.data} compact="very" />
+                            <HealthChecksTable defaultLimitOverride={50} data={this.props.healthCheckStore.healthChecks.data} compact="very" />
                         </Segment>
                     </Grid.Column>
                 </Grid.Row>
@@ -88,14 +83,14 @@ class Servers extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        serverStore: state.ServerReducer
+        healthCheckStore: state.HealthCheckReducer
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
-        getServersAction
+        getHealthChecksAction
     }, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Servers);
+export default connect(mapStateToProps, mapDispatchToProps)(HealthChecks);

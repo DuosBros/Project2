@@ -218,8 +218,11 @@ div.content.noimg {
     padding-left: 7px;
 }
 
+div.generic.table {
+    overflow: auto;
+}
 .generic.table .RecordsPerPage > input {
-    width: 4em;
+    width: 5em;
 }
 .generic.table .column.toggles .label {
     cursor: pointer;
@@ -230,8 +233,20 @@ div.content.noimg {
     margin: 0 0 0 0.5em
 }
 
+.iconMargin:before {
+    margin-left: 0.5em;
+    margin-right: 0.3em;
+}
 .leftMargin {
     margin-left: 1.5em;
+}
+
+.rightMargin {
+    margin-right: 1em;
+}
+
+.rightMargin:before {
+    margin-right: 2.5em;
 }
 
 .bottomMargin {

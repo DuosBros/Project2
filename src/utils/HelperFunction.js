@@ -8,6 +8,115 @@ export const mapDataForMinMaxAvgChart = (data) => {
     }))
 }
 
+export const getUniqueValuesOfKey = (array, key) => {
+    return array.reduce((carry, item) => {
+        if (item[key] && !~carry.indexOf(item[key])) carry.push(item[key]);
+        return carry;
+    }, []);
+}
+
+export const mapDataForGenericChart = (data, key, filter, filterZeroCount) => {
+    var grouped = groupBy(data, key);
+    var keys = Object.keys(grouped);
+
+    if (filter) {
+        if (key === Object.keys(filter)[0]) {
+            keys = keys.filter(y => y.search(filter[Object.keys(filter)[0]], "i") >= 0)
+        }
+    }
+    var mapped = keys.map(x => {
+        var count = grouped[x].length
+        let result;
+        if (filterZeroCount) {
+            if (filter) {
+                if (count !== 0 && grouped[x].filter(y =>
+                    y[Object.keys(filter)[0]].toString().search(filter[Object.keys(filter)[0]], "i") >= 0)) {
+                    result = ({
+                        name: x && x !== "null" ? x : "Unknown",
+                        count: grouped[x].filter(y =>
+                            y[Object.keys(filter)[0]].toString().search(filter[Object.keys(filter)[0]], "i") >= 0).length
+                    })
+                }
+            }
+            else {
+                if (count !== 0) {
+                    result = ({
+                        name: x && x !== "null" ? x : "Unknown",
+                        count: count
+                    })
+                }
+            }
+
+        }
+        else {
+            result = ({
+                name: x && x !== "null" ? x : "Unknown",
+                count: filter ? grouped[x].filter(y =>
+                    y[Object.keys(filter)[0]].toString().search(filter[Object.keys(filter)[0]], "i") >= 0).length : count
+            })
+        }
+
+        return result;
+    })
+
+    return mapped.filter(x => x).sort((a, b) => b.count - a.count)
+}
+
+export const mapDataForStackedGenericBarChart = (data, key, categories, property, filter) => {
+    var grouped = groupBy(data, key);
+    var keys = Object.keys(grouped);
+
+    if (filter) {
+        if (key === Object.keys(filter)[0]) {
+            keys = keys.filter(y => y.search(filter[Object.keys(filter)[0]], "i") >= 0)
+        }
+    }
+    var mapped = keys.map(x => {
+        let result;
+        var count = grouped[x].length
+
+        if (filter) {
+            if (count !== 0 && grouped[x].filter(y =>
+                y[Object.keys(filter)[0]].toString().search(filter[Object.keys(filter)[0]], "i") >= 0)) {
+
+                result = {
+                    name: x && x !== "null" ? x : "Unknown"
+                }
+
+                categories.forEach(z => {
+                    result[z] = grouped[x].filter(y =>
+                        y[Object.keys(filter)[0]].toString().search(filter[Object.keys(filter)[0]], "i") >= 0
+                        && y[property] === z).length
+                })
+
+
+            }
+        }
+        else {
+            if (count !== 0) {
+                result = {
+                    name: x && x !== "null" ? x : "Unknown"
+                }
+
+                categories.forEach(z => {
+                    result[z] = grouped[x].filter(y => y[property] === z).length
+                })
+            }
+        }
+
+        return result;
+    })
+
+    return mapped;
+}
+
+export const pick = (array, keys) => {
+    return array.map(x => {
+        return keys.map(k => k in x ? { [k]: x[k] } : {})
+            .reduce((res, o) => Object.assign(res, o), {})
+    })
+}
+
 export const groupBy = (items, key) => items.reduce(
     (result, item) => ({
         ...result,
@@ -168,32 +277,32 @@ export const sleep = (milliseconds) => {
     return new Promise(resolve => setTimeout(resolve, milliseconds))
 }
 
-export const promiseMap = function(n, arr, transformer, ignoreErrors) {
+export const promiseMap = function (n, arr, transformer, ignoreErrors) {
     var res = new Array(arr.length);
     var last = 0;
-    var tranformOrFinish = function(runner, idx) {
-        if(idx >= arr.length) {
+    var tranformOrFinish = function (runner, idx) {
+        if (idx >= arr.length) {
             return res;
         }
         return Promise.resolve(transformer(arr[idx], idx))
-        .then((ret) => {
-            res[idx] = ret;
-            return tranformOrFinish(runner, last++);
-        }, (err) => {
-            if(ignoreErrors === false) {
-                last = arr.length;
-                throw err;
-            }
-            res[idx] = err;
-            return tranformOrFinish(runner, last++);
-        });
+            .then((ret) => {
+                res[idx] = ret;
+                return tranformOrFinish(runner, last++);
+            }, (err) => {
+                if (ignoreErrors === false) {
+                    last = arr.length;
+                    throw err;
+                }
+                res[idx] = err;
+                return tranformOrFinish(runner, last++);
+            });
     };
 
     var tasks = [];
-    for(let i = 0; i < n && i < arr.length; i++) {
+    for (let i = 0; i < n && i < arr.length; i++) {
         tasks.push(tranformOrFinish(i, last++));
     }
 
     return Promise.all(tasks)
-    .then(() => res);
+        .then(() => res);
 };

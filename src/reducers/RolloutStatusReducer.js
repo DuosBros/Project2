@@ -1,5 +1,5 @@
 import {
-    GET_DISME_APPLICATIONS, REMOVE_SERVICE_DETAILS,
+    GET_DISME_APPLICATIONS, REMOVE_ROLLOUT_STATUS,
     GET_ROLLOUT_STATUS, DELETE_ALL_ROLLOUT_STATUSES
 } from '../constants/RolloutStatusConstants';
 import { GET_HEALTH, GET_VERSION } from '../constants/ServiceConstants';
@@ -15,13 +15,10 @@ const RolloutStatusReducer = (state = initialState, action) => {
     switch (action.type) {
         case GET_DISME_APPLICATIONS:
             return Object.assign({}, state, { dismeApplications: action.payload })
-        case REMOVE_SERVICE_DETAILS:
+        case REMOVE_ROLLOUT_STATUS:
             return Object.assign({}, state, {
-                serviceDetails: state.serviceDetails.data.filter(x => {
-                    return x.Service[0].Shortcut !== action.payload.data.Shortcut
-                }),
                 rolloutStatuses: state.rolloutStatuses.filter(x => {
-                    return x.serviceName !== action.payload.data.Shortcut
+                    return x.serviceName !== action.payload.Shortcut
                 })
             })
         // this doesn't have standard error handling

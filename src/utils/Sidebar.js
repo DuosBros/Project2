@@ -44,22 +44,13 @@ class Sidebar extends React.Component {
                             <Menu.Item as={Link} to='/versionstatus' >
                                 Version Status
                             </Menu.Item>
-                            {/*
-                            <Menu.Item as={Link} to='/theming' >
-                                HealthChecks
+                            <Menu.Item as={Link} to='/healthchecks' >
+                                Health Checks
                             </Menu.Item>
-                            <Menu.Item as={Link} to='/theming' >
-                                Availability
-                            </Menu.Item> */}
                         </Menu.Menu>
                     </Menu.Item>
                     <Menu.Item>
                         <Menu.Header as={Link} to='/lbfarms'>Loadbalancer Farms</Menu.Header>
-                        {/* <Menu.Menu>
-                            <Menu.Item as={Link} to='/' >
-                                Consistency
-                            </Menu.Item>
-                        </Menu.Menu> */}
                     </Menu.Item>
                     <Menu.Item>
                         <Menu.Header as={Link} to='/ipaddresses'>IPAddresses</Menu.Header>
@@ -83,6 +74,20 @@ class Sidebar extends React.Component {
                             </Menu.Item>
                         </Menu.Menu>
                     </Menu.Item> */}
+                    <Menu.Item>
+                        <Menu.Header>Statistics</Menu.Header>
+                        <Menu.Menu>
+                            <Menu.Item as={Link} to='/statistics/servers' >
+                                Servers
+                            </Menu.Item>
+                            <Menu.Item as={Link} to='/statistics/services' >
+                                Services
+                            </Menu.Item>
+                            <Menu.Item as={Link} to='/statistics/loadbalancerfarms' >
+                                LoadBalancer Farms
+                            </Menu.Item>
+                        </Menu.Menu>
+                    </Menu.Item>
                     <Menu.Item>
                         <Menu.Header as={Link} to='/admin'>Admin</Menu.Header>
                     </Menu.Item>
@@ -112,7 +117,7 @@ class Sidebar extends React.Component {
 
         return (
             <div id={this.props.headerStore.showVerticalMenu ? "verticalMenu" : "hiddenVerticalMenu"}>
-                <Menu  inverted fluid vertical borderless>
+                <Menu inverted fluid vertical borderless>
                     {NavMenu}
                 </Menu>
                 <div className="sidebarCollapser">

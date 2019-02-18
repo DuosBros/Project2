@@ -4,12 +4,15 @@ import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 
 import {
-    getDismeApplicationsAction, removeServiceDetailsAction, getRolloutStatusAction,
-    deleteAllRoloutStatusesAction, deleteRolloutStatusAction
+    getDismeApplicationsAction, getRolloutStatusAction,
+    deleteAllRoloutStatusesAction, removeRolloutStatusAction
 } from '../actions/RolloutStatusActions';
 
 
-import { getHealthAction, getVersionAction, getServiceDetailsByShortcutsAction } from '../actions/ServiceActions';
+import {
+    getHealthAction, getVersionAction, getServiceDetailsByShortcutsAction, removeServiceDetailsAction,
+    removeAllServiceDetailsAction
+} from '../actions/ServiceActions';
 
 import { getDismeApplications, getServiceByShortcut, getHealth, getVersion } from '../requests/ServiceAxios';
 import { Grid, Header, Segment, Dropdown, Input, Table, Button, Message, Icon } from 'semantic-ui-react';
@@ -58,6 +61,10 @@ class RolloutStatus extends React.Component {
         this.changeInputBasedOnUrl();
 
         this.fechtAndHandleDismeApplications();
+    }
+
+    componentWillUnmount() {
+        this.props.removeAllServiceDetailsAction();
     }
 
     changeInputBasedOnUrl = () => {
@@ -404,6 +411,7 @@ class RolloutStatus extends React.Component {
         this.setState({ inputProductsValues: joined });
 
         this.props.removeServiceDetailsAction(service);
+        this.props.removeRolloutStatusAction(service);
     }
 
     handleRefreshRolloutStatus = (shortcut, serviceId) => {
@@ -488,7 +496,7 @@ class RolloutStatus extends React.Component {
                         <Table.Row key={service.Service[0].Id}>
                             <Table.Cell>{service.Service[0].Name}</Table.Cell>
                             <Table.Cell>
-                                <Link to={'/service/' + service.Service[0].Id} target="_blank">{service.Service[0].Shortcut}</Link>
+                                <Link to={'/service/' + service.Service[0].Id}>{service.Service[0].Shortcut}</Link>
                             </Table.Cell>
                             <Table.Cell>
                                 <DismeStatus dismeStatus={service.Service[0].Status} />
@@ -698,9 +706,11 @@ class RolloutStatus extends React.Component {
                             <Grid stackable>
                                 <Grid.Row>
                                     <Grid.Column width={3} >
+                                        <strong>Disme Application</strong>
                                         {dismeApplicationsDropdown}
                                     </Grid.Column>
                                     <Grid.Column width={13} >
+                                        <strong>List of services</strong>
                                         <Input
                                             onChange={this.handleInputOnChange}
                                             fluid
@@ -734,11 +744,12 @@ function mapDispatchToProps(dispatch) {
         searchServiceShortcutAction,
         getServiceDetailsByShortcutsAction,
         removeServiceDetailsAction,
+        removeRolloutStatusAction,
         getRolloutStatusAction,
         deleteAllRoloutStatusesAction,
-        deleteRolloutStatusAction,
         getHealthAction,
-        getVersionAction
+        getVersionAction,
+        removeAllServiceDetailsAction
     }, dispatch);
 }
 

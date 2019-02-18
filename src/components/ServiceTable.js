@@ -52,7 +52,8 @@ export default class ServiceTable extends GenericTable {
                 prop: "Links",
                 width: 1,
                 sortable: false,
-                searchable: false
+                searchable: false,
+                exportByDefault: false
             },
             {
                 name: "Poolname",
