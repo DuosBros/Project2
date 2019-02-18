@@ -1,6 +1,7 @@
 import React from 'react'
 import { Button } from 'semantic-ui-react';
 import GenericTable from './GenericTable';
+import { Link } from 'react-router-dom';
 
 export default class WebChecksTable extends GenericTable {
 
@@ -14,6 +15,7 @@ export default class WebChecksTable extends GenericTable {
             {
                 name: "Url",
                 prop: "Url",
+                display: "urllink",
                 width: 8
             },
             {
@@ -30,6 +32,7 @@ export default class WebChecksTable extends GenericTable {
     }
 
     transformDataRow(data) {
+        data.urllink = (<a target="_blank" href={data.Url}>{data.Url}</a>);
         data.kblink = (
             <Button
                 as="a"
@@ -38,7 +41,7 @@ export default class WebChecksTable extends GenericTable {
                 rel="noopener noreferrer"
                 style={{ padding: '0.3em' }}
                 size='medium'
-                icon='external' />
+                icon='graduation' />
         );
         return data;
     }

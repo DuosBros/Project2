@@ -262,9 +262,26 @@ export default class GenericTable extends Component {
     }
 
     handleJSONExport = (data, type) => {
-        const fileName = new Date().toISOString()
+        if (type === "txt" || type === "json") {
+            const fileName = new Date().toISOString() + "." + type
 
-        ExportFromJSON({ data: data, fileName: fileName, exportType: type })
+            var a = document.createElement("a");
+            document.body.appendChild(a);
+            a.style = "display: none";
+
+            var json = JSON.stringify(data),
+                blob = new Blob([json], { type: "octet/stream" }),
+                url = window.URL.createObjectURL(blob);
+            a.href = url;
+            a.download = fileName;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+        else {
+            const fileName = new Date().toISOString()
+
+            ExportFromJSON({ data: data, fileName: fileName, exportType: type })
+        }
     }
 
     render() {
@@ -569,6 +586,14 @@ export default class GenericTable extends Component {
                             <Grid.Column width={2}>
                                 <Dropdown icon={<Icon className="iconMargin" name='share' />} item text='Export'>
                                     <Dropdown.Menu>
+                                        <Dropdown.Item
+                                            onClick={() => this.handleJSONExport(dataToExport, ExportFromJSON.types.txt)}
+                                            icon={<Icon name='file text outline' />}
+                                            text='Export to TXT' />
+                                               <Dropdown.Item
+                                            onClick={() => this.handleJSONExport(dataToExport, ExportFromJSON.types.json)}
+                                            icon={<Icon name='file text outline' />}
+                                            text='Export to JSON' />
                                         <Dropdown.Item
                                             onClick={() => this.handleJSONExport(dataToExport, ExportFromJSON.types.csv)}
                                             icon={<Icon name='file text outline' />}

@@ -23,6 +23,8 @@ import DismeStatus from '../components/DismeStatus';
 import ErrorMessage from '../components/ErrorMessage';
 import MinMaxAvgAreaChart from '../charts/MinMaxAvgAreaChart';
 import { mapDataForMinMaxAvgChart } from '../utils/HelperFunction';
+import VirtualMachinesTable from '../components/VirtualMachinesTable';
+import WindowsServicesTable from '../components/WindowsServicesTable';
 
 class ServerDetails extends React.Component {
 
@@ -519,7 +521,7 @@ class ServerDetails extends React.Component {
                         {
                             windowsservices ? (
                                 <Segment attached='bottom'>
-                                    <GenericTable columns={windowsServicesTableColumnProperties} data={serverDetailsData.WindowsServices} showTableHeader={false} compact="very" />
+                                    <WindowsServicesTable data={serverDetailsData.WindowsServices} showTableHeader={false} compact="very" />
                                 </Segment>
                             ) : (
                                     null
