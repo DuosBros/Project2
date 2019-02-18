@@ -221,8 +221,8 @@ div.content.noimg {
 div.generic.table {
     overflow: auto;
 }
-.generic.table .RecordsPerPage > input {
-    width: 5em;
+.RecordsPerPage > input {
+    width: 4.5em;
 }
 .generic.table .column.toggles .label {
     cursor: pointer;

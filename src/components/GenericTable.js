@@ -537,7 +537,6 @@ export default class GenericTable extends Component {
                         compact
                         content={showColumnToggles ? 'Hide Column Toggles' : 'Show Column Toggles'}
                         style={{ padding: '0.3em', marginTop: '0.5em', textAlign: 'right' }}
-                        id="secondaryButton"
                         icon={showColumnToggles ? 'eye slash' : 'eye'}
                         labelPosition='right' />
                 </div>
@@ -583,14 +582,14 @@ export default class GenericTable extends Component {
                                     fluid
                                     value={multiSearchInput} placeholder="Type to search..." name="multiSearchInput" onChange={this.handleMultiFilterChange} ></Input>
                             </Grid.Column>
-                            <Grid.Column width={2}>
+                            <Grid.Column width={1}>
                                 <Dropdown icon={<Icon className="iconMargin" name='share' />} item text='Export'>
                                     <Dropdown.Menu>
                                         <Dropdown.Item
                                             onClick={() => this.handleJSONExport(dataToExport, ExportFromJSON.types.txt)}
                                             icon={<Icon name='file text outline' />}
                                             text='Export to TXT' />
-                                               <Dropdown.Item
+                                        <Dropdown.Item
                                             onClick={() => this.handleJSONExport(dataToExport, ExportFromJSON.types.json)}
                                             icon={<Icon name='file text outline' />}
                                             text='Export to JSON' />
@@ -605,12 +604,12 @@ export default class GenericTable extends Component {
                                     </Dropdown.Menu>
                                 </Dropdown>
                             </Grid.Column>
-                            <Grid.Column width={4}>
+                            <Grid.Column width={3}>
                                 <div style={{ float: "right", margin: "0 20px", display: defaultLimit === 0 ? "none" : "visible" }}>
                                     <span>Showing {filteredData.length > 0 ? this.state.offset + 1 : 0} to {filteredData.length < limit ? filteredData.length : this.state.offset + limit} of {filteredData.length} entries</span>
                                 </div>
                             </Grid.Column>
-                            <Grid.Column width={2}>
+                            <Grid.Column width={4}>
                                 <div style={{ float: "left", margin: "0 20px", display: defaultLimit === 0 ? "none" : "visible" }}>
                                     <Input
                                         label='Records per page:'
@@ -625,12 +624,12 @@ export default class GenericTable extends Component {
                                 <>
                                     <Button
                                         size="small"
+                                        className="showColumnFilters"
                                         name="showColumnFilters"
                                         onClick={this.handleStateToggle}
                                         compact
                                         content={showColumnFilters ? 'Hide Column Filters' : 'Show Column Filters'}
-                                        style={{ padding: '0.3em', marginTop: '0.5em', textAlign: 'right' }}
-                                        id="secondaryButton"
+                                        style={{ padding: '0.3em', textAlign: 'right' }}
                                         icon={showColumnFilters ? 'eye slash' : 'eye'}
                                         labelPosition='right' />
                                     {columnToggleButton}
@@ -647,7 +646,7 @@ export default class GenericTable extends Component {
                 tableFunctionsGrid = (
                     <Grid>
                         <Grid.Row>
-                            <Grid.Column>
+                            <Grid.Column width={16}>
                                 <Popup trigger={
                                     <Button compact onClick={() => this.setState({ showTableHeaderFunctions: !showTableHeaderFunctions })} icon floated="right">
                                         <Icon name="setting"></Icon>
@@ -665,19 +664,21 @@ export default class GenericTable extends Component {
         }
 
         return (
-            <div className="generic table">
+            <>
                 {tableFunctionsGrid}
-                <Table compact={compact} selectable sortable celled basic='very'>
-                    <Table.Header>
-                        <Table.Row>{headerCells}</Table.Row>
-                    </Table.Header>
-                    {filterColumnsRow}
-                    <Table.Body>
-                        {tableBody}
-                    </Table.Body>
-                    {tableFooter}
-                </Table>
-            </div>
+                < div className="generic table" >
+                    <Table compact={compact} selectable sortable celled basic='very'>
+                        <Table.Header>
+                            <Table.Row>{headerCells}</Table.Row>
+                        </Table.Header>
+                        {filterColumnsRow}
+                        <Table.Body>
+                            {tableBody}
+                        </Table.Body>
+                        {tableFooter}
+                    </Table>
+                </div >
+            </>
         );
     }
 
