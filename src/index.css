@@ -224,7 +224,7 @@ div.generic.table {
 .RecordsPerPage > input {
     width: 4.5em;
 }
-.generic.table .column.toggles .label {
+.column.toggles .label {
     cursor: pointer;
 }
 

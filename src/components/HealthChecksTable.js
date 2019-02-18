@@ -61,6 +61,7 @@ export default class HealthChecksTable extends GenericTable {
     }
 
     transformDataRow(data) {
+        data.LocalIP = data.LocalIP ? "true" : "false"
         data.Links = (
             <>
                 <Popup trigger={
