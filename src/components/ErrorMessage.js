@@ -1,47 +1,42 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Message, Icon, Image } from 'semantic-ui-react'
 import pikachu from '../assets/pikachu.jpg'
 
-class ErrorMessage extends React.Component {
-    state = {
-        isRefreshButtonLoading: false
-    }
+const ErrorMessage = (props) => {
+    const [isRefreshButtonLoading, toggleRefreshButtonLoading] = useState(0);
 
     handleRefresh = () => {
-        this.setState({ isRefreshButtonLoading: true });
-        this.props.handleRefresh();
-        this.setState({ isRefreshButtonLoading: false });
+        toggleRefreshButtonLoading(true);
+        props.handleRefresh();
+        toggleRefreshButtonLoading(false);
     }
 
-    render() {
-        return (
-            <Message icon>
-                <Image src={pikachu} size='tiny' spaced />
-                <Message.Content>
-                    <Message.Header>{(this.props.title || "Ooops something went wrong")}</Message.Header>
-                    {this.props.message === "" ? null : <>{this.props.message} <br /></>}
+    return (
+        <Message icon>
+            <Image src={pikachu} size='tiny' spaced />
+            <Message.Content>
+                <Message.Header>{(props.title || "Ooops something went wrong")}</Message.Header>
+                {props.message === "" ? null : <>{props.message} <br /></>}
 
-                    {
-                        this.props.handleRefresh ?
-                            (
-                                <>
-                                    Try again
+                {
+                    props.handleRefresh ?
+                        (
+                            <>
+                                Try again
                                     <Icon
-                                        className="pointerCursor"
-                                        onClick={() => this.handleRefresh()}
-                                        name="refresh"
-                                        loading={this.state.isRefreshButtonLoading} />
-                                </>
-                            ) : (
-                                null
-                            )
-                    }
+                                    className="pointerCursor"
+                                    onClick={() => this.handleRefresh()}
+                                    name="refresh"
+                                    loading={isRefreshButtonLoading} />
+                            </>
+                        ) : (
+                            null
+                        )
+                }
 
-                </Message.Content>
-            </Message>
-        )
-    }
+            </Message.Content>
+        </Message>
+    )
 }
-
 
 export default ErrorMessage;
