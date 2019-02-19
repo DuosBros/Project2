@@ -31,7 +31,7 @@ export default class WebChecksTable extends GenericTable {
     }
 
     transformDataRow(data) {
-        data.urllink = (<a target="_blank" href={data.Url}>{data.Url}</a>);
+        data.urllink = (<a target="_blank" rel="noopener noreferrer" href={data.Url}>{data.Url}</a>);
         data.kblink = (
             <Button
                 as="a"

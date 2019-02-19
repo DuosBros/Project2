@@ -16,7 +16,7 @@ import {
 } from '../actions/ServiceActions';
 
 import { getDismeApplications, getServiceByShortcut, getHealth, getVersion } from '../requests/ServiceAxios';
-import { Grid, Header, Segment, Dropdown, Input, Table, Button, Message, Icon, TextArea, Form } from 'semantic-ui-react';
+import { Grid, Header, Segment, Dropdown, Table, Button, Message, Icon, TextArea, Form } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import DismeStatus from '../components/DismeStatus';
 import { DISME_SERVICE_URL, DISME_SERVICE_PLACEHOLDER } from '../appConfig';
