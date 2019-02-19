@@ -4,6 +4,7 @@ import {
     REMOVE_ALL_SERVICE_DETAILS
 } from '../constants/ServiceConstants';
 import { getServerState, getDismeState } from '../utils/HelperFunction';
+import { errorColor } from '../appConfig';
 
 const serviceInitialState = {
     showLoadBalancerFarmsTasksModal: false,
@@ -40,11 +41,11 @@ const ServiceReducer = (state = serviceInitialState, action) => {
             if (action.payload.success && action.payload.data.Websites) {
                 var mappedWebsites = action.payload.data.Websites.map(web => {
                     if (action.payload.data.Service[0].SiteID !== web.SiteId) {
-                        web.SiteIdAlertType = "error"
+                        web.SiteIdAlert = { backgroundColor: errorColor }
                     }
 
                     if (web.State !== "Started") {
-                        web.StateAlertType = "error"
+                        web.StateAlert = { backgroundColor: errorColor }
                     }
 
                     return web;

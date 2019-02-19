@@ -488,7 +488,7 @@ export default class GenericTable extends Component {
                 if (c.display) {
                     return (<Table.Cell key={c.prop}>{data[c.display]}</Table.Cell>)
                 }
-                return (<Table.Cell key={c.prop}>{data[c.prop]}</Table.Cell>)
+                return (<Table.Cell style={data[c.styleProp] ? data[c.styleProp] : null} key={c.prop}>{data[c.prop]}</Table.Cell>)
             });
 
             if (isEdit) {

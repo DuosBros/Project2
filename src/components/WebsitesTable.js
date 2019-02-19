@@ -27,6 +27,7 @@ export default class WebsitesTable extends GenericTable {
             {
                 name: "Site ID",
                 prop: "SiteId",
+                styleProp: "SiteIdAlert",
                 width: 1,
                 collapsing: true
             },
@@ -62,6 +63,7 @@ export default class WebsitesTable extends GenericTable {
             {
                 name: "State",
                 prop: "State",
+                styleProp: "StateAlert",
                 width: 1
             },
             {
@@ -85,7 +87,7 @@ export default class WebsitesTable extends GenericTable {
             data.BindingsDisplay = data.Bindings.map((binding, i) => {
                 return (
                     <React.Fragment key={i}>
-                        {binding.IpAddress + ":" + binding.Port + ":" + binding.Binding} 
+                        {binding.IpAddress + ":" + binding.Port + ":" + binding.Binding}
                         <br />
                     </React.Fragment>
                 );
