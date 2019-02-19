@@ -53,7 +53,7 @@ class Sidebar extends React.Component {
                         <Menu.Header as={Link} to='/lbfarms'>Loadbalancer Farms</Menu.Header>
                     </Menu.Item>
                     <Menu.Item>
-                        <Menu.Header as={Link} to='/ipaddresses'>IPAddresses</Menu.Header>
+                        <Menu.Header as={Link} to='/ipaddresses'>IP Addresses</Menu.Header>
                         {/* <Menu.Menu>
                             <Menu.Item as={Link} to='/' >
                                 Consistency

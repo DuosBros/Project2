@@ -5,7 +5,6 @@ import { Grid, Header, Segment, Icon, List, Button, Message, Image } from 'seman
 import _ from 'lodash';
 import moment from 'moment'
 
-import GenericTable from '../components/GenericTable';
 import ServiceTable from '../components/ServiceTable';
 import ServerStatus from '../components/ServerStatus';
 import WebsitesTable from '../components/WebsitesTable';
@@ -23,7 +22,6 @@ import DismeStatus from '../components/DismeStatus';
 import ErrorMessage from '../components/ErrorMessage';
 import MinMaxAvgAreaChart from '../charts/MinMaxAvgAreaChart';
 import { mapDataForMinMaxAvgChart } from '../utils/HelperFunction';
-import VirtualMachinesTable from '../components/VirtualMachinesTable';
 import WindowsServicesTable from '../components/WindowsServicesTable';
 
 class ServerDetails extends React.Component {
@@ -134,8 +132,8 @@ class ServerDetails extends React.Component {
 
         var scomAlertsSuccess = this.props.serverStore.scomAlerts.success;
         var scomAlertsData = this.props.serverStore.scomAlerts.data;
-        var OSIcon, windowsServicesTableColumnProperties, scomAlertsSegment;
-
+        var OSIcon, scomAlertsSegment;
+        
         const { webchecks, dismeservices, loadbalancerfarms, windowsservices, websites, scomalerts } = this.state;
 
         // in case of error
@@ -203,34 +201,6 @@ class ServerDetails extends React.Component {
                 <span key={ip.Id}>{ip.IpAddress} <br /></span>
             )
         })
-
-        windowsServicesTableColumnProperties = [
-            {
-                name: "Service Name",
-                prop: "ServiceName",
-                width: 3,
-            },
-            {
-                name: "Display Name",
-                prop: "DisplayName",
-                width: 1,
-            },
-            {
-                name: "Startup Type",
-                prop: "StartupType",
-                width: 2,
-            },
-            {
-                name: "State",
-                prop: "State",
-                width: 2,
-            },
-            {
-                name: "User",
-                prop: "User",
-                width: 4,
-            }
-        ]
 
         var serverStatsSegment;
 

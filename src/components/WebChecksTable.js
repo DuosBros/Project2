@@ -1,7 +1,6 @@
 import React from 'react'
 import { Button } from 'semantic-ui-react';
 import GenericTable from './GenericTable';
-import { Link } from 'react-router-dom';
 
 export default class WebChecksTable extends GenericTable {
 
