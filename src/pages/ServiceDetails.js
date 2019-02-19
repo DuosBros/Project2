@@ -57,31 +57,19 @@ class ServiceDetails extends React.Component {
 
     handleToggleShowAllSegments = () => {
 
-        if (this.state.showAllSegments && (this.state.assignedLoadBalancerFarms || this.state.servers || this.state.websites)) {
-            this.setState({
-                showAllSegments: false,
-                assignedLoadBalancerFarms: false,
-                servers: false,
-                websites: false,
-
-            });
-        }
-        else {
-            this.setState({
-                showAllSegments: true,
-                assignedLoadBalancerFarms: true,
-                servers: true,
-                websites: true,
-
-            });
-        }
-
+        var visible = !(this.state.assignedLoadBalancerFarms || this.state.servers || this.state.websites);
+        this.setState({
+            showAllSegments: visible,
+            assignedLoadBalancerFarms: visible,
+            servers: visible,
+            websites: visible
+        });
     }
 
     render() {
         const serviceDetailsSuccess = this.props.serviceStore.serviceDetails.success;
         const serviceDetailsData = this.props.serviceStore.serviceDetails.data;
-        const { showAllSegments, assignedLoadBalancerFarms, servers, websites } = this.state;
+        const { assignedLoadBalancerFarms, servers, websites } = this.state;
 
         // in case of error
         if (!serviceDetailsSuccess) {
@@ -114,7 +102,7 @@ class ServiceDetails extends React.Component {
                             <Button
                                 floated='right'
                                 onClick={() => this.handleToggleShowAllSegments()}
-                                content={showAllSegments && (assignedLoadBalancerFarms || servers || websites) ? 'Hide All Segments' : 'Show All Segments'}
+                                content={(assignedLoadBalancerFarms || servers || websites) ? 'Hide All Segments' : 'Show All Segments'}
                                 icon='content'
                                 labelPosition='right'
                                 style={{ fontSize: 'medium', padding: '0.3em', bottom: '0.1em' }} />
@@ -207,6 +195,7 @@ class ServiceDetails extends React.Component {
                                 floated='right'
                                 icon='content' />
                             <Button
+                                id="primaryButton"
                                 disabled={!isAdmin(this.props.baseStore.currentUser)}
                                 onClick={() => this.props.toggleLoadBalancerFarmsTasksModalAction()}
                                 style={{ padding: '0.3em', bottom: '0.1em' }}
@@ -221,7 +210,7 @@ class ServiceDetails extends React.Component {
                                     <LoadBalancerFarmsTable data={serviceDetailsData.LbFarms} showTableHeaderFunctions={false} />
                                 </Segment>
                             ) : (
-                                    <div></div>
+                                    null
                                 )
                         }
                     </Grid.Column>
@@ -238,7 +227,7 @@ class ServiceDetails extends React.Component {
                                     <ServersTable data={serviceDetailsData.Servers} compact={true} />
                                 </Segment>
                             ) : (
-                                    <div></div>
+                                    null
                                 )
                         }
                     </Grid.Column>
@@ -255,7 +244,7 @@ class ServiceDetails extends React.Component {
                                     <WebsitesTable data={serviceDetailsData.Websites} />
                                 </Segment>
                             ) : (
-                                    <div></div>
+                                    null
                                 )
                         }
                     </Grid.Column>

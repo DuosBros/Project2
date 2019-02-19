@@ -116,10 +116,9 @@ class Base extends React.Component {
                         <Sidebar />
                         <LoadBalancerFarmsTasks show={this.props.serviceStore.showLoadBalancerFarmsTasksModal} />
                         <UserDetails userDetails={this.props.baseStore.currentUser} show={this.props.headerStore.showUserDetails} />
-                        {/* <NotAuthorized userDetails={this.props.baseStore.currentUser} show={this.props.baseStore.showNotAuthorizedModal} /> */}
                         <div id="bodyWrapper" {...wideClass}>
-                            <Switch>
-                                <ErrorBoundary>
+                            <ErrorBoundary>
+                                <Switch>
                                     <Route exact path='/' component={Home} />
                                     <Route exact path='/login' component={Login} />
                                     <Route path='/server/:id' component={ServerDetails} />
@@ -139,8 +138,8 @@ class Base extends React.Component {
                                     <Route path='/statistics/services' component={ServicesStatistics} />
                                     <Route path='/statistics/servers' component={ServersStatistics} />
                                     <Route path='/statistics/loadbalancerfarms' component={LoadBalancerFarmsStatistics} />
-                                </ErrorBoundary>
-                            </Switch>
+                                </Switch>
+                            </ErrorBoundary>
                         </div>
                         <Footer id="footer" {...wideClass} />
                     </div>
