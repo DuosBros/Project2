@@ -1,14 +1,14 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Label } from 'semantic-ui-react';
 
-export default class AvailabilityStatus extends Component {
+const AvailabilityStatus = (props) => {
 
-    render() {
-        var state = this.props.status
-        return (
-            <Label size={this.props.size} color={state === 'available' ? 'green' : 'red'} horizontal>
-                {state ? state : "no data"}
-            </Label>
-        )
-    }
+    var state = props.status
+    return (
+        <Label size={props.size} color={state === 'available' ? 'green' : 'red'} horizontal>
+            {state ? state : "no data"}
+        </Label>
+    )
 }
+
+export default AvailabilityStatus;

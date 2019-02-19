@@ -1,13 +1,13 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Label } from 'semantic-ui-react';
 
-export default class ServerStatus extends Component {
+const ServerStatus = (props) => {
 
-    getColor = (state) => {
-        if(state === 'online') {
+    const getColor = (state) => {
+        if (state === 'online') {
             return 'green'
         }
-        else if(state === 'not reachable') {
+        else if (state === 'not reachable') {
             return 'grey'
         }
         else {
@@ -16,13 +16,13 @@ export default class ServerStatus extends Component {
 
     }
 
-    render() {
-        var state = this.props.serverState ? this.props.serverState : "No Data"
-        return (
-            <Label size={this.props.size} color={this.getColor(state)} horizontal>
-                {state}
-            </Label>
-        )
-    }
+    var state = props.serverState ? props.serverState : "No Data"
+    return (
+        <Label size={props.size} color={getColor(state)} horizontal>
+            {state}
+        </Label>
+    )
 }
+
+export default ServerStatus;
 

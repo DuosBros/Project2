@@ -1,15 +1,14 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Label } from 'semantic-ui-react';
 
-export default class DismeStatus extends Component {
+const DismeStatus = (props) => {
 
-    render() {
-        var state = this.props.dismeStatus
+        var state = props.dismeStatus
         return (
-            <Label size={this.props.size} color={state === 'active' ? 'green' : 'red'} horizontal>
+            <Label size={props.size} color={state === 'active' ? 'green' : 'red'} horizontal>
                 {state}
             </Label>
         )
-    }
 }
 
+export default DismeStatus;
