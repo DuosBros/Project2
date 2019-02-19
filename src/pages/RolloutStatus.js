@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
+import keyboardKey from 'keyboard-key'
 
 import {
     getDismeApplicationsAction, getRolloutStatusAction,
@@ -15,7 +16,7 @@ import {
 } from '../actions/ServiceActions';
 
 import { getDismeApplications, getServiceByShortcut, getHealth, getVersion } from '../requests/ServiceAxios';
-import { Grid, Header, Segment, Dropdown, Input, Table, Button, Message, Icon } from 'semantic-ui-react';
+import { Grid, Header, Segment, Dropdown, Input, Table, Button, Message, Icon, TextArea, Form } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import DismeStatus from '../components/DismeStatus';
 import { DISME_SERVICE_URL, DISME_SERVICE_PLACEHOLDER } from '../appConfig';
@@ -50,8 +51,8 @@ class RolloutStatus extends React.Component {
             segments: DEFAULT_SEGMENT
         }
 
-        this.getServiceDetailsAndRolloutStatus = this.getServiceDetailsAndRolloutStatus.bind(this);
-        this.getServiceDetailsAndRolloutStatus = debounce(this.getServiceDetailsAndRolloutStatus, 150);
+        this.getServiceDetails = this.getServiceDetails.bind(this);
+        this.getServiceDetails = debounce(this.getServiceDetails, 150);
         this.handleSearchServiceShortcut = this.handleSearchServiceShortcut.bind(this);
         this.handleSearchServiceShortcut = debounce(this.handleSearchServiceShortcut, 150);
     }
@@ -61,6 +62,22 @@ class RolloutStatus extends React.Component {
         this.changeInputBasedOnUrl();
 
         this.fechtAndHandleDismeApplications();
+
+        document.addEventListener('keydown', this.handleDocumentKeyDown)
+    }
+
+
+    handleDocumentKeyDown = (e) => {
+        const shortcutMatch = keyboardKey.getKey(e) === 'Enter';
+        const hasModifier = e.altKey || e.ctrlKey || e.metaKey;
+
+        if (!shortcutMatch || hasModifier) {
+            return;
+        }
+
+        this.getRolloutStatuses()
+
+        e.preventDefault();
     }
 
     componentWillUnmount() {
@@ -115,7 +132,7 @@ class RolloutStatus extends React.Component {
             inputProductsValues: joinedShortcuts
         });
 
-        this.getServiceDetailsAndRolloutStatus(joinedShortcuts)
+        this.getServiceDetails(joinedShortcuts)
     }
 
     handleApplicationDropdownOnSearchChange = (e) => {
@@ -145,10 +162,10 @@ class RolloutStatus extends React.Component {
 
         var valueToSearch = value.replace(/[^a-zA-Z0-9,_.-]/g, "")
         var uniqueValueToSearch = Array.from(new Set(valueToSearch.split(',')))
-        this.getServiceDetailsAndRolloutStatus(uniqueValueToSearch)
+        this.getServiceDetails(uniqueValueToSearch)
     }
 
-    getServiceDetailsAndRolloutStatus(services) {
+    getServiceDetails(services) {
         getServiceByShortcut(services)
             .then(res => {
                 if (res.data) {
@@ -165,11 +182,11 @@ class RolloutStatus extends React.Component {
             .catch(err => {
                 this.props.getServiceDetailsByShortcutsAction({ success: false, error: err })
             })
-            .then((res) => {
-                if (res) {
-                    this.getRolloutStatuses()
-                }
-            })
+        // .then((res) => {
+        //     if (res) {
+        //         this.getRolloutStatuses()
+        //     }
+        // })
     }
 
     getHealthsAndVersions = () => {
@@ -290,7 +307,7 @@ class RolloutStatus extends React.Component {
         var value = m.options.find(x => x.value === m.value).text;
 
         this.setState({ inputProductsValues: this.state.inputProductsValues + "," + value });
-        this.getServiceDetailsAndRolloutStatus(this.state.inputProductsValues)
+        this.getServiceDetails(this.state.inputProductsValues)
     }
 
     handleToggleShowAllSegments = () => {
@@ -590,13 +607,11 @@ class RolloutStatus extends React.Component {
                         <Header block attached='top' as='h4'>
                             {x.serviceName}
                             <Button
-                                basic
                                 size="tiny"
                                 style={{ padding: '0em', marginRight: '0.5em', marginLeft: '0.5em' }}
                                 onClick={() => this.handleRefreshRolloutStatus(x.serviceName, x.serviceId)}
                                 icon='refresh' />
                             <Button
-                                basic
                                 style={{ padding: '0em', marginRight: '0.5em' }}
                                 onClick={() => this.handleToggleShowingContent(x.serviceName)}
                                 floated='right'
@@ -626,7 +641,6 @@ class RolloutStatus extends React.Component {
                         <Header block attached='top' as='h4'>
                             Service details
                             <Button
-                                basic
                                 style={{ padding: '0em', marginRight: '0.5em' }}
                                 onClick={() => this.handleToggleShowingContent("serviceDetails")}
                                 floated='right'
@@ -709,14 +723,23 @@ class RolloutStatus extends React.Component {
                                         <strong>Disme Application</strong>
                                         {dismeApplicationsDropdown}
                                     </Grid.Column>
-                                    <Grid.Column width={13} >
-                                        <strong>List of services</strong>
-                                        <Input
-                                            onChange={this.handleInputOnChange}
+                                    <Grid.Column width={11} >
+                                        <strong>List of services</strong><br />
+                                        <Form>
+                                            <TextArea autoHeight
+                                                onChange={this.handleInputOnChange}
+                                                value={this.state.inputProductsValues}
+                                                placeholder='Insert coma delimited service shortcuts or select from the dropdown on the left'
+                                                rows={1} />
+                                        </Form>
+                                    </Grid.Column>
+                                    <Grid.Column verticalAlign="bottom" width={2} >
+                                        <Button
+                                            disabled={serviceDetails ? false : true}
+                                            onClick={() => this.getRolloutStatuses()}
                                             fluid
-                                            value={this.state.inputProductsValues}
-                                            placeholder='Insert coma delimited service shortcuts or select from the dropdown on the left'
-                                        />
+                                            primary
+                                            content="Get Rollout Statuses" />
                                     </Grid.Column>
                                 </Grid.Row>
                             </Grid>
