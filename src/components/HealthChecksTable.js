@@ -26,11 +26,6 @@ export default class HealthChecksTable extends GenericTable {
                 width: 2,
             },
             {
-                name: "RegistryKey",
-                prop: "RegistryKey",
-                collapsing: true,
-            },
-            {
                 name: "Expected Text",
                 prop: "ExpectedText",
                 width: 1,
@@ -43,19 +38,21 @@ export default class HealthChecksTable extends GenericTable {
                 searchable: false,
                 exportableByDefault: false
             },
-
+            {
+                name: "RegistryKey",
+                prop: "RegistryKey",
+                visibleByDefault: false,
+                collapsing: true,
+            },
             {
                 name: "Local IP",
                 prop: "LocalIP",
                 width: 1,
-                visibleByDefault: false,
-
             },
             {
                 name: "Port",
                 prop: "Port",
                 width: 1,
-                visibleByDefault: false
             }
         ];
     }
