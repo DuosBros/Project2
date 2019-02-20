@@ -4,8 +4,8 @@ import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 
 import { Grid, Header, Segment, Message, Icon } from 'semantic-ui-react';
-import { getServices } from '../requests/ServiceAxios';
-import { getServicesAction } from '../actions/ServiceActions';
+import { getServices, getHighAvailabilities } from '../requests/ServiceAxios';
+import { getServicesAction, getHighAvailabilitiesAction } from '../actions/ServiceActions';
 import ServiceTable from '../components/ServiceTable';
 import ErrorMessage from '../components/ErrorMessage';
 
@@ -19,9 +19,21 @@ class Services extends React.Component {
         getServices()
             .then(res => {
                 this.props.getServicesAction({ success: true, data: res.data })
+                return true;
             })
             .catch(err => {
                 this.props.getServicesAction({ success: false, error: err })
+            })
+            .then(res => {
+                if (res) {
+                    getHighAvailabilities()
+                        .then(res => {
+                            this.props.getHighAvailabilitiesAction({ success: true, data: res.data })
+                        })
+                        .catch(err => {
+                            this.props.getHighAvailabilitiesAction({ success: false, error: err })
+                        })
+                }
             })
     }
 
@@ -86,7 +98,8 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
-        getServicesAction
+        getServicesAction,
+        getHighAvailabilitiesAction
     }, dispatch);
 }
 

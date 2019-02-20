@@ -48,6 +48,21 @@ export default class ServiceTable extends GenericTable {
                 width: 1,
             },
             {
+                name: "Is In IXI [#]",
+                prop: "isIXIAndServerCount",
+                width: 1,
+            },
+            {
+                name: "Is In TSI [#]",
+                prop: "isTSIAndServerCount",
+                width: 1,
+            },
+            {
+                name: "Is HA",
+                prop: "isHA",
+                width: 1,
+            },
+            {
                 name: "Links",
                 prop: "Links",
                 width: 1,
@@ -128,7 +143,6 @@ export default class ServiceTable extends GenericTable {
                             <Image src={window.location.protocol + '//' + window.location.host + "/icons/disme.png"} />
                         } />
                 } content='Go to Disme details' inverted />
-
 
                 <Popup trigger={
                     <Button

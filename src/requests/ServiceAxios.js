@@ -24,3 +24,7 @@ export function getHealth(serviceId, IP) {
 export function getVersion(serviceId, serverId) {
     return axios.get(LOCO_API + 'service/' + serviceId + '/server/' + serverId + '/version')
 }
+
+export function getHighAvailabilities() {
+    return axios.get(LOCO_API + 'highavailability')
+}

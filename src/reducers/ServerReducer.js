@@ -21,6 +21,8 @@ const ServerReducer = (state = serverInitialState, action) => {
                         if(x.State !== "Running") {
                             x.StateAlert = { backgroundColor: errorColor }
                         }
+
+                        return x;
                     })
                 }
             }
