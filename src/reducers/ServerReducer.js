@@ -1,5 +1,6 @@
 import { GET_SERVER_DETAILS, GET_VM_DETAILS, GET_SERVER_SCOM_ALERTS, GET_SERVERS, GET_SERVER_STATS } from '../constants/ServerConstants';
 import { getServerState, getDismeState } from '../utils/HelperFunction';
+import { errorColor } from '../appConfig';
 
 const serverInitialState = {
     serverDetails: { success: true },
@@ -14,6 +15,14 @@ const ServerReducer = (state = serverInitialState, action) => {
             if (action.payload.data) {
                 action.payload.data.ServerState = getServerState(action.payload.data.ServerStateID)
                 action.payload.data.Disme = getDismeState(action.payload.data.Disme)
+
+                if(action.payload.data.WindowsServices) {
+                    action.payload.data.WindowsServices.map(x => {
+                        if(x.State !== "Running") {
+                            x.StateAlert = { backgroundColor: errorColor }
+                        }
+                    })
+                }
             }
 
             return Object.assign({}, state, { serverDetails: action.payload })

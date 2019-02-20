@@ -21,6 +21,7 @@ export default class WindowsServicesTable extends GenericTable {
             {
                 name: "State",
                 prop: "State",
+                styleProp: "StateAlert",
                 collapsing: true
             },
             {
