@@ -4,9 +4,9 @@ import { getAvailabiltyAndEnabledState } from '../utils/HelperFunction';
 
 const LBPoolStatus = (props) => {
 
-    var { availabilityState, enabledState } = this.props
+    var { availabilityState, enabledState } = props
     return (
-        <React.Fragment>
+        <>
             <Label
                 size={props.size}
                 color={getAvailabiltyAndEnabledState(availabilityState, enabledState)}
@@ -19,7 +19,7 @@ const LBPoolStatus = (props) => {
                 horizontal>
                 {enabledState ? enabledState : "no data"}
             </Label>
-        </React.Fragment>
+        </>
     )
 }
 

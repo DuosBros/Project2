@@ -16,18 +16,21 @@ export default class SearchBox extends React.Component {
         const isEnter = keyboardKey.getKey(e) === 'Enter'
 
         if (isEnter) {
-            var url = _.replace(this.props.url, new RegExp(this.props.pattern, "g"), this.state.value)
-            var win = window.open(url, '_blank');
-            win.focus();
-
+            this.handleWindowOpen()
         }
+    }
+
+    handleWindowOpen = () => {
+        var url = _.replace(this.props.url, new RegExp(this.props.pattern, "g"), this.state.value)
+        var win = window.open(url, '_blank');
+        win.focus();
     }
 
     render() {
         return (
             <React.Fragment>
-                <Input onKeyPress={this.handleKeyPress} onChange={this.handleChange} placeholder={this.props.placeholder}/>
-                <Button circular icon="arrow right" id="homeSecondIcon" style={{ visibility: (this.state.value === "" ? "hidden" : "visible") }}/>
+                <Input onKeyPress={this.handleKeyPress} onChange={this.handleChange} placeholder={this.props.placeholder} />
+                <Button onClick={() => this.handleWindowOpen()} circular icon="arrow right" id="homeSecondIcon" style={{ visibility: (this.state.value === "" ? "hidden" : "visible") }} />
             </React.Fragment>
         );
     }
