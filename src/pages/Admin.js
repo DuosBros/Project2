@@ -1,7 +1,10 @@
 import React from 'react';
 import { Grid, Header, Segment, List } from 'semantic-ui-react';
+import links from '../links';
 
 const Admin = () => {
+    let locoUrl
+    links.list.filter(x => x.filter(y => y.items.filter(z => { if (z.title === "LOCO") { locoUrl = z.url } })))
     return (
         <Grid stackable>
             <Grid.Row>
@@ -10,7 +13,7 @@ const Admin = () => {
                         Admin
                         </Header>
                     <Segment attached='bottom' >
-                    <Grid stackable>
+                        <Grid stackable>
                             <Grid.Row>
                                 <Grid.Column>
                                     <List divided relaxed>
@@ -28,11 +31,32 @@ const Admin = () => {
                                                 <List.Description>Admin tasks related to Active Directory</List.Description>
                                             </List.Content>
                                         </List.Item>
+                                        <List.Item>
+                                            <List.Icon name='area graph' size='large' verticalAlign='middle' />
+                                            <List.Content>
+                                                <List.Header as='a' target='_blank' href={locoUrl + '/hangfire'}>Hangfire</List.Header>
+                                                <List.Description>Hangfire dashboard</List.Description>
+                                            </List.Content>
+                                        </List.Item>
+                                        <List.Item>
+                                            <List.Icon name='book' size='large' verticalAlign='middle' />
+                                            <List.Content>
+                                                <List.Header as='a' target='_blank' href={locoUrl + '/swagger'}>LOCO API Documentation</List.Header>
+                                                <List.Description>Swagger</List.Description>
+                                            </List.Content>
+                                        </List.Item>
+                                        <List.Item>
+                                            <List.Icon name='cog' size='large' verticalAlign='middle' />
+                                            <List.Content>
+                                                <List.Header as='a' href={'/admin/agentlogs'}>Agent Logs</List.Header>
+                                                <List.Description>Agent logs</List.Description>
+                                            </List.Content>
+                                        </List.Item>
                                     </List>
                                 </Grid.Column>
                             </Grid.Row>
                         </Grid>
-                        </Segment>
+                    </Segment>
                 </Grid.Column>
             </Grid.Row>
         </Grid>

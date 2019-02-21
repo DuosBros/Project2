@@ -1,0 +1,1 @@
+export const GET_AGENTLOGS = 'GET_AGENTLOGS';
