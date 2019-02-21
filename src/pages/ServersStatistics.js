@@ -322,7 +322,7 @@ class ServersStatistics extends React.Component {
                                         value: x,
                                         text: x
                                     })
-                                )}
+                                ).sort((a, b) => a.value - b.value)}
                                 index={2}
                                 label="Property Value" />
                             <br />
