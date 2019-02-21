@@ -81,6 +81,9 @@ class Sidebar extends React.Component {
                                     <Menu.Item as={Link} to='/admin/activedirectory' >
                                         ActiveDirectory
                                     </Menu.Item>
+                                    <Menu.Item as={Link} to='/admin/agentlogs' >
+                                        Agent logs
+                                    </Menu.Item>
                                 </Menu.Menu>
                             </Menu.Item>
                         ) : null

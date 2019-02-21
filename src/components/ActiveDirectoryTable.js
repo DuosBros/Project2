@@ -1,6 +1,5 @@
 import React from 'react'
 import GenericTable from './GenericTable';
-import VirtualMachineStatus from './VirtualMachineStatus';
 import { Popup, Button, Icon } from 'semantic-ui-react';
 
 export default class ActiveDirectoryTable extends GenericTable {

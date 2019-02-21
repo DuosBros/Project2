@@ -19,16 +19,16 @@ const LoadBalancerReducer = (state = initialState, action) => {
                         temp.data[index].expiration = element.expiration
                     }
                 });
-
-                return Object.assign({}, state, { loadBalancers: temp })
             }
+            
+            return Object.assign({}, state, { loadBalancers: temp })
         case DELETE_LOADBALANCER_TOKEN:
             var temp = Object.assign({}, state.loadBalancers)
             if (action.payload.success) {
 
                 var index = temp.data.findIndex(x => x.Id === action.payload.data)
-                
-                if(index > 0) {
+
+                if (index > 0) {
                     delete temp.data[index].token
                     delete temp.data[index].expiration
                 }

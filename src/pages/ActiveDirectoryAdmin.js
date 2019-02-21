@@ -218,7 +218,8 @@ function mapDispatchToProps(dispatch) {
     return bindActionCreators({
         getActiveDirectoriesAction,
         createActiveDirectoryAction,
-        editActiveDirectoryAction
+        editActiveDirectoryAction,
+        deleteActiveDirectoryAction
     }, dispatch);
 }
 

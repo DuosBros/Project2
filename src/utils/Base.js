@@ -15,7 +15,7 @@ import UserDetails from '../modals/UserDetails';
 
 import { authenticateAction, authenticationStartedAction, authenticateEndedAction, authenticateOKAction, authenticationFailedAction } from '../actions/BaseAction';
 import { authenticate } from '../requests/BaseAxios';
-import { debounce } from '../utils/HelperFunction';
+import { debounce, isAdmin } from '../utils/HelperFunction';
 
 import { LOCO_API } from '../appConfig';
 import LoadBalancerFarmsTasks from '../modals/LoadBalancerFarmsTasks';
@@ -39,6 +39,7 @@ import Statistics from '../pages/Statistics';
 import LoadBalancerAdmin from '../pages/LoadBalancerAdmin';
 import ScrollToTop from './ScrollToTop';
 import ActiveDirectoryAdmin from '../pages/ActiveDirectoryAdmin';
+import AgentLogs from '../pages/AgentLogs';
 
 class Base extends React.Component {
     constructor(props) {
@@ -112,6 +113,17 @@ class Base extends React.Component {
             wideClass.className = "wide"
         }
 
+        let locoAdminRoutes = null;
+        if (isAdmin(this.props.baseStore.currentUser)) {
+            locoAdminRoutes = (
+                <>
+                    <Route exact path='/admin' component={Admin} />
+                    <Route exact path='/admin/loadbalancer' component={LoadBalancerAdmin} />
+                    <Route exact path='/admin/activedirectory' component={ActiveDirectoryAdmin} />
+                    <Route exact path='/admin/agentlogs' component={AgentLogs} />
+                </>
+            )
+        }
         return (
             <div>
                 <BrowserRouter>
@@ -123,6 +135,7 @@ class Base extends React.Component {
                         <div id="bodyWrapper" {...wideClass}>
                             <ErrorBoundary>
                                 <Switch>
+                                    <Route exact path='/site/check' render={() => <div>CHECK_OK</div>} />
                                     <Route exact path='/' component={Home} />
                                     <Route exact path='/login' component={Login} />
                                     <Route path='/server/:id' component={ServerDetails} />
@@ -137,14 +150,13 @@ class Base extends React.Component {
                                     <Route path='/lbfarms' component={LoadBalancerFarms} />
                                     <Route path='/ipaddresses' component={IPAddresses} />
                                     <Route exact path='/statistics' component={Statistics} />
-                                    <Route exact path='/admin' component={Admin} />
-                                    <Route exact path='/admin/loadbalancer' component={LoadBalancerAdmin} />
-                                    <Route exact path='/admin/activedirectory' component={ActiveDirectoryAdmin} />
+                                    {locoAdminRoutes}
                                     <Route path='/versionstatus' component={VersionStatus} />
                                     <Route path='/healthchecks' component={HealthChecks} />
                                     <Route path='/statistics/services' component={ServicesStatistics} />
                                     <Route path='/statistics/servers' component={ServersStatistics} />
                                     <Route path='/statistics/loadbalancerfarms' component={LoadBalancerFarmsStatistics} />
+
                                 </Switch>
                             </ErrorBoundary>
                         </div>
