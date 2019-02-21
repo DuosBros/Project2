@@ -38,6 +38,7 @@ import HealthChecks from '../pages/HealthChecks';
 import Statistics from '../pages/Statistics';
 import LoadBalancerAdmin from '../pages/LoadBalancerAdmin';
 import ScrollToTop from './ScrollToTop';
+import ActiveDirectoryAdmin from '../pages/ActiveDirectoryAdmin';
 
 class Base extends React.Component {
     constructor(props) {
@@ -138,6 +139,7 @@ class Base extends React.Component {
                                     <Route exact path='/statistics' component={Statistics} />
                                     <Route exact path='/admin' component={Admin} />
                                     <Route exact path='/admin/loadbalancer' component={LoadBalancerAdmin} />
+                                    <Route exact path='/admin/activedirectory' component={ActiveDirectoryAdmin} />
                                     <Route path='/versionstatus' component={VersionStatus} />
                                     <Route path='/healthchecks' component={HealthChecks} />
                                     <Route path='/statistics/services' component={ServicesStatistics} />

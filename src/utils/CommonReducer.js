@@ -13,11 +13,12 @@ import IPAddressReducer from '../reducers/IPAddressReducer';
 import VersionStatusReducer from '../reducers/VersionStatusReducer';
 import HealthCheckReducer from '../reducers/HealthCheckReducer';
 import LoadBalancerReducer from '../reducers/LoadBalancerReducer';
+import ActiveDirectoryReducer from '../reducers/ActiveDirectoryReducer';
 
 const CommonReducer = combineReducers({
     HeaderReducer, BaseReducer, ServerReducer, ServiceReducer, LoginReducer, LoadBalancerFarmsReducer,
     PatchGroupReducer, RolloutStatusReducer, VirtualMachineReducer, IPAddressReducer, VersionStatusReducer,
-    HealthCheckReducer, LoadBalancerReducer
+    HealthCheckReducer, LoadBalancerReducer, ActiveDirectoryReducer
 });
 
 export default CommonReducer;

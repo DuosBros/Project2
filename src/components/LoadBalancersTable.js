@@ -55,7 +55,7 @@ export default class LoadBalancersTable extends GenericTable {
     }
 
     transformDataRow(data) {
-        data.expiration = moment(data.expiration).local().format("HH:mm:ss DD.MM.YYYY")
+        data.expiration = data.expiration ? moment(data.expiration).local().format("HH:mm:ss DD.MM.YYYY") : null
         if(data.token) {
             data.action = (
                 <Popup trigger={

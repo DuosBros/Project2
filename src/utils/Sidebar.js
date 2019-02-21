@@ -78,7 +78,7 @@ class Sidebar extends React.Component {
                                     <Menu.Item as={Link} to='/admin/loadbalancer' >
                                         Loadbalancer
                                     </Menu.Item>
-                                    <Menu.Item as={Link} to='/admin/loadbalancer' >
+                                    <Menu.Item as={Link} to='/admin/activedirectory' >
                                         ActiveDirectory
                                     </Menu.Item>
                                 </Menu.Menu>
