@@ -35,6 +35,8 @@ import ServersStatistics from '../pages/ServersStatistics';
 import LoadBalancerFarmsStatistics from '../pages/LoadBalancerFarmsStatistics';
 import ErrorBoundary from '../components/ErrorBoundary';
 import HealthChecks from '../pages/HealthChecks';
+import Statistics from '../pages/Statistics';
+import LoadBalancerAdmin from '../pages/LoadBalancerAdmin';
 
 class Base extends React.Component {
     constructor(props) {
@@ -132,7 +134,9 @@ class Base extends React.Component {
                                     <Route path='/services' component={Services} />
                                     <Route path='/lbfarms' component={LoadBalancerFarms} />
                                     <Route path='/ipaddresses' component={IPAddresses} />
-                                    <Route path='/admin' component={Admin} />
+                                    <Route exact path='/statistics' component={Statistics} />
+                                    <Route exact path='/admin' component={Admin} />
+                                    <Route exact path='/admin/loadbalancer' component={LoadBalancerAdmin} />
                                     <Route path='/versionstatus' component={VersionStatus} />
                                     <Route path='/healthchecks' component={HealthChecks} />
                                     <Route path='/statistics/services' component={ServicesStatistics} />

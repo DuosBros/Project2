@@ -62,12 +62,6 @@ export default class VirtualMachinesTable extends GenericTable {
                 width: 1,
             },
             {
-                name: "VMSubnet",
-                prop: "VMSubnet",
-                collapsing: true,
-                visibleByDefault: false
-            },
-            {
                 name: "IPv4",
                 prop: "IPv4Addresses",
                 width: 2,

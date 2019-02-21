@@ -12,7 +12,7 @@ export default class Footer extends React.Component {
                     <Grid.Row columns='equal'>
 
                         <Grid.Column>
-                            © {(new Date()).getFullYear()} <a href="mailto:SportsB2CLeanOpsLOB2C1@bwinparty.com">VIE LeanOps</a> | 
+                            © {(new Date()).getFullYear()} <a href="mailto:d.leanops.sports.b2c@gvcgroup.com">VIE LeanOps B2C</a> | 
                              Issue? <a href="https://vie.git.bwinparty.com/groups/leanops/Loco/-/issues" target="_blank" rel="noopener noreferrer">Report it!</a> <Icon name="bug" ></Icon>
                              | Version: {packageJson.version}
                         </Grid.Column>

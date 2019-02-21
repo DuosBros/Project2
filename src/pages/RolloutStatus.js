@@ -9,7 +9,6 @@ import {
     deleteAllRoloutStatusesAction, removeRolloutStatusAction
 } from '../actions/RolloutStatusActions';
 
-
 import {
     getHealthAction, getVersionAction, getServiceDetailsByShortcutsAction, removeServiceDetailsAction,
     removeAllServiceDetailsAction
@@ -75,7 +74,9 @@ class RolloutStatus extends React.Component {
             return;
         }
 
-        this.getRolloutStatuses()
+        if(e.currentTarget.activeElement.tagName === "TEXTAREA") {
+            this.getRolloutStatuses()
+        }
 
         e.preventDefault();
     }
@@ -176,17 +177,10 @@ class RolloutStatus extends React.Component {
                 }
 
                 this.setState({ loadingServiceDetails: false });
-
-                return true;
             })
             .catch(err => {
                 this.props.getServiceDetailsByShortcutsAction({ success: false, error: err })
             })
-        // .then((res) => {
-        //     if (res) {
-        //         this.getRolloutStatuses()
-        //     }
-        // })
     }
 
     getHealthsAndVersions = () => {
@@ -306,7 +300,8 @@ class RolloutStatus extends React.Component {
     handleServiceChange = (e, m) => {
         var value = m.options.find(x => x.value === m.value).text;
 
-        this.setState({ inputProductsValues: this.state.inputProductsValues + "," + value });
+        var servicesString = this.state.inputProductsValues ? this.state.inputProductsValues + "," + value : value
+        this.setState({ inputProductsValues: servicesString });
         this.getServiceDetails(this.state.inputProductsValues)
     }
 
@@ -547,26 +542,26 @@ class RolloutStatus extends React.Component {
             })
         }
 
-        servicesTableRows.push(
-            <Table.Row key={-1}>
-                <Table.Cell colSpan={6}>
-                    <Dropdown
-                        className="search"
-                        icon='search'
-                        selection
-                        onChange={this.handleServiceChange}
-                        options={this.props.headerStore.searchServiceShortcutsResult.filter(x => !this.state.inputProductsValues.split(",").includes(x.text)).slice(0, 10)}
-                        fluid
-                        selectOnBlur={false}
-                        selectOnNavigation={false}
-                        placeholder='Type to search a service'
-                        value=""
-                        onSearchChange={this.handleServiceShortcutSearchChange}
-                        search
-                    />
-                </Table.Cell>
-            </Table.Row>
-        )
+        // servicesTableRows.push(
+        //     <Table.Row key={-1}>
+        //         <Table.Cell colSpan={6}>
+        //             <Dropdown
+        //                 className="search"
+        //                 icon='search'
+        //                 selection
+        //                 onChange={this.handleServiceChange}
+        //                 options={this.props.headerStore.searchServiceShortcutsResult.filter(x => !this.state.inputProductsValues.split(",").includes(x.text)).slice(0, 10)}
+        //                 fluid
+        //                 selectOnBlur={false}
+        //                 selectOnNavigation={false}
+        //                 placeholder='Type to search a service'
+        //                 value=""
+        //                 onSearchChange={this.handleServiceShortcutSearchChange}
+        //                 search
+        //             />
+        //         </Table.Cell>
+        //     </Table.Row>
+        // )
 
         var segments = this.props.rolloutStatusStore.rolloutStatuses.map((x, i) => {
             var segmentContent;
@@ -723,7 +718,24 @@ class RolloutStatus extends React.Component {
                                         <strong>Disme Application</strong>
                                         {dismeApplicationsDropdown}
                                     </Grid.Column>
-                                    <Grid.Column width={11} >
+                                    <Grid.Column width={2} >
+                                        <strong>Search for a service</strong>
+                                        <Dropdown
+                                            className="search"
+                                            icon='search'
+                                            selection
+                                            onChange={this.handleServiceChange}
+                                            options={this.props.headerStore.searchServiceShortcutsResult.filter(x => !this.state.inputProductsValues.split(",").includes(x.text)).slice(0, 10)}
+                                            fluid
+                                            selectOnBlur={false}
+                                            selectOnNavigation={false}
+                                            placeholder='Type to search'
+                                            value=""
+                                            onSearchChange={this.handleServiceShortcutSearchChange}
+                                            search
+                                        />
+                                    </Grid.Column>
+                                    <Grid.Column width={9} >
                                         <strong>List of services</strong><br />
                                         <Form>
                                             <TextArea autoHeight

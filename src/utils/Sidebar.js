@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { toggleVerticalMenuAction } from '../actions/HeaderActions';
+import { isAdmin } from './HelperFunction';
 
 
 class Sidebar extends React.Component {
@@ -54,28 +55,9 @@ class Sidebar extends React.Component {
                     </Menu.Item>
                     <Menu.Item>
                         <Menu.Header as={Link} to='/ipaddresses'>IP Addresses</Menu.Header>
-                        {/* <Menu.Menu>
-                            <Menu.Item as={Link} to='/' >
-                                Consistency
-                            </Menu.Item>
-                        </Menu.Menu> */}
                     </Menu.Item>
-                    {/* <Menu.Item>
-                        <Menu.Header>Scom</Menu.Header>
-                    </Menu.Item> */}
-                    {/* <Menu.Item>
-                        <Menu.Header>Config</Menu.Header>
-                        <Menu.Menu>
-                            <Menu.Item as={Link} to='/' >
-                                Loadbalancer
-                            </Menu.Item>
-                            <Menu.Item as={Link} to='/usage' >
-                                ActiveDirectory
-                            </Menu.Item>
-                        </Menu.Menu>
-                    </Menu.Item> */}
                     <Menu.Item>
-                        <Menu.Header>Statistics</Menu.Header>
+                        <Menu.Header as={Link} to='/statistics'>Statistics</Menu.Header>
                         <Menu.Menu>
                             <Menu.Item as={Link} to='/statistics/servers' >
                                 Servers
@@ -88,15 +70,21 @@ class Sidebar extends React.Component {
                             </Menu.Item>
                         </Menu.Menu>
                     </Menu.Item>
-                    <Menu.Item>
-                        <Menu.Header as={Link} to='/admin'>Admin</Menu.Header>
-                    </Menu.Item>
-                    {/* <Menu.Item>
-                        <Menu.Header>Help</Menu.Header>
-                    </Menu.Item> */}
-                    {/* <Menu.Item>
-                        <Menu.Header>About</Menu.Header>
-                    </Menu.Item> */}
+                    {
+                        isAdmin ? (
+                            <Menu.Item>
+                                <Menu.Header as={Link} to='/admin'>Admin</Menu.Header>
+                                <Menu.Menu>
+                                    <Menu.Item as={Link} to='/admin/loadbalancer' >
+                                        Loadbalancer
+                                    </Menu.Item>
+                                    <Menu.Item as={Link} to='/admin/loadbalancer' >
+                                        ActiveDirectory
+                                    </Menu.Item>
+                                </Menu.Menu>
+                            </Menu.Item>
+                        ) : null
+                    }
                 </div>
             );
 
