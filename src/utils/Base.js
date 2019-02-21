@@ -37,6 +37,7 @@ import ErrorBoundary from '../components/ErrorBoundary';
 import HealthChecks from '../pages/HealthChecks';
 import Statistics from '../pages/Statistics';
 import LoadBalancerAdmin from '../pages/LoadBalancerAdmin';
+import ScrollToTop from './ScrollToTop';
 
 class Base extends React.Component {
     constructor(props) {
@@ -113,7 +114,7 @@ class Base extends React.Component {
         return (
             <div>
                 <BrowserRouter>
-                    <div>
+                    <ScrollToTop>
                         <Route path="/:entityType?/:entityId?" component={Header} />
                         <Sidebar />
                         <LoadBalancerFarmsTasks show={this.props.serviceStore.showLoadBalancerFarmsTasksModal} />
@@ -146,7 +147,7 @@ class Base extends React.Component {
                             </ErrorBoundary>
                         </div>
                         <Footer id="footer" {...wideClass} />
-                    </div>
+                    </ScrollToTop>
                 </BrowserRouter>
             </div>
         )
