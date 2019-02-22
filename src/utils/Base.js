@@ -40,6 +40,8 @@ import LoadBalancerAdmin from '../pages/LoadBalancerAdmin';
 import ScrollToTop from './ScrollToTop';
 import ActiveDirectoryAdmin from '../pages/ActiveDirectoryAdmin';
 import AgentLogs from '../pages/AgentLogs';
+import NotFound from '../pages/NotFound';
+import PrivateRoute from './PrivateRoute';
 
 class Base extends React.Component {
     constructor(props) {
@@ -113,17 +115,6 @@ class Base extends React.Component {
             wideClass.className = "wide"
         }
 
-        let locoAdminRoutes = null;
-        if (isAdmin(this.props.baseStore.currentUser)) {
-            locoAdminRoutes = (
-                <>
-                    <Route exact path='/admin' component={Admin} />
-                    <Route exact path='/admin/loadbalancer' component={LoadBalancerAdmin} />
-                    <Route exact path='/admin/activedirectory' component={ActiveDirectoryAdmin} />
-                    <Route exact path='/admin/agentlogs' component={AgentLogs} />
-                </>
-            )
-        }
         return (
             <div>
                 <BrowserRouter>
@@ -150,13 +141,16 @@ class Base extends React.Component {
                                     <Route path='/lbfarms' component={LoadBalancerFarms} />
                                     <Route path='/ipaddresses' component={IPAddresses} />
                                     <Route exact path='/statistics' component={Statistics} />
-                                    {locoAdminRoutes}
+                                    <PrivateRoute isAdmin={isAdmin(this.props.baseStore.currentUser)} exact path='/admin' component={Admin} />
+                                    <PrivateRoute isAdmin={isAdmin(this.props.baseStore.currentUser)} exact path='/admin/loadbalancer' component={LoadBalancerAdmin} />
+                                    <PrivateRoute isAdmin={isAdmin(this.props.baseStore.currentUser)} exact path='/admin/activedirectory' component={ActiveDirectoryAdmin} />
+                                    <PrivateRoute isAdmin={isAdmin(this.props.baseStore.currentUser)} exact path='/admin/agentlogs' component={AgentLogs} />
                                     <Route path='/versionstatus' component={VersionStatus} />
                                     <Route path='/healthchecks' component={HealthChecks} />
                                     <Route path='/statistics/services' component={ServicesStatistics} />
                                     <Route path='/statistics/servers' component={ServersStatistics} />
                                     <Route path='/statistics/loadbalancerfarms' component={LoadBalancerFarmsStatistics} />
-
+                                    <Route component={NotFound} />
                                 </Switch>
                             </ErrorBoundary>
                         </div>
