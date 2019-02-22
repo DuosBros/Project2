@@ -33,7 +33,7 @@ export default class ActiveDirectoryTable extends GenericTable {
 
                 <Popup trigger={
                     <Button
-                        onClick={() => this.props.deleteADPath(data.Id)}
+                        onClick={() => this.props.handleDeleteButtonOnClick(data.Id)}
                         style={{ padding: '0.3em' }}
                         size='medium'
                         icon={

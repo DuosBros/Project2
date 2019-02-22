@@ -43,14 +43,49 @@ const ActiveDirectoryModal = (props) => {
     )
 }
 
+const ConfirmationModal = (props) => {
+    return (
+        <Modal
+            size='large'
+            open={props.show}
+            closeOnEscape={true}
+            closeIcon={true}
+            onClose={() => props.toggleConfirmationModal()}
+        >
+            <Modal.Header>Delete AD Path</Modal.Header>
+            <Modal.Content>
+                <Header>Are you sure?</Header>
+                <p>This action might cause unexpected behavior of loco agent</p>
+            </Modal.Content>
+            <Modal.Actions>
+                <Button
+                    onClick={() => props.handleDeleteADPath()}
+                    positive
+                    labelPosition='right'
+                    icon='checkmark'
+                    content='OK'
+                />
+                <Button
+                    onClick={() => props.toggleConfirmationModal()}
+                    labelPosition='right'
+                    icon='checkmark'
+                    content='Close'
+                />
+            </Modal.Actions>
+        </Modal>
+    )
+}
+
 class ActiveDirectoryAdmin extends React.Component {
 
     state = {
+        showConfirmationModal: false,
         showModal: false,
         payload: {
             Id: null,
             ADPath: ""
-        }
+        },
+        ADPathIDToDelete: null
     }
 
     componentDidMount() {
@@ -102,19 +137,32 @@ class ActiveDirectoryAdmin extends React.Component {
             })
     }
 
-    deleteADPath = (id) => {
-        deleteActiveDirectory(id)
+    handleDeleteButtonOnClick = (id) => {
+        this.toggleConfirmationModal()
+        this.setState({ ADPathIDToDelete: id });
+    }
+
+    deleteADPath = () => {
+        deleteActiveDirectory(this.state.ADPathIDToDelete)
             .then(() => {
                 this.fetchActiveDirectoriesAndHandleResult()
             })
             .catch(err => {
                 this.props.deleteActiveDirectoryAction({ success: false, error: err })
             })
+            .finally(() => {
+                this.toggleConfirmationModal()
+            })
     }
 
     toggleModal = () => {
         this.setState({ showModal: !this.state.showModal });
     }
+
+    toggleConfirmationModal = () => {
+        this.setState({ showConfirmationModal: !this.state.showConfirmationModal });
+    }
+
 
     handleAddButtonOnClick = () => {
         this.setState({ showModal: true, header: "Create AD Path", modalAction: this.createADPath });
@@ -171,6 +219,14 @@ class ActiveDirectoryAdmin extends React.Component {
             )
         }
 
+        if (this.state.showConfirmationModal) {
+            modal = (
+                <ConfirmationModal
+                    handleDeleteADPath={this.deleteADPath}
+                    show={true}
+                    toggleConfirmationModal={this.toggleConfirmationModal} />
+            )
+        }
         // render page
         return (
             <Grid stackable>
@@ -196,7 +252,7 @@ class ActiveDirectoryAdmin extends React.Component {
                                 </Grid.Row>
                             </Grid>
                             <ActiveDirectoryTable
-                                deleteADPath={this.deleteADPath}
+                                handleDeleteButtonOnClick={this.handleDeleteButtonOnClick}
                                 handleEditOnClick={this.handleEditOnClick}
                                 compact="very" defaultLimitOverride={0}
                                 data={this.props.activeDirectoryStore.activeDirectories.data} />
