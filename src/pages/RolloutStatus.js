@@ -64,8 +64,6 @@ class RolloutStatus extends React.Component {
 
         document.addEventListener('keydown', this.handleDocumentKeyDown)
     }
-
-
     handleDocumentKeyDown = (e) => {
         const shortcutMatch = keyboardKey.getKey(e) === 'Enter';
         const hasModifier = e.altKey || e.ctrlKey || e.metaKey;
@@ -74,7 +72,7 @@ class RolloutStatus extends React.Component {
             return;
         }
 
-        if(e.currentTarget.activeElement.tagName === "TEXTAREA") {
+        if (e.currentTarget.activeElement.tagName === "TEXTAREA") {
             this.getRolloutStatuses()
         }
 
@@ -301,8 +299,9 @@ class RolloutStatus extends React.Component {
         var value = m.options.find(x => x.value === m.value).text;
 
         var servicesString = this.state.inputProductsValues ? this.state.inputProductsValues + "," + value : value
+        this.props.history.push("/rolloutstatus?services=" + servicesString)
         this.setState({ inputProductsValues: servicesString });
-        this.getServiceDetails(this.state.inputProductsValues)
+        this.getServiceDetails(servicesString)
     }
 
     handleToggleShowAllSegments = () => {
@@ -465,6 +464,7 @@ class RolloutStatus extends React.Component {
     render() {
         var { showAllSegments } = this.state;
 
+        const serviceDetailsData = Array.isArray(this.props.serviceStore.serviceDetails.data) ? this.props.serviceStore.serviceDetails.data : null
         var serviceTableColumnProperties = [
             {
                 name: "Name",
@@ -496,13 +496,20 @@ class RolloutStatus extends React.Component {
 
         if (!this.props.serviceStore.serviceDetails.success) {
             servicesTableRows.push(
-                <Table.Row error>
+                <Table.Row key={-1} error>
                     <Table.Cell colSpan={6}>Error fetching data</Table.Cell>
                 </Table.Row>
             )
         }
+        else if (!serviceDetailsData) {
+            servicesTableRows.push(
+                <Table.Row key={-1} warning>
+                    <Table.Cell colSpan={6}>Fetching service details</Table.Cell>
+                </Table.Row>
+            )
+        }
         else {
-            servicesTableRows = this.props.serviceStore.serviceDetails.data.map((service, index) => {
+            servicesTableRows = serviceDetailsData.map((service, index) => {
                 if (service) {
                     return (
                         <Table.Row key={service.Service[0].Id}>
@@ -541,27 +548,6 @@ class RolloutStatus extends React.Component {
                 }
             })
         }
-
-        // servicesTableRows.push(
-        //     <Table.Row key={-1}>
-        //         <Table.Cell colSpan={6}>
-        //             <Dropdown
-        //                 className="search"
-        //                 icon='search'
-        //                 selection
-        //                 onChange={this.handleServiceChange}
-        //                 options={this.props.headerStore.searchServiceShortcutsResult.filter(x => !this.state.inputProductsValues.split(",").includes(x.text)).slice(0, 10)}
-        //                 fluid
-        //                 selectOnBlur={false}
-        //                 selectOnNavigation={false}
-        //                 placeholder='Type to search a service'
-        //                 value=""
-        //                 onSearchChange={this.handleServiceShortcutSearchChange}
-        //                 search
-        //             />
-        //         </Table.Cell>
-        //     </Table.Row>
-        // )
 
         var segments = this.props.rolloutStatusStore.rolloutStatuses.map((x, i) => {
             var segmentContent;

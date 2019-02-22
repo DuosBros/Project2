@@ -71,7 +71,7 @@ class Sidebar extends React.Component {
                         </Menu.Menu>
                     </Menu.Item>
                     {
-                        isAdmin ? (
+                        isAdmin(this.props.baseStore.currentUser) ? (
                             <Menu.Item>
                                 <Menu.Header as={Link} to='/admin'>Admin</Menu.Header>
                                 <Menu.Menu>

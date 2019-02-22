@@ -5,7 +5,7 @@ import _ from 'lodash';
 import { Grid, Header, Segment, Icon, List, Button, Message, Image } from 'semantic-ui-react';
 import moment from 'moment';
 
-import { getServiceDetailsAction, toggleLoadBalancerFarmsTasksModalAction } from '../actions/ServiceActions';
+import { getServiceDetailsAction, toggleLoadBalancerFarmsTasksModalAction, removeAllServiceDetailsAction } from '../actions/ServiceActions';
 import { getServiceDetails } from '../requests/ServiceAxios';
 import ServersTable from '../components/ServersTable';
 import WebsitesTable from '../components/WebsitesTable';
@@ -26,6 +26,7 @@ class ServiceDetails extends React.Component {
             servers: true,
             websites: true,
         }
+        // this.updateService();
     }
 
     componentDidMount() {
@@ -68,7 +69,7 @@ class ServiceDetails extends React.Component {
 
     render() {
         const serviceDetailsSuccess = this.props.serviceStore.serviceDetails.success;
-        const serviceDetailsData = this.props.serviceStore.serviceDetails.data;
+        const serviceDetailsData = Array.isArray(this.props.serviceStore.serviceDetails.data) ? null : this.props.serviceStore.serviceDetails.data
         const { assignedLoadBalancerFarms, servers, websites } = this.state;
 
         // in case of error
@@ -264,7 +265,8 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
         getServiceDetailsAction,
-        toggleLoadBalancerFarmsTasksModalAction
+        toggleLoadBalancerFarmsTasksModalAction,
+        removeAllServiceDetailsAction
     }, dispatch);
 }
 

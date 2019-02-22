@@ -9,14 +9,14 @@ import { errorColor } from '../appConfig';
 
 const serviceInitialState = {
     showLoadBalancerFarmsTasksModal: false,
-    serviceDetails: { success: true, data: [] },
+    serviceDetails: { success: true },
     services: { success: true }
 }
 
 const ServiceReducer = (state = serviceInitialState, action) => {
     switch (action.type) {
         case REMOVE_ALL_SERVICE_DETAILS:
-            return Object.assign({}, state, { serviceDetails: { success: true, data: [] } })
+            return Object.assign({}, state, { serviceDetails: { success: true } })
         case REMOVE_SERVICE_DETAILS:
             return Object.assign({}, state, {
                 serviceDetails: {

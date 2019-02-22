@@ -43,7 +43,8 @@ class VersionStatus extends React.Component {
             applicationDropdownValue: "",
             segments: DEFAULT_SEGMENT,
             selectedEnvironments: [],
-            alertNoEnvironmentsSelected: false
+            alertNoEnvironmentsSelected: false,
+            getVersionsStarted: false
         };
     }
     componentDidMount() {
@@ -168,7 +169,7 @@ class VersionStatus extends React.Component {
 
         this.setState({ selectedEnvironments: value, alertNoEnvironmentsSelected: false });
 
-        if (this.props.serviceStore.serviceDetails.success) {
+        if (this.props.serviceStore.serviceDetails.success && this.props.serviceStore.serviceDetails.data) {
             var shortcuts = this.props.serviceStore.serviceDetails.data.map(x => x.Service[0].Shortcut)
             if (shortcuts.length !== 0)
                 this.getServiceDetailsAndVersions(shortcuts);
@@ -232,7 +233,7 @@ class VersionStatus extends React.Component {
 
     getServiceDetailsAndVersions(services) {
         this.props.removeAllVersionsAction();
-        
+
         getServiceByShortcut(services)
             .then(res => {
                 if (res.data) {
@@ -243,22 +244,23 @@ class VersionStatus extends React.Component {
                 }
 
                 this.setState({ loadingServiceDetails: false });
-
-                return true;
             })
             .catch(err => {
                 this.props.getServiceDetailsByShortcutsAction({ success: false, error: err })
             })
-            .then((res) => {
-                if (res) {
-                    this.getVersions(services)
-                }
-            })
+        // .then((res) => {
+        //     if (res) {
+        //         this.getVersions(services)
+        //     }
+        // })
     }
 
-    getVersions = (services) => {
+    getVersions = () => {
+        this.setState({ getVersionsStarted: true });
+        var services = this.props.serviceStore.serviceDetails.data.map(x => x.Service[0].Shortcut)
+
         if (this.state.selectedEnvironments.length === 0) {
-            this.setState({ alertNoEnvironmentsSelected: true });
+            this.setState({ alertNoEnvironmentsSelected: true, getVersionsStarted: true });
         }
         else {
             this.setState({ alertNoEnvironmentsSelected: false });
@@ -274,27 +276,18 @@ class VersionStatus extends React.Component {
                 .catch(err => {
                     this.props.getVersionsAction({ success: false, error: err })
                 })
+                .finally(() => {
+                    this.setState({ getVersionsStarted: true });
+                })
         }
     }
 
     handleServiceChange = (e, m) => {
         var value = m.options.find(x => x.value === m.value).text;
-        var servicesString = this.state.inputProductsValues + "," + value
+        var servicesString = this.state.inputProductsValues ? this.state.inputProductsValues + "," + value : value
 
-        var url = new URL(document.location.href)
-        if (value) {
-            if (url.searchParams.get("services")) {
-                url.searchParams.set('services', servicesString);
-            }
-            else {
-                url.searchParams.apend("services", value)
-            }
-
-            this.props.history.push(url.pathname + url.search)
-        }
-        else {
-            url.searchParams.delete("services")
-            this.props.history.push(url.search)
+        this.props.history.push("/versionstatus?services=" + servicesString)
+        if (!value) {
             this.setState({ segments: DEFAULT_SEGMENT });
         }
 
@@ -348,6 +341,8 @@ class VersionStatus extends React.Component {
     render() {
         var { showAllSegments, selectedEnvironments } = this.state;
 
+        const serviceDetailsData = Array.isArray(this.props.serviceStore.serviceDetails.data) ? this.props.serviceStore.serviceDetails.data : null
+
         var serviceTableColumnProperties = [
             {
                 name: "Name",
@@ -379,13 +374,20 @@ class VersionStatus extends React.Component {
 
         if (!this.props.serviceStore.serviceDetails.success) {
             servicesTableRows.push(
-                <Table.Row error>
+                <Table.Row key={-1} error>
                     <Table.Cell colSpan={6}>Error fetching data</Table.Cell>
                 </Table.Row>
             )
         }
+        else if (!serviceDetailsData) {
+            servicesTableRows.push(
+                <Table.Row key={-1} warning>
+                    <Table.Cell colSpan={6}>Fetching service details</Table.Cell>
+                </Table.Row>
+            )
+        }
         else {
-            servicesTableRows = this.props.serviceStore.serviceDetails.data.map((service, index) => {
+            servicesTableRows = serviceDetailsData.map((service, index) => {
                 if (service) {
                     return (
                         <Table.Row key={service.Service[0].Id}>
@@ -424,27 +426,6 @@ class VersionStatus extends React.Component {
                 }
             })
         }
-
-        servicesTableRows.push(
-            <Table.Row key={-1}>
-                <Table.Cell colSpan={6}>
-                    <Dropdown
-                        className="search"
-                        icon='search'
-                        selection
-                        onChange={this.handleServiceChange}
-                        options={this.props.headerStore.searchServiceShortcutsResult.filter(x => !this.state.inputProductsValues.split(",").includes(x.text)).slice(0, 10)}
-                        fluid
-                        selectOnBlur={false}
-                        selectOnNavigation={false}
-                        placeholder='Type to search a service'
-                        value=""
-                        onSearchChange={this.handleServiceShortcutSearchChange}
-                        search
-                    />
-                </Table.Cell>
-            </Table.Row>
-        )
 
         var serviceDetails;
         if (this.state.inputProductsValues) {
@@ -554,6 +535,31 @@ class VersionStatus extends React.Component {
                 </Grid.Row>
             );
         }
+        // else if (!this.props.versionStatusStore.versions.data || this.state.getVersionsStarted === true) {
+        //     versionStatusSegment = (
+        //         <Grid.Row>
+        //             <Grid.Column>
+        //                 <Header block attached='top' as='h4'>
+        //                     Version Info
+        //                 <Button
+        //                         basic
+        //                         style={{ padding: '0em', marginRight: '0.5em' }}
+        //                         onClick={() => this.handleToggleShowingContent("versionInfo")}
+        //                         floated='right'
+        //                         icon='content' />
+        //                 </Header>
+        //                 <Segment attached='bottom' >
+        //                     <Message info icon>
+        //                         <Icon name='circle notched' loading />
+        //                         <Message.Content>
+        //                             <Message.Header>Fetching version statuses</Message.Header>
+        //                         </Message.Content>
+        //                     </Message>
+        //                 </Segment>
+        //             </Grid.Column>
+        //         </Grid.Row>
+        //     )
+        // }
         else {
             versionStatusSegment = (
                 <Grid.Row>
@@ -568,7 +574,7 @@ class VersionStatus extends React.Component {
                                 icon='content' />
                         </Header>
                         <Segment attached='bottom' >
-                            <VersionStatusTable showTableHeader={false} compact="very" data={this.props.versionStatusStore.versions.data} />
+                            <VersionStatusTable defaultLimitOverride={0} showTableHeader={false} compact="very" data={this.props.versionStatusStore.versions.data} />
                         </Segment>
                     </Grid.Column>
                 </Grid.Row>
@@ -579,6 +585,10 @@ class VersionStatus extends React.Component {
             if (this.props.serviceStore.serviceDetails.data.length === 0 || selectedEnvironments.length === 0) {
                 versionStatusSegment = null
             }
+        }
+
+        if(this.state.getVersionsStarted === false) {
+            versionStatusSegment = null
         }
 
 
@@ -609,7 +619,24 @@ class VersionStatus extends React.Component {
                                         <strong>Disme Application</strong>
                                         {dismeApplicationsDropdown}
                                     </Grid.Column>
-                                    <Grid.Column width={13} >
+                                    <Grid.Column width={2} >
+                                        <strong>Search for a service</strong>
+                                        <Dropdown
+                                            className="search"
+                                            icon='search'
+                                            selection
+                                            onChange={this.handleServiceChange}
+                                            options={this.props.headerStore.searchServiceShortcutsResult.filter(x => !this.state.inputProductsValues.split(",").includes(x.text)).slice(0, 10)}
+                                            fluid
+                                            selectOnBlur={false}
+                                            selectOnNavigation={false}
+                                            placeholder='Type to search'
+                                            value=""
+                                            onSearchChange={this.handleServiceShortcutSearchChange}
+                                            search
+                                        />
+                                    </Grid.Column>
+                                    <Grid.Column width={11} >
                                         <strong>List of services</strong>
                                         <Input
                                             onChange={this.handleInputOnChange}
@@ -624,9 +651,14 @@ class VersionStatus extends React.Component {
                                         <strong>Environment</strong>
                                         {environmentsDropdown}
                                     </Grid.Column>
-                                    {/* <Grid.Column width={4} textAlign="right" >
-                                        <Button primary content="Get rollout status" />
-                                    </Grid.Column> */}
+                                    <Grid.Column verticalAlign="bottom" width={6} >
+                                        <Button
+                                            floated='right'
+                                            disabled={serviceDetails ? false : true}
+                                            onClick={() => this.getVersions()}
+                                            primary
+                                            content="Get Version Statuses" />
+                                    </Grid.Column>
                                 </Grid.Row>
                             </Grid>
                         </Segment>
