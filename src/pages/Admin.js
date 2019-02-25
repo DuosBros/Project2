@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 const Admin = () => {
     let locoUrl
-    links.list.filter(x => x.filter(y => y.items.filter(z => { if (z.title === "LOCO") { locoUrl = z.url } })))
+    links.list.forEach(x => x.forEach(y => y.items.forEach(z => { if (z.title === "LOCO") { locoUrl = z.url } })))
     return (
         <Grid stackable>
             <Grid.Row>
