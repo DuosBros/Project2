@@ -36,77 +36,77 @@ export default {
             "country": "at",
             "title": "IXI INT",
             "tooltip": "ixi3-lb2",
-            "url": "https://ixi3-lb2.is.icepor.com/tmui/"
+            "url": "https://ixi3-lb2.is.icepor.com/"
         },
         {
             "country": "at",
             "title": "IXI EXT",
             "tooltip": "ixi3-lb1",
-            "url": "https://ixi3-lb1.is.icepor.com/tmui/"
+            "url": "https://ixi3-lb1.is.icepor.com/"
         },
         {
             "country": "at",
             "title": "TSI INT",
             "tooltip": "tsi-lb2",
-            "url": "https://tsi-lb2.is.icepor.com/tmui/"
+            "url": "https://tsi-lb2.is.icepor.com/"
         },
         {
             "country": "at",
             "title": "TSI EXT",
             "tooltip": "tsi-lb1",
-            "url": "https://tsi-lb1.is.icepor.com/tmui/"
+            "url": "https://tsi-lb1.is.icepor.com/"
         },
         {
             "country": "at",
             "title": "TEST/LLT",
             "tooltip": "ixi3-test-lb1",
-            "url": "https://ixi3-test-lb1.is.icepor.com/tmui/"
+            "url": "https://ixi3-test-lb1.is.icepor.com/"
         },
         {
             "country": "at",
             "title": "DNS",
             "tooltip": "ixi3-gtm1",
-            "url": "https://10.130.255.20/tmui/"
+            "url": "https://10.130.255.20/"
         },
         {
             "country": "be",
             "title": "BE/OOS",
             "tooltip": "oos-lb1",
-            "url": "https://10.164.128.10/tmui/"
+            "url": "https://10.164.128.10/"
         },
         {
             "country": "fr",
             "title": "FR/PAR",
             "tooltip": "par-lb1",
-            "url": "https://10.165.128.10/tmui/"
+            "url": "https://10.165.128.10/"
         },
         {
             "country": "ru",
             "title": "RU/MOS",
             "tooltip": "mos-lb1",
-            "url": "https://10.162.128.10/tmui/"
+            "url": "https://10.162.128.10/"
         },
         {
             "country": "gi",
             "title": "GI",
             "tooltip": "gib2-lb2",
-            "url": "https://10.166.222.56/tmui/"
+            "url": "https://10.166.222.56/"
         },
         {
             "country": "gg",
             "title": "GG",
             "tooltip": "gci-lb2",
-            "url": "https://10.169.222.56/tmui/"
+            "url": "https://10.169.222.56/"
         },
         {
             "country": "us",
             "title": "NJ01",
-            "url": "https://10.92.12.4/tmui/"
+            "url": "https://10.92.12.4/"
         },
         {
             "country": "us",
             "title": "NJ02",
-            "url": "https://10.92.12.5/tmui/"
+            "url": "https://10.92.12.5/"
         }
     ],
     "list": [
