@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
-import { Grid, Header, Segment, Table, Button, Input, Dropdown, Message, Icon } from 'semantic-ui-react';
+import { Grid, Header, Segment, Table, Button, Input, Dropdown, Message, Icon, TextArea, Form } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 
 import { getDismeApplications, getServiceByShortcut } from '../requests/ServiceAxios';
@@ -587,7 +587,7 @@ class VersionStatus extends React.Component {
             }
         }
 
-        if(this.state.getVersionsStarted === false) {
+        if (this.state.getVersionsStarted === false) {
             versionStatusSegment = null
         }
 
@@ -615,11 +615,27 @@ class VersionStatus extends React.Component {
                         <Segment attached='bottom' >
                             <Grid stackable>
                                 <Grid.Row>
-                                    <Grid.Column width={3} >
+                                    <Grid.Column width={6} >
                                         <strong>Disme Application</strong>
                                         {dismeApplicationsDropdown}
                                     </Grid.Column>
-                                    <Grid.Column width={2} >
+
+                                    <Grid.Column width={6} >
+                                        <strong>Environment</strong>
+                                        {environmentsDropdown}
+                                    </Grid.Column>
+                                    <Grid.Column verticalAlign="bottom" width={4} >
+                                        <Button
+                                            floated='right'
+                                            disabled={serviceDetails ? false : true}
+                                            onClick={() => this.getVersions()}
+                                            primary
+                                            content="Get Version Statuses" />
+                                    </Grid.Column>
+
+                                </Grid.Row>
+                                <Grid.Row >
+                                    <Grid.Column width={3} >
                                         <strong>Search for a service</strong>
                                         <Dropdown
                                             className="search"
@@ -636,28 +652,15 @@ class VersionStatus extends React.Component {
                                             search
                                         />
                                     </Grid.Column>
-                                    <Grid.Column width={11} >
+                                    <Grid.Column width={13} >
                                         <strong>List of services</strong>
-                                        <Input
-                                            onChange={this.handleInputOnChange}
-                                            fluid
-                                            value={this.state.inputProductsValues}
-                                            placeholder='Insert coma delimited service shortcuts or select from the dropdown on the left'
-                                        />
-                                    </Grid.Column>
-                                </Grid.Row>
-                                <Grid.Row >
-                                    <Grid.Column width={10} >
-                                        <strong>Environment</strong>
-                                        {environmentsDropdown}
-                                    </Grid.Column>
-                                    <Grid.Column verticalAlign="bottom" width={6} >
-                                        <Button
-                                            floated='right'
-                                            disabled={serviceDetails ? false : true}
-                                            onClick={() => this.getVersions()}
-                                            primary
-                                            content="Get Version Statuses" />
+                                        <Form>
+                                            <TextArea rows={1}
+                                                onChange={this.handleInputOnChange}
+                                                fluid
+                                                value={this.state.inputProductsValues}
+                                                placeholder='Insert coma delimited service shortcuts or select from the dropdown on the left' />
+                                        </Form>
                                     </Grid.Column>
                                 </Grid.Row>
                             </Grid>
