@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
-import { Grid, Header, Segment, Table, Button, Input, Dropdown, Message, Icon, TextArea, Form } from 'semantic-ui-react';
+import { Grid, Header, Segment, Table, Button, Dropdown, Message, Icon, TextArea, Form } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 
 import { getDismeApplications, getServiceByShortcut } from '../requests/ServiceAxios';
