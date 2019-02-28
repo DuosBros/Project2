@@ -72,7 +72,8 @@ export default class GenericTable extends Component {
             columnToggle: columns.filter(c => c.visibleByDefault === false).length > 0,
             showColumnToggles: false,
             visibleColumnsList: columns.filter(c => c.visibleByDefault).map(c => c.prop),
-            exportableColumnsList: columns.filter(c => c.exportableByDefault).map(c => c.prop)
+            exportableColumnsList: columns.filter(c => c.exportableByDefault).map(c => c.prop),
+            expandedRows: []
         }
 
         if (Array.isArray(this.state.data)) {
@@ -138,6 +139,7 @@ export default class GenericTable extends Component {
                 sortColumn: clickedColumn,
                 data: this.sort(data, clickedColumn, 'ascending'),
                 sortDirection: 'ascending',
+                expandedRows: []
             });
 
             return;
@@ -146,12 +148,16 @@ export default class GenericTable extends Component {
         sortDirection = sortDirection === 'ascending' ? 'descending' : 'ascending';
         this.setState({
             data: this.sort(data, sortColumn, sortDirection),
-            sortDirection
+            sortDirection,
+            expandedRows: []
         });
     }
 
-    handleClick(offset) {
-        this.setState({ offset });
+    handlePaginationChange(offset) {
+        this.setState({
+            offset,
+            expandedRows: []
+        });
     }
 
     handleColumnFilterChange = (e, { name, value }) => {
@@ -284,6 +290,18 @@ export default class GenericTable extends Component {
         }
     }
 
+    onExpandToggle = (e, { rowkey, rowdata }) => {
+        this.setState(function(prev) {
+            if(prev.expandedRows.indexOf(rowkey) === -1) {
+                this.onRowExpandToggle(true, rowkey, rowdata);
+                return { expandedRows: [...prev.expandedRows, rowkey] };
+            } else {
+                this.onRowExpandToggle(false, rowkey, rowdata);
+                return { expandedRows: prev.expandedRows.filter(e => e !== rowkey) }
+            }
+        });
+    }
+
     render() {
         const {
             columns,
@@ -304,12 +322,15 @@ export default class GenericTable extends Component {
             filters,
             offset,
             showTableHeaderFunctions,
-            showTableHeader
+            showTableHeader,
+            expandedRows
         } = this.state;
 
         const {
             compact
         } = this.props;
+
+        const expandable = this.isExpandable();
 
         let visibleColumns = columns.filter(c => visibleColumnsList.indexOf(c.prop) !== -1);
 
@@ -424,7 +445,7 @@ export default class GenericTable extends Component {
                                 offset={offset}
                                 limit={limit}
                                 total={filteredData.length}
-                                onClick={(e, props, o) => this.handleClick(o)}
+                                onClick={(e, props, o) => this.handlePaginationChange(o)}
                             />
                         </Table.HeaderCell>
                     </Table.Row>
@@ -463,6 +484,8 @@ export default class GenericTable extends Component {
         var tableBody = [],
             prevRow = {};
         renderData.map(data => this.transformDataRow(Object.assign({}, data))).forEach(data => {
+            let rowKey = this.getDataKey(data);
+            // check whether grouping header should be inserted
             let insertGroupingHeader = false;
             for (let gc of grouping) {
                 if (data[gc.prop] !== prevRow[gc.prop]) {
@@ -471,6 +494,7 @@ export default class GenericTable extends Component {
                 }
             }
 
+            // insert grouping header if needed
             if (insertGroupingHeader === true) {
                 let groupingHeaderKey = grouping.map(gc => data[gc.prop]),
                     groupingHeaderText = grouping.map(gc => data[gc.display ? gc.display : gc.prop]);
@@ -481,16 +505,28 @@ export default class GenericTable extends Component {
                 ));
             }
 
-            let cells = visibleColumns.map(c => {
+            let isRowExpanded = expandable === true && expandedRows.indexOf(rowKey) !== -1;
+
+            // create table cells from row data
+            let cells = visibleColumns.map((c, i) => {
+                let expandButton = null;
+                let cellData;
                 if (c.data === false) {
                     return null;
                 }
                 if (c.display) {
-                    return (<Table.Cell key={c.prop}>{data[c.display]}</Table.Cell>)
+                    cellData = data[c.display];
+                } else {
+                    cellData = data[c.prop];
                 }
-                return (<Table.Cell style={data[c.styleProp] ? data[c.styleProp] : null} key={c.prop}>{data[c.prop]}</Table.Cell>)
+                if (expandable === true && i === 0) {
+                    let expandName = isRowExpanded ? "minus" : "plus";
+                    expandButton = (<Icon link rowkey={rowKey} rowdata={data} name={expandName + " square outline"} onClick={this.onExpandToggle}/>);
+                }
+                return (<Table.Cell style={data[c.styleProp] ? data[c.styleProp] : null} key={c.prop}>{expandButton}{cellData}</Table.Cell>)
             });
 
+            // add cell for add/remove buttons if enabled
             if (isEdit) {
                 let editIcon;
                 if (isAdd) {
@@ -517,13 +553,25 @@ export default class GenericTable extends Component {
                 ));
             }
 
+            // build row from cells
             tableBody.push((
                 <Table.Row positive={isEdit && isAdd === true && toAdd.map(x => x.Id).indexOf(data.Id) > -1}
                     negative={isEdit && isAdd === false && toRemove.map(x => x.Id).indexOf(data.Id) > -1}
-                    key={"data-" + this.getDataKey(data)}>
+                    key={'data' + rowKey}>
                     {cells}
                 </Table.Row>
             ));
+
+            // insert details-row if row is in expanded state
+            if(isRowExpanded) {
+                tableBody.push((
+                    <Table.Row key={'expanded' + rowKey}>
+                        <Table.Cell width={16}>{this.renderExpandedRow(rowKey, data)}</Table.Cell>
+                    </Table.Row>
+                ));
+            }
+
+            // important for drawing grouping headers
             prevRow = data;
         });
 
@@ -695,6 +743,18 @@ export default class GenericTable extends Component {
     }
 
     renderCustomFilter() {
+        return null;
+    }
+
+    isExpandable() {
+        return false;
+    }
+
+    onRowExpandToggle(visible, rowKey, rowData) {
+        return;
+    }
+
+    renderExpandedRow(rowKey, rowData) {
         return null;
     }
 
