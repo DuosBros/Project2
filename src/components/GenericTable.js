@@ -566,7 +566,7 @@ export default class GenericTable extends Component {
             if(isRowExpanded) {
                 tableBody.push((
                     <Table.Row key={'expanded' + rowKey}>
-                        <Table.Cell width={16}>{this.renderExpandedRow(rowKey, data)}</Table.Cell>
+                        <Table.Cell colspan={visibleColumns.length}>{this.renderExpandedRow(rowKey, data)}</Table.Cell>
                     </Table.Row>
                 ));
             }
