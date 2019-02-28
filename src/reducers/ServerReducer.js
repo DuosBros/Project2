@@ -13,12 +13,19 @@ const ServerReducer = (state = serverInitialState, action) => {
     switch (action.type) {
         case GET_SERVER_DETAILS:
             if (action.payload.data) {
+                if (action.payload.data.OperatingSystem.search(new RegExp("linux", "i")) >= 0) {
+                    if (action.payload.data.VM) {
+                        if (action.payload.data.VM.Status === "Running") {
+                            action.payload.data.ServerStateID = 1
+                        }
+                    }
+                }
                 action.payload.data.ServerState = getServerState(action.payload.data.ServerStateID)
                 action.payload.data.Disme = getDismeState(action.payload.data.Disme)
 
-                if(action.payload.data.WindowsServices) {
+                if (action.payload.data.WindowsServices) {
                     action.payload.data.WindowsServices.map(x => {
-                        if(x.State !== "Running") {
+                        if (x.State !== "Running") {
                             x.StateAlert = { backgroundColor: errorColor }
                         }
 
