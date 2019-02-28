@@ -1,11 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { getLoadBalancerPoolStatus } from '../requests/LoadBalancerFarmsAxios';
+import { getLoadBalancerPoolStatusAction } from '../actions/LoadBalancerFarmsAction';
 import { Button } from 'semantic-ui-react';
 import GenericTable, { GenericTablePropTypes } from './GenericTable';
 import VsStatus from './VsStatus';
 import LBPoolStatus from './LBPoolStatus';
 
-export default class LoadBalancerFarmsTable extends GenericTable {
+class LoadBalancerFarmsTable extends GenericTable {
     static defaultProps = {
         ...GenericTable.defaultProps,
         defaultShowBETAPools: true
@@ -20,6 +24,7 @@ export default class LoadBalancerFarmsTable extends GenericTable {
         super(props);
         this.state.showBETAPools = props.defaultShowBETAPools;
     }
+
     getColumns() {
         return [
             {
@@ -85,6 +90,23 @@ export default class LoadBalancerFarmsTable extends GenericTable {
         ];
     }
 
+    isExpandable() {
+        return true;
+    }
+
+    onRowExpandToggle(visible, rowKey, rowData) {
+        // TODO: trigger pool status fetch
+        if(visible) {
+            console.log("onRowExpandToggle", { visible, rowKey, rowData });
+            getLoadBalancerPoolStatus(rowData.LbId, rowData.Pool);
+        }
+    }
+
+    renderExpandedRow(rowKey, rowData) {
+        // TODO: this.props.loadbalancerFarmsStore
+        return (<div>{rowKey}</div>);
+    }
+
     onComponentDidMount() {
         this.setState({ showBETAPools: false });
     }
@@ -122,3 +144,17 @@ export default class LoadBalancerFarmsTable extends GenericTable {
         );
     }
 }
+
+function mapStateToProps(state) {
+    return {
+        loadbalancerFarmsStore: state.LoadBalancerFarmsReducer
+    };
+}
+
+function mapDispatchToProps(dispatch) {
+    return bindActionCreators({
+        /* getLoadBalancerPoolStatusAction */
+    }, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoadBalancerFarmsTable);
