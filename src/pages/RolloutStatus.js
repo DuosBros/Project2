@@ -10,7 +10,7 @@ import {
 } from '../actions/RolloutStatusActions';
 
 import {
-    getHealthAction, getVersionAction, getServiceDetailsByShortcutsAction, removeServiceDetailsAction,
+    getServiceDetailsByShortcutsAction, removeServiceDetailsAction,
     removeAllServiceDetailsAction, getHealthsAction, getVersionsAction
 } from '../actions/ServiceActions';
 
@@ -128,7 +128,7 @@ class RolloutStatus extends React.Component {
         var shortcuts = filteredApps.map(x => x.services.map(y => y.Shortcut))[0];
 
         var joinedShortcuts = shortcuts.join(",")
-
+        this.props.history.push("/rolloutstatus?services=" + joinedShortcuts)
         this.setState({
             inputProductsValues: joinedShortcuts
         });
@@ -183,30 +183,23 @@ class RolloutStatus extends React.Component {
             })
     }
 
-    getHealthsAndVersions = (refreshTriggered, serviceId) => {
+    getHealthsAndVersions = (serviceId, refreshTriggered) => {
 
         if (refreshTriggered) {
             var health = {
                 success: true,
-                data: {
-                    serviceId: serviceId,
-                    refreshTriggered: refreshTriggered
-                }
+                serviceId: serviceId
+              
             }
 
-            this.props.getHealthAction(health)
+            this.props.getHealthsAction(health)
 
             var version = {
                 success: true,
-                data: {
-                    serviceId: serviceId,
-                    refreshTriggered: refreshTriggered
-                }
+                serviceId: serviceId,
             }
 
-            this.props.getVersionAction(version)
-
-            return;
+            this.props.getVersionsAction(version)
         }
 
         var cloned = Object.assign([], this.props.rolloutStatusStore.rolloutStatuses);
@@ -226,16 +219,14 @@ class RolloutStatus extends React.Component {
                     .then(res => {
                         var temp = {
                             success: true,
-                            data: {
-                                serviceId: serviceId,
-                                health: res.data
-                            }
+                            serviceId: serviceId,
+                            data: res.data
                         }
 
                         this.props.getHealthsAction(temp)
                     })
                     .catch(err => {
-                        this.props.getHealthsAction({ success: false, error: err })
+                        this.props.getHealthsAction({ success: false, error: err, serviceId: serviceId })
                     })
             }
 
@@ -246,16 +237,14 @@ class RolloutStatus extends React.Component {
                     .then(res => {
                         var temp = {
                             success: true,
-                            data: {
-                                serviceId: serviceId,
-                                version: res.data
-                            }
+                            serviceId: serviceId,
+                            data: res.data
                         }
 
                         this.props.getVersionsAction(temp)
                     })
                     .catch(err => {
-                        this.props.getVersionsAction({ success: false, error: err })
+                        this.props.getVersionsAction({ success: false, error: err, serviceId: serviceId })
                     })
             }
         });
@@ -356,7 +345,7 @@ class RolloutStatus extends React.Component {
             this.props.getRolloutStatusAction(object)
 
             sleep(1000).then(() => {
-                this.getRolloutStatusAndHandleResult(shortcut, serviceId);
+                this.getRolloutStatusAndHandleResult(shortcut, serviceId, false);
             })
         });
     }
@@ -393,11 +382,11 @@ class RolloutStatus extends React.Component {
 
         this.props.getRolloutStatusAction(object)
 
-        this.getRolloutStatusAndHandleResult(shortcut, serviceId);
+        this.getRolloutStatusAndHandleResult(shortcut, serviceId, true);
 
     }
 
-    getRolloutStatusAndHandleResult = (shortcut, serviceId) => {
+    getRolloutStatusAndHandleResult = (shortcut, serviceId, refreshTriggered) => {
         getRolloutStatus(shortcut)
             .then(res => {
 
@@ -421,7 +410,7 @@ class RolloutStatus extends React.Component {
                 this.props.getRolloutStatusAction(object)
             })
             .then(() => {
-                this.getHealthsAndVersions()
+                this.getHealthsAndVersions(serviceId, refreshTriggered)
             })
     }
 
@@ -534,14 +523,14 @@ class RolloutStatus extends React.Component {
                     }
                     else {
                         segmentContent = (
-                            <RolloutStatusTable getHealthsAndVersions={this.getHealthsAndVersions} showTableHeaderFunctions={false} showTableHeader={false} data={x.rolloutStatus} defaultLimitOverride={0} />
+                            <RolloutStatusTable showTableHeaderFunctions={false} showTableHeader={false} data={x.rolloutStatus} defaultLimitOverride={0} />
                         )
                     }
 
                 }
                 else {
                     segmentContent = (
-                        <RolloutStatusTable getHealthsAndVersions={this.getHealthsAndVersions} showTableHeaderFunctions={false} showTableHeader={false} data={x.rolloutStatus} defaultLimitOverride={0} />
+                        <RolloutStatusTable showTableHeaderFunctions={false} showTableHeader={false} data={x.rolloutStatus} defaultLimitOverride={0} />
                     )
                 }
             }

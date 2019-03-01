@@ -9,13 +9,6 @@ import { LBNAME_SUFFIX_WITH_IS, NWTOOLS_URL, LBNAME_SUFFIX } from '../appConfig'
 
 export default class RolloutStatusTable extends GenericTable {
 
-    handleRefresh = () => {
-
-        // loading again
-        this.props.getHealthsAndVersions(true)
-        this.props.getHealthsAndVersions(false)
-    }
-
     getGrouping() {
         return [
             "LbName",
@@ -104,7 +97,7 @@ export default class RolloutStatusTable extends GenericTable {
         if ('healthInfo' in data) {
             if (data.healthInfo) {
                 if(data.healthInfo.err) {
-                    data.Health = (<>{"Error occured - try again"} <Icon className="pointerCursor" onClick={() => this.handleRefresh(data)} name="refresh" /> </>)
+                    data.Health = "Error occured - try again"
                 }
                 else {
                     data.Health = Array.isArray(data.healthInfo) ?
@@ -135,7 +128,7 @@ export default class RolloutStatusTable extends GenericTable {
             if (data.versionInfo) {
                 
                 if(data.versionInfo.err) {
-                    data.Version = (<>{"Error occured - try again"} <Icon className="pointerCursor" onClick={() => this.handleRefresh(data)} name="refresh" /> </>)
+                    data.Version = "Error occured - try again"
                 }
                 else {
                     data.Version = data.versionInfo ? data.versionInfo : "No data"
