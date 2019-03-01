@@ -30,6 +30,11 @@ const ServiceReducer = (state = serviceInitialState, action) => {
         case GET_SERVICE_DETAILS:
             if (action.payload.success && action.payload.data.Servers) {
                 var mappedServers = action.payload.data.Servers.map(server => {
+                    if (server.IPs) {
+                        server.IPs = server.IPs.map((ip) => {
+                            return ip.IpAddress
+                        });
+                    }
                     server.ServerState = getServerState(server.ServerStateID)
                     server.Disme = getDismeState(server.Disme)
 

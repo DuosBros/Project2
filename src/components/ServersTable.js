@@ -8,7 +8,7 @@ import DismeStatus from './DismeStatus';
 
 export default class ServersTable extends GenericTable {
     getColumns() {
-        return [
+        let columns = [
             {
                 name: "Name",
                 prop: "ServerName",
@@ -47,6 +47,11 @@ export default class ServersTable extends GenericTable {
                 name: "Operating System",
                 prop: "OperatingSystem",
                 width: 4
+            },
+            {
+                name: "IP",
+                prop: "IPs",
+                width: 2
             },
             {
                 name: "Links",
@@ -99,9 +104,15 @@ export default class ServersTable extends GenericTable {
                 visibleByDefault: false
             }
         ];
+
+        if (this.props.shouldIPColumnRender === false) {
+            columns = columns.filter(x => x.name !== "IP")
+        }
+        return columns;
     }
 
     transformDataRow(data) {
+
         data.Links = (
             <>
                 {/* TODO: once loco provider server.DismeId, uncomment below code
@@ -135,7 +146,7 @@ export default class ServersTable extends GenericTable {
                 <Popup trigger={
                     <Button
                         as="a"
-                        href={Kibana.dashboardLinkBuilder("prod", "metricsWindows").addFilter("beat.hostname",data.ServerName).build()}
+                        href={Kibana.dashboardLinkBuilder("prod", "metricsWindows").addFilter("beat.hostname", data.ServerName).build()}
                         target="_blank"
                         rel="noopener noreferrer"
                         style={{ padding: '0.3em' }}
