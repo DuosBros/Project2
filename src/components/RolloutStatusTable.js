@@ -9,11 +9,11 @@ import { LBNAME_SUFFIX_WITH_IS, NWTOOLS_URL, LBNAME_SUFFIX } from '../appConfig'
 
 export default class RolloutStatusTable extends GenericTable {
 
-    handleRefresh = (data) => {
+    handleRefresh = () => {
 
         // loading again
-        this.props.getHealthAndVersion(true, data.healthInfo.ip, data.versionInfo.serverId, data.healthInfo.serviceId, data.healthInfo.serviceName)
-        this.props.getHealthAndVersion(false, data.healthInfo.ip, data.versionInfo.serverId, data.healthInfo.serviceId, data.healthInfo.serviceName)
+        this.props.getHealthsAndVersions(true)
+        this.props.getHealthsAndVersions(false)
     }
 
     getGrouping() {
@@ -107,10 +107,10 @@ export default class RolloutStatusTable extends GenericTable {
                     data.Health = (<>{"Error occured - try again"} <Icon className="pointerCursor" onClick={() => this.handleRefresh(data)} name="refresh" /> </>)
                 }
                 else {
-                    data.Health = Array.isArray(data.healthInfo.health) ?
+                    data.Health = Array.isArray(data.healthInfo) ?
                         <VanillaHealthStatus
                             url={NWTOOLS_URL + 'f5_curl.php?url=/Common/' + data.Pool + "&host=" + data.Ip}
-                            status={data.healthInfo.health}
+                            status={data.healthInfo}
                             size='small' />
                         : "No data"
                 }
@@ -138,7 +138,7 @@ export default class RolloutStatusTable extends GenericTable {
                     data.Version = (<>{"Error occured - try again"} <Icon className="pointerCursor" onClick={() => this.handleRefresh(data)} name="refresh" /> </>)
                 }
                 else {
-                    data.Version = data.versionInfo.version ? data.versionInfo.version.Version : "No data"
+                    data.Version = data.versionInfo ? data.versionInfo : "No data"
                 }
             }
             else {

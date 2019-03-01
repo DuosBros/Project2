@@ -11,10 +11,10 @@ import {
 
 import {
     getHealthAction, getVersionAction, getServiceDetailsByShortcutsAction, removeServiceDetailsAction,
-    removeAllServiceDetailsAction
+    removeAllServiceDetailsAction, getHealthsAction, getVersionsAction
 } from '../actions/ServiceActions';
 
-import { getDismeApplications, getServiceByShortcut, getHealth, getVersion } from '../requests/ServiceAxios';
+import { getDismeApplications, getServiceByShortcut, getHealths, getVersionsForRollout } from '../requests/ServiceAxios';
 import { Grid, Header, Segment, Dropdown, Table, Button, Message, Icon, TextArea, Form } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import DismeStatus from '../components/DismeStatus';
@@ -22,7 +22,7 @@ import { DISME_SERVICE_URL, DISME_SERVICE_PLACEHOLDER } from '../appConfig';
 import SimpleTable from '../components/SimpleTable';
 import { searchServiceShortcut } from '../requests/HeaderAxios';
 import { searchServiceShortcutAction } from '../actions/HeaderActions';
-import { debounce, sleep, groupBy, isValidIPv4 } from '../utils/HelperFunction';
+import { debounce, sleep, isValidIPv4, isNum } from '../utils/HelperFunction';
 import { getRolloutStatus } from '../requests/RolloutStatusAxios';
 import RolloutStatusTable from '../components/RolloutStatusTable';
 import ErrorMessage from '../components/ErrorMessage';
@@ -64,15 +64,17 @@ class RolloutStatus extends React.Component {
 
         document.addEventListener('keydown', this.handleDocumentKeyDown)
     }
+
     handleDocumentKeyDown = (e) => {
         const shortcutMatch = keyboardKey.getKey(e) === 'Enter';
         const hasModifier = e.altKey || e.ctrlKey || e.metaKey;
+        const bodyHasFocus = document.activeElement === document.body
 
         if (!shortcutMatch || hasModifier) {
             return;
         }
 
-        if (e.currentTarget.activeElement.tagName === "TEXTAREA") {
+        if (e.currentTarget.activeElement.tagName === "TEXTAREA" || bodyHasFocus) {
             this.getRolloutStatuses()
         }
 
@@ -181,40 +183,25 @@ class RolloutStatus extends React.Component {
             })
     }
 
-    getHealthsAndVersions = () => {
+    getHealthsAndVersions = (refreshTriggered, serviceId) => {
 
-        var cloned = Object.assign([], this.props.rolloutStatusStore.rolloutStatuses);
-
-        cloned.forEach(element => {
-            sleep(1000).then(() => {
-                if (element.rolloutStatus) {
-                    var grouped = groupBy(element.rolloutStatus, "Server")
-                    var keys = Object.keys(grouped);
-
-                    keys.forEach(e => {
-                        this.getHealthAndVersion(false, grouped[e][0].Ip, grouped[e][0].Serverid, element.serviceId, element.serviceName)
-                    })
-                }
-            });
-        });
-    }
-
-    getHealthAndVersion = (refreshTriggered, ip, serverId, serviceId, serviceName) => {
         if (refreshTriggered) {
             var health = {
-                serviceName: serviceName,
-                serviceId: serviceId,
-                ip: ip,
-                refreshTriggered: refreshTriggered
+                success: true,
+                data: {
+                    serviceId: serviceId,
+                    refreshTriggered: refreshTriggered
+                }
             }
 
             this.props.getHealthAction(health)
 
             var version = {
-                serviceName: serviceName,
-                serviceId: serviceId,
-                serverId: serverId,
-                refreshTriggered: refreshTriggered
+                success: true,
+                data: {
+                    serviceId: serviceId,
+                    refreshTriggered: refreshTriggered
+                }
             }
 
             this.props.getVersionAction(version)
@@ -222,63 +209,57 @@ class RolloutStatus extends React.Component {
             return;
         }
 
-        if (isValidIPv4(ip)) {
-            getHealth(serviceId, ip)
-                .then(res => {
-                    var o = {
-                        serviceName: serviceName,
-                        serviceId: serviceId,
-                        ip: ip,
-                        health: res.data
-                    }
+        var cloned = Object.assign([], this.props.rolloutStatusStore.rolloutStatuses);
 
-                    this.props.getHealthAction(o)
-                })
-                .catch((err) => {
-                    var o = {
-                        serviceName: serviceName,
-                        serviceId: serviceId,
-                        ip: ip,
-                        health: "",
-                        err: err
-                    }
 
-                    this.props.getHealthAction(o)
-                })
-        }
-        else {
-            var o = {
-                serviceName: serviceName,
-                serviceId: serviceId,
-                ip: ip,
-                health: ""
+        cloned.filter(x => x.isLoading === false).forEach(element => {
+
+            var serviceId = element.serviceId;
+
+            var ips = element.rolloutStatus.map(x => x.Ip).filter(x => isValidIPv4(x));
+            var serverIds = element.rolloutStatus.map(x => x.Serverid).filter(x => isNum(x) && x !== 0);
+
+            if (ips.length > 0) {
+                var getHealthsPayload = {}
+                getHealthsPayload.Ip = ips
+                getHealths(serviceId, getHealthsPayload)
+                    .then(res => {
+                        var temp = {
+                            success: true,
+                            data: {
+                                serviceId: serviceId,
+                                health: res.data
+                            }
+                        }
+
+                        this.props.getHealthsAction(temp)
+                    })
+                    .catch(err => {
+                        this.props.getHealthsAction({ success: false, error: err })
+                    })
             }
 
-            this.props.getHealthAction(o)
-        }
+            if (serverIds.length > 0) {
+                var getVersionsPayload = {}
+                getVersionsPayload.Id = serverIds
+                getVersionsForRollout(serviceId, getVersionsPayload)
+                    .then(res => {
+                        var temp = {
+                            success: true,
+                            data: {
+                                serviceId: serviceId,
+                                version: res.data
+                            }
+                        }
 
-        getVersion(serviceId, serverId)
-            .then(res => {
-                var o = {
-                    serviceName: serviceName,
-                    serviceId: serviceId,
-                    serverId: serverId,
-                    version: res.data
-                }
-
-                this.props.getVersionAction(o)
-            })
-            .catch((err) => {
-                var o = {
-                    serviceName: serviceName,
-                    serviceId: serviceId,
-                    serverId: serverId,
-                    version: "",
-                    err: err
-                }
-
-                this.props.getVersionAction(o)
-            })
+                        temp.data.version = [{"Shortcut":"casino","Environment":"PRODUCTION","Datacenter":"IXI","ServerName":"ATVP1WWCAS121","ServerGroup":"AT.PROD.A","ServerState":1,"Version":"0.0.0.542"},{"Shortcut":"casino","Environment":"PRODUCTION","Datacenter":"IXI","ServerName":"ATVP1WWCAS122","ServerGroup":"AT.PROD.B","ServerState":1,"Version":"0.0.0.542"},{"Shortcut":"casino","Environment":"PRODUCTION","Datacenter":"IXI","ServerName":"ATVP1WWCAS123","ServerGroup":"AT.PROD.A","ServerState":1,"Version":"0.0.0.542"},{"Shortcut":"casino","Environment":"PRODUCTION","Datacenter":"IXI","ServerName":"ATVP1WWCAS124","ServerGroup":"AT.PROD.B","ServerState":1,"Version":"0.0.0.542"},{"Shortcut":"casino","Environment":"PRODUCTION","Datacenter":"IXI","ServerName":"ATVP1WWCAS121","ServerGroup":"AT.PROD.A","ServerState":1,"Version":"0.0.0.542"},{"Shortcut":"casino","Environment":"PRODUCTION","Datacenter":"IXI","ServerName":"ATVP1WWCAS122","ServerGroup":"AT.PROD.B","ServerState":1,"Version":"0.0.0.542"},{"Shortcut":"casino","Environment":"PRODUCTION","Datacenter":"IXI","ServerName":"ATVP1WWCAS123","ServerGroup":"AT.PROD.A","ServerState":1,"Version":"0.0.0.542"},{"Shortcut":"casino","Environment":"PRODUCTION","Datacenter":"IXI","ServerName":"ATVP1WWCAS124","ServerGroup":"AT.PROD.B","ServerState":1,"Version":"0.0.0.542"},{"Shortcut":"casino","Environment":"PRODUCTION","Datacenter":"TSI","ServerName":"ATVP1WWCAS221","ServerGroup":"AT.PROD.A","ServerState":1,"Version":"0.0.0.542"},{"Shortcut":"casino","Environment":"PRODUCTION","Datacenter":"TSI","ServerName":"ATVP1WWCAS222","ServerGroup":"AT.PROD.B","ServerState":1,"Version":"0.0.0.542"},{"Shortcut":"casino","Environment":"PRODUCTION","Datacenter":"TSI","ServerName":"ATVP1WWCAS223","ServerGroup":"AT.PROD.A","ServerState":1,"Version":"0.0.0.542"},{"Shortcut":"casino","Environment":"PRODUCTION","Datacenter":"TSI","ServerName":"ATVP1WWCAS224","ServerGroup":"AT.PROD.B","ServerState":1,"Version":"0.0.0.542"},{"Shortcut":"casino","Environment":"PRODUCTION","Datacenter":"TSI","ServerName":"ATVP1WWCAS221","ServerGroup":"AT.PROD.A","ServerState":1,"Version":"0.0.0.542"},{"Shortcut":"casino","Environment":"PRODUCTION","Datacenter":"TSI","ServerName":"ATVP1WWCAS222","ServerGroup":"AT.PROD.B","ServerState":1,"Version":"0.0.0.542"},{"Shortcut":"casino","Environment":"PRODUCTION","Datacenter":"TSI","ServerName":"ATVP1WWCAS223","ServerGroup":"AT.PROD.A","ServerState":1,"Version":"0.0.0.542"},{"Shortcut":"casino","Environment":"PRODUCTION","Datacenter":"TSI","ServerName":"ATVP1WWCAS224","ServerGroup":"AT.PROD.B","ServerState":1,"Version":"0.0.0.542"}]
+                        this.props.getVersionsAction(temp)
+                    })
+                    .catch(err => {
+                        this.props.getVersionsAction({ success: false, error: err })
+                    })
+            }
+        });
     }
 
     handleSearchServiceShortcut(value) {
@@ -376,31 +357,7 @@ class RolloutStatus extends React.Component {
             this.props.getRolloutStatusAction(object)
 
             sleep(1000).then(() => {
-                getRolloutStatus(shortcut)
-                    .then(res => {
-
-                        var object = {
-                            serviceName: shortcut,
-                            serviceId: serviceId,
-                            rolloutStatus: res.data,
-                            isLoading: false
-                        }
-                        this.props.getRolloutStatusAction(object)
-                    })
-                    .catch(err => {
-                        var object = {
-                            serviceName: shortcut,
-                            serviceId: serviceId,
-                            rolloutStatus: [],
-                            err: err,
-                            isLoading: false
-                        }
-                        this.props.getRolloutStatusAction(object)
-                    })
-                    .then(() => {
-                        this.getHealthsAndVersions()
-                    })
-
+                this.getRolloutStatusAndHandleResult(shortcut, serviceId);
             })
         });
     }
@@ -437,6 +394,11 @@ class RolloutStatus extends React.Component {
 
         this.props.getRolloutStatusAction(object)
 
+        this.getRolloutStatusAndHandleResult(shortcut, serviceId);
+
+    }
+
+    getRolloutStatusAndHandleResult = (shortcut, serviceId) => {
         getRolloutStatus(shortcut)
             .then(res => {
 
@@ -446,7 +408,7 @@ class RolloutStatus extends React.Component {
                     rolloutStatus: res.data,
                     isLoading: false
                 }
-                this.getHealthsAndVersions()
+
                 this.props.getRolloutStatusAction(object)
             })
             .catch(err => {
@@ -458,6 +420,9 @@ class RolloutStatus extends React.Component {
                     isLoading: false
                 }
                 this.props.getRolloutStatusAction(object)
+            })
+            .then(() => {
+                this.getHealthsAndVersions()
             })
     }
 
@@ -570,14 +535,14 @@ class RolloutStatus extends React.Component {
                     }
                     else {
                         segmentContent = (
-                            <RolloutStatusTable getHealthAndVersion={this.getHealthAndVersion} showTableHeaderFunctions={false} showTableHeader={false} data={x.rolloutStatus} defaultLimitOverride={0} />
+                            <RolloutStatusTable getHealthsAndVersions={this.getHealthsAndVersions} showTableHeaderFunctions={false} showTableHeader={false} data={x.rolloutStatus} defaultLimitOverride={0} />
                         )
                     }
 
                 }
                 else {
                     segmentContent = (
-                        <RolloutStatusTable getHealthAndVersion={this.getHealthAndVersion} showTableHeaderFunctions={false} showTableHeader={false} data={x.rolloutStatus} defaultLimitOverride={0} />
+                        <RolloutStatusTable getHealthsAndVersions={this.getHealthsAndVersions} showTableHeaderFunctions={false} showTableHeader={false} data={x.rolloutStatus} defaultLimitOverride={0} />
                     )
                 }
             }
@@ -768,9 +733,9 @@ function mapDispatchToProps(dispatch) {
         removeRolloutStatusAction,
         getRolloutStatusAction,
         deleteAllRoloutStatusesAction,
-        getHealthAction,
-        getVersionAction,
-        removeAllServiceDetailsAction
+        removeAllServiceDetailsAction,
+        getHealthsAction,
+        getVersionsAction
     }, dispatch);
 }
 

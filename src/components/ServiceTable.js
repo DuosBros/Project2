@@ -48,6 +48,11 @@ export default class ServiceTable extends GenericTable {
                 width: 1,
             },
             {
+                name: "Framework",
+                prop: "Framework",
+                width: 1,
+            },
+            {
                 name: "Is In IXI [#]",
                 prop: "isIXIAndServerCount",
                 width: 1,
