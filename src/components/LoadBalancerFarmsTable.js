@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { getLoadBalancerPoolStatus } from '../requests/LoadBalancerFarmsAxios';
-import { getLoadBalancerPoolStatusAction } from '../actions/LoadBalancerFarmsAction';
-import { Button } from 'semantic-ui-react';
+import { setLoadBalancerPoolStatusAction, setLoadBalancerPoolStatusLoadingAction } from '../actions/LoadBalancerFarmsAction';
+import { Dimmer, Loader, Button, Icon } from 'semantic-ui-react';
 import GenericTable, { GenericTablePropTypes } from './GenericTable';
 import VsStatus from './VsStatus';
 import LBPoolStatus from './LBPoolStatus';
@@ -97,14 +98,65 @@ class LoadBalancerFarmsTable extends GenericTable {
     onRowExpandToggle(visible, rowKey, rowData) {
         // TODO: trigger pool status fetch
         if(visible) {
-            console.log("onRowExpandToggle", { visible, rowKey, rowData });
-            getLoadBalancerPoolStatus(rowData.LbId, rowData.Pool);
+            this.props.setLoadBalancerPoolStatusLoadingAction(rowData.LbId, rowData.Pool, true)
+            getLoadBalancerPoolStatus(rowData.LbId, rowData.Pool)
+            .then(response => this.props.setLoadBalancerPoolStatusAction(rowData.LbId, rowData.Pool, response));
         }
     }
 
     renderExpandedRow(rowKey, rowData) {
-        // TODO: this.props.loadbalancerFarmsStore
-        return (<div>{rowKey}</div>);
+        const poolStatus = this.props.loadbalancerFarmsStore.loadBalancerPoolStatus;
+        if(!poolStatus) {
+            return (<p>no load balancer data present</p>);
+        }
+
+        const lb = poolStatus[rowData.LbId];
+        if(!lb) {
+            return (<p>no pool status data present</p>);
+        }
+
+        var pool = lb[rowData.Pool];
+        if(!pool) {
+            return (<p>pool status unknown</p>);
+        }
+
+        let content = null;
+        if(pool.success === true) {
+            content = this.renderPools(pool);
+        } else {
+            if(!pool.data && pool.loading) {
+                content = "loading..."
+            } else {
+                let msg = "unknown error";
+                if(pool.error) {
+                    msg = pool.error;
+                }
+                content = (<p>Error loading pool status: {msg}</p>);
+            }
+        }
+
+        return (
+            <div style={{ position: "relative" }}>
+                <Dimmer active={pool.loading === true} size="mini" inverted>
+                    <Loader />
+                </Dimmer>
+                {content}
+            </div>
+        );
+    }
+
+    static POOL_STATUS_MAP = {
+        "enabled": "green",
+        "disabled": "red"
+    }
+
+    renderPools(pool) {
+        let res = pool.map(p => {
+            let color = LoadBalancerFarmsTable.POOL_STATUS_MAP.hasOwnProperty(p.Enabled) ? LoadBalancerFarmsTable.POOL_STATUS_MAP[p.Enabled] : "black";
+            let ipPort = p.Ip + ":" + p.Port;
+            return (<li key={ipPort}><Icon color={color} name="circle"/> {ipPort} | <Link to={'/server/' + p.Serverid}>{p.Server}</Link> | {p.Description}</li>);
+        });
+        return (<ul>{res}</ul>);
     }
 
     onComponentDidMount() {
@@ -153,7 +205,8 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
-        /* getLoadBalancerPoolStatusAction */
+        setLoadBalancerPoolStatusAction,
+        setLoadBalancerPoolStatusLoadingAction
     }, dispatch);
 }
 

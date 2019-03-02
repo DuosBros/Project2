@@ -1,4 +1,8 @@
-import { GET_LOADBALANCER_FARMS, GET_LOADBALANCER_POOL_STATUS } from "../constants/LoadBalancerFarmsConstants";
+import {
+    GET_LOADBALANCER_FARMS,
+    SET_LOADBALANCER_POOL_STATUS,
+    SET_LOADBALANCER_POOL_STATUS_LOADING
+} from "../constants/LoadBalancerFarmsConstants";
 
 export function getAllLoadBalancerFarmsAction(payload) {
     return {
@@ -7,9 +11,16 @@ export function getAllLoadBalancerFarmsAction(payload) {
     }
 }
 
-export function getLoadBalancerPoolStatusAction(payload) {
+export function setLoadBalancerPoolStatusAction(lbId, pool, response) {
     return {
-        payload,
-        type: GET_LOADBALANCER_POOL_STATUS
+        payload: { lbId, pool, response },
+        type: SET_LOADBALANCER_POOL_STATUS
+    }
+}
+
+export function setLoadBalancerPoolStatusLoadingAction(lbId, pool, loading) {
+    return {
+        payload: { lbId, pool, loading },
+        type: SET_LOADBALANCER_POOL_STATUS_LOADING
     }
 }
