@@ -448,23 +448,17 @@ export default class GenericTable extends Component {
         if (defaultLimit && filteredData.length > limit) {
             renderData = filteredData.slice(offset, offset + limit)
             tableFooter = (
-                <Table.Footer fullWidth>
-                    <Table.Row>
-                        <Table.HeaderCell colSpan='16'>
-                            <Pagination
-                                className="pagination"
-                                compact
-                                reduced
-                                size="small"
-                                floated="right"
-                                offset={offset}
-                                limit={limit}
-                                total={filteredData.length}
-                                onClick={this.handlePaginationChange}
-                            />
-                        </Table.HeaderCell>
-                    </Table.Row>
-                </Table.Footer>
+                <Pagination
+                    className="pagination"
+                    compact
+                    reduced
+                    size="small"
+                    floated="right"
+                    offset={offset}
+                    limit={limit}
+                    total={filteredData.length}
+                    onClick={this.handlePaginationChange}
+                />
             )
         }
         else {
@@ -743,16 +737,18 @@ export default class GenericTable extends Component {
         return (
             <div className="generic table">
                 {tableFunctionsGrid}
-                <Table compact={compact} selectable sortable celled basic='very'>
-                    <Table.Header>
-                        <Table.Row>{headerCells}</Table.Row>
-                    </Table.Header>
-                    {filterColumnsRow}
-                    <Table.Body>
-                        {tableBody}
-                    </Table.Body>
-                    {tableFooter}
-                </Table>
+                <div className="scroll-wrapper">
+                    <Table compact={compact} selectable sortable celled basic='very'>
+                        <Table.Header>
+                            <Table.Row>{headerCells}</Table.Row>
+                        </Table.Header>
+                        {filterColumnsRow}
+                        <Table.Body>
+                            {tableBody}
+                        </Table.Body>
+                    </Table>
+                </div>
+                {tableFooter}
             </div >
         );
     }

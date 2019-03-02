@@ -222,7 +222,7 @@ div.content.noimg {
 }
 
 div.generic.table {
-    overflow: auto;
+    overflow: hidden;
 
     .RecordsPerPage > input {
         width: 4.5em;
@@ -230,6 +230,11 @@ div.generic.table {
 
     .column.toggles .label {
         cursor: pointer;
+    }
+
+    .scroll-wrapper {
+        overflow: auto;
+        margin: 0 0 0.8em;
     }
 
     table {
