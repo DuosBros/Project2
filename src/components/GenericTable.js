@@ -397,7 +397,16 @@ export default class GenericTable extends Component {
                 />
             );
         });
-        if (isEdit) {
+        if(expandable) {
+            headerCells.unshift((
+                <Table.HeaderCell
+                    collapsing
+                    key="expand"
+                    disabled
+                />
+            ));
+        }
+        if(isEdit) {
             headerCells.push((
                 <Table.HeaderCell
                     collapsing={false}
@@ -514,8 +523,7 @@ export default class GenericTable extends Component {
             let isRowExpanded = expandable === true && expandedRows.indexOf(rowKey) !== -1;
 
             // create table cells from row data
-            let cells = visibleColumns.map((c, i) => {
-                let expandButton = null;
+            let cells = visibleColumns.map(c => {
                 let cellData;
                 if (c.data === false) {
                     return null;
@@ -525,12 +533,19 @@ export default class GenericTable extends Component {
                 } else {
                     cellData = data[c.prop];
                 }
-                if (expandable === true && i === 0) {
-                    let expandName = isRowExpanded ? "minus" : "plus";
-                    expandButton = (<Icon link rowkey={rowKey} rowdata={data} name={expandName + " square outline"} onClick={this.onExpandToggle}/>);
-                }
-                return (<Table.Cell style={data[c.styleProp] ? data[c.styleProp] : null} key={c.prop}>{expandButton}{cellData}</Table.Cell>)
+                return (<Table.Cell style={data[c.styleProp] ? data[c.styleProp] : null} key={c.prop}>{cellData}</Table.Cell>)
             });
+            if (expandable === true) {
+                let expandName = isRowExpanded ? "minus" : "plus";
+                cells.unshift((
+                    <Table.Cell key="expand" collapsing>
+                        <Icon link
+                            rowkey={rowKey}
+                            rowdata={data}
+                            name={expandName + " square outline"}
+                            onClick={this.onExpandToggle}/>
+                    </Table.Cell>));
+            }
 
             // add cell for add/remove buttons if enabled
             if (isEdit) {
