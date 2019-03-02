@@ -152,7 +152,7 @@ export default class GenericTable extends Component {
         });
     }
 
-    handlePaginationChange(offset) {
+    handlePaginationChange = (e, props, offset) => {
         this.setState({
             offset,
             expandedRows: []
@@ -309,6 +309,10 @@ export default class GenericTable extends Component {
         });
     }
 
+    onTableHeaderToggle = () => {
+        this.setState(prev => ({ showTableHeaderFunctions: !prev.showTableHeaderFunctions }));
+    }
+
     render() {
         const {
             columns,
@@ -447,7 +451,7 @@ export default class GenericTable extends Component {
                                 offset={offset}
                                 limit={limit}
                                 total={filteredData.length}
-                                onClick={(e, props, o) => this.handlePaginationChange(o)}
+                                onClick={this.handlePaginationChange}
                             />
                         </Table.HeaderCell>
                     </Table.Row>
@@ -702,7 +706,7 @@ export default class GenericTable extends Component {
                         <Grid.Row>
                             <Grid.Column width={16}>
                                 <Popup trigger={
-                                    <Button compact onClick={() => this.setState({ showTableHeaderFunctions: !showTableHeaderFunctions })} icon floated="right">
+                                    <Button compact onClick={this.onTableHeaderToggle} icon floated="right">
                                         <Icon name="setting"></Icon>
                                     </Button>
                                 } content='Show table settings' inverted />
