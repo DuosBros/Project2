@@ -438,6 +438,7 @@ export default class GenericTable extends Component {
                     <Table.Row>
                         <Table.HeaderCell colSpan='16'>
                             <Pagination
+                                className="pagination"
                                 compact
                                 reduced
                                 size="small"
