@@ -227,17 +227,26 @@ div.generic.table {
     .RecordsPerPage > input {
         width: 4.5em;
     }
+
     .column.toggles .label {
         cursor: pointer;
     }
-    ul {
-        margin: 0;
-        list-style: none;
-        padding: 0 0 0 1em;
+
+    table {
+        td {
+            white-space: nowrap;
+        }
+        ul {
+            margin: 0;
+            list-style: none;
+            padding: 0 0 0 1em;
+        }
+
+        tfoot th {
+            padding: 0.8em 0;
+        }
     }
-    tfoot th {
-        padding: 0.8em 0;
-    }
+
     .pagination {
         position: sticky;
         right: 0;
