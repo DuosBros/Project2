@@ -751,11 +751,11 @@ export default class GenericTable extends Component {
         return false;
     }
 
-    onRowExpandToggle(visible, rowKey, rowData) {
+    onRowExpandToggle(visible, rowKey, rowData) { // eslint-disable-line no-unused-vars
         return;
     }
 
-    renderExpandedRow(rowKey, rowData) {
+    renderExpandedRow(rowKey, rowData) { // eslint-disable-line no-unused-vars
         return null;
     }
 
