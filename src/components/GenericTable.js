@@ -486,6 +486,10 @@ export default class GenericTable extends Component {
                     </Table.HeaderCell>
                 );
             })
+            if(expandable) {
+                headerFilterCells.unshift((<Table.HeaderCell collapsing key="expand">
+                </Table.HeaderCell>))
+            }
             filterColumnsRow = (
                 <Table.Header>
                     <Table.Row>{headerFilterCells}</Table.Row>
