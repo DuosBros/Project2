@@ -11,7 +11,7 @@ const DEFAULT_COLUMN_PROPS = {
     sortable: true,
     searchable: true,
     visibleByDefault: true,
-    exportableByDefault: true
+    exportable: true
 }
 
 export const GenericTablePropTypes = {
@@ -72,7 +72,6 @@ export default class GenericTable extends Component {
             columnToggle: columns.filter(c => c.visibleByDefault === false).length > 0,
             showColumnToggles: false,
             visibleColumnsList: columns.filter(c => c.visibleByDefault).map(c => c.prop),
-            exportableColumnsList: columns.filter(c => c.exportableByDefault).map(c => c.prop),
             expandedRows: []
         }
 
@@ -267,7 +266,15 @@ export default class GenericTable extends Component {
         return a.toString().localeCompare(b.toString());
     }
 
-    handleJSONExport = (data, type) => {
+    handleExport = (e, { value: type }) => {
+        const { data, columns, visibleColumnsList } = this.state;
+
+        // only export visible and exportable columns
+        let columnsToExport = columns
+            .filter(c => c.exportable === true && visibleColumnsList.indexOf(c.prop) !== -1)
+            .map(c => { return { label: c.name, key: c.prop } });
+        let dataToExport = pick(data, columnsToExport.map(x => x.key));
+
         if (type === "txt" || type === "json") {
             const fileName = new Date().toISOString() + "." + type
 
@@ -275,7 +282,7 @@ export default class GenericTable extends Component {
             document.body.appendChild(a);
             a.style = "display: none";
 
-            var json = JSON.stringify(data),
+            var json = JSON.stringify(dataToExport),
                 blob = new Blob([json], { type: "octet/stream" }),
                 url = window.URL.createObjectURL(blob);
             a.href = url;
@@ -286,7 +293,7 @@ export default class GenericTable extends Component {
         else {
             const fileName = new Date().toISOString()
 
-            ExportFromJSON({ data: data, fileName: fileName, exportType: type })
+            ExportFromJSON({ data: dataToExport, fileName: fileName, exportType: type })
         }
     }
 
@@ -307,7 +314,6 @@ export default class GenericTable extends Component {
             columns,
             grouping,
             visibleColumnsList,
-            exportableColumnsList,
             sortColumn,
             sortDirection,
             multiSearchInput,
@@ -352,11 +358,6 @@ export default class GenericTable extends Component {
             return null;
         }
 
-        let exportableColumns = columns.filter(c => exportableColumnsList.indexOf(c.prop) !== -1);
-
-        // not exporting columns like Links (which contains buttons)
-        let columnsToExport = visibleColumns.filter(x => exportableColumns.includes(x)).map(x => { return { label: x.name, key: x.prop } });
-        let dataToExport = pick(data, columnsToExport.map(x => x.key))
         var renderData, tableFooter, filteredData,
             filterColumnsRow, toggleColumnsRow,
             columnToggleButton,
@@ -635,19 +636,23 @@ export default class GenericTable extends Component {
                                 <Dropdown icon={<Icon className="iconMargin" name='share' />} item text='Export'>
                                     <Dropdown.Menu>
                                         <Dropdown.Item
-                                            onClick={() => this.handleJSONExport(dataToExport, ExportFromJSON.types.txt)}
+                                            onClick={this.handleExport}
+                                            value={ExportFromJSON.types.txt}
                                             icon={<Icon name='file text outline' />}
                                             text='Export to TXT' />
                                         <Dropdown.Item
-                                            onClick={() => this.handleJSONExport(dataToExport, ExportFromJSON.types.json)}
+                                            onClick={this.handleExport}
+                                            value={ExportFromJSON.types.json}
                                             icon={<Icon name='file text outline' />}
                                             text='Export to JSON' />
                                         <Dropdown.Item
-                                            onClick={() => this.handleJSONExport(dataToExport, ExportFromJSON.types.csv)}
+                                            onClick={this.handleExport}
+                                            value={ExportFromJSON.types.csv}
                                             icon={<Icon name='file text outline' />}
                                             text='Export to CSV' />
                                         <Dropdown.Item
-                                            onClick={() => this.handleJSONExport(dataToExport, ExportFromJSON.types.xls)}
+                                            onClick={this.handleExport}
+                                            value={ExportFromJSON.types.xls}
                                             icon={<Icon name='file excel' />}
                                             text='Export to XLS' />
                                     </Dropdown.Menu>
