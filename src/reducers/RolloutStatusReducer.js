@@ -2,7 +2,8 @@ import {
     GET_DISME_APPLICATIONS, REMOVE_ROLLOUT_STATUS,
     GET_ROLLOUT_STATUS, DELETE_ALL_ROLLOUT_STATUSES
 } from '../constants/RolloutStatusConstants';
-import { GET_HEALTH, GET_VERSION } from '../constants/ServiceConstants';
+import { GET_HEALTHS } from '../constants/ServiceConstants';
+import { GET_VERSIONS } from '../constants/VersionStatusConstants';
 
 const initialState = {
     dismeApplications: { success: true, data: [] },
@@ -47,10 +48,8 @@ const RolloutStatusReducer = (state = initialState, action) => {
             return copy;
         case DELETE_ALL_ROLLOUT_STATUSES:
             return Object.assign({}, state, { rolloutStatuses: [] })
-        // this doesn't have standard error handling
-        case GET_HEALTH:
+        case GET_HEALTHS:
             copy = Object.assign([], state.rolloutStatuses);
-
             index = copy.findIndex(x => x.serviceId === action.payload.serviceId);
 
             if (index < 0) {
@@ -58,15 +57,15 @@ const RolloutStatusReducer = (state = initialState, action) => {
             }
 
             mappedRolloutStatuses = copy[index].rolloutStatus.map(x => {
-                if (x.Ip === action.payload.ip) {
-                    if (action.payload.refreshTriggered) {
-                        if ('healthInfo' in x) {
-                            delete x.healthInfo
-                        }
+                if (action.payload.success && action.payload.data) {
+                    var serverHealth = action.payload.data.filter(y => y[2] === x.Ip)
+                    if (serverHealth !== null) {
+                        x.healthInfo = serverHealth[0];
                     }
-                    else {
-                        x.healthInfo = action.payload;
-                    }
+                }
+                else {
+                    x.healthInfo = {}
+                    x.healthInfo.err = action.payload.error
                 }
 
                 return x;
@@ -74,36 +73,35 @@ const RolloutStatusReducer = (state = initialState, action) => {
 
             copy[index].rolloutStatus = mappedRolloutStatuses
 
-            return Object.assign({}, state, { rolloutStatuses: copy })
-        // this doesn't have standard error handling
-        case GET_VERSION:
-            copy = Object.assign([], state.rolloutStatuses);
 
+
+            return Object.assign({}, state, { rolloutStatuses: copy })
+        case GET_VERSIONS:
+            copy = Object.assign([], state.rolloutStatuses);
             index = copy.findIndex(x => x.serviceId === action.payload.serviceId);
 
             if (index < 0) {
-                throw new Error("Could not find")
+                throw new Error("Could not find");
             }
 
             mappedRolloutStatuses = copy[index].rolloutStatus.map(x => {
-                if (x.Serverid === action.payload.serverId) {
-                    if (action.payload.refreshTriggered) {
-                        if ('versionInfo' in x) {
-                            delete x.versionInfo
-                        }
-                    }
-                    else {
-                        x.versionInfo = action.payload;
+                if (action.payload.success && action.payload.data) {
+                    var versionObject = action.payload.data.filter(y => y.ServerName === x.Server)
+                    if (versionObject !== null) {
+                        x.versionInfo = versionObject[0].Version;
                     }
                 }
-
+                else {
+                    if (action.payload.error) {
+                        x.versionInfo = {}
+                        x.versionInfo.err = action.payload.error
+                    }
+                }
                 return x;
             })
 
             copy[index].rolloutStatus = mappedRolloutStatuses
-
             return Object.assign({}, state, { rolloutStatuses: copy })
-
         default:
             return state;
     }

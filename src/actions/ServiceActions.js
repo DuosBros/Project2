@@ -1,7 +1,8 @@
 import {
-    GET_SERVICE_DETAILS, TOGGLE_LOADBALANCERFARMS_TASKS, GET_SERVICES, GET_HEALTH, GET_VERSION,
-    GET_SERVICE_DETAILS_BY_SHORTCUTS, REMOVE_SERVICE_DETAILS, REMOVE_ALL_SERVICE_DETAILS, GET_HIGHAVAILABILITIES
+    GET_SERVICE_DETAILS, TOGGLE_LOADBALANCERFARMS_TASKS, GET_SERVICES,
+    GET_SERVICE_DETAILS_BY_SHORTCUTS, REMOVE_SERVICE_DETAILS, REMOVE_ALL_SERVICE_DETAILS, GET_HIGHAVAILABILITIES, GET_HEALTHS
 } from '../constants/ServiceConstants';
+import { GET_VERSIONS } from '../constants/VersionStatusConstants';
 
 export function removeAllServiceDetailsAction() {
     return {
@@ -43,17 +44,17 @@ export function getServicesAction(payload) {
     }
 }
 
-export function getHealthAction(payload) {
+export function getHealthsAction(payload) {
     return {
         payload,
-        type: GET_HEALTH
+        type: GET_HEALTHS
     }
 }
 
-export function getVersionAction(payload) {
+export function getVersionsAction(payload) {
     return {
         payload,
-        type: GET_VERSION
+        type: GET_VERSIONS
     }
 }
 

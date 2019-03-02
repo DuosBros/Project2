@@ -655,7 +655,9 @@ class VersionStatus extends React.Component {
                                     <Grid.Column width={13} >
                                         <strong>List of services</strong>
                                         <Form>
-                                            <TextArea rows={1}
+                                            <TextArea
+                                                autoHeight
+                                                rows={1}
                                                 onChange={this.handleInputOnChange}
                                                 fluid
                                                 value={this.state.inputProductsValues}

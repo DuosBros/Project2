@@ -77,7 +77,7 @@ class Servers extends React.Component {
                             Servers
                             </Header>
                         <Segment attached='bottom' >
-                            <ServersTable defaultLimitOverride={50} data={this.props.serverStore.servers.data} compact="very" />
+                            <ServersTable defaultLimitOverride={50} data={this.props.serverStore.servers.data} compact="very" shouldIPColumnRender={false} />
                         </Segment>
                     </Grid.Column>
                 </Grid.Row>

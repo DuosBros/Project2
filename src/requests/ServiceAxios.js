@@ -17,12 +17,12 @@ export function getServices() {
     return axios.get(LOCO_API + 'service');
 }
 
-export function getHealth(serviceId, IP) {
-    return axios.get(LOCO_API + 'service/' + serviceId + '/ip/' + IP + '/health')
+export function getHealths(serviceId, ipsPayload) {
+    return axios.post(LOCO_API + 'service/' + serviceId + '/health', ipsPayload)
 }
 
-export function getVersion(serviceId, serverId) {
-    return axios.get(LOCO_API + 'service/' + serviceId + '/server/' + serverId + '/version')
+export function getVersionsForRollout(serviceId, serverIdsPayload) {
+    return axios.post(LOCO_API + 'service/' + serviceId + '/version', serverIdsPayload)
 }
 
 export function getHighAvailabilities() {
