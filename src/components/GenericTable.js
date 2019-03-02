@@ -713,21 +713,19 @@ export default class GenericTable extends Component {
         }
 
         return (
-            <>
+            <div className="generic table">
                 {tableFunctionsGrid}
-                < div className="generic table" >
-                    <Table compact={compact} selectable sortable celled basic='very'>
-                        <Table.Header>
-                            <Table.Row>{headerCells}</Table.Row>
-                        </Table.Header>
-                        {filterColumnsRow}
-                        <Table.Body>
-                            {tableBody}
-                        </Table.Body>
-                        {tableFooter}
-                    </Table>
-                </div >
-            </>
+                <Table compact={compact} selectable sortable celled basic='very'>
+                    <Table.Header>
+                        <Table.Row>{headerCells}</Table.Row>
+                    </Table.Header>
+                    {filterColumnsRow}
+                    <Table.Body>
+                        {tableBody}
+                    </Table.Body>
+                    {tableFooter}
+                </Table>
+            </div >
         );
     }
 
