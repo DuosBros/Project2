@@ -13,23 +13,6 @@ export default class AppRoutes extends React.Component {
         this.store = createStore(CommonReducer);
 
         axios.defaults.headers.post['Content-Type'] = 'application/json';
-        // axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
-        // fetch("http://localhost:24298/api/auth/", {
-        //     mode: "cors",
-        //     credentials: "include"
-        // })
-    }
-
-    componentWillMount() {
-        // var current = window.location.href
-
-        // if(current.includes('patients') || current.includes('graphs')) {
-
-        // }
-        // else {
-        //     browserHistory.push('/login')
-        // }
-
     }
 
     render() {
