@@ -313,6 +313,161 @@ export default class GenericTable extends Component {
         this.setState(prev => ({ showTableHeaderFunctions: !prev.showTableHeaderFunctions }));
     }
 
+    renderTableFunctions(numRecords) {
+        const {
+            columns,
+            columnToggle,
+            defaultLimit,
+            limit,
+            limitInput,
+            limitInputValid,
+            multiSearchInput,
+            showColumnFilters,
+            showColumnToggles,
+            showTableHeader,
+            showTableHeaderFunctions,
+            visibleColumnsList,
+        } = this.state;
+
+        let columnToggleButton = null,
+            toggleColumnsRow = null;
+
+        if (columnToggle) {
+            columnToggleButton = (
+                <div>
+                    <Button
+                        size="small"
+                        name="showColumnToggles"
+                        onClick={this.handleStateToggle}
+                        compact
+                        content={showColumnToggles ? 'Hide Column Toggles' : 'Show Column Toggles'}
+                        style={{ padding: '0.3em', marginTop: '0.5em', textAlign: 'right' }}
+                        icon={showColumnToggles ? 'eye slash' : 'eye'}
+                        labelPosition='right' />
+                </div>
+            )
+
+            if (showColumnToggles) {
+                let columnToggles = columns.map(c => {
+                    let visible = visibleColumnsList.indexOf(c.prop) !== -1;
+                    return (
+                        <Label
+                            key={c.prop}
+                            color={visible ? "green" : "red"}
+                            content={c.name}
+                            value={visible}
+                            onClick={this.handleColumnToggle}
+                            prop={c.prop} />
+                    );
+                });
+                toggleColumnsRow = (
+                    <Grid.Row>
+                        <Grid.Column textAlign="right" className="column toggles">
+                            {columnToggles}
+                        </Grid.Column>
+                    </Grid.Row>
+                );
+            } else {
+                toggleColumnsRow = null;
+            }
+        }
+
+        if (showTableHeader) {
+            if (showTableHeaderFunctions) {
+                return (
+                    <Grid>
+                        <Grid.Row>
+                            <Grid.Column floated='left' width={4}>
+                                <Input
+                                    label='Filter:'
+                                    id="multiSearchFilterInBuffedTable"
+                                    fluid
+                                    value={multiSearchInput} placeholder="Type to search..." name="multiSearchInput" onChange={this.handleMultiFilterChange} ></Input>
+                            </Grid.Column>
+                            <Grid.Column width={1}>
+                                <Dropdown icon={<Icon className="iconMargin" name='share' />} item text='Export'>
+                                    <Dropdown.Menu>
+                                        <Dropdown.Item
+                                            onClick={this.handleExport}
+                                            value={ExportFromJSON.types.txt}
+                                            icon={<Icon name='file text outline' />}
+                                            text='Export to TXT' />
+                                        <Dropdown.Item
+                                            onClick={this.handleExport}
+                                            value={ExportFromJSON.types.json}
+                                            icon={<Icon name='file text outline' />}
+                                            text='Export to JSON' />
+                                        <Dropdown.Item
+                                            onClick={this.handleExport}
+                                            value={ExportFromJSON.types.csv}
+                                            icon={<Icon name='file text outline' />}
+                                            text='Export to CSV' />
+                                        <Dropdown.Item
+                                            onClick={this.handleExport}
+                                            value={ExportFromJSON.types.xls}
+                                            icon={<Icon name='file excel' />}
+                                            text='Export to XLS' />
+                                    </Dropdown.Menu>
+                                </Dropdown>
+                            </Grid.Column>
+                            <Grid.Column width={3}>
+                                <div style={{ float: "right", margin: "0 20px", display: defaultLimit === 0 ? "none" : "visible" }}>
+                                    <span>Showing {numRecords > 0 ? this.state.offset + 1 : 0} to {numRecords < limit ? numRecords : this.state.offset + limit} of {numRecords} entries</span>
+                                </div>
+                            </Grid.Column>
+                            <Grid.Column width={4}>
+                                <div style={{ float: "left", margin: "0 20px", display: defaultLimit === 0 ? "none" : "visible" }}>
+                                    <Input
+                                        label='Records per page:'
+                                        className="RecordsPerPage"
+                                        error={!limitInputValid}
+                                        value={limitInput}
+                                        name="inputRecordsPerPage"
+                                        onChange={this.handleChangeRecordsPerPage} />
+                                </div>
+                            </Grid.Column>
+                            <Grid.Column floated='right' width={4} textAlign="right">
+                                <>
+                                    <Button
+                                        size="small"
+                                        className="showColumnFilters"
+                                        name="showColumnFilters"
+                                        onClick={this.handleStateToggle}
+                                        compact
+                                        content={showColumnFilters ? 'Hide Column Filters' : 'Show Column Filters'}
+                                        style={{ padding: '0.3em', textAlign: 'right' }}
+                                        icon={showColumnFilters ? 'eye slash' : 'eye'}
+                                        labelPosition='right' />
+                                    {columnToggleButton}
+                                    {this.renderCustomFilter()}
+                                </>
+
+                            </Grid.Column>
+                        </Grid.Row>
+                        {toggleColumnsRow}
+                    </Grid>
+                )
+            }
+            else {
+                return (
+                    <Grid>
+                        <Grid.Row>
+                            <Grid.Column width={16}>
+                                <Popup trigger={
+                                    <Button compact onClick={this.onTableHeaderToggle} icon floated="right">
+                                        <Icon name="setting"></Icon>
+                                    </Button>
+                                } content='Show table settings' inverted />
+
+                            </Grid.Column>
+                        </Grid.Row>
+                    </Grid>
+                )
+            }
+        }
+        return null;
+    }
+
     render() {
         const {
             columns,
@@ -323,16 +478,10 @@ export default class GenericTable extends Component {
             multiSearchInput,
             defaultLimit,
             limit,
-            limitInput,
-            limitInputValid,
             showColumnFilters,
-            showColumnToggles,
-            columnToggle,
             data,
             filters,
             offset,
-            showTableHeaderFunctions,
-            showTableHeader,
             expandedRows
         } = this.state;
 
@@ -363,8 +512,7 @@ export default class GenericTable extends Component {
         }
 
         var renderData, tableFooter, filteredData,
-            filterColumnsRow, toggleColumnsRow,
-            columnToggleButton,
+            filterColumnsRow,
             isEdit, isAdd, toAdd, toRemove;
 
         isEdit = this.props.isEdit;
@@ -594,145 +742,7 @@ export default class GenericTable extends Component {
             prevRow = data;
         });
 
-        if (columnToggle) {
-            columnToggleButton = (
-                <div>
-                    <Button
-                        size="small"
-                        name="showColumnToggles"
-                        onClick={this.handleStateToggle}
-                        compact
-                        content={showColumnToggles ? 'Hide Column Toggles' : 'Show Column Toggles'}
-                        style={{ padding: '0.3em', marginTop: '0.5em', textAlign: 'right' }}
-                        icon={showColumnToggles ? 'eye slash' : 'eye'}
-                        labelPosition='right' />
-                </div>
-            )
-
-            if (showColumnToggles) {
-                let columnToggles = columns.map(c => {
-                    let visible = visibleColumnsList.indexOf(c.prop) !== -1;
-                    return (
-                        <Label
-                            key={c.prop}
-                            color={visible ? "green" : "red"}
-                            content={c.name}
-                            value={visible}
-                            onClick={this.handleColumnToggle}
-                            prop={c.prop} />
-                    );
-                });
-                toggleColumnsRow = (
-                    <Grid.Row>
-                        <Grid.Column textAlign="right" className="column toggles">
-                            {columnToggles}
-                        </Grid.Column>
-                    </Grid.Row>
-                );
-            } else {
-                toggleColumnsRow = null;
-            }
-        } else {
-            columnToggleButton = null;
-            toggleColumnsRow = null;
-        }
-        var tableFunctionsGrid;
-        if (showTableHeader) {
-            if (showTableHeaderFunctions) {
-                tableFunctionsGrid = (
-                    <Grid>
-                        <Grid.Row>
-                            <Grid.Column floated='left' width={4}>
-                                <Input
-                                    label='Filter:'
-                                    id="multiSearchFilterInBuffedTable"
-                                    fluid
-                                    value={multiSearchInput} placeholder="Type to search..." name="multiSearchInput" onChange={this.handleMultiFilterChange} ></Input>
-                            </Grid.Column>
-                            <Grid.Column width={1}>
-                                <Dropdown icon={<Icon className="iconMargin" name='share' />} item text='Export'>
-                                    <Dropdown.Menu>
-                                        <Dropdown.Item
-                                            onClick={this.handleExport}
-                                            value={ExportFromJSON.types.txt}
-                                            icon={<Icon name='file text outline' />}
-                                            text='Export to TXT' />
-                                        <Dropdown.Item
-                                            onClick={this.handleExport}
-                                            value={ExportFromJSON.types.json}
-                                            icon={<Icon name='file text outline' />}
-                                            text='Export to JSON' />
-                                        <Dropdown.Item
-                                            onClick={this.handleExport}
-                                            value={ExportFromJSON.types.csv}
-                                            icon={<Icon name='file text outline' />}
-                                            text='Export to CSV' />
-                                        <Dropdown.Item
-                                            onClick={this.handleExport}
-                                            value={ExportFromJSON.types.xls}
-                                            icon={<Icon name='file excel' />}
-                                            text='Export to XLS' />
-                                    </Dropdown.Menu>
-                                </Dropdown>
-                            </Grid.Column>
-                            <Grid.Column width={3}>
-                                <div style={{ float: "right", margin: "0 20px", display: defaultLimit === 0 ? "none" : "visible" }}>
-                                    <span>Showing {filteredData.length > 0 ? this.state.offset + 1 : 0} to {filteredData.length < limit ? filteredData.length : this.state.offset + limit} of {filteredData.length} entries</span>
-                                </div>
-                            </Grid.Column>
-                            <Grid.Column width={4}>
-                                <div style={{ float: "left", margin: "0 20px", display: defaultLimit === 0 ? "none" : "visible" }}>
-                                    <Input
-                                        label='Records per page:'
-                                        className="RecordsPerPage"
-                                        error={!limitInputValid}
-                                        value={limitInput}
-                                        name="inputRecordsPerPage"
-                                        onChange={this.handleChangeRecordsPerPage} />
-                                </div>
-                            </Grid.Column>
-                            <Grid.Column floated='right' width={4} textAlign="right">
-                                <>
-                                    <Button
-                                        size="small"
-                                        className="showColumnFilters"
-                                        name="showColumnFilters"
-                                        onClick={this.handleStateToggle}
-                                        compact
-                                        content={showColumnFilters ? 'Hide Column Filters' : 'Show Column Filters'}
-                                        style={{ padding: '0.3em', textAlign: 'right' }}
-                                        icon={showColumnFilters ? 'eye slash' : 'eye'}
-                                        labelPosition='right' />
-                                    {columnToggleButton}
-                                    {this.renderCustomFilter()}
-                                </>
-
-                            </Grid.Column>
-                        </Grid.Row>
-                        {toggleColumnsRow}
-                    </Grid>
-                )
-            }
-            else {
-                tableFunctionsGrid = (
-                    <Grid>
-                        <Grid.Row>
-                            <Grid.Column width={16}>
-                                <Popup trigger={
-                                    <Button compact onClick={this.onTableHeaderToggle} icon floated="right">
-                                        <Icon name="setting"></Icon>
-                                    </Button>
-                                } content='Show table settings' inverted />
-
-                            </Grid.Column>
-                        </Grid.Row>
-                    </Grid>
-                )
-            }
-        }
-        else {
-            tableFunctionsGrid = null
-        }
+        var tableFunctionsGrid = this.renderTableFunctions(filteredData.length);
 
         return (
             <div className="generic table">
