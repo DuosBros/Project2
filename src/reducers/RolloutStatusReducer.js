@@ -56,24 +56,24 @@ const RolloutStatusReducer = (state = initialState, action) => {
                 throw new Error("Could not find");
             }
 
-            mappedRolloutStatuses = copy[index].rolloutStatus.map(x => {
-                if (action.payload.success && action.payload.data) {
-                    var serverHealth = action.payload.data.filter(y => y[2] === x.Ip)
-                    if (serverHealth !== null) {
-                        x.healthInfo = serverHealth[0];
+            if (Array.isArray(copy[index].rolloutStatus)) {
+                mappedRolloutStatuses = copy[index].rolloutStatus.map(x => {
+                    if (action.payload.success && action.payload.data) {
+                        var serverHealth = action.payload.data.filter(y => y[2] === x.Ip)
+                        if (serverHealth !== null) {
+                            x.healthInfo = serverHealth[0];
+                        }
                     }
-                }
-                else {
-                    x.healthInfo = {}
-                    x.healthInfo.err = action.payload.error
-                }
+                    else {
+                        x.healthInfo = {}
+                        x.healthInfo.err = action.payload.error
+                    }
 
-                return x;
-            })
+                    return x;
+                })
+            }
 
             copy[index].rolloutStatus = mappedRolloutStatuses
-
-
 
             return Object.assign({}, state, { rolloutStatuses: copy })
         case GET_VERSIONS:
@@ -84,21 +84,23 @@ const RolloutStatusReducer = (state = initialState, action) => {
                 throw new Error("Could not find");
             }
 
-            mappedRolloutStatuses = copy[index].rolloutStatus.map(x => {
-                if (action.payload.success && action.payload.data) {
-                    var versionObject = action.payload.data.filter(y => y.ServerName === x.Server)
-                    if (versionObject !== null) {
-                        x.versionInfo = versionObject[0].Version;
+            if (Array.isArray(copy[index].rolloutStatus)) {
+                mappedRolloutStatuses = copy[index].rolloutStatus.map(x => {
+                    if (action.payload.success && action.payload.data) {
+                        var versionObject = action.payload.data.filter(y => y.ServerName === x.Server)
+                        if (versionObject !== null) {
+                            x.versionInfo = versionObject[0].Version;
+                        }
                     }
-                }
-                else {
-                    if (action.payload.error) {
-                        x.versionInfo = {}
-                        x.versionInfo.err = action.payload.error
+                    else {
+                        if (action.payload.error) {
+                            x.versionInfo = {}
+                            x.versionInfo.err = action.payload.error
+                        }
                     }
-                }
-                return x;
-            })
+                    return x;
+                })
+            }
 
             copy[index].rolloutStatus = mappedRolloutStatuses
             return Object.assign({}, state, { rolloutStatuses: copy })

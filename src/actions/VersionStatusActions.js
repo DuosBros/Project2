@@ -1,4 +1,4 @@
-import { GET_STAGES, GET_VERSIONS, REMOVE_ALL_VERSIONS } from "../constants/VersionStatusConstants";
+import { GET_STAGES, GET_VERSION, REMOVE_ALL_VERSIONS } from "../constants/VersionStatusConstants";
 
 export function getStagesAction(payload) {
     return {
@@ -10,7 +10,7 @@ export function getStagesAction(payload) {
 export function getVersionsAction(payload) {
     return {
         payload,
-        type: GET_VERSIONS
+        type: GET_VERSION
     }
 }
 
