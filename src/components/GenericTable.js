@@ -17,6 +17,8 @@ const DEFAULT_COLUMN_PROPS = {
 export default class GenericTable extends Component {
     static propTypes = {
         columns: PropTypes.arrayOf(PropTypes.shape({
+            prop: PropTypes.string.isRequired,
+            name: PropTypes.string.isRequired,
             collapsing: PropTypes.bool,
             exportable: PropTypes.bool,
             searchable: PropTypes.bool,
