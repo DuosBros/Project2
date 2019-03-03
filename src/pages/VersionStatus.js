@@ -574,7 +574,7 @@ class VersionStatus extends React.Component {
                                 icon='content' />
                         </Header>
                         <Segment attached='bottom' >
-                            <VersionStatusTable defaultLimitOverride={0} showTableHeader={false} compact="very" data={this.props.versionStatusStore.versions.data} />
+                            <VersionStatusTable rowsPerPage={0} tableHeader={false} compact="very" data={this.props.versionStatusStore.versions.data} />
                         </Segment>
                     </Grid.Column>
                 </Grid.Row>

@@ -254,7 +254,7 @@ class ActiveDirectoryAdmin extends React.Component {
                             <ActiveDirectoryTable
                                 handleDeleteButtonOnClick={this.handleDeleteButtonOnClick}
                                 handleEditOnClick={this.handleEditOnClick}
-                                compact="very" defaultLimitOverride={0}
+                                compact="very" rowsPerPage={0}
                                 data={this.props.activeDirectoryStore.activeDirectories.data} />
                         </Segment>
                     </Grid.Column>

@@ -90,7 +90,7 @@ class LoadBalancerAdmin extends React.Component {
                             LoadBalancers
                             </Header>
                         <Segment attached='bottom' >
-                            <LoadBalancersTable handleRemoveLBTokenOnClick={this.handleRemoveLBTokenOnClick} compact="very" defaultLimitOverride={0} data={this.props.loadBalancerStore.loadBalancers.data} />
+                            <LoadBalancersTable handleRemoveLBTokenOnClick={this.handleRemoveLBTokenOnClick} compact="very" rowsPerPage={0} data={this.props.loadBalancerStore.loadBalancers.data} />
                         </Segment>
                     </Grid.Column>
                 </Grid.Row>

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Component } from 'react'
 import GenericTable from './GenericTable';
 import { Link } from 'react-router-dom';
 import DismeStatus from './DismeStatus';
@@ -7,131 +7,129 @@ import Kibana from '../utils/Kibana';
 import { Button, Popup, Image } from 'semantic-ui-react';
 import _ from 'lodash';
 
-export default class ServiceTable extends GenericTable {
-    getColumns() {
-        return [
-            {
-                name: "Name",
-                prop: "Name",
-                width: 2
-            },
-            {
-                name: "Shortcut",
-                prop: "Shortcut",
-                display: "ShortcutLink",
-                width: 1
-            },
-            {
-                name: "Status",
-                prop: "Status",
-                display: "Status",
-                width: 1
-            },
-            {
-                name: "Owner",
-                prop: "Owner",
-                width: 1
-            },
-            {
-                name: "Application",
-                prop: "Application",
-                width: 1
-            },
-            {
-                name: "Label",
-                prop: "Label",
-                width: 1,
-            },
-            {
-                name: "DevFramework",
-                prop: "DevFramework",
-                width: 1,
-            },
-            {
-                name: "Framework",
-                prop: "Framework",
-                width: 1,
-            },
-            {
-                name: "Is In IXI [#]",
-                prop: "isIXIAndServerCount",
-                width: 1,
-            },
-            {
-                name: "Is In TSI [#]",
-                prop: "isTSIAndServerCount",
-                width: 1,
-            },
-            {
-                name: "Is HA",
-                prop: "isHA",
-                width: 1,
-            },
-            {
-                name: "Links",
-                prop: "Links",
-                width: 1,
-                sortable: false,
-                searchable: false,
-                exportByDefault: false
-            },
-            {
-                name: "Poolname",
-                prop: "Poolname",
-                width: 1,
-                visibleByDefault: false
-            },
-            {
-                name: "ServiceName",
-                prop: "ServiceName",
-                width: 1,
-                visibleByDefault: false
-            },
-            {
-                name: "ServiceUser",
-                prop: "ServiceUser",
-                width: 1,
-                visibleByDefault: false
-            },
-            {
-                name: "SiteID",
-                prop: "SiteID",
-                width: 1,
-                visibleByDefault: false
-            },
+export default class ServiceTable extends Component {
+    columns = [
+        {
+            name: "Name",
+            prop: "Name",
+            width: 2
+        },
+        {
+            name: "Shortcut",
+            prop: "Shortcut",
+            display: "ShortcutLink",
+            width: 1
+        },
+        {
+            name: "Status",
+            prop: "Status",
+            display: "Status",
+            width: 1
+        },
+        {
+            name: "Owner",
+            prop: "Owner",
+            width: 1
+        },
+        {
+            name: "Application",
+            prop: "Application",
+            width: 1
+        },
+        {
+            name: "Label",
+            prop: "Label",
+            width: 1,
+        },
+        {
+            name: "DevFramework",
+            prop: "DevFramework",
+            width: 1,
+        },
+        {
+            name: "Framework",
+            prop: "Framework",
+            width: 1,
+        },
+        {
+            name: "Is In IXI [#]",
+            prop: "isIXIAndServerCount",
+            width: 1,
+        },
+        {
+            name: "Is In TSI [#]",
+            prop: "isTSIAndServerCount",
+            width: 1,
+        },
+        {
+            name: "Is HA",
+            prop: "isHA",
+            width: 1,
+        },
+        {
+            name: "Links",
+            prop: "Links",
+            width: 1,
+            sortable: false,
+            searchable: false,
+            exportByDefault: false
+        },
+        {
+            name: "Poolname",
+            prop: "Poolname",
+            width: 1,
+            visibleByDefault: false
+        },
+        {
+            name: "ServiceName",
+            prop: "ServiceName",
+            width: 1,
+            visibleByDefault: false
+        },
+        {
+            name: "ServiceUser",
+            prop: "ServiceUser",
+            width: 1,
+            visibleByDefault: false
+        },
+        {
+            name: "SiteID",
+            prop: "SiteID",
+            width: 1,
+            visibleByDefault: false
+        },
 
-            {
-                name: "HomeDir",
-                prop: "HomeDir",
-                width: 1,
-                visibleByDefault: false
-            },
-            {
-                name: "ResponsibleTeam",
-                prop: "ResponsibleTeam",
-                width: 1,
-                visibleByDefault: false
-            },
-            {
-                name: "isWebService",
-                prop: "isWebService",
-                width: 1,
-                visibleByDefault: false
-            },
-            {
-                name: "CreatedAt",
-                prop: "CreatedAt",
-                width: 1,
-                visibleByDefault: false
-            },
-            {
-                name: "LastUpdate",
-                prop: "LastUpdate",
-                width: 1,
-                visibleByDefault: false
-            }
-        ];
-    }
+        {
+            name: "HomeDir",
+            prop: "HomeDir",
+            width: 1,
+            visibleByDefault: false
+        },
+        {
+            name: "ResponsibleTeam",
+            prop: "ResponsibleTeam",
+            width: 1,
+            visibleByDefault: false
+        },
+        {
+            name: "isWebService",
+            prop: "isWebService",
+            width: 1,
+            visibleByDefault: false
+        },
+        {
+            name: "CreatedAt",
+            prop: "CreatedAt",
+            width: 1,
+            visibleByDefault: false
+        },
+        {
+            name: "LastUpdate",
+            prop: "LastUpdate",
+            width: 1,
+            visibleByDefault: false
+        }
+    ]
 
     transformDataRow(data) {
         data.Links = (
@@ -182,5 +180,15 @@ export default class ServiceTable extends GenericTable {
 
         data.ShortcutLink = (<Link to={'/service/' + data.Id}>{data.Shortcut}</Link>);
         return data;
+    }
+
+    render() {
+        return (
+            <GenericTable
+                columns={this.columns}
+                transformDataRow={this.transformDataRow}
+                {...this.props}
+                />
+        )
     }
 }

@@ -119,10 +119,6 @@ html, body {
     padding: '0.3em';
     bottom: '0.1em';
 }
-
-#WebsitesTable {
-    overflow-x: scroll;
-}
 /* .simpleTable {
     text-Align: center
 } */
@@ -226,13 +222,40 @@ div.content.noimg {
 }
 
 div.generic.table {
-    overflow: auto;
-}
-.RecordsPerPage > input {
-    width: 4.5em;
-}
-.column.toggles .label {
-    cursor: pointer;
+    overflow: hidden;
+
+    .RecordsPerPage > input {
+        width: 4.5em;
+    }
+
+    .column.toggles .label {
+        cursor: pointer;
+    }
+
+    .scroll-wrapper {
+        overflow: auto;
+        margin: 0 0 0.8em;
+    }
+
+    table {
+        td {
+            white-space: nowrap;
+        }
+        ul {
+            margin: 0;
+            list-style: none;
+            padding: 0 0 0 1em;
+        }
+
+        tfoot th {
+            padding: 0.8em 0;
+        }
+    }
+
+    .pagination {
+        position: sticky;
+        right: 0;
+    }
 }
 
 .pointerCursor:before {

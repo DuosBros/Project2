@@ -189,7 +189,7 @@ class RolloutStatus extends React.Component {
             var health = {
                 success: true,
                 serviceId: serviceId
-              
+
             }
 
             this.props.getHealthsAction(health)
@@ -523,14 +523,14 @@ class RolloutStatus extends React.Component {
                     }
                     else {
                         segmentContent = (
-                            <RolloutStatusTable showTableHeaderFunctions={false} showTableHeader={false} data={x.rolloutStatus} defaultLimitOverride={0} />
+                            <RolloutStatusTable tableHeader={false} data={x.rolloutStatus} rowsPerPage={0} />
                         )
                     }
 
                 }
                 else {
                     segmentContent = (
-                        <RolloutStatusTable showTableHeaderFunctions={false} showTableHeader={false} data={x.rolloutStatus} defaultLimitOverride={0} />
+                        <RolloutStatusTable tableHeader={false} data={x.rolloutStatus} rowsPerPage={0} />
                     )
                 }
             }

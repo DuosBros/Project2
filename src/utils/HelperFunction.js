@@ -8,6 +8,14 @@ export const mapDataForMinMaxAvgChart = (data) => {
     }))
 }
 
+export const axiosHandler = function(a) {
+    // TODO set error field on error handler
+    return a.then(
+        response => ({ success: true, data: response.data }),
+        response => ({ success: false, response: response })
+    );
+};
+
 export const getUniqueValuesOfKey = (array, key) => {
     return array.reduce((carry, item) => {
         if (item[key] && !~carry.indexOf(item[key])) carry.push(item[key]);

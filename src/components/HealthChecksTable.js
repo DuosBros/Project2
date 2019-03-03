@@ -1,61 +1,59 @@
-import React from 'react'
+import React, { Component } from 'react'
 import GenericTable from './GenericTable';
 import { Button, Popup } from 'semantic-ui-react';
 
-export default class HealthChecksTable extends GenericTable {
-    getColumns() {
-        return [
-            {
-                name: "Title",
-                prop: "Title",
-                collapsing: true
-            },
-            {
-                name: "Label",
-                prop: "Label",
-                width: 1,
-            },
-            {
-                name: "Server Name",
-                prop: "ServerName",
-                width: 2,
-            },
-            {
-                name: "Environment",
-                prop: "Environment",
-                width: 2,
-            },
-            {
-                name: "Expected Text",
-                prop: "ExpectedText",
-                width: 1,
-            },
-            {
-                name: "Links",
-                prop: "Links",
-                width: 1,
-                sortable: false,
-                searchable: false,
-                exportableByDefault: false
-            },
-            {
-                name: "RegistryKey",
-                prop: "RegistryKey",
-                visibleByDefault: false,
-                collapsing: true,
-            },
-            {
-                name: "Local IP",
-                prop: "LocalIP",
-                width: 1,
-            },
-            {
-                name: "Port",
-                prop: "Port",
-                width: 1,
-            }
-        ];
-    }
+export default class HealthChecksTable extends Component {
+    columns = [
+        {
+            name: "Title",
+            prop: "Title",
+            collapsing: true
+        },
+        {
+            name: "Label",
+            prop: "Label",
+            width: 1,
+        },
+        {
+            name: "Server Name",
+            prop: "ServerName",
+            width: 2,
+        },
+        {
+            name: "Environment",
+            prop: "Environment",
+            width: 2,
+        },
+        {
+            name: "Expected Text",
+            prop: "ExpectedText",
+            width: 1,
+        },
+        {
+            name: "Links",
+            prop: "Links",
+            width: 1,
+            sortable: false,
+            searchable: false,
+            exportableByDefault: false
+        },
+        {
+            name: "RegistryKey",
+            prop: "RegistryKey",
+            visibleByDefault: false,
+            collapsing: true,
+        },
+        {
+            name: "Local IP",
+            prop: "LocalIP",
+            width: 1,
+        },
+        {
+            name: "Port",
+            prop: "Port",
+            width: 1,
+        }
+    ]
 
     transformDataRow(data) {
         data.LocalIP = data.LocalIP ? "true" : "false"
@@ -85,5 +83,15 @@ export default class HealthChecksTable extends GenericTable {
         );
 
         return data;
+    }
+
+    render() {
+        return (
+            <GenericTable
+                columns={this.columns}
+                transformDataRow={this.transformDataRow}
+                {...this.props}
+                />
+        );
     }
 }

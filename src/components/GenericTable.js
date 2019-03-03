@@ -11,30 +11,51 @@ const DEFAULT_COLUMN_PROPS = {
     sortable: true,
     searchable: true,
     visibleByDefault: true,
-    exportableByDefault: true
+    exportable: true
 }
 
-export const GenericTablePropTypes = {
-    defaultLimitOverride: PropTypes.number,
-    showTableHeaderFunctions: PropTypes.bool,
-    showTableHeader: PropTypes.bool,
-    disableGrouping: PropTypes.bool,
-    compact: PropTypes.oneOfType([
-        PropTypes.bool,
-        PropTypes.string
-    ])
-};
-
 export default class GenericTable extends Component {
-    static defaultProps = {
-        defaultLimitOverride: 15,
-        showTableHeaderFunctions: true,
-        showTableHeader: true,
-        disableGrouping: false,
-        compact: false
+    static propTypes = {
+        columns: PropTypes.arrayOf(PropTypes.shape({
+            collapsing: PropTypes.bool,
+            exportable: PropTypes.bool,
+            searchable: PropTypes.bool,
+            sortable: PropTypes.bool,
+            visibleByDefault: PropTypes.bool,
+        })).isRequired,
+        compact: PropTypes.oneOfType([
+            PropTypes.bool,
+            PropTypes.oneOf(['very'])
+        ]),
+        customFilterCallback: PropTypes.func,
+        disableGrouping: PropTypes.bool,
+        expandable: PropTypes.bool,
+        getDataKey: PropTypes.func,
+        grouping: PropTypes.array,
+        onRowExpandToggle: PropTypes.func,
+        renderCustomFilter: PropTypes.func,
+        renderExpandedRow: PropTypes.func,
+        rowsPerPage: n => Number.isInteger(n) && n >= 0,
+        tableHeader: PropTypes.oneOfType([
+            PropTypes.bool,
+            PropTypes.oneOf(["hidden"])
+        ]),
+        transformDataRow: PropTypes.func,
     }
 
-    static propTypes = GenericTablePropTypes
+    static defaultProps = {
+        compact: false,
+        customFilterCallback: GenericTable.customFilterCallback,
+        disableGrouping: false,
+        expandable: false,
+        getDataKey: GenericTable.getDataKey,
+        grouping: [],
+        onRowExpandToggle: GenericTable.onRowExpandToggle,
+        renderCustomFilter: GenericTable.renderCustomFilter,
+        renderExpandedRow: GenericTable.renderExpandedRow,
+        rowsPerPage: 15,
+        tableHeader: true,
+    }
 
     constructor(props) {
         super(props);
@@ -50,29 +71,25 @@ export default class GenericTable extends Component {
             filters[col.prop] = "";
         }
 
-        let defaultLimit = parseInt(this.props.defaultLimitOverride);
-
         this.state = {
-            sortColumn: null,
-            sortDirection: null,
-            offset: 0,
-            showTableHeaderFunctions: this.props.showTableHeaderFunctions,
-            showTableHeader: this.props.showTableHeader,
-            defaultLimit,
-            limit: defaultLimit,
-            limitInput: defaultLimit.toString(),
-            limitInputValid: true,
-            multiSearchInput: this.props.multiSearchInput ? this.props.multiSearchInput : "",
-            showColumnFilters: false,
+            columns,
+            columnToggle: columns.filter(c => c.visibleByDefault === false).length > 0,
+            data: props.data,
+            expandedRows: [],
             filterInputs,
             filters,
-            columns,
             grouping,
-            data: this.props.data,
-            columnToggle: columns.filter(c => c.visibleByDefault === false).length > 0,
+            limit: parseInt(props.rowsPerPage),
+            limitInput: props.rowsPerPage.toString(),
+            limitInputValid: true,
+            multiSearchInput: props.multiSearchInput ? props.multiSearchInput : "",
+            offset: 0,
+            showColumnFilters: false,
             showColumnToggles: false,
+            showTableHeader: props.tableHeader,
+            sortColumn: null,
+            sortDirection: null,
             visibleColumnsList: columns.filter(c => c.visibleByDefault).map(c => c.prop),
-            exportableColumnsList: columns.filter(c => c.exportableByDefault).map(c => c.prop)
         }
 
         if (Array.isArray(this.state.data)) {
@@ -84,11 +101,7 @@ export default class GenericTable extends Component {
     }
 
     generateColumnsAndGrouping(props) {
-        let columns = this.getColumns();
-
-        if (!columns && props.columns) {
-            columns = props.columns
-        }
+        let columns = props.columns;
 
         if (!columns) {
             throw new Error("Columns are undefined!");
@@ -101,7 +114,7 @@ export default class GenericTable extends Component {
             }
         }
 
-        let grouping = props.disableGrouping ? [] : this.getGrouping();
+        let grouping = props.disableGrouping ? [] : props.grouping;
         grouping = grouping.map(gp => {
             let match = columns.filter(c => c.prop === gp);
             if (match.length > 1) {
@@ -138,6 +151,7 @@ export default class GenericTable extends Component {
                 sortColumn: clickedColumn,
                 data: this.sort(data, clickedColumn, 'ascending'),
                 sortDirection: 'ascending',
+                expandedRows: []
             });
 
             return;
@@ -146,12 +160,16 @@ export default class GenericTable extends Component {
         sortDirection = sortDirection === 'ascending' ? 'descending' : 'ascending';
         this.setState({
             data: this.sort(data, sortColumn, sortDirection),
-            sortDirection
+            sortDirection,
+            expandedRows: []
         });
     }
 
-    handleClick(offset) {
-        this.setState({ offset });
+    handlePaginationChange = (e, props, offset) => {
+        this.setState({
+            offset,
+            expandedRows: []
+        });
     }
 
     handleColumnFilterChange = (e, { name, value }) => {
@@ -198,7 +216,7 @@ export default class GenericTable extends Component {
 
     handleChangeRecordsPerPage = (e, { value }) => {
         let n = value.trim(),
-            limitInputValid = isNum(n);
+            limitInputValid = isNum(n) && n > 0;
 
         this.setState({
             limitInput: value,
@@ -213,7 +231,7 @@ export default class GenericTable extends Component {
     updateLimit() {
         this.setState(prev => {
             let n = prev.limitInput.trim(),
-                limitInputValid = isNum(n);
+                limitInputValid = isNum(n) && n > 0;
 
             if (limitInputValid) {
                 return { limit: parseInt(n) };
@@ -261,7 +279,15 @@ export default class GenericTable extends Component {
         return a.toString().localeCompare(b.toString());
     }
 
-    handleJSONExport = (data, type) => {
+    handleExport = (e, { value: type }) => {
+        const { data, columns, visibleColumnsList } = this.state;
+
+        // only export visible and exportable columns
+        let columnsToExport = columns
+            .filter(c => c.exportable === true && visibleColumnsList.indexOf(c.prop) !== -1)
+            .map(c => { return { label: c.name, key: c.prop } });
+        let dataToExport = pick(data, columnsToExport.map(x => x.key));
+
         if (type === "txt" || type === "json") {
             const fileName = new Date().toISOString() + "." + type
 
@@ -269,7 +295,7 @@ export default class GenericTable extends Component {
             document.body.appendChild(a);
             a.style = "display: none";
 
-            var json = JSON.stringify(data),
+            var json = JSON.stringify(dataToExport),
                 blob = new Blob([json], { type: "octet/stream" }),
                 url = window.URL.createObjectURL(blob);
             a.href = url;
@@ -280,252 +306,47 @@ export default class GenericTable extends Component {
         else {
             const fileName = new Date().toISOString()
 
-            ExportFromJSON({ data: data, fileName: fileName, exportType: type })
+            ExportFromJSON({ data: dataToExport, fileName: fileName, exportType: type })
         }
     }
 
-    render() {
+    onExpandToggle = (e, { rowkey, rowdata }) => {
+        this.setState(function(prev) {
+            const visible = prev.expandedRows.indexOf(rowkey) === -1
+
+            // callback
+            if(this.props.onRowExpandToggle) {
+                this.props.onRowExpandToggle(visible, rowkey, rowdata);
+            }
+
+            if(visible) {
+                return { expandedRows: [...prev.expandedRows, rowkey] };
+            } else {
+                return { expandedRows: prev.expandedRows.filter(e => e !== rowkey) }
+            }
+        });
+    }
+
+    onTableHeaderShow = () => {
+        this.setState({ showTableHeader: true });
+    }
+
+    renderTableFunctions(numRecords) {
         const {
             columns,
-            grouping,
-            visibleColumnsList,
-            exportableColumnsList,
-            sortColumn,
-            sortDirection,
-            multiSearchInput,
-            defaultLimit,
+            columnToggle,
             limit,
             limitInput,
             limitInputValid,
+            multiSearchInput,
             showColumnFilters,
             showColumnToggles,
-            columnToggle,
-            data,
-            filters,
-            offset,
-            showTableHeaderFunctions,
-            showTableHeader
+            showTableHeader,
+            visibleColumnsList,
         } = this.state;
 
-        const {
-            compact
-        } = this.props;
-
-        let visibleColumns = columns.filter(c => visibleColumnsList.indexOf(c.prop) !== -1);
-
-        if (!Array.isArray(data)) {
-            let msg = this.props.placeholder ? this.props.placeholder : "Fetching data...";
-            return (
-                <div className="centered">
-                    <Message info icon>
-                        <Icon name='circle notched' loading />
-                        <Message.Content>
-                            <Message.Header>{msg}</Message.Header>
-                        </Message.Content>
-                    </Message>
-                </div>
-            );
-        }
-
-        if (this.props.data.length < 1) {
-            return null;
-        }
-
-        let exportableColumns = columns.filter(c => exportableColumnsList.indexOf(c.prop) !== -1);
-
-        // not exporting columns like Links (which contains buttons)
-        let columnsToExport = visibleColumns.filter(x => exportableColumns.includes(x)).map(x => { return { label: x.name, key: x.prop } });
-        let dataToExport = pick(data, columnsToExport.map(x => x.key))
-        var renderData, tableFooter, filteredData,
-            filterColumnsRow, toggleColumnsRow,
-            columnToggleButton,
-            isEdit, isAdd, toAdd, toRemove;
-
-        isEdit = this.props.isEdit;
-        isAdd = this.props.isAdd;
-
-        if (isEdit) {
-            toAdd = this.props.toAdd;
-            toRemove = this.props.toRemove;
-        }
-
-        let headerCells = visibleColumns.map(c => {
-            let headerProps;
-            if (c.sortable) {
-                headerProps = {
-                    sorted: sortColumn === c.prop ? sortDirection : null,
-                    onClick: this.handleSort(c.prop)
-                };
-            } else {
-                headerProps = {
-                    disabled: true
-                };
-            }
-            return (
-                <Table.HeaderCell
-                    collapsing={c.collapsing}
-                    width={c.collapsing ? null : c.width}
-                    key={"c-" + c.prop}
-                    content={c.name}
-                    {...headerProps}
-                />
-            );
-        });
-        if (isEdit) {
-            headerCells.push((
-                <Table.HeaderCell
-                    collapsing={false}
-                    width={1}
-                    key="action"
-                    content="Actions"
-                    disabled
-                />
-            ));
-        }
-
-        if (multiSearchInput !== "") {
-            filteredData = filterInArrayOfObjects(multiSearchInput, data, visibleColumns.filter(c => c.searchable).map(c => c.prop));
-        } else {
-            filteredData = data;
-        }
-
-        filteredData = this.applyCustomFilter(filteredData);
-
-        if (showColumnFilters) {
-            var filterValid = [];
-            for (let col of Object.getOwnPropertyNames(filters)) {
-                try {
-                    if (!_.isEmpty(filters[col])) {
-                        filteredData = filteredData.filter(data => {
-                            if (data[col]) {
-                                return data[col].toString().search(new RegExp(filters[col], "i")) >= 0
-                            }
-                            return false;
-                        })
-                    }
-                    filterValid[col] = true;
-                } catch (e) {
-                    filterValid[col] = false;
-                }
-            }
-        }
-
-        if (defaultLimit && filteredData.length > limit) {
-            renderData = filteredData.slice(offset, offset + limit)
-            tableFooter = (
-                <Table.Footer fullWidth>
-                    <Table.Row>
-                        <Table.HeaderCell colSpan='16'>
-                            <Pagination
-                                compact
-                                reduced
-                                size="small"
-                                floated="right"
-                                offset={offset}
-                                limit={limit}
-                                total={filteredData.length}
-                                onClick={(e, props, o) => this.handleClick(o)}
-                            />
-                        </Table.HeaderCell>
-                    </Table.Row>
-                </Table.Footer>
-            )
-        }
-        else {
-            renderData = filteredData
-            tableFooter = (
-                null
-            )
-        }
-
-        if (showColumnFilters) {
-            let headerFilterCells = visibleColumns.map(c => {
-                let filterInput = null;
-                if (c.searchable) {
-                    filterInput = (<Input fluid name={c.prop} onChange={this.handleColumnFilterChange} value={this.state.filterInputs[c.prop]} error={!filterValid[c.prop]} />)
-                }
-                return (
-                    <Table.HeaderCell collapsing={c.collapsing} width={c.collapsing ? null : c.width} key={c.prop}>
-                        {filterInput}
-                    </Table.HeaderCell>
-                );
-            })
-            filterColumnsRow = (
-                <Table.Header>
-                    <Table.Row>{headerFilterCells}</Table.Row>
-                </Table.Header>
-            )
-        }
-        else {
-            filterColumnsRow = null
-        }
-
-        var tableBody = [],
-            prevRow = {};
-        renderData.map(data => this.transformDataRow(Object.assign({}, data))).forEach(data => {
-            let insertGroupingHeader = false;
-            for (let gc of grouping) {
-                if (data[gc.prop] !== prevRow[gc.prop]) {
-                    insertGroupingHeader = true;
-                    break;
-                }
-            }
-
-            if (insertGroupingHeader === true) {
-                let groupingHeaderKey = grouping.map(gc => data[gc.prop]),
-                    groupingHeaderText = grouping.map(gc => data[gc.display ? gc.display : gc.prop]);
-                tableBody.push((
-                    <Table.Row key={"group-" + groupingHeaderKey.join('::')}>
-                        <Table.HeaderCell style={{ backgroundColor: '#f2f2f2' }} colSpan='11'>{groupingHeaderText.join(', ')}</Table.HeaderCell>
-                    </Table.Row>
-                ));
-            }
-
-            let cells = visibleColumns.map(c => {
-                if (c.data === false) {
-                    return null;
-                }
-                if (c.display) {
-                    return (<Table.Cell key={c.prop}>{data[c.display]}</Table.Cell>)
-                }
-                return (<Table.Cell style={data[c.styleProp] ? data[c.styleProp] : null} key={c.prop}>{data[c.prop]}</Table.Cell>)
-            });
-
-            if (isEdit) {
-                let editIcon;
-                if (isAdd) {
-                    editIcon = toAdd.map(x => x.Id).indexOf(data.Id) > -1 ? (<Icon color="red" corner name='minus' />) : (<Icon color="green" corner name='add' />);
-                } else {
-                    editIcon = toRemove.map(x => x.Id).indexOf(data.Id) > -1 ? (<Icon color="green" corner name='add' />) : (<Icon color="red" corner name='minus' />);
-                }
-                let editIconGroup = (
-                    <>
-                        <Icon name='balance' />
-                        {editIcon}
-                    </>
-                );
-
-                cells.push((
-                    <Table.Cell key="a">
-                        <Button
-                            onClick={isEdit && isAdd ? () => this.props.handleAdd(data) : () => this.props.handleRemove(data)}
-                            style={{ padding: '0.3em' }}
-                            size='medium'
-                            icon={editIconGroup} >
-                        </Button>
-                    </Table.Cell>
-                ));
-            }
-
-            tableBody.push((
-                <Table.Row positive={isEdit && isAdd === true && toAdd.map(x => x.Id).indexOf(data.Id) > -1}
-                    negative={isEdit && isAdd === false && toRemove.map(x => x.Id).indexOf(data.Id) > -1}
-                    key={"data-" + this.getDataKey(data)}>
-                    {cells}
-                </Table.Row>
-            ));
-            prevRow = data;
-        });
+        let columnToggleButton = null,
+            toggleColumnsRow = null;
 
         if (columnToggle) {
             columnToggleButton = (
@@ -565,14 +386,11 @@ export default class GenericTable extends Component {
             } else {
                 toggleColumnsRow = null;
             }
-        } else {
-            columnToggleButton = null;
-            toggleColumnsRow = null;
         }
-        var tableFunctionsGrid;
-        if (showTableHeader) {
-            if (showTableHeaderFunctions) {
-                tableFunctionsGrid = (
+
+        if (showTableHeader !== false) {
+            if (showTableHeader !== "hidden") {
+                return (
                     <Grid>
                         <Grid.Row>
                             <Grid.Column floated='left' width={4}>
@@ -586,31 +404,35 @@ export default class GenericTable extends Component {
                                 <Dropdown icon={<Icon className="iconMargin" name='share' />} item text='Export'>
                                     <Dropdown.Menu>
                                         <Dropdown.Item
-                                            onClick={() => this.handleJSONExport(dataToExport, ExportFromJSON.types.txt)}
+                                            onClick={this.handleExport}
+                                            value={ExportFromJSON.types.txt}
                                             icon={<Icon name='file text outline' />}
                                             text='Export to TXT' />
                                         <Dropdown.Item
-                                            onClick={() => this.handleJSONExport(dataToExport, ExportFromJSON.types.json)}
+                                            onClick={this.handleExport}
+                                            value={ExportFromJSON.types.json}
                                             icon={<Icon name='file text outline' />}
                                             text='Export to JSON' />
                                         <Dropdown.Item
-                                            onClick={() => this.handleJSONExport(dataToExport, ExportFromJSON.types.csv)}
+                                            onClick={this.handleExport}
+                                            value={ExportFromJSON.types.csv}
                                             icon={<Icon name='file text outline' />}
                                             text='Export to CSV' />
                                         <Dropdown.Item
-                                            onClick={() => this.handleJSONExport(dataToExport, ExportFromJSON.types.xls)}
+                                            onClick={this.handleExport}
+                                            value={ExportFromJSON.types.xls}
                                             icon={<Icon name='file excel' />}
                                             text='Export to XLS' />
                                     </Dropdown.Menu>
                                 </Dropdown>
                             </Grid.Column>
                             <Grid.Column width={3}>
-                                <div style={{ float: "right", margin: "0 20px", display: defaultLimit === 0 ? "none" : "visible" }}>
-                                    <span>Showing {filteredData.length > 0 ? this.state.offset + 1 : 0} to {filteredData.length < limit ? filteredData.length : this.state.offset + limit} of {filteredData.length} entries</span>
+                                <div style={{ float: "right", margin: "0 20px", display: limit === 0 ? "none" : "visible" }}>
+                                    <span>Showing {numRecords > 0 ? this.state.offset + 1 : 0} to {numRecords < limit ? numRecords : this.state.offset + limit} of {numRecords} entries</span>
                                 </div>
                             </Grid.Column>
                             <Grid.Column width={4}>
-                                <div style={{ float: "left", margin: "0 20px", display: defaultLimit === 0 ? "none" : "visible" }}>
+                                <div style={{ float: "left", margin: "0 20px", display: limit === 0 ? "none" : "visible" }}>
                                     <Input
                                         label='Records per page:'
                                         className="RecordsPerPage"
@@ -633,7 +455,7 @@ export default class GenericTable extends Component {
                                         icon={showColumnFilters ? 'eye slash' : 'eye'}
                                         labelPosition='right' />
                                     {columnToggleButton}
-                                    {this.renderCustomFilter()}
+                                    {this.props.renderCustomFilter()}
                                 </>
 
                             </Grid.Column>
@@ -643,12 +465,12 @@ export default class GenericTable extends Component {
                 )
             }
             else {
-                tableFunctionsGrid = (
+                return (
                     <Grid>
                         <Grid.Row>
                             <Grid.Column width={16}>
                                 <Popup trigger={
-                                    <Button compact onClick={() => this.setState({ showTableHeaderFunctions: !showTableHeaderFunctions })} icon floated="right">
+                                    <Button compact onClick={this.onTableHeaderShow} icon floated="right">
                                         <Icon name="setting"></Icon>
                                     </Button>
                                 } content='Show table settings' inverted />
@@ -659,14 +481,290 @@ export default class GenericTable extends Component {
                 )
             }
         }
-        else {
-            tableFunctionsGrid = null
+        return null;
+    }
+
+    render() {
+        const {
+            columns,
+            grouping,
+            visibleColumnsList,
+            sortColumn,
+            sortDirection,
+            multiSearchInput,
+            limit,
+            showColumnFilters,
+            data,
+            filters,
+            offset,
+            expandedRows
+        } = this.state;
+
+        const {
+            compact,
+            expandable,
+            getDataKey
+        } = this.props;
+
+        let visibleColumns = columns.filter(c => visibleColumnsList.indexOf(c.prop) !== -1);
+
+        if (!Array.isArray(data)) {
+            let msg = this.props.placeholder ? this.props.placeholder : "Fetching data...";
+            return (
+                <div className="centered">
+                    <Message info icon>
+                        <Icon name='circle notched' loading />
+                        <Message.Content>
+                            <Message.Header>{msg}</Message.Header>
+                        </Message.Content>
+                    </Message>
+                </div>
+            );
         }
 
+        if (this.props.data.length < 1) {
+            return null;
+        }
+
+        var renderData, tableFooter, filteredData,
+            filterColumnsRow,
+            isEdit, isAdd, toAdd, toRemove;
+
+        isEdit = this.props.isEdit;
+        isAdd = this.props.isAdd;
+
+        if (isEdit) {
+            toAdd = this.props.toAdd;
+            toRemove = this.props.toRemove;
+        }
+
+        let headerCells = visibleColumns.map(c => {
+            let headerProps;
+            if (c.sortable) {
+                headerProps = {
+                    sorted: sortColumn === c.prop ? sortDirection : null,
+                    onClick: this.handleSort(c.prop)
+                };
+            } else {
+                headerProps = {
+                    disabled: true
+                };
+            }
+            return (
+                <Table.HeaderCell
+                    collapsing={c.collapsing}
+                    width={c.collapsing ? null : c.width}
+                    key={"c-" + c.prop}
+                    content={c.name}
+                    {...headerProps}
+                />
+            );
+        });
+        if(expandable) {
+            headerCells.unshift((
+                <Table.HeaderCell
+                    collapsing
+                    key="expand"
+                    disabled
+                />
+            ));
+        }
+        if(isEdit) {
+            headerCells.push((
+                <Table.HeaderCell
+                    collapsing={false}
+                    width={1}
+                    key="action"
+                    content="Actions"
+                    disabled
+                />
+            ));
+        }
+
+        if (multiSearchInput !== "") {
+            filteredData = filterInArrayOfObjects(multiSearchInput, data, visibleColumns.filter(c => c.searchable).map(c => c.prop));
+        } else {
+            filteredData = data;
+        }
+
+        filteredData = this.props.customFilterCallback(filteredData);
+
+        if (showColumnFilters) {
+            var filterValid = [];
+            for (let col of Object.getOwnPropertyNames(filters)) {
+                try {
+                    if (!_.isEmpty(filters[col])) {
+                        filteredData = filteredData.filter(data => {
+                            if (data[col]) {
+                                return data[col].toString().search(new RegExp(filters[col], "i")) >= 0
+                            }
+                            return false;
+                        })
+                    }
+                    filterValid[col] = true;
+                } catch (e) {
+                    filterValid[col] = false;
+                }
+            }
+        }
+
+        if (limit && filteredData.length > limit) {
+            renderData = filteredData.slice(offset, offset + limit)
+            tableFooter = (
+                <Pagination
+                    className="pagination"
+                    compact
+                    reduced
+                    size="small"
+                    floated="right"
+                    offset={offset}
+                    limit={limit}
+                    total={filteredData.length}
+                    onClick={this.handlePaginationChange}
+                />
+            )
+        }
+        else {
+            renderData = filteredData
+            tableFooter = (
+                null
+            )
+        }
+
+        if (showColumnFilters) {
+            let headerFilterCells = visibleColumns.map(c => {
+                let filterInput = null;
+                if (c.searchable) {
+                    filterInput = (<Input fluid name={c.prop} onChange={this.handleColumnFilterChange} value={this.state.filterInputs[c.prop]} error={!filterValid[c.prop]} />)
+                }
+                return (
+                    <Table.HeaderCell collapsing={c.collapsing} width={c.collapsing ? null : c.width} key={c.prop}>
+                        {filterInput}
+                    </Table.HeaderCell>
+                );
+            })
+            if(expandable) {
+                headerFilterCells.unshift((<Table.HeaderCell collapsing key="expand">
+                </Table.HeaderCell>))
+            }
+            filterColumnsRow = (
+                <Table.Header>
+                    <Table.Row>{headerFilterCells}</Table.Row>
+                </Table.Header>
+            )
+        }
+        else {
+            filterColumnsRow = null
+        }
+
+        var tableBody = [],
+            prevRow = {};
+        let transformer = this.props.transformDataRow ? data => this.props.transformDataRow(Object.assign({}, data)) : data => data;
+        renderData.map(transformer).forEach(data => {
+
+            let rowKey = getDataKey(data);
+            // check whether grouping header should be inserted
+            let insertGroupingHeader = false;
+            for (let gc of grouping) {
+                if (data[gc.prop] !== prevRow[gc.prop]) {
+                    insertGroupingHeader = true;
+                    break;
+                }
+            }
+
+            // insert grouping header if needed
+            if (insertGroupingHeader === true) {
+                let groupingHeaderKey = grouping.map(gc => data[gc.prop]),
+                    groupingHeaderText = grouping.map(gc => data[gc.display ? gc.display : gc.prop]);
+                tableBody.push((
+                    <Table.Row key={"group-" + groupingHeaderKey.join('::')}>
+                        <Table.HeaderCell style={{ backgroundColor: '#f2f2f2' }} colSpan='11'>{groupingHeaderText.join(', ')}</Table.HeaderCell>
+                    </Table.Row>
+                ));
+            }
+
+            let isRowExpanded = expandable === true && expandedRows.indexOf(rowKey) !== -1;
+
+            // create table cells from row data
+            let cells = visibleColumns.map(c => {
+                let cellData;
+                if (c.data === false) {
+                    return null;
+                }
+                if (c.display) {
+                    cellData = data[c.display];
+                } else {
+                    cellData = data[c.prop];
+                }
+                return (<Table.Cell style={data[c.styleProp] ? data[c.styleProp] : null} key={c.prop}>{cellData}</Table.Cell>)
+            });
+            if (expandable === true) {
+                let expandName = isRowExpanded ? "minus" : "plus";
+                cells.unshift((
+                    <Table.Cell key="expand" collapsing>
+                        <Icon link
+                            rowkey={rowKey}
+                            rowdata={data}
+                            name={expandName + " square outline"}
+                            onClick={this.onExpandToggle}/>
+                    </Table.Cell>));
+            }
+
+            // add cell for add/remove buttons if enabled
+            if (isEdit) {
+                let editIcon;
+                if (isAdd) {
+                    editIcon = toAdd.map(x => x.Id).indexOf(data.Id) > -1 ? (<Icon color="red" corner name='minus' />) : (<Icon color="green" corner name='add' />);
+                } else {
+                    editIcon = toRemove.map(x => x.Id).indexOf(data.Id) > -1 ? (<Icon color="green" corner name='add' />) : (<Icon color="red" corner name='minus' />);
+                }
+                let editIconGroup = (
+                    <>
+                        <Icon name='balance' />
+                        {editIcon}
+                    </>
+                );
+
+                cells.push((
+                    <Table.Cell key="a">
+                        <Button
+                            onClick={isEdit && isAdd ? () => this.props.handleAdd(data) : () => this.props.handleRemove(data)}
+                            style={{ padding: '0.3em' }}
+                            size='medium'
+                            icon={editIconGroup} >
+                        </Button>
+                    </Table.Cell>
+                ));
+            }
+
+            // build row from cells
+            tableBody.push((
+                <Table.Row positive={isEdit && isAdd === true && toAdd.map(x => x.Id).indexOf(data.Id) > -1}
+                    negative={isEdit && isAdd === false && toRemove.map(x => x.Id).indexOf(data.Id) > -1}
+                    key={'data' + rowKey}>
+                    {cells}
+                </Table.Row>
+            ));
+
+            // insert details-row if row is in expanded state
+            if(isRowExpanded) {
+                tableBody.push((
+                    <Table.Row key={'expanded' + rowKey}>
+                        <Table.Cell colSpan={visibleColumns.length}>{this.props.renderExpandedRow(rowKey, data)}</Table.Cell>
+                    </Table.Row>
+                ));
+            }
+
+            // important for drawing grouping headers
+            prevRow = data;
+        });
+
+        var tableFunctionsGrid = this.renderTableFunctions(filteredData.length);
+
         return (
-            <>
+            <div className="generic table">
                 {tableFunctionsGrid}
-                < div className="generic table" >
+                <div className="scroll-wrapper">
                     <Table compact={compact} selectable sortable celled basic='very'>
                         <Table.Header>
                             <Table.Row>{headerCells}</Table.Row>
@@ -675,34 +773,30 @@ export default class GenericTable extends Component {
                         <Table.Body>
                             {tableBody}
                         </Table.Body>
-                        {tableFooter}
                     </Table>
-                </div >
-            </>
+                </div>
+                {tableFooter}
+            </div >
         );
     }
 
-    getGrouping() {
-        return [];
-    }
-
-    getColumns() {
+    static renderCustomFilter() {
         return null;
     }
 
-    transformDataRow(data) {
-        return data;
+    static onRowExpandToggle(visible, rowKey, rowData) { // eslint-disable-line no-unused-vars
+        return;
     }
 
-    renderCustomFilter() {
+    static renderExpandedRow(rowKey, rowData) { // eslint-disable-line no-unused-vars
         return null;
     }
 
-    applyCustomFilter(filteredData) {
+    static customFilterCallback(filteredData) {
         return filteredData;
     }
 
-    getDataKey(data) {
+    static getDataKey(data) {
         return data.Id
     }
 }
