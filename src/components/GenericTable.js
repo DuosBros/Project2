@@ -35,8 +35,8 @@ export default class GenericTable extends Component {
         onRowExpandToggle: PropTypes.func,
         renderCustomFilter: PropTypes.func,
         renderExpandedRow: PropTypes.func,
-        rowsPerPage: n => Number.isOnteger(n) && n >= 0,
-        tableHeader: PropTypes.oneOf([
+        rowsPerPage: n => Number.isInteger(n) && n >= 0,
+        tableHeader: PropTypes.oneOfType([
             PropTypes.bool,
             PropTypes.oneOf(["hidden"])
         ]),
