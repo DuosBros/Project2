@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom';
 import GenericTable from './GenericTable';
 import AvailabilityStatus from '../components/AvailabilityStatus';
@@ -7,7 +7,7 @@ import VanillaHealthStatus from './VanillaHealthStatus';
 import { Icon } from 'semantic-ui-react';
 import { LBNAME_SUFFIX_WITH_IS, NWTOOLS_URL, LBNAME_SUFFIX } from '../appConfig';
 
-export default class RolloutStatusTable extends Component {
+export default class RolloutStatusTable extends React.PureComponent {
 
     grouping = [
         "LbName",

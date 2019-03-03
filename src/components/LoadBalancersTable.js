@@ -1,9 +1,9 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { Button, Popup, Icon } from 'semantic-ui-react';
 import GenericTable from './GenericTable';
 import moment from 'moment';
 
-export default class LoadBalancersTable extends Component {
+export default class LoadBalancersTable extends React.PureComponent {
 
     columns = [
         {

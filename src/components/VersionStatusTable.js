@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React from 'react';
 import GenericTable from './GenericTable';
 import { getServerState } from '../utils/HelperFunction';
 import ServerStatus from './ServerStatus';
 
-export default class VersionStatusTable extends Component {
+export default class VersionStatusTable extends React.PureComponent {
     columns = [
         {
             name: "Shortcut",

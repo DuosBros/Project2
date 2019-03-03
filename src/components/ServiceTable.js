@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import GenericTable from './GenericTable';
 import { Link } from 'react-router-dom';
 import DismeStatus from './DismeStatus';
@@ -7,7 +7,7 @@ import Kibana from '../utils/Kibana';
 import { Button, Popup, Image } from 'semantic-ui-react';
 import _ from 'lodash';
 
-export default class ServiceTable extends Component {
+export default class ServiceTable extends React.PureComponent {
     columns = [
         {
             name: "Name",

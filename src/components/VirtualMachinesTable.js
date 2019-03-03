@@ -1,8 +1,8 @@
-import React, { Component } from 'react'
+import React from 'react'
 import GenericTable from './GenericTable';
 import VirtualMachineStatus from './VirtualMachineStatus';
 
-export default class VirtualMachinesTable extends Component {
+export default class VirtualMachinesTable extends React.PureComponent {
     columns = [
         {
             name: "Name",

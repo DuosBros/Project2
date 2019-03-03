@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 import GenericTable from './GenericTable';
 import { Link } from 'react-router-dom';
 
-export default class PatchGroupsTable extends Component {
+export default class PatchGroupsTable extends React.PureComponent {
     columns = [
         {
             name: "Name",

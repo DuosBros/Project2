@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import GenericTable from './GenericTable';
 import { Popup, Button, Image } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
@@ -6,7 +6,7 @@ import Kibana from '../utils/Kibana';
 import ServerStatus from './ServerStatus';
 import DismeStatus from './DismeStatus';
 
-export default class ServersTable extends Component {
+export default class ServersTable extends React.PureComponent {
     columns = [
         {
             name: "Name",

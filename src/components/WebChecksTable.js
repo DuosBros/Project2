@@ -1,8 +1,8 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { Button } from 'semantic-ui-react';
 import GenericTable from './GenericTable';
 
-export default class WebChecksTable extends Component {
+export default class WebChecksTable extends React.PureComponent {
 
     columns = [
         {

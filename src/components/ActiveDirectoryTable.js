@@ -1,8 +1,8 @@
-import React, { Component } from 'react'
+import React from 'react'
 import GenericTable from './GenericTable';
 import { Popup, Button, Icon } from 'semantic-ui-react';
 
-export default class ActiveDirectoryTable extends Component {
+export default class ActiveDirectoryTable extends React.PureComponent {
     columns = [
         {
             name: "AD Path",
@@ -40,7 +40,6 @@ export default class ActiveDirectoryTable extends Component {
                 } content='Remove AD Path' inverted />
             </>
         )
-        // data.StatusLabel = (<VirtualMachineStatus size="small" status={data.Status} ></VirtualMachineStatus>);
 
         return data;
     }
@@ -51,7 +50,7 @@ export default class ActiveDirectoryTable extends Component {
                 columns={this.columns}
                 transformDataRow={this.transformDataRow}
                 {...this.props}
-                />
+            />
         );
     }
 }

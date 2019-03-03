@@ -1,7 +1,7 @@
-import React, { Component } from 'react'
+import React from 'react'
 import GenericTable from './GenericTable';
 
-export default class AgentLogTable extends Component {
+export default class AgentLogTable extends React.PureComponent {
     columns = [
         {
             name: "Agent Name",
@@ -46,6 +46,6 @@ export default class AgentLogTable extends Component {
     ]
 
     render() {
-        return (<GenericTable columns={this.columns} {...this.props}/>);
+        return (<GenericTable columns={this.columns} {...this.props} />);
     }
 }

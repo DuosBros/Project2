@@ -1,8 +1,8 @@
-import React, { Component } from 'react'
+import React from 'react'
 import GenericTable from './GenericTable';
 import { Link } from 'react-router-dom';
 
-export default class IPAddressesTable extends Component {
+export default class IPAddressesTable extends React.PureComponent {
     columns = [
         {
             name: "ID",

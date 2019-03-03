@@ -1,16 +1,16 @@
-import React, { Component } from 'react';
+import React from 'react';
 import GenericTable from './GenericTable';
 
-export default class WindowsServicesTable extends Component {
+export default class WindowsServicesTable extends React.PureComponent {
     columns = [
-        {
-            name: "Service Name",
-            prop: "ServiceName",
-            collapsing: true
-        },
         {
             name: "Display Name",
             prop: "DisplayName",
+            collapsing: true
+        },
+        {
+            name: "Service Name",
+            prop: "ServiceName",
             collapsing: true
         },
         {
@@ -36,7 +36,7 @@ export default class WindowsServicesTable extends Component {
             <GenericTable
                 columns={this.columns}
                 {...this.props}
-                />
+            />
         );
     }
 }

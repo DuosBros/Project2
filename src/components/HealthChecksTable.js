@@ -1,8 +1,8 @@
-import React, { Component } from 'react'
+import React from 'react'
 import GenericTable from './GenericTable';
 import { Button, Popup } from 'semantic-ui-react';
 
-export default class HealthChecksTable extends Component {
+export default class HealthChecksTable extends React.PureComponent {
     columns = [
         {
             name: "Title",
@@ -91,7 +91,7 @@ export default class HealthChecksTable extends Component {
                 columns={this.columns}
                 transformDataRow={this.transformDataRow}
                 {...this.props}
-                />
+            />
         );
     }
 }
