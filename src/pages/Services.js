@@ -8,11 +8,14 @@ import { getServices, getHighAvailabilities } from '../requests/ServiceAxios';
 import { getServicesAction, getHighAvailabilitiesAction } from '../actions/ServiceActions';
 import ServiceTable from '../components/ServiceTable';
 import ErrorMessage from '../components/ErrorMessage';
+import { APP_TITLE } from '../appConfig';
 
 class Services extends React.Component {
 
     componentDidMount() {
         this.fetchServicesAndHandleResult()
+
+        document.title = APP_TITLE + "Services"
     }
 
     fetchServicesAndHandleResult = () => {

@@ -8,11 +8,14 @@ import { getVirtualMachines } from '../requests/VirtualMachineAxios';
 import { getVirtualMachinesAction } from '../actions/VirtualMachineAction';
 import VirtualMachinesTable from '../components/VirtualMachinesTable';
 import ErrorMessage from '../components/ErrorMessage';
+import { APP_TITLE } from '../appConfig';
 
 class VirtualMachines extends React.Component {
 
     componentDidMount() {
         this.fetchVirtualMachinesAndHandleResult()
+
+        document.title = APP_TITLE + "Virtual Machines"
     }
 
     fetchVirtualMachinesAndHandleResult = () => {

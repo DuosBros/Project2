@@ -10,6 +10,7 @@ import { mapDataForGenericChart, getUniqueValuesOfKey, mapDataForStackedGenericB
 import ErrorMessage from '../components/ErrorMessage';
 import BarChartWithRawData from '../charts/BarChartWithRawData';
 import PieChartWithRawData from '../charts/PieChartWIthRawData';
+import { APP_TITLE } from '../appConfig';
 
 let rawDataStyle = {
     dt: {
@@ -24,6 +25,8 @@ class LoadBalancerFarmsStatistics extends React.Component {
 
     componentDidMount() {
         this.fetchLoadBalancerFarmsAndHandleResult()
+
+        document.title = APP_TITLE + "LoadBalancerFarms Statistics"
     }
 
     fetchLoadBalancerFarmsAndHandleResult = () => {

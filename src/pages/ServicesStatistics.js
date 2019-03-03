@@ -9,6 +9,7 @@ import { getServicesAction } from '../actions/ServiceActions';
 import ErrorMessage from '../components/ErrorMessage';
 import { mapDataForGenericChart } from '../utils/HelperFunction';
 import BarChartWithRawData from '../charts/BarChartWithRawData';
+import { APP_TITLE } from '../appConfig';
 
 class ServicesStatistics extends React.Component {
 
@@ -23,6 +24,8 @@ class ServicesStatistics extends React.Component {
     }
     componentDidMount() {
         this.fetchServicesAndHandleResult()
+
+        document.title = APP_TITLE + "Services Statistics"
     }
 
     fetchServicesAndHandleResult = () => {

@@ -8,11 +8,14 @@ import { getAllLoadBalancerFarms } from '../requests/LoadBalancerFarmsAxios';
 import { Grid, Header, Segment, Message, Icon } from 'semantic-ui-react';
 import LoadBalancerFarmsTable from '../components/LoadBalancerFarmsTable';
 import ErrorMessage from '../components/ErrorMessage';
+import { APP_TITLE } from '../appConfig';
 
 class LoadBalancerFarms extends React.Component {
 
     componentDidMount() {
         this.fetchLoadBalancerFarmsAndHandleResult()
+
+        document.title = APP_TITLE + "LoadBalancerFarms"
     }
 
     fetchLoadBalancerFarmsAndHandleResult = () => {

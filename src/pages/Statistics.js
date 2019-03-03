@@ -1,7 +1,11 @@
 import { Grid, Header, List, Segment } from "semantic-ui-react";
 import React from 'react'
+import { APP_TITLE } from "../appConfig";
 
 const Statistics = () => {
+
+    document.title = APP_TITLE + "Statistics"
+
     return (
         <Grid stackable>
             <Grid.Row>

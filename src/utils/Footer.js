@@ -1,6 +1,6 @@
 import React from 'react';
 import packageJson from '../../package.json';
-import { Divider, Grid, Icon } from 'semantic-ui-react'
+import { Divider, Icon } from 'semantic-ui-react'
 
 export default class Footer extends React.Component {
 

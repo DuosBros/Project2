@@ -8,11 +8,14 @@ import { getHealthChecks } from '../requests/HealthCheckAxios';
 import { getHealthChecksAction } from '../actions/HealthCheckAction';
 import ErrorMessage from '../components/ErrorMessage';
 import HealthChecksTable from '../components/HealthChecksTable';
+import { APP_TITLE } from '../appConfig';
 
 class HealthChecks extends React.Component {
 
     componentDidMount() {
         this.fetchHealthCheckssAndHandleResult()
+
+        document.title = APP_TITLE + "HealthChecks";
     }
 
     fetchHealthCheckssAndHandleResult = () => {

@@ -12,7 +12,7 @@ import WebsitesTable from '../components/WebsitesTable';
 import { isAdmin } from '../utils/HelperFunction';
 import LoadBalancerFarmsTable from '../components/LoadBalancerFarmsTable';
 import DismeStatus from '../components/DismeStatus';
-import { DISME_SERVICE_URL, DISME_SERVICE_PLACEHOLDER } from '../appConfig';
+import { DISME_SERVICE_URL, DISME_SERVICE_PLACEHOLDER, APP_TITLE } from '../appConfig';
 import Kibana from '../utils/Kibana';
 import ErrorMessage from '../components/ErrorMessage';
 
@@ -37,6 +37,14 @@ class ServiceDetails extends React.Component {
         getServiceDetails(this.props.match.params.id)
             .then(res => {
                 this.props.getServiceDetailsAction({ success: true, data: res.data })
+                
+                if (res.data[0]) {
+                    document.title = APP_TITLE + res.data[0].Name;
+                }
+                else {
+                    document.title = APP_TITLE + "Service Details"
+                }
+
             })
             .catch(err => {
                 this.props.getServiceDetailsAction({ success: false, error: err })

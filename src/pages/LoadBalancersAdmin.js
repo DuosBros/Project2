@@ -8,11 +8,14 @@ import ErrorMessage from '../components/ErrorMessage';
 import { getLoadBalancers, getLoadBalancersTokens, deleteLoadBalancerToken } from '../requests/LoadBalancerAxios';
 import { getLoadBalancersAction, getLoadBalancersTokensAction, deleteLoadBalancerTokenAction } from '../actions/LoadBalancerAction';
 import LoadBalancersTable from '../components/LoadBalancersTable';
+import { APP_TITLE } from '../appConfig';
 
-class LoadBalancerAdmin extends React.Component {
+class LoadBalancersAdmin extends React.Component {
 
     componentDidMount() {
         this.fetchLoadBalancersAndHandleResult()
+
+        document.title = APP_TITLE + "LoadBalancers Admin";
     }
 
     fetchLoadBalancersAndHandleResult = () => {
@@ -114,4 +117,4 @@ function mapDispatchToProps(dispatch) {
     }, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LoadBalancerAdmin);
+export default connect(mapStateToProps, mapDispatchToProps)(LoadBalancersAdmin);

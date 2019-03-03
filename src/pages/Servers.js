@@ -9,11 +9,14 @@ import { getServersAction } from '../actions/ServerActions';
 import ServersTable from '../components/ServersTable';
 import { getServerState, getDismeState } from '../utils/HelperFunction';
 import ErrorMessage from '../components/ErrorMessage';
+import { APP_TITLE } from '../appConfig';
 
 class Servers extends React.Component {
 
     componentDidMount() {
         this.fetchServersAndHandleResult()
+
+        document.title = APP_TITLE + "Servers"
     }
 
     fetchServersAndHandleResult = () => {

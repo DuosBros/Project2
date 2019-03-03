@@ -2,8 +2,10 @@ import React from 'react';
 import { Grid, Header, Segment, List } from 'semantic-ui-react';
 import links from '../links';
 import { Link } from 'react-router-dom';
+import { APP_TITLE } from '../appConfig';
 
 const Admin = () => {
+    document.title = APP_TITLE + "Admin";
     let locoUrl
     links.list.forEach(x => x.forEach(y => y.items.forEach(z => { if (z.title === "LOCO") { locoUrl = z.url } })))
     return (

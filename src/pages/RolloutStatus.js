@@ -18,7 +18,7 @@ import { getDismeApplications, getServiceByShortcut, getHealths, getVersionsForR
 import { Grid, Header, Segment, Dropdown, Table, Button, Message, Icon, TextArea, Form } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import DismeStatus from '../components/DismeStatus';
-import { DISME_SERVICE_URL, DISME_SERVICE_PLACEHOLDER } from '../appConfig';
+import { DISME_SERVICE_URL, DISME_SERVICE_PLACEHOLDER, APP_TITLE } from '../appConfig';
 import SimpleTable from '../components/SimpleTable';
 import { searchServiceShortcut } from '../requests/HeaderAxios';
 import { searchServiceShortcutAction } from '../actions/HeaderActions';
@@ -63,6 +63,8 @@ class RolloutStatus extends React.Component {
         this.fechtAndHandleDismeApplications();
 
         document.addEventListener('keydown', this.handleDocumentKeyDown)
+
+        document.title = APP_TITLE + "Rollout Status"
     }
 
     handleDocumentKeyDown = (e) => {

@@ -13,7 +13,7 @@ import WebChecksTable from '../components/WebChecksTable';
 import { getServerDetailsAction, getVmDetailsAction, getServerScomAlertsAction, getServerStatsAction } from '../actions/ServerActions';
 import { getServerDetails, getServerScomAlerts, getDiskUsageDetails } from '../requests/ServerAxios';
 
-import { errorColor } from '../appConfig';
+import { errorColor, APP_TITLE } from '../appConfig';
 
 import Kibana from '../utils/Kibana';
 import LoadBalancerFarmsTable from '../components/LoadBalancerFarmsTable';
@@ -52,6 +52,14 @@ class ServerDetails extends React.Component {
         getServerDetails(this.props.match.params.id)
             .then(res => {
                 this.props.getServerDetailsAction({ success: true, data: res.data })
+
+                if (res.data) {
+                    document.title = APP_TITLE + res.data.ServerName;
+                }
+                else {
+                    document.title = APP_TITLE + "Server Details"
+                }
+
                 return res
             })
             .catch((err) => {
