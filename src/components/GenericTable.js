@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 import { Table, Grid, Message, Input, Button, Icon, Label, Popup, Dropdown } from 'semantic-ui-react'
 import Pagination from 'semantic-ui-react-button-pagination';
 import ExportFromJSON from 'export-from-json'
@@ -20,7 +21,10 @@ export default class GenericTable extends Component {
             name: PropTypes.string.isRequired,
             collapsing: PropTypes.bool,
             exportable: PropTypes.bool,
-            searchable: PropTypes.bool,
+            searchable: PropTypes.oneOfType([
+                PropTypes.bool,
+                PropTypes.oneOf(["distinct"])
+            ]),
             sortable: PropTypes.bool,
             visibleByDefault: PropTypes.bool,
         })).isRequired,
@@ -71,16 +75,18 @@ export default class GenericTable extends Component {
             filterInputsChanged = {},
             filterInputsValid = {},
             filters = {};
-        for (let col of columns) {
-            filterInputs[col.prop] = "";
+        for (let col of columns.filter(c => c.searchable !== false)) {
+            filterInputs[col.prop] = col.searchable === true ? "" : -1;
             filterInputsChanged[col.prop] = false;
             filterInputsValid[col.prop] = true;
             filters[col.prop] = null;
         }
 
         let multiSearch = this.multiSearchFilterFromInput(props.multiSearchInput);
+        let columnDistinctValues = this.generateDistinctValues(columns, props.data);
 
         this.state = {
+            columnDistinctValues,
             columns,
             columnToggle: columns.filter(c => c.visibleByDefault === false).length > 0,
             data: props.data,
@@ -145,6 +151,16 @@ export default class GenericTable extends Component {
         };
     }
 
+    generateDistinctValues(columns, data) {
+        let columnDistinctValues = {};
+        for(let c of columns.filter(e => e.searchable === "distinct")) {
+            let values = _.uniq(data.map(e => e[c.prop])).sort().map((e, i) => ({ key: i, text: e, value: i }));
+            values.unshift({ key: -1, text: (<em>unfiltered</em>), value: -1 });
+            columnDistinctValues[c.prop] = values;
+        }
+        return columnDistinctValues;
+    }
+
     componentWillReceiveProps(nextProps) {
         if (this.props.data !== nextProps.data) {
             let data;
@@ -152,7 +168,7 @@ export default class GenericTable extends Component {
                 data = this.sort(nextProps.data, null);
             }
 
-            this.setState({ data });
+            this.setState({ data, ...this.generateDistinctValues(this.state.columns, data) });
         }
     }
 
@@ -198,6 +214,19 @@ export default class GenericTable extends Component {
         this.updateColumnFilters();
     }
 
+    handleColumnFilterDropdown = (e, { name, value }) => {
+        this.setState(prev => {
+            let filterInputs = Object.assign({}, prev.filterInputs, { [name]: value }),
+                filterInputsChanged = Object.assign({}, prev.filterInputsChanged, { [name]: true });
+
+            return {
+                filterInputs,
+                filterInputsChanged
+            };
+        });
+        this.updateColumnFilters();
+    }
+
     updateColumnFilters() {
         this.setState((prev) => {
             let filters = {},
@@ -228,6 +257,13 @@ export default class GenericTable extends Component {
     }
 
     buildColumnFilter(key, needle) {
+        if(typeof needle === "number") {
+            // TODO find cleaner solution
+            if(needle === -1) {
+                return null;
+            }
+            return heystack => heystack[key].toString() === this.state.columnDistinctValues[key];
+        }
         let func = this.buildFilter(needle);
         if(func == null) {
             return func;
@@ -590,6 +626,7 @@ export default class GenericTable extends Component {
 
     render() {
         const {
+            columnDistinctValues,
             columns,
             grouping,
             visibleColumnsList,
@@ -689,7 +726,7 @@ export default class GenericTable extends Component {
         }
 
         if (multiSearchInputValid && multiSearch != null) {
-            filteredData = filterInArrayOfObjects(multiSearch, data, visibleColumns.filter(c => c.searchable).map(c => c.prop));
+            filteredData = filterInArrayOfObjects(multiSearch, data, visibleColumns.filter(c => c.searchable !== false).map(c => c.prop));
         } else {
             filteredData = data;
         }
@@ -730,8 +767,10 @@ export default class GenericTable extends Component {
         if (showColumnFilters) {
             let headerFilterCells = visibleColumns.map(c => {
                 let filterInput = null;
-                if (c.searchable) {
+                if (c.searchable === true) {
                     filterInput = (<Input fluid name={c.prop} onChange={this.handleColumnFilterChange} value={filterInputs[c.prop]} error={!filterInputsValid[c.prop]} />)
+                } else if (c.searchable === "distinct") {
+                    filterInput = (<Dropdown fluid search selection name={c.prop} onChange={this.handleColumnFilterDropdown} value={filterInputs[c.prop]} options={columnDistinctValues[c.prop]} />)
                 }
                 return (
                     <Table.HeaderCell collapsing={c.collapsing} width={c.collapsing ? null : c.width} key={c.prop}>

@@ -30,7 +30,8 @@ class LoadBalancerFarmsTable extends Component {
         {
             name: "Data Center",
             prop: "DataCenter",
-            visibleByDefault: false,
+            visibleByDefault: true,
+            searchable: "distinct",
             width: 1
         },
         {
