@@ -247,26 +247,16 @@ export const debounce = (fn, time) => {
     }
 }
 
-function trimString(s) {
-    var l = 0, r = s.length - 1;
-    while (l < s.length && s[l] === ' ') l++;
-    while (r > l && s[r] === ' ') r -= 1;
-    return s.substring(l, r + 1);
-}
-
 /*
  * "keys" (optional) Specifies which properties of objects should be inspected.
  *                   If omitted, all properties will be inspected.
  */
-export const filterInArrayOfObjects = (toSearch, array, keys) => {
-    toSearch = trimString(toSearch); // trim it
+export const filterInArrayOfObjects = (filter, array, keys) => {
     return array.filter(element => {
         let objk = keys ? keys : Object.keys(element);
         for (let key of objk) {
             if (element[key]) { // fuken lodash returning isEmpty true for numbers
-                if (element[key].toString().toLowerCase().indexOf(toSearch.toString().toLowerCase()) !== -1) {
-                    return true
-                }
+                return filter(element[key])
             }
         }
         return false;

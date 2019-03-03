@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 import { Table, Grid, Message, Input, Button, Icon, Label, Popup, Dropdown } from 'semantic-ui-react'
@@ -34,6 +33,7 @@ export default class GenericTable extends Component {
         expandable: PropTypes.bool,
         getDataKey: PropTypes.func,
         grouping: PropTypes.array,
+        multiSearchInput: PropTypes.string,
         onRowExpandToggle: PropTypes.func,
         renderCustomFilter: PropTypes.func,
         renderExpandedRow: PropTypes.func,
@@ -52,6 +52,7 @@ export default class GenericTable extends Component {
         expandable: false,
         getDataKey: GenericTable.getDataKey,
         grouping: [],
+        multiSearchInput: "",
         onRowExpandToggle: GenericTable.onRowExpandToggle,
         renderCustomFilter: GenericTable.renderCustomFilter,
         renderExpandedRow: GenericTable.renderExpandedRow,
@@ -67,11 +68,17 @@ export default class GenericTable extends Component {
 
         // generate empty filters and filterInputs objects
         let filterInputs = {},
+            filterInputsChanged = {},
+            filterInputsValid = {},
             filters = {};
         for (let col of columns) {
             filterInputs[col.prop] = "";
-            filters[col.prop] = "";
+            filterInputsChanged[col.prop] = false;
+            filterInputsValid[col.prop] = true;
+            filters[col.prop] = null;
         }
+
+        let multiSearch = this.multiSearchFilterFromInput(props.multiSearchInput);
 
         this.state = {
             columns,
@@ -79,12 +86,15 @@ export default class GenericTable extends Component {
             data: props.data,
             expandedRows: [],
             filterInputs,
+            filterInputsChanged,
+            filterInputsValid,
             filters,
             grouping,
             limit: parseInt(props.rowsPerPage),
             limitInput: props.rowsPerPage.toString(),
             limitInputValid: true,
-            multiSearchInput: props.multiSearchInput ? props.multiSearchInput : "",
+            multiSearchInput: props.multiSearchInput,
+            ...multiSearch,
             offset: 0,
             showColumnFilters: false,
             showColumnToggles: false,
@@ -98,7 +108,8 @@ export default class GenericTable extends Component {
             this.state.data = this.sort(this.state.data, null);
         }
 
-        this.updateFilters = debounce(this.updateFilters, 400);
+        this.updateMultiFilter = debounce(this.updateMultiFilter, 400);
+        this.updateColumnFilters = debounce(this.updateColumnFilters, 400);
         this.updateLimit = debounce(this.updateLimit, 400);
     }
 
@@ -175,17 +186,94 @@ export default class GenericTable extends Component {
     }
 
     handleColumnFilterChange = (e, { name, value }) => {
-        let filterInputs = Object.assign({}, this.state.filterInputs, { [name]: value })
-        this.setState({ filterInputs });
-        this.updateFilters();
+        this.setState(prev => {
+            let filterInputs = Object.assign({}, prev.filterInputs, { [name]: value }),
+                filterInputsChanged = Object.assign({}, prev.filterInputsChanged, { [name]: true });
+
+            return {
+                filterInputs,
+                filterInputsChanged
+            };
+        });
+        this.updateColumnFilters();
     }
 
-    updateFilters = () => {
-        this.setState((prev) => ({ filters: prev.filterInputs }));
+    updateColumnFilters() {
+        this.setState((prev) => {
+            let filters = {},
+                filterInputsChanged = Object.assign({}, prev.filterInputsChanged),
+                filterInputsValid = Object.assign({}, prev.filterInputsValid);
+
+            for(let key of Object.getOwnPropertyNames(prev.filters).filter(c => prev.filterInputsChanged[c])) {
+                let func = null,
+                    valid = false;
+
+                try {
+                    func = this.buildColumnFilter(key, prev.filterInputs[key]);
+                    valid = true;
+                } catch(e) {
+                    // ignore errors, valid will be false anyway
+                }
+
+                filterInputsChanged[key] = false;
+                filterInputsValid[key] = valid;
+                filters[key] = func;
+            }
+            return {
+                filters,
+                filterInputsChanged,
+                filterInputsValid
+            };
+        });
+    }
+
+    buildColumnFilter(key, needle) {
+        let func = this.buildFilter(needle);
+        if(func == null) {
+            return func;
+        }
+        return heystack => func(heystack[key]);
+    }
+
+    buildFilter(needle) {
+        if(needle.length > 0 && needle.substr(0, 1) === "~") {
+            if(needle.length === 1) {
+                return null;
+            }
+            let re = new RegExp(needle.substr(1), "i");
+            return heystack => heystack.toString().search(re) >= 0;
+        }
+        let n = needle.trim().toLowerCase();
+        if(n.length === 0) {
+            return null;
+        }
+        return heystack => heystack.toString().toLowerCase().indexOf(n) >= 0;
     }
 
     handleMultiFilterChange = (e, { value }) => {
         this.setState({ multiSearchInput: value });
+        this.updateMultiFilter();
+    }
+
+    multiSearchFilterFromInput(input) {
+        let func = null,
+            valid = false;
+
+        try {
+            func = this.buildFilter(input);
+            valid = true;
+        } catch(e) {
+            // ignore errors, valid will be false anyway
+        }
+
+        return {
+            multiSearch: func,
+            multiSearchInputValid: valid
+        }
+    }
+
+    updateMultiFilter() {
+        this.setState((prev) => this.multiSearchFilterFromInput(prev.multiSearchInput));
     }
 
     handleToggleColumnFilters = () => {
@@ -341,6 +429,7 @@ export default class GenericTable extends Component {
             limitInput,
             limitInputValid,
             multiSearchInput,
+            multiSearchInputValid,
             showColumnFilters,
             showColumnToggles,
             showTableHeader,
@@ -400,7 +489,11 @@ export default class GenericTable extends Component {
                                     label='Filter:'
                                     id="multiSearchFilterInBuffedTable"
                                     fluid
-                                    value={multiSearchInput} placeholder="Type to search..." name="multiSearchInput" onChange={this.handleMultiFilterChange} ></Input>
+                                    value={multiSearchInput}
+                                    placeholder="Type to search..."
+                                    name="multiSearchInput"
+                                    onChange={this.handleMultiFilterChange}
+                                    error={!multiSearchInputValid}/>
                             </Grid.Column>
                             <Grid.Column width={1}>
                                 <Dropdown icon={<Icon className="iconMargin" name='share' />} item text='Export'>
@@ -493,11 +586,14 @@ export default class GenericTable extends Component {
             visibleColumnsList,
             sortColumn,
             sortDirection,
-            multiSearchInput,
+            multiSearch,
+            multiSearchInputValid,
             limit,
             showColumnFilters,
             data,
             filters,
+            filterInputs,
+            filterInputsValid,
             offset,
             expandedRows
         } = this.state;
@@ -583,8 +679,8 @@ export default class GenericTable extends Component {
             ));
         }
 
-        if (multiSearchInput !== "") {
-            filteredData = filterInArrayOfObjects(multiSearchInput, data, visibleColumns.filter(c => c.searchable).map(c => c.prop));
+        if (multiSearchInputValid && multiSearch != null) {
+            filteredData = filterInArrayOfObjects(multiSearch, data, visibleColumns.filter(c => c.searchable).map(c => c.prop));
         } else {
             filteredData = data;
         }
@@ -592,20 +688,9 @@ export default class GenericTable extends Component {
         filteredData = this.props.customFilterCallback(filteredData);
 
         if (showColumnFilters) {
-            var filterValid = [];
             for (let col of Object.getOwnPropertyNames(filters)) {
-                try {
-                    if (!_.isEmpty(filters[col])) {
-                        filteredData = filteredData.filter(data => {
-                            if (data[col]) {
-                                return data[col].toString().search(new RegExp(filters[col], "i")) >= 0
-                            }
-                            return false;
-                        })
-                    }
-                    filterValid[col] = true;
-                } catch (e) {
-                    filterValid[col] = false;
+                if (filters[col] != null) {
+                    filteredData = filteredData.filter(filters[col]);
                 }
             }
         }
@@ -637,7 +722,7 @@ export default class GenericTable extends Component {
             let headerFilterCells = visibleColumns.map(c => {
                 let filterInput = null;
                 if (c.searchable) {
-                    filterInput = (<Input fluid name={c.prop} onChange={this.handleColumnFilterChange} value={this.state.filterInputs[c.prop]} error={!filterValid[c.prop]} />)
+                    filterInput = (<Input fluid name={c.prop} onChange={this.handleColumnFilterChange} value={filterInputs[c.prop]} error={!filterInputsValid[c.prop]} />)
                 }
                 return (
                     <Table.HeaderCell collapsing={c.collapsing} width={c.collapsing ? null : c.width} key={c.prop}>
