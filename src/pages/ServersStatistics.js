@@ -12,6 +12,7 @@ import ErrorMessage from '../components/ErrorMessage';
 import { mapDataForGenericChart, getUniqueValuesOfKey } from '../utils/HelperFunction';
 import BarChartWithRawData from '../charts/BarChartWithRawData';
 import PieChartWithRawData from '../charts/PieChartWIthRawData';
+import { APP_TITLE } from '../appConfig';
 
 const DropDownForCombinedPieChart = (props) => {
     return (
@@ -46,6 +47,8 @@ class ServersStatistics extends React.Component {
     componentDidMount() {
         this.fetchServersAndHandleResult()
         this.fetchVirtualMachinesAndHandleResult()
+
+        document.title = APP_TITLE + "Servers Statistics"
     }
 
     fetchServersAndHandleResult = () => {

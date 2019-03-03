@@ -8,11 +8,13 @@ import { getAgentLogs } from '../requests/AgentLogAxios';
 import { getAgentLogsAction } from '../actions/AgentLogActions';
 import ErrorMessage from '../components/ErrorMessage';
 import AgentLogTable from '../components/AgentLogTable';
+import { APP_TITLE } from '../appConfig';
 
 class AgentLogs extends React.Component {
 
     componentDidMount() {
         this.fetchAgentLogsAndHandleResult()
+        document.title = APP_TITLE + "AgentLogs Admin";
     }
 
     fetchAgentLogsAndHandleResult = () => {

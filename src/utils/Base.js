@@ -36,7 +36,7 @@ import LoadBalancerFarmsStatistics from '../pages/LoadBalancerFarmsStatistics';
 import ErrorBoundary from '../components/ErrorBoundary';
 import HealthChecks from '../pages/HealthChecks';
 import Statistics from '../pages/Statistics';
-import LoadBalancerAdmin from '../pages/LoadBalancerAdmin';
+import LoadBalancersAdmin from '../pages/LoadBalancersAdmin';
 import ScrollToTop from './ScrollToTop';
 import ActiveDirectoryAdmin from '../pages/ActiveDirectoryAdmin';
 import AgentLogs from '../pages/AgentLogs';
@@ -142,7 +142,7 @@ class Base extends React.Component {
                                     <Route path='/ipaddresses' component={IPAddresses} />
                                     <Route exact path='/statistics' component={Statistics} />
                                     <PrivateRoute isAdmin={isAdmin(this.props.baseStore.currentUser)} exact path='/admin' component={Admin} />
-                                    <PrivateRoute isAdmin={isAdmin(this.props.baseStore.currentUser)} exact path='/admin/loadbalancer' component={LoadBalancerAdmin} />
+                                    <PrivateRoute isAdmin={isAdmin(this.props.baseStore.currentUser)} exact path='/admin/loadbalancer' component={LoadBalancersAdmin} />
                                     <PrivateRoute isAdmin={isAdmin(this.props.baseStore.currentUser)} exact path='/admin/activedirectory' component={ActiveDirectoryAdmin} />
                                     <PrivateRoute isAdmin={isAdmin(this.props.baseStore.currentUser)} exact path='/admin/agentlogs' component={AgentLogs} />
                                     <Route path='/versionstatus' component={VersionStatus} />

@@ -8,6 +8,7 @@ import ErrorMessage from '../components/ErrorMessage';
 import { getActiveDirectories, createActiveDirectory, editActiveDirectories, deleteActiveDirectory } from '../requests/ActiveDirectoryAxios';
 import { getActiveDirectoriesAction, createActiveDirectoryAction, editActiveDirectoryAction, deleteActiveDirectoryAction } from '../actions/ActiveDirectoryActions';
 import ActiveDirectoryTable from '../components/ActiveDirectoryTable';
+import { APP_TITLE } from '../appConfig';
 
 const ActiveDirectoryModal = (props) => {
     return (
@@ -90,6 +91,8 @@ class ActiveDirectoryAdmin extends React.Component {
 
     componentDidMount() {
         this.fetchActiveDirectoriesAndHandleResult()
+
+        document.title = APP_TITLE + "ActiveDirectory Admin";
     }
 
     fetchActiveDirectoriesAndHandleResult = () => {
@@ -241,7 +244,7 @@ class ActiveDirectoryAdmin extends React.Component {
                         </Header>
                         <Segment attached='bottom' >
                             <Grid>
-                                <Grid.Row>
+                                <Grid.Row className="bottomMargin">
                                     <Grid.Column>
                                         <Button
                                             onClick={() => this.handleAddButtonOnClick()}

@@ -10,7 +10,7 @@ import { getServiceDetailsByShortcutsAction, removeServiceDetailsAction, removeA
 import { getStagesAction, getVersionsAction, removeAllVersionsAction } from '../actions/VersionStatusActions';
 import { searchServiceShortcutAction } from '../actions/HeaderActions';
 import { getDismeApplicationsAction } from '../actions/RolloutStatusActions';
-import { DISME_SERVICE_URL, DISME_SERVICE_PLACEHOLDER } from '../appConfig';
+import { DISME_SERVICE_URL, DISME_SERVICE_PLACEHOLDER, APP_TITLE } from '../appConfig';
 import DismeStatus from '../components/DismeStatus';
 import ErrorMessage from '../components/ErrorMessage';
 import SimpleTable from '../components/SimpleTable';
@@ -52,6 +52,8 @@ class VersionStatus extends React.Component {
         this.fetchAndHandleStages();
 
         this.changeInputBasedOnUrl();
+
+        document.title = APP_TITLE + "Version Status"
     }
 
     componentWillUnmount() {
@@ -139,6 +141,7 @@ class VersionStatus extends React.Component {
         var shortcuts = filteredApps.map(x => x.services.map(y => y.Shortcut))[0];
 
         var joinedShortcuts = shortcuts.join(",")
+        this.props.history.push("/versionstatus?services=" + joinedShortcuts)
 
         this.setState({
             inputProductsValues: joinedShortcuts

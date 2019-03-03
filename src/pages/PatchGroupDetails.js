@@ -9,6 +9,7 @@ import { getPatchGroupDetailsAction, getPatchGroupServersAction } from '../actio
 import ErrorMessage from '../components/ErrorMessage';
 import ServersTable from '../components/ServersTable';
 import { getServerState, getDismeState } from '../utils/HelperFunction';
+import { APP_TITLE } from '../appConfig';
 
 class PatchGroupDetails extends React.Component {
 
@@ -27,6 +28,12 @@ class PatchGroupDetails extends React.Component {
         getPatchGroupDetails(id)
             .then(res => {
                 this.props.getPatchGroupDetailsAction({ success: true, data: res.data })
+                if(res.data[0]) {
+                    document.title = APP_TITLE + res.data[0].Name;
+                }
+                else {
+                    document.title = APP_TITLE + "PatchGroup Details"
+                }
             })
             .catch(err => {
                 this.props.getPatchGroupDetailsAction({ success: false, error: err })

@@ -8,11 +8,14 @@ import { getPatchGroups } from '../requests/PatchGroupAxios';
 import { Grid, Header, Segment, Message, Icon } from 'semantic-ui-react';
 import PatchGroupsTable from '../components/PatchGroupsTable';
 import ErrorMessage from '../components/ErrorMessage';
+import { APP_TITLE } from '../appConfig';
 
 class PatchGroups extends React.Component {
 
     componentDidMount() {
         this.fetchPatchGroupsAndHandleResult()
+
+        document.title = APP_TITLE + "Patchgroups"
     }
 
     fetchPatchGroupsAndHandleResult = () => {

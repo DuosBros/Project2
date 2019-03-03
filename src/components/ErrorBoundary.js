@@ -1,5 +1,6 @@
 import React from 'react';
 import ErrorMessage from "./ErrorMessage";
+import { APP_TITLE } from '../appConfig';
 
 export default class ErrorBoundary extends React.Component {
     constructor(props) {
@@ -11,6 +12,8 @@ export default class ErrorBoundary extends React.Component {
     }
 
     componentDidCatch(error, errorInfo) {
+        document.title = APP_TITLE + "Oops!";
+        
         this.setState({
             error: error,
             errorInfo: errorInfo

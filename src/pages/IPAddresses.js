@@ -8,11 +8,14 @@ import { getIPAddressesAction } from '../actions/IPAddressActions';
 import { getIPAddresses } from '../requests/IPAddressAxios';
 import IPAddressesTable from '../components/IPAddressesTable';
 import ErrorMessage from '../components/ErrorMessage';
+import { APP_TITLE } from '../appConfig';
 
 class IPAddresses extends React.Component {
 
     componentDidMount() {
         this.fetchIPAddressesAndHandleResult()
+
+        document.title = APP_TITLE + "IP Addresses";
     }
 
     fetchIPAddressesAndHandleResult = () => {

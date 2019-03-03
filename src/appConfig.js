@@ -1,3 +1,4 @@
+export const APP_TITLE = "LOCO V2 - "
 /*global process*/
 export const LOCO_API = process.env.NODE_ENV === 'development' ? 'http://loco.dev.env.works/Api/' : 'https://loco.prod.env.works/Api/';
 // export const LOCO_API = "http://localhost:24298/Api/"

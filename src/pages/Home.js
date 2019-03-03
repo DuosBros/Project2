@@ -3,7 +3,7 @@ import { Grid, List, Popup, Divider, Header, Image, Flag, Input, Button } from '
 import SearchBox from '../components/SearchBox';
 import ShortcutFocus from '../components/ShortcutFocus';
 
-import { INCIDENT_PLACEHOLDER, SN_INC_SEARCH_URL, VERSION1_SEARCH_URL, VERSION1_PLACEHOLDER } from '../appConfig';
+import { INCIDENT_PLACEHOLDER, SN_INC_SEARCH_URL, VERSION1_SEARCH_URL, VERSION1_PLACEHOLDER, APP_TITLE } from '../appConfig';
 import links from '../links';
 
 export default class Home extends React.Component {
@@ -16,6 +16,10 @@ export default class Home extends React.Component {
         }
     }
 
+    componentDidMount() {
+        document.title = APP_TITLE + "Home";
+    }
+    
     handleChange = (e, { name, value }) => {
         this.setState({ [name]: value })
     }

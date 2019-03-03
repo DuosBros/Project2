@@ -7,6 +7,7 @@ import _ from 'lodash';
 
 import { sendAuthenticationData } from '../requests/LoginAxios';
 import { authenticateAction, authenticationStartedAction, authenticateEndedAction, authenticateOKAction, authenticationFailedAction } from '../actions/BaseAction';
+import { APP_TITLE } from '../appConfig';
 
 class Login extends React.Component {
     constructor(props) {
@@ -26,6 +27,9 @@ class Login extends React.Component {
         }
     }
 
+    componentDidMount() {
+        document.title = APP_TITLE + "Login";
+    }
     auth = () => {
 
         this.props.authenticationStartedAction();
