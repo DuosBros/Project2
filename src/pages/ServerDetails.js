@@ -133,7 +133,7 @@ class ServerDetails extends React.Component {
         var scomAlertsSuccess = this.props.serverStore.scomAlerts.success;
         var scomAlertsData = this.props.serverStore.scomAlerts.data;
         var OSIcon, scomAlertsSegment;
-        
+
         const { webchecks, dismeservices, loadbalancerfarms, windowsservices, websites, scomalerts } = this.state;
 
         // in case of error
@@ -399,7 +399,7 @@ class ServerDetails extends React.Component {
                         {
                             webchecks ? (
                                 <Segment attached='bottom'>
-                                    <WebChecksTable data={serverDetailsData.WebChecks} showTableHeader={false} compact="very" />
+                                    <WebChecksTable data={serverDetailsData.WebChecks} tableHeader={false} compact="very" />
                                 </Segment>
                             ) : (
                                     null
@@ -416,7 +416,7 @@ class ServerDetails extends React.Component {
                         {
                             dismeservices ? (
                                 <Segment attached='bottom'>
-                                    <ServiceTable data={serverDetailsData.ServicesFull} showTableHeaderFunctions={false} compact="very" />
+                                    <ServiceTable data={serverDetailsData.ServicesFull} tableHeader="hidden" compact="very" />
                                 </Segment>
                             ) : (
                                     null
@@ -455,7 +455,7 @@ class ServerDetails extends React.Component {
                         {
                             websites ? (
                                 <Segment attached='bottom'>
-                                    <WebsitesTable data={serverDetailsData.Websites} disableGrouping={true} showTableHeaderFunctions={false} />
+                                    <WebsitesTable data={serverDetailsData.Websites} disableGrouping={true} tableHeader="hidden" />
                                 </Segment>
                             ) : (
                                     null
@@ -491,7 +491,7 @@ class ServerDetails extends React.Component {
                         {
                             windowsservices ? (
                                 <Segment attached='bottom'>
-                                    <WindowsServicesTable data={serverDetailsData.WindowsServices} showTableHeader={false} compact="very" />
+                                    <WindowsServicesTable data={serverDetailsData.WindowsServices} tableHeader={false} compact="very" />
                                 </Segment>
                             ) : (
                                     null

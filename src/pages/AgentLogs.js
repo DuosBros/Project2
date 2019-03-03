@@ -68,7 +68,7 @@ class AgentLogs extends React.Component {
                         Agent Logs
                             </Header>
                         <Segment attached='bottom' >
-                            <AgentLogTable compact="very" defaultLimitOverride={50} data={this.props.agentLogStore.agentLogs.data} />
+                            <AgentLogTable compact="very" rowsPerPage={50} data={this.props.agentLogStore.agentLogs.data} />
                         </Segment>
                     </Grid.Column>
                 </Grid.Row>

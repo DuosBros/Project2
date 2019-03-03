@@ -14,43 +14,48 @@ const DEFAULT_COLUMN_PROPS = {
     exportable: true
 }
 
-export const GenericTablePropTypes = {
-    columns: PropTypes.array.isRequired,
-    customFilterCallback: PropTypes.func,
-    expandable: PropTypes.bool,
-    getDataKey: PropTypes.func,
-    grouping: PropTypes.array,
-    onRowExpandToggle: PropTypes.func,
-    renderCustomFilter: PropTypes.func,
-    renderExpandedRow: PropTypes.func,
-    transformDataRow: PropTypes.func,
-    defaultLimitOverride: PropTypes.number,
-    showTableHeaderFunctions: PropTypes.bool,
-    showTableHeader: PropTypes.bool,
-    disableGrouping: PropTypes.bool,
-    compact: PropTypes.oneOfType([
-        PropTypes.bool,
-        PropTypes.string
-    ])
-};
-
 export default class GenericTable extends Component {
+    static propTypes = {
+        columns: PropTypes.arrayOf(PropTypes.shape({
+            collapsing: PropTypes.bool,
+            exportable: PropTypes.bool,
+            searchable: PropTypes.bool,
+            sortable: PropTypes.bool,
+            visibleByDefault: PropTypes.bool,
+        })).isRequired,
+        compact: PropTypes.oneOfType([
+            PropTypes.bool,
+            PropTypes.oneOf(['very'])
+        ]),
+        customFilterCallback: PropTypes.func,
+        disableGrouping: PropTypes.bool,
+        expandable: PropTypes.bool,
+        getDataKey: PropTypes.func,
+        grouping: PropTypes.array,
+        onRowExpandToggle: PropTypes.func,
+        renderCustomFilter: PropTypes.func,
+        renderExpandedRow: PropTypes.func,
+        rowsPerPage: n => Number.isOnteger(n) && n >= 0,
+        tableHeader: PropTypes.oneOf([
+            PropTypes.bool,
+            PropTypes.oneOf(["hidden"])
+        ]),
+        transformDataRow: PropTypes.func,
+    }
+
     static defaultProps = {
+        compact: false,
         customFilterCallback: GenericTable.customFilterCallback,
-        defaultLimitOverride: 15,
+        disableGrouping: false,
         expandable: false,
         getDataKey: GenericTable.getDataKey,
         grouping: [],
         onRowExpandToggle: GenericTable.onRowExpandToggle,
         renderCustomFilter: GenericTable.renderCustomFilter,
         renderExpandedRow: GenericTable.renderExpandedRow,
-        showTableHeaderFunctions: true,
-        showTableHeader: true,
-        disableGrouping: false,
-        compact: false
+        rowsPerPage: 15,
+        tableHeader: true,
     }
-
-    static propTypes = GenericTablePropTypes
 
     constructor(props) {
         super(props);
@@ -66,29 +71,25 @@ export default class GenericTable extends Component {
             filters[col.prop] = "";
         }
 
-        let defaultLimit = parseInt(this.props.defaultLimitOverride);
-
         this.state = {
-            sortColumn: null,
-            sortDirection: null,
-            offset: 0,
-            showTableHeaderFunctions: this.props.showTableHeaderFunctions,
-            showTableHeader: this.props.showTableHeader,
-            defaultLimit,
-            limit: defaultLimit,
-            limitInput: defaultLimit.toString(),
-            limitInputValid: true,
-            multiSearchInput: this.props.multiSearchInput ? this.props.multiSearchInput : "",
-            showColumnFilters: false,
+            columns,
+            columnToggle: columns.filter(c => c.visibleByDefault === false).length > 0,
+            data: props.data,
+            expandedRows: [],
             filterInputs,
             filters,
-            columns,
             grouping,
-            data: this.props.data,
-            columnToggle: columns.filter(c => c.visibleByDefault === false).length > 0,
+            limit: parseInt(props.rowsPerPage),
+            limitInput: props.rowsPerPage.toString(),
+            limitInputValid: true,
+            multiSearchInput: props.multiSearchInput ? props.multiSearchInput : "",
+            offset: 0,
+            showColumnFilters: false,
             showColumnToggles: false,
+            showTableHeader: props.tableHeader,
+            sortColumn: null,
+            sortDirection: null,
             visibleColumnsList: columns.filter(c => c.visibleByDefault).map(c => c.prop),
-            expandedRows: []
         }
 
         if (Array.isArray(this.state.data)) {
@@ -215,7 +216,7 @@ export default class GenericTable extends Component {
 
     handleChangeRecordsPerPage = (e, { value }) => {
         let n = value.trim(),
-            limitInputValid = isNum(n);
+            limitInputValid = isNum(n) && n > 0;
 
         this.setState({
             limitInput: value,
@@ -230,7 +231,7 @@ export default class GenericTable extends Component {
     updateLimit() {
         this.setState(prev => {
             let n = prev.limitInput.trim(),
-                limitInputValid = isNum(n);
+                limitInputValid = isNum(n) && n > 0;
 
             if (limitInputValid) {
                 return { limit: parseInt(n) };
@@ -326,15 +327,14 @@ export default class GenericTable extends Component {
         });
     }
 
-    onTableHeaderToggle = () => {
-        this.setState(prev => ({ showTableHeaderFunctions: !prev.showTableHeaderFunctions }));
+    onTableHeaderShow = () => {
+        this.setState({ showTableHeader: true });
     }
 
     renderTableFunctions(numRecords) {
         const {
             columns,
             columnToggle,
-            defaultLimit,
             limit,
             limitInput,
             limitInputValid,
@@ -342,7 +342,6 @@ export default class GenericTable extends Component {
             showColumnFilters,
             showColumnToggles,
             showTableHeader,
-            showTableHeaderFunctions,
             visibleColumnsList,
         } = this.state;
 
@@ -389,8 +388,8 @@ export default class GenericTable extends Component {
             }
         }
 
-        if (showTableHeader) {
-            if (showTableHeaderFunctions) {
+        if (showTableHeader !== false) {
+            if (showTableHeader !== "hidden") {
                 return (
                     <Grid>
                         <Grid.Row>
@@ -428,12 +427,12 @@ export default class GenericTable extends Component {
                                 </Dropdown>
                             </Grid.Column>
                             <Grid.Column width={3}>
-                                <div style={{ float: "right", margin: "0 20px", display: defaultLimit === 0 ? "none" : "visible" }}>
+                                <div style={{ float: "right", margin: "0 20px", display: limit === 0 ? "none" : "visible" }}>
                                     <span>Showing {numRecords > 0 ? this.state.offset + 1 : 0} to {numRecords < limit ? numRecords : this.state.offset + limit} of {numRecords} entries</span>
                                 </div>
                             </Grid.Column>
                             <Grid.Column width={4}>
-                                <div style={{ float: "left", margin: "0 20px", display: defaultLimit === 0 ? "none" : "visible" }}>
+                                <div style={{ float: "left", margin: "0 20px", display: limit === 0 ? "none" : "visible" }}>
                                     <Input
                                         label='Records per page:'
                                         className="RecordsPerPage"
@@ -471,7 +470,7 @@ export default class GenericTable extends Component {
                         <Grid.Row>
                             <Grid.Column width={16}>
                                 <Popup trigger={
-                                    <Button compact onClick={this.onTableHeaderToggle} icon floated="right">
+                                    <Button compact onClick={this.onTableHeaderShow} icon floated="right">
                                         <Icon name="setting"></Icon>
                                     </Button>
                                 } content='Show table settings' inverted />
@@ -493,7 +492,6 @@ export default class GenericTable extends Component {
             sortColumn,
             sortDirection,
             multiSearchInput,
-            defaultLimit,
             limit,
             showColumnFilters,
             data,
@@ -610,7 +608,7 @@ export default class GenericTable extends Component {
             }
         }
 
-        if (defaultLimit && filteredData.length > limit) {
+        if (limit && filteredData.length > limit) {
             renderData = filteredData.slice(offset, offset + limit)
             tableFooter = (
                 <Pagination

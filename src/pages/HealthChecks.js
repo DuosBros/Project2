@@ -72,7 +72,7 @@ class HealthChecks extends React.Component {
                             HealthChecks
                             </Header>
                         <Segment attached='bottom' >
-                            <HealthChecksTable defaultLimitOverride={50} data={this.props.healthCheckStore.healthChecks.data} compact="very" />
+                            <HealthChecksTable rowsPerPage={50} data={this.props.healthCheckStore.healthChecks.data} compact="very" />
                         </Segment>
                     </Grid.Column>
                 </Grid.Row>

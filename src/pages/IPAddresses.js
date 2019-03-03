@@ -68,7 +68,7 @@ class IPAddresses extends React.Component {
                         </Header>
                         <Segment attached='bottom' >
                             <IPAddressesTable
-                                defaultLimitOverride={45}
+                                rowsPerPage={45}
                                 data={this.props.ipAddressStore.ipAddresses.data}
                                 placeholder="Fetching ip addresses"
                                 compact="very" />

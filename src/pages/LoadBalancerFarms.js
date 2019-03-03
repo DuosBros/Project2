@@ -67,7 +67,7 @@ class LoadBalancerFarms extends React.Component {
                             LoadBalancer Farms
                             </Header>
                         <Segment attached='bottom' >
-                            <LoadBalancerFarmsTable compact="very" defaultLimitOverride={45} data={this.props.loadbalancerFarmsStore.loadBalancerFarms.data} />
+                            <LoadBalancerFarmsTable compact="very" rowsPerPage={45} data={this.props.loadbalancerFarmsStore.loadBalancerFarms.data} />
                         </Segment>
                     </Grid.Column>
                 </Grid.Row>

@@ -146,7 +146,7 @@ class PatchGroupDetails extends React.Component {
                             {
                                 this.props.patchGroupStore.patchGroupServers.success ? (
                                     <ServersTable
-                                        defaultLimitOverride={50}
+                                        rowsPerPage={50}
                                         data={this.props.patchGroupStore.patchGroupServers.data}
                                         compact="very" />
                                 ) : (
