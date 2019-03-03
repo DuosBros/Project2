@@ -177,13 +177,15 @@ dd {
     margin-left: 0;
 }
 
-.dl-horizontal dd:after,.dl-horizontal dd:before {
-    display: table;
-    content: " "
-}
+.dl-horizontal {
+    dd:after, dd:before {
+        display: table;
+        content: " "
+    }
 
-.dl-horizontal dd:after {
-    clear: both
+    dd:after {
+        clear: both
+    }
 }
 
 @media (min-width: 768px) {
@@ -201,18 +203,20 @@ dd {
     }
 }
 
-.links.column {
-    display: inline-block;
-    float: left;
-}
+.links {
+    .column {
+        display: inline-block;
+        float: left;
+    }
 
-.links.section img {
-    width: 16px;
-    height: 16px;
-}
+    .section {
+        img {
+            width: 16px;
+            height: 16px;
+        }
 
-.links.section {
-    margin: 0 20px 20px 0;
+        margin: 0 20px 20px 0;
+    }
 }
 
 div.content.noimg {
@@ -244,10 +248,6 @@ div.generic.table {
             margin: 0;
             list-style: none;
             padding: 0 0 0 1em;
-        }
-
-        tfoot th {
-            padding: 0.8em 0;
         }
     }
 
