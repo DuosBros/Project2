@@ -490,7 +490,7 @@ export default class GenericTable extends Component {
                                         <Label className='iconMargin'>
                                             <Popup on='click' hideOnScroll trigger={<Icon name='question circle' size='small' />} inverted>
                                                 <Popup.Content>
-                                                    Did you know that you can also use <a target="_blank" rel="noopener noreferrer" href='https://regexr.com/'>regex expressions</a> in this filter and column filters?
+                                                    Did you know that you can also use <a target="_blank" rel="noopener noreferrer" href='https://regexr.com/'>Regular Expressions</a> in this filter and column filters by prefixing your expression with "~"?
                                                 </Popup.Content>
                                             </Popup>
                                             Filter:
