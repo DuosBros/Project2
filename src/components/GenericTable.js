@@ -313,15 +313,15 @@ export default class GenericTable extends Component {
     }
 
     onExpandToggle = (e, { rowkey, rowdata }) => {
-        this.setState(function(prev) {
+        this.setState(function (prev) {
             const visible = prev.expandedRows.indexOf(rowkey) === -1
 
             // callback
-            if(this.props.onRowExpandToggle) {
+            if (this.props.onRowExpandToggle) {
                 this.props.onRowExpandToggle(visible, rowkey, rowdata);
             }
 
-            if(visible) {
+            if (visible) {
                 return { expandedRows: [...prev.expandedRows, rowkey] };
             } else {
                 return { expandedRows: prev.expandedRows.filter(e => e !== rowkey) }
@@ -397,7 +397,16 @@ export default class GenericTable extends Component {
                         <Grid.Row>
                             <Grid.Column floated='left' width={4}>
                                 <Input
-                                    label='Filter:'
+                                    label={(
+                                        <Label className='iconMargin'>
+                                            <Popup on='click' hideOnScroll trigger={<Icon name='question circle' size='small' />} inverted>
+                                                <Popup.Content>
+                                                    Did you know that you can also use <a target="_blank" rel="noopener noreferrer" href='https://regexr.com/'>regex expressions</a> in this filter and column filters?
+                                                </Popup.Content>
+                                            </Popup>
+                                            Filter:
+                                        </Label>
+                                    )}
                                     id="multiSearchFilterInBuffedTable"
                                     fluid
                                     value={multiSearchInput} placeholder="Type to search..." name="multiSearchInput" onChange={this.handleMultiFilterChange} ></Input>
@@ -562,7 +571,7 @@ export default class GenericTable extends Component {
                 />
             );
         });
-        if(expandable) {
+        if (expandable) {
             headerCells.unshift((
                 <Table.HeaderCell
                     collapsing
@@ -571,7 +580,7 @@ export default class GenericTable extends Component {
                 />
             ));
         }
-        if(isEdit) {
+        if (isEdit) {
             headerCells.push((
                 <Table.HeaderCell
                     collapsing={false}
@@ -645,7 +654,7 @@ export default class GenericTable extends Component {
                     </Table.HeaderCell>
                 );
             })
-            if(expandable) {
+            if (expandable) {
                 headerFilterCells.unshift((<Table.HeaderCell collapsing key="expand">
                 </Table.HeaderCell>))
             }
@@ -708,7 +717,7 @@ export default class GenericTable extends Component {
                             rowkey={rowKey}
                             rowdata={data}
                             name={expandName + " square outline"}
-                            onClick={this.onExpandToggle}/>
+                            onClick={this.onExpandToggle} />
                     </Table.Cell>));
             }
 
@@ -749,7 +758,7 @@ export default class GenericTable extends Component {
             ));
 
             // insert details-row if row is in expanded state
-            if(isRowExpanded) {
+            if (isRowExpanded) {
                 tableBody.push((
                     <Table.Row key={'expanded' + rowKey}>
                         <Table.Cell colSpan={visibleColumns.length}>{this.props.renderExpandedRow(rowKey, data)}</Table.Cell>
