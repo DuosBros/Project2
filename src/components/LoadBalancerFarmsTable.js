@@ -116,7 +116,7 @@ class LoadBalancerFarmsTable extends Component {
 
         let content = null;
         if(pool.success === true) {
-            content = this.renderPools(pool);
+            content = this.renderPools(pool.data);
         } else {
             if(!pool.data && pool.loading) {
                 content = "loading..."
