@@ -662,7 +662,6 @@ class VersionStatus extends React.Component {
                                                 autoHeight
                                                 rows={1}
                                                 onChange={this.handleInputOnChange}
-                                                fluid
                                                 value={this.state.inputProductsValues}
                                                 placeholder='Insert coma delimited service shortcuts or select from the dropdown on the left' />
                                         </Form>
