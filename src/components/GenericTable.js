@@ -15,6 +15,15 @@ const DEFAULT_COLUMN_PROPS = {
 }
 
 export const GenericTablePropTypes = {
+    columns: PropTypes.array.isRequired,
+    customFilterCallback: PropTypes.func,
+    expandable: PropTypes.bool,
+    getDataKey: PropTypes.func,
+    grouping: PropTypes.array,
+    onRowExpandToggle: PropTypes.func,
+    renderCustomFilter: PropTypes.func,
+    renderExpandedRow: PropTypes.func,
+    transformDataRow: PropTypes.func,
     defaultLimitOverride: PropTypes.number,
     showTableHeaderFunctions: PropTypes.bool,
     showTableHeader: PropTypes.bool,
@@ -27,7 +36,14 @@ export const GenericTablePropTypes = {
 
 export default class GenericTable extends Component {
     static defaultProps = {
+        customFilterCallback: GenericTable.customFilterCallback,
         defaultLimitOverride: 15,
+        expandable: false,
+        getDataKey: GenericTable.getDataKey,
+        grouping: [],
+        onRowExpandToggle: GenericTable.onRowExpandToggle,
+        renderCustomFilter: GenericTable.renderCustomFilter,
+        renderExpandedRow: GenericTable.renderExpandedRow,
         showTableHeaderFunctions: true,
         showTableHeader: true,
         disableGrouping: false,
@@ -84,11 +100,7 @@ export default class GenericTable extends Component {
     }
 
     generateColumnsAndGrouping(props) {
-        let columns = this.getColumns();
-
-        if (!columns && props.columns) {
-            columns = props.columns
-        }
+        let columns = props.columns;
 
         if (!columns) {
             throw new Error("Columns are undefined!");
@@ -101,7 +113,7 @@ export default class GenericTable extends Component {
             }
         }
 
-        let grouping = props.disableGrouping ? [] : this.getGrouping();
+        let grouping = props.disableGrouping ? [] : props.grouping;
         grouping = grouping.map(gp => {
             let match = columns.filter(c => c.prop === gp);
             if (match.length > 1) {
@@ -299,11 +311,16 @@ export default class GenericTable extends Component {
 
     onExpandToggle = (e, { rowkey, rowdata }) => {
         this.setState(function(prev) {
-            if(prev.expandedRows.indexOf(rowkey) === -1) {
-                this.onRowExpandToggle(true, rowkey, rowdata);
+            const visible = prev.expandedRows.indexOf(rowkey) === -1
+
+            // callback
+            if(this.props.onRowExpandToggle) {
+                this.props.onRowExpandToggle(visible, rowkey, rowdata);
+            }
+
+            if(visible) {
                 return { expandedRows: [...prev.expandedRows, rowkey] };
             } else {
-                this.onRowExpandToggle(false, rowkey, rowdata);
                 return { expandedRows: prev.expandedRows.filter(e => e !== rowkey) }
             }
         });
@@ -439,7 +456,7 @@ export default class GenericTable extends Component {
                                         icon={showColumnFilters ? 'eye slash' : 'eye'}
                                         labelPosition='right' />
                                     {columnToggleButton}
-                                    {this.renderCustomFilter()}
+                                    {this.props.renderCustomFilter()}
                                 </>
 
                             </Grid.Column>
@@ -486,10 +503,10 @@ export default class GenericTable extends Component {
         } = this.state;
 
         const {
-            compact
+            compact,
+            expandable,
+            getDataKey
         } = this.props;
-
-        const expandable = this.isExpandable();
 
         let visibleColumns = columns.filter(c => visibleColumnsList.indexOf(c.prop) !== -1);
 
@@ -572,7 +589,7 @@ export default class GenericTable extends Component {
             filteredData = data;
         }
 
-        filteredData = this.applyCustomFilter(filteredData);
+        filteredData = this.props.customFilterCallback(filteredData);
 
         if (showColumnFilters) {
             var filterValid = [];
@@ -644,8 +661,10 @@ export default class GenericTable extends Component {
 
         var tableBody = [],
             prevRow = {};
-        renderData.map(data => this.transformDataRow(Object.assign({}, data))).forEach(data => {
-            let rowKey = this.getDataKey(data);
+        let transformer = this.props.transformDataRow ? data => this.props.transformDataRow(Object.assign({}, data)) : data => data;
+        renderData.map(transformer).forEach(data => {
+
+            let rowKey = getDataKey(data);
             // check whether grouping header should be inserted
             let insertGroupingHeader = false;
             for (let gc of grouping) {
@@ -733,7 +752,7 @@ export default class GenericTable extends Component {
             if(isRowExpanded) {
                 tableBody.push((
                     <Table.Row key={'expanded' + rowKey}>
-                        <Table.Cell colSpan={visibleColumns.length}>{this.renderExpandedRow(rowKey, data)}</Table.Cell>
+                        <Table.Cell colSpan={visibleColumns.length}>{this.props.renderExpandedRow(rowKey, data)}</Table.Cell>
                     </Table.Row>
                 ));
             }
@@ -763,39 +782,23 @@ export default class GenericTable extends Component {
         );
     }
 
-    getGrouping() {
-        return [];
-    }
-
-    getColumns() {
+    static renderCustomFilter() {
         return null;
     }
 
-    transformDataRow(data) {
-        return data;
-    }
-
-    renderCustomFilter() {
-        return null;
-    }
-
-    isExpandable() {
-        return false;
-    }
-
-    onRowExpandToggle(visible, rowKey, rowData) { // eslint-disable-line no-unused-vars
+    static onRowExpandToggle(visible, rowKey, rowData) { // eslint-disable-line no-unused-vars
         return;
     }
 
-    renderExpandedRow(rowKey, rowData) { // eslint-disable-line no-unused-vars
+    static renderExpandedRow(rowKey, rowData) { // eslint-disable-line no-unused-vars
         return null;
     }
 
-    applyCustomFilter(filteredData) {
+    static customFilterCallback(filteredData) {
         return filteredData;
     }
 
-    getDataKey(data) {
+    static getDataKey(data) {
         return data.Id
     }
 }

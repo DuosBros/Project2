@@ -1,22 +1,20 @@
-import React from 'react'
+import React, { Component } from 'react'
 import GenericTable from './GenericTable';
 import { Popup, Button, Icon } from 'semantic-ui-react';
 
-export default class ActiveDirectoryTable extends GenericTable {
-    getColumns() {
-        return [
-            {
-                name: "AD Path",
-                prop: "ADPath"
-            },
-            {
-                name: "Action",
-                prop: "Action",
-                sortable: false,
-                searchable: false,
-            }
-        ];
-    }
+export default class ActiveDirectoryTable extends Component {
+    columns = [
+        {
+            name: "AD Path",
+            prop: "ADPath"
+        },
+        {
+            name: "Action",
+            prop: "Action",
+            sortable: false,
+            searchable: false,
+        }
+    ]
 
     transformDataRow(data) {
         data.Action = (
@@ -45,5 +43,15 @@ export default class ActiveDirectoryTable extends GenericTable {
         // data.StatusLabel = (<VirtualMachineStatus size="small" status={data.Status} ></VirtualMachineStatus>);
 
         return data;
+    }
+
+    render() {
+        return (
+            <GenericTable
+                columns={this.columns}
+                transformDataRow={this.transformDataRow}
+                {...this.props}
+                />
+        );
     }
 }
