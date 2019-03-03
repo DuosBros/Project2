@@ -1,9 +1,12 @@
-export const APP_TITLE = "LOCO V2 - "
 /*global process*/
-export const LOCO_API = process.env.NODE_ENV === 'development' ? 'http://loco.dev.env.works/Api/' : 'https://loco.prod.env.works/Api/';
-// export const LOCO_API = "http://localhost:24298/Api/"
+export const NODE_ENV = process.env.NODE_ENV
 /*global process:false*/
+
+export const APP_TITLE = "LOCO V2 - "
+
+export const LOCO_API = NODE_ENV === 'development' ? 'http://loco.dev.env.works/Api/' : 'https://loco.prod.env.works/Api/';
 export const PM_API = "https://pm.bwin.corp/api/"
+
 export const DEFAULT_TIME_FRAME = 720 // in minutes
 export const DEFAULT_INTERVAL = 60 // in minutes
 

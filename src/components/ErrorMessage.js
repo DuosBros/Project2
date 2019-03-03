@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Message, Icon, Image, Accordion } from 'semantic-ui-react'
+import { NODE_ENV } from '../appConfig'
 import pikachu from '../assets/pikachu.jpg'
 
 export default class ErrorMessage extends Component {
@@ -95,7 +96,7 @@ export default class ErrorMessage extends Component {
             )
         }
 
-        let errorAccordion = process.env.NODE_ENV === 'development' ? this.renderErrorAccordeon(error, errorInfo) : null;
+        let errorAccordion = NODE_ENV === 'development' ? this.renderErrorAccordeon(error, errorInfo) : null;
 
         return (
             <Message icon>
