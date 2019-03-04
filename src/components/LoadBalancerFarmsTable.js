@@ -11,6 +11,20 @@ import VsStatus from './VsStatus';
 import LBPoolStatus from './LBPoolStatus';
 import { getAvailabiltyAndEnabledState } from '../utils/HelperFunction';
 
+const ExpandedRowLBPoolMembersContent = (props) => {
+    let color = getAvailabiltyAndEnabledState(props.Availability, props.Enabled)
+    let ipPort = props.Ip + ":" + props.Port;
+    let serverName = props.Server ? <Link to={'/server/' + props.Serverid}>{props.Server}</Link> : "Server not found"
+    return (
+        <li key={ipPort}>
+            <Popup size='large' inverted trigger={
+                <Icon color={color} name="circle" />
+            } content={"Availability: " + props.Availability + " | Enabled: " + props.Enabled} />
+            {ipPort} | {serverName} | {props.Description}
+        </li>
+    )
+}
+
 class LoadBalancerFarmsTable extends Component {
     static defaultProps = {
         defaultShowBETAPools: false
@@ -142,10 +156,7 @@ class LoadBalancerFarmsTable extends Component {
 
     renderPools(pool) {
         let res = pool.map(p => {
-            let color = getAvailabiltyAndEnabledState(p.Availability, p.Enabled)
-            let ipPort = p.Ip + ":" + p.Port;
-            let serverName = p.Server ? <Link to={'/server/' + p.Serverid}>{p.Server}</Link> : "Server not found"
-            return (<li key={ipPort}><Popup size='large' inverted trigger={<Icon color={color} name="circle" />} content={"Availability: " + p.Availability + " | Enabled: " + p.Enabled} /> {ipPort} | {serverName} | {p.Description}</li>);
+            return <ExpandedRowLBPoolMembersContent data={p} />
         });
         return (<ul>{res}</ul>);
     }
