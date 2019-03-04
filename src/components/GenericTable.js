@@ -778,7 +778,7 @@ export default class GenericTable extends Component {
                 if (c.searchable === true) {
                     filterInput = (<Input fluid name={c.prop} onChange={this.handleColumnFilterChange} value={filterInputs[c.prop]} error={!filterInputsValid[c.prop]} />)
                 } else if (c.searchable === "distinct") {
-                    filterInput = (<Dropdown fluid search selection name={c.prop} onChange={this.handleColumnFilterDropdown} value={filterInputs[c.prop]} options={columnDistinctValues[c.prop]} />)
+                    filterInput = (<Dropdown fluid search selection name={c.prop} onChange={this.handleColumnFilterDropdown} value={filterInputs[c.prop]} options={columnDistinctValues[c.prop]} selectOnNavigation={false} />)
                 }
                 return (
                     <Table.HeaderCell collapsing={c.collapsing} width={c.collapsing ? null : c.width} key={c.prop}>
