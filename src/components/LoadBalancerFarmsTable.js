@@ -5,10 +5,11 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { getLoadBalancerPoolStatus } from '../requests/LoadBalancerFarmsAxios';
 import { setLoadBalancerPoolStatusAction, setLoadBalancerPoolStatusLoadingAction } from '../actions/LoadBalancerFarmsAction';
-import { Dimmer, Loader, Button, Icon } from 'semantic-ui-react';
+import { Dimmer, Loader, Button, Icon, Popup } from 'semantic-ui-react';
 import GenericTable from './GenericTable';
 import VsStatus from './VsStatus';
 import LBPoolStatus from './LBPoolStatus';
+import { getAvailabiltyAndEnabledState } from '../utils/HelperFunction';
 
 class LoadBalancerFarmsTable extends Component {
     static defaultProps = {
@@ -139,17 +140,12 @@ class LoadBalancerFarmsTable extends Component {
         );
     }
 
-    static POOL_STATUS_MAP = {
-        "enabled": "green",
-        "disabled": "red"
-    }
-
     renderPools(pool) {
         let res = pool.map(p => {
-            let color = LoadBalancerFarmsTable.POOL_STATUS_MAP.hasOwnProperty(p.Enabled) ? LoadBalancerFarmsTable.POOL_STATUS_MAP[p.Enabled] : "black";
+            let color = getAvailabiltyAndEnabledState(p.Availability, p.Enabled)
             let ipPort = p.Ip + ":" + p.Port;
             let serverName = p.Server ? <Link to={'/server/' + p.Serverid}>{p.Server}</Link> : "Server not found"
-            return (<li key={ipPort}><Icon color={color} name="circle" /> {ipPort} | {serverName} | {p.Description}</li>);
+            return (<li key={ipPort}><Popup size='large' inverted trigger={<Icon color={color} name="circle" />} content={"Availability: " + p.Availability + " | Enabled: " + p.Enabled} /> {ipPort} | {serverName} | {p.Description}</li>);
         });
         return (<ul>{res}</ul>);
     }
