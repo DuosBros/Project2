@@ -232,7 +232,11 @@ export default class GenericTable extends Component {
         if(func == null) {
             return func;
         }
-        return heystack => func(heystack[key]);
+        return heystack => (
+            heystack[key] !== undefined &&
+            heystack[key] !== null &&
+            func(heystack[key])
+        );
     }
 
     buildFilter(needle) {

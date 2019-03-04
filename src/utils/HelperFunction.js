@@ -255,10 +255,11 @@ export const filterInArrayOfObjects = (filter, array, keys) => {
     return array.filter(element => {
         let objk = keys ? keys : Object.keys(element);
         for (let key of objk) {
-            if (element[key]) { // fuken lodash returning isEmpty true for numbers
-                if (filter(element[key])) {
-                    return true;
-                }
+            if (element[key] !== undefined &&
+                element[key] !== null &&
+                filter(element[key])
+            ) { // fuken lodash returning isEmpty true for numbers
+                return true;
             }
         }
         return false;
