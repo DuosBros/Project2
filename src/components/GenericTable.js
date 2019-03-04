@@ -852,7 +852,7 @@ export default class GenericTable extends Component {
                     <Table.Row key={'expanded' + rowKey}>
                         {/* +1 because there is extra column for toggling */}
                         <Table.Cell />
-                        <Table.Cell style={{borderLeft: 'none'}} colSpan={visibleColumns.length}>{this.props.renderExpandedRow(rowKey, data)}</Table.Cell>
+                        <Table.Cell style={{borderLeft: 'none', paddingTop: '0px'}} colSpan={visibleColumns.length}>{this.props.renderExpandedRow(rowKey, data)}</Table.Cell>
                     </Table.Row>
                 ));
             }
