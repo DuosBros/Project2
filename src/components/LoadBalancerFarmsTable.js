@@ -12,15 +12,15 @@ import LBPoolStatus from './LBPoolStatus';
 import { getAvailabiltyAndEnabledState } from '../utils/HelperFunction';
 
 const ExpandedRowLBPoolMembersContent = (props) => {
-    let color = getAvailabiltyAndEnabledState(props.Availability, props.Enabled)
-    let ipPort = props.Ip + ":" + props.Port;
-    let serverName = props.Server ? <Link to={'/server/' + props.Serverid}>{props.Server}</Link> : "Server not found"
+    let color = getAvailabiltyAndEnabledState(props.data.Availability, props.data.Enabled)
+    let ipPort = props.data.Ip + ":" + props.data.Port;
+    let serverName = props.data.Server ? <Link to={'/server/' + props.data.Serverid}>{props.data.Server}</Link> : "Server not found"
     return (
         <li key={ipPort}>
             <Popup size='large' inverted trigger={
                 <Icon color={color} name="circle" />
-            } content={"Availability: " + props.Availability + " | Enabled: " + props.Enabled} />
-            {ipPort} | {serverName} | {props.Description}
+            } content={"Availability: " + props.data.Availability + " | Enabled: " + props.data.Enabled} />
+            {ipPort} | {serverName} | {props.data.Description}
         </li>
     )
 }
