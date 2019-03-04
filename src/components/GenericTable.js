@@ -846,7 +846,9 @@ export default class GenericTable extends Component {
             if (isRowExpanded) {
                 tableBody.push((
                     <Table.Row key={'expanded' + rowKey}>
-                        <Table.Cell colSpan={visibleColumns.length}>{this.props.renderExpandedRow(rowKey, data)}</Table.Cell>
+                        {/* +1 because there is extra column for toggling */}
+                        <Table.Cell />
+                        <Table.Cell style={{borderLeft: 'none'}} colSpan={visibleColumns.length}>{this.props.renderExpandedRow(rowKey, data)}</Table.Cell>
                     </Table.Row>
                 ));
             }
