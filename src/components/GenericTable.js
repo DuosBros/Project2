@@ -262,7 +262,11 @@ export default class GenericTable extends Component {
             if(needle === -1) {
                 return null;
             }
-            return heystack => heystack[key].toString() === this.state.columnDistinctValues[key];
+            return heystack => (
+                heystack[key] !== undefined &&
+                heystack[key] !== null &&
+                heystack[key].toString() === this.state.columnDistinctValues[key][needle+1].text
+            );
         }
         let func = this.buildFilter(needle);
         if (func == null) {
