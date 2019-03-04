@@ -204,14 +204,14 @@ export default class GenericTable extends Component {
                 filterInputsChanged = Object.assign({}, prev.filterInputsChanged),
                 filterInputsValid = Object.assign({}, prev.filterInputsValid);
 
-            for(let key of Object.getOwnPropertyNames(prev.filters).filter(c => prev.filterInputsChanged[c])) {
+            for (let key of Object.getOwnPropertyNames(prev.filters).filter(c => prev.filterInputsChanged[c])) {
                 let func = null,
                     valid = false;
 
                 try {
                     func = this.buildColumnFilter(key, prev.filterInputs[key]);
                     valid = true;
-                } catch(e) {
+                } catch (e) {
                     // ignore errors, valid will be false anyway
                 }
 
@@ -229,22 +229,22 @@ export default class GenericTable extends Component {
 
     buildColumnFilter(key, needle) {
         let func = this.buildFilter(needle);
-        if(func == null) {
+        if (func == null) {
             return func;
         }
         return heystack => func(heystack[key]);
     }
 
     buildFilter(needle) {
-        if(needle.length > 0 && needle.substr(0, 1) === "~") {
-            if(needle.length === 1) {
+        if (needle.length > 0 && needle.substr(0, 1) === "~") {
+            if (needle.length === 1) {
                 return null;
             }
             let re = new RegExp(needle.substr(1), "i");
             return heystack => heystack.toString().search(re) >= 0;
         }
         let n = needle.trim().toLowerCase();
-        if(n.length === 0) {
+        if (n.length === 0) {
             return null;
         }
         return heystack => heystack.toString().toLowerCase().indexOf(n) >= 0;
@@ -262,7 +262,7 @@ export default class GenericTable extends Component {
         try {
             func = this.buildFilter(input);
             valid = true;
-        } catch(e) {
+        } catch (e) {
             // ignore errors, valid will be false anyway
         }
 
@@ -502,7 +502,7 @@ export default class GenericTable extends Component {
                                     placeholder="Type to search..."
                                     name="multiSearchInput"
                                     onChange={this.handleMultiFilterChange}
-                                    error={!multiSearchInputValid}/>
+                                    error={!multiSearchInputValid} />
                             </Grid.Column>
                             <Grid.Column width={1}>
                                 <Dropdown icon={<Icon className="iconMargin" name='share' />} item text='Export'>
