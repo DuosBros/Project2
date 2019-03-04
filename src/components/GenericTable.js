@@ -200,7 +200,7 @@ export default class GenericTable extends Component {
 
     updateColumnFilters() {
         this.setState((prev) => {
-            let filters = {},
+            let filters = Object.assign({}, prev.filters),
                 filterInputsChanged = Object.assign({}, prev.filterInputsChanged),
                 filterInputsValid = Object.assign({}, prev.filterInputsValid);
 
