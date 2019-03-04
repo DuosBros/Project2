@@ -15,11 +15,13 @@ html, body {
 
 #footer {
     margin-left: 200px;
-    padding-top: 1em;
-    padding-bottom: 1em;
-    bottom: 1em;
+    padding: 1em 0;
+    bottom: 0;
     position: relative;
 
+    .content {
+        padding: 0 1em;
+    }
 }
 
 #footer.wide {

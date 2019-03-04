@@ -5,10 +5,25 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { getLoadBalancerPoolStatus } from '../requests/LoadBalancerFarmsAxios';
 import { setLoadBalancerPoolStatusAction, setLoadBalancerPoolStatusLoadingAction } from '../actions/LoadBalancerFarmsAction';
-import { Dimmer, Loader, Button, Icon } from 'semantic-ui-react';
+import { Dimmer, Loader, Button, Icon, Popup } from 'semantic-ui-react';
 import GenericTable from './GenericTable';
 import VsStatus from './VsStatus';
 import LBPoolStatus from './LBPoolStatus';
+import { getAvailabiltyAndEnabledState } from '../utils/HelperFunction';
+
+const ExpandedRowLBPoolMembersContent = (props) => {
+    let color = getAvailabiltyAndEnabledState(props.data.Availability, props.data.Enabled)
+    let ipPort = props.data.Ip + ":" + props.data.Port;
+    let serverName = props.data.Server ? <Link to={'/server/' + props.data.Serverid}>{props.data.Server}</Link> : "Server not found"
+    return (
+        <li key={ipPort}>
+            <Popup size='large' inverted trigger={
+                <Icon color={color} name="circle" />
+            } content={"Availability: " + props.data.Availability + " | Enabled: " + props.data.Enabled} />
+            {ipPort} | {serverName} | {props.data.Description}
+        </li>
+    )
+}
 
 class LoadBalancerFarmsTable extends Component {
     static defaultProps = {
@@ -92,38 +107,38 @@ class LoadBalancerFarmsTable extends Component {
 
     onRowExpandToggle = (visible, rowKey, rowData) => {
         // TODO: trigger pool status fetch
-        if(visible) {
+        if (visible) {
             this.props.setLoadBalancerPoolStatusLoadingAction(rowData.LbId, rowData.Pool, true)
             getLoadBalancerPoolStatus(rowData.LbId, rowData.Pool)
-            .then(response => this.props.setLoadBalancerPoolStatusAction(rowData.LbId, rowData.Pool, response));
+                .then(response => this.props.setLoadBalancerPoolStatusAction(rowData.LbId, rowData.Pool, response));
         }
     }
 
     renderExpandedRow = (rowKey, rowData) => {
         const poolStatus = this.props.loadbalancerFarmsStore.loadBalancerPoolStatus;
-        if(!poolStatus) {
+        if (!poolStatus) {
             return (<p>no load balancer data present</p>);
         }
 
         const lb = poolStatus[rowData.LbId];
-        if(!lb) {
+        if (!lb) {
             return (<p>no pool status data present</p>);
         }
 
         var pool = lb[rowData.Pool];
-        if(!pool) {
+        if (!pool) {
             return (<p>pool status unknown</p>);
         }
 
         let content = null;
-        if(pool.success === true) {
+        if (pool.success === true) {
             content = this.renderPools(pool.data);
         } else {
-            if(!pool.data && pool.loading) {
+            if (!pool.data && pool.loading) {
                 content = "loading..."
             } else {
                 let msg = "unknown error";
-                if(pool.error) {
+                if (pool.error) {
                     msg = pool.error;
                 }
                 content = (<p>Error loading pool status: {msg}</p>);
@@ -140,16 +155,9 @@ class LoadBalancerFarmsTable extends Component {
         );
     }
 
-    static POOL_STATUS_MAP = {
-        "enabled": "green",
-        "disabled": "red"
-    }
-
     renderPools(pool) {
         let res = pool.map(p => {
-            let color = LoadBalancerFarmsTable.POOL_STATUS_MAP.hasOwnProperty(p.Enabled) ? LoadBalancerFarmsTable.POOL_STATUS_MAP[p.Enabled] : "black";
-            let ipPort = p.Ip + ":" + p.Port;
-            return (<li key={ipPort}><Icon color={color} name="circle"/> {ipPort} | <Link to={'/server/' + p.Serverid}>{p.Server}</Link> | {p.Description}</li>);
+            return <ExpandedRowLBPoolMembersContent data={p} />
         });
         return (<ul>{res}</ul>);
     }
@@ -205,7 +213,7 @@ class LoadBalancerFarmsTable extends Component {
                 onRowExpandToggle={this.onRowExpandToggle}
                 renderExpandedRow={this.renderExpandedRow}
                 {...this.props}
-                />
+            />
         );
     }
 }

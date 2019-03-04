@@ -212,11 +212,11 @@ export const getAvailabiltyAndEnabledState = (availabilityState, enabledState) =
         case "offline":
             switch (enabledState) {
                 case "disabled":
-                    return "red"
+                    return "orange"
                 case "disabled-by-parent":
                     return "red";
                 case "enabled":
-                    return "red"
+                    return "orange"
                 default:
                     return "grey"
             }
@@ -255,8 +255,11 @@ export const filterInArrayOfObjects = (filter, array, keys) => {
     return array.filter(element => {
         let objk = keys ? keys : Object.keys(element);
         for (let key of objk) {
-            if (element[key]) { // fuken lodash returning isEmpty true for numbers
-                return filter(element[key])
+            if (element[key] !== undefined &&
+                element[key] !== null &&
+                filter(element[key])
+            ) { // fuken lodash returning isEmpty true for numbers
+                return true;
             }
         }
         return false;
