@@ -256,7 +256,9 @@ export const filterInArrayOfObjects = (filter, array, keys) => {
         let objk = keys ? keys : Object.keys(element);
         for (let key of objk) {
             if (element[key]) { // fuken lodash returning isEmpty true for numbers
-                return filter(element[key])
+                if (filter(element[key])) {
+                    return true;
+                }
             }
         }
         return false;
