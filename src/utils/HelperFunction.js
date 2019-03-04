@@ -212,11 +212,11 @@ export const getAvailabiltyAndEnabledState = (availabilityState, enabledState) =
         case "offline":
             switch (enabledState) {
                 case "disabled":
-                    return "red"
+                    return "orange"
                 case "disabled-by-parent":
                     return "red";
                 case "enabled":
-                    return "red"
+                    return "orange"
                 default:
                     return "grey"
             }
