@@ -148,7 +148,8 @@ class LoadBalancerFarmsTable extends Component {
         let res = pool.map(p => {
             let color = LoadBalancerFarmsTable.POOL_STATUS_MAP.hasOwnProperty(p.Enabled) ? LoadBalancerFarmsTable.POOL_STATUS_MAP[p.Enabled] : "black";
             let ipPort = p.Ip + ":" + p.Port;
-            return (<li key={ipPort}><Icon color={color} name="circle"/> {ipPort} | <Link to={'/server/' + p.Serverid}>{p.Server}</Link> | {p.Description}</li>);
+            let serverName = p.Server ? <Link to={'/server/' + p.Serverid}>{p.Server}</Link> : "Server not found"
+            return (<li key={ipPort}><Icon color={color} name="circle" /> {ipPort} | {serverName} | {p.Description}</li>);
         });
         return (<ul>{res}</ul>);
     }
