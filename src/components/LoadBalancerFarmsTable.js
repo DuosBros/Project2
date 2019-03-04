@@ -91,38 +91,38 @@ class LoadBalancerFarmsTable extends Component {
 
     onRowExpandToggle = (visible, rowKey, rowData) => {
         // TODO: trigger pool status fetch
-        if(visible) {
+        if (visible) {
             this.props.setLoadBalancerPoolStatusLoadingAction(rowData.LbId, rowData.Pool, true)
             getLoadBalancerPoolStatus(rowData.LbId, rowData.Pool)
-            .then(response => this.props.setLoadBalancerPoolStatusAction(rowData.LbId, rowData.Pool, response));
+                .then(response => this.props.setLoadBalancerPoolStatusAction(rowData.LbId, rowData.Pool, response));
         }
     }
 
     renderExpandedRow = (rowKey, rowData) => {
         const poolStatus = this.props.loadbalancerFarmsStore.loadBalancerPoolStatus;
-        if(!poolStatus) {
+        if (!poolStatus) {
             return (<p>no load balancer data present</p>);
         }
 
         const lb = poolStatus[rowData.LbId];
-        if(!lb) {
+        if (!lb) {
             return (<p>no pool status data present</p>);
         }
 
         var pool = lb[rowData.Pool];
-        if(!pool) {
+        if (!pool) {
             return (<p>pool status unknown</p>);
         }
 
         let content = null;
-        if(pool.success === true) {
+        if (pool.success === true) {
             content = this.renderPools(pool.data);
         } else {
-            if(!pool.data && pool.loading) {
+            if (!pool.data && pool.loading) {
                 content = "loading..."
             } else {
                 let msg = "unknown error";
-                if(pool.error) {
+                if (pool.error) {
                     msg = pool.error;
                 }
                 content = (<p>Error loading pool status: {msg}</p>);
@@ -205,7 +205,7 @@ class LoadBalancerFarmsTable extends Component {
                 onRowExpandToggle={this.onRowExpandToggle}
                 renderExpandedRow={this.renderExpandedRow}
                 {...this.props}
-                />
+            />
         );
     }
 }
