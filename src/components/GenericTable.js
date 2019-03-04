@@ -115,7 +115,7 @@ export default class GenericTable extends Component {
         }
 
         this.updateMultiFilter = debounce(this.updateMultiFilter, 400);
-        this.updateColumnFilters = debounce(this.updateColumnFilters, 400);
+        this.updateColumnFilters = debounce(this.updateColumnFiltersImmediate, 400);
         this.updateLimit = debounce(this.updateLimit, 400);
     }
 
@@ -227,7 +227,7 @@ export default class GenericTable extends Component {
         this.updateColumnFilters();
     }
 
-    updateColumnFilters() {
+    updateColumnFiltersImmediate() {
         this.setState((prev) => {
             let filters = Object.assign({}, prev.filters),
                 filterInputsChanged = Object.assign({}, prev.filterInputsChanged),
