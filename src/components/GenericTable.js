@@ -83,7 +83,7 @@ export default class GenericTable extends Component {
         }
 
         let multiSearch = this.multiSearchFilterFromInput(props.multiSearchInput);
-        let columnDistinctValues = this.generateDistinctValues(columns, props.data);
+        let columnDistinctValues = this.generateDistinctValues(columns, props.data, props.distictValues);
 
         this.state = {
             columnDistinctValues,
@@ -151,16 +151,29 @@ export default class GenericTable extends Component {
         };
     }
 
-    generateDistinctValues(columns, data) {
+    generateDistinctValues(columns, data, fromProps) {
+        const unfilteredOption = { key: -1, text: (<em>unfiltered</em>), value: -1 };
+        const optionMapper = (e, i) => ({ key: i, text: e, value: i });
         let columnDistinctValues = {};
+
         for(let c of columns.filter(e => e.searchable === "distinct")) {
-            let values = data.map(e => e[c.prop])
+            let values;
+            if(fromProps !== undefined) {
+                if(!Array.isArray(fromProps[c.prop])) {
+                    values = [];
+                } else {
+                    values = fromProps[c.prop].map(optionMapper);
+                }
+            } else {
+                values = data.map(e => e[c.prop])
                 .filter(e =>
                     e !== undefined &&
                     e !== null)
-                .map(e => e.toString());
-                values = _.uniq(values).sort().map((e, i) => ({ key: i, text: e, value: i }));
-            values.unshift({ key: -1, text: (<em>unfiltered</em>), value: -1 });
+                    .map(e => e.toString());
+
+                values = _.uniq(values).sort().map(optionMapper);
+            }
+            values.unshift(unfilteredOption);
             columnDistinctValues[c.prop] = values;
         }
         return columnDistinctValues;
@@ -173,8 +186,11 @@ export default class GenericTable extends Component {
                 data = this.sort(nextProps.data, null);
             }
 
-            let columnDistinctValues = this.generateDistinctValues(this.state.columns, data)
+            let columnDistinctValues = this.generateDistinctValues(this.state.columns, data, nextProps.distictValues)
             this.setState({ data, columnDistinctValues });
+        } else if (this.props.distictValues !== nextProps.distictValues) { // else if, so we don't generate distinct values twice
+            let columnDistinctValues = this.generateDistinctValues(this.state.columns, this.state.data, nextProps.distictValues)
+            this.setState({ columnDistinctValues });
         }
     }
 
