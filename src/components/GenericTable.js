@@ -158,12 +158,8 @@ export default class GenericTable extends Component {
 
         for(let c of columns.filter(e => e.searchable === "distinct")) {
             let values;
-            if(fromProps !== undefined) {
-                if(!Array.isArray(fromProps[c.prop])) {
-                    values = [];
-                } else {
-                    values = fromProps[c.prop].map(optionMapper);
-                }
+            if(Array.isArray(fromProps[c.prop])) {
+                values = fromProps[c.prop].map(optionMapper);
             } else {
                 values = data.map(e => e[c.prop])
                 .filter(e =>
