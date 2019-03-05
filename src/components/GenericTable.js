@@ -173,7 +173,8 @@ export default class GenericTable extends Component {
                 data = this.sort(nextProps.data, null);
             }
 
-            this.setState({ data, ...this.generateDistinctValues(this.state.columns, data) });
+            let columnDistinctValues = this.generateDistinctValues(this.state.columns, data)
+            this.setState({ data, columnDistinctValues });
         }
     }
 
