@@ -83,7 +83,7 @@ export default class GenericTable extends Component {
         }
 
         let multiSearch = this.multiSearchFilterFromInput(props.multiSearchInput);
-        let columnDistinctValues = this.generateDistinctValues(columns, props.data, props.distictValues);
+        let columnDistinctValues = this.generateDistinctValues(columns, props.data, props.distinctValues);
 
         this.state = {
             columnDistinctValues,
@@ -186,10 +186,10 @@ export default class GenericTable extends Component {
                 data = this.sort(nextProps.data, null);
             }
 
-            let columnDistinctValues = this.generateDistinctValues(this.state.columns, data, nextProps.distictValues)
+            let columnDistinctValues = this.generateDistinctValues(this.state.columns, data, nextProps.distinctValues)
             this.setState({ data, columnDistinctValues });
         } else if (this.props.distictValues !== nextProps.distictValues) { // else if, so we don't generate distinct values twice
-            let columnDistinctValues = this.generateDistinctValues(this.state.columns, this.state.data, nextProps.distictValues)
+            let columnDistinctValues = this.generateDistinctValues(this.state.columns, this.state.data, nextProps.distinctValues)
             this.setState({ columnDistinctValues });
         }
     }
