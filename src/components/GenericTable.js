@@ -154,7 +154,12 @@ export default class GenericTable extends Component {
     generateDistinctValues(columns, data) {
         let columnDistinctValues = {};
         for(let c of columns.filter(e => e.searchable === "distinct")) {
-            let values = _.uniq(data.map(e => e[c.prop])).sort().map((e, i) => ({ key: i, text: e, value: i }));
+            let values = data.map(e => e[c.prop])
+                .filter(e =>
+                    e !== undefined &&
+                    e !== null)
+                .map(e => e.toString());
+                values = _.uniq(values).sort().map((e, i) => ({ key: i, text: e, value: i }));
             values.unshift({ key: -1, text: (<em>unfiltered</em>), value: -1 });
             columnDistinctValues[c.prop] = values;
         }
@@ -265,7 +270,7 @@ export default class GenericTable extends Component {
             return heystack => (
                 heystack[key] !== undefined &&
                 heystack[key] !== null &&
-                heystack[key].toString() === this.state.columnDistinctValues[key][needle+1].text
+                heystack[key].toString() === this.state.columnDistinctValues[key][needle+1].text.toString()
             );
         }
         let func = this.buildFilter(needle);
