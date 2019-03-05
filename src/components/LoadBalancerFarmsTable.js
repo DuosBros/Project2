@@ -79,6 +79,7 @@ class LoadBalancerFarmsTable extends Component {
             name: "Port",
             prop: "Port",
             width: 1,
+            searchable: "distinct",
             collapsing: true
         },
         {
@@ -90,6 +91,7 @@ class LoadBalancerFarmsTable extends Component {
         {
             name: "Load Balancer Name",
             prop: "LbName",
+            searchable: "distinct",
             width: 2
         },
         {
@@ -101,6 +103,7 @@ class LoadBalancerFarmsTable extends Component {
             name: "Env",
             prop: "Environment",
             visibleByDefault: false,
+            searchable: "distinct",
             width: 1
         }
     ]
