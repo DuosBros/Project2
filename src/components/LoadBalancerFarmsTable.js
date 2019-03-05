@@ -10,6 +10,10 @@ import GenericTable from './GenericTable';
 import VsStatus from './VsStatus';
 import LBPoolStatus from './LBPoolStatus';
 import { getAvailabiltyAndEnabledState } from '../utils/HelperFunction';
+import { getEnvironmentsAction } from '../actions/MiscActions';
+import { getLoadBalancersAction } from '../actions/LoadBalancerAction';
+import { getLoadBalancers } from '../requests/LoadBalancerAxios';
+import { getStages } from '../requests/VersionStatusAxios';
 
 const ExpandedRowLBPoolMembersContent = (props) => {
     let color = getAvailabiltyAndEnabledState(props.data.Availability, props.data.Enabled)
@@ -41,12 +45,33 @@ class LoadBalancerFarmsTable extends Component {
         };
     }
 
+    componentDidMount() {
+        if (!this.props.loadBalancerStore.loadBalancers.data) {
+            getLoadBalancers()
+                .then(res => {
+                    this.props.getLoadBalancersAction({ success: true, data: res.data })
+                })
+                .catch(err => {
+                    this.props.getLoadBalancersAction({ success: false, error: err })
+                })
+        }
+
+        if (!this.props.miscStore.environments.data) {
+            getStages()
+                .then(res => {
+                    this.props.getEnvironmentsAction({ success: true, data: res.data })
+                })
+                .catch(err => {
+                    this.props.getEnvironmentsAction({ success: false, error: err })
+                })
+        }
+    }
+
     columns = [
         {
             name: "Data Center",
             prop: "DataCenter",
             visibleByDefault: true,
-            searchable: "distinct",
             width: 1
         },
         {
@@ -79,7 +104,6 @@ class LoadBalancerFarmsTable extends Component {
             name: "Port",
             prop: "Port",
             width: 1,
-            searchable: "distinct",
             collapsing: true
         },
         {
@@ -205,6 +229,12 @@ class LoadBalancerFarmsTable extends Component {
     }
 
     render() {
+
+        let distinctValuesObject = {
+            LBName: this.props.loadBalancerStore.loadBalancers.data ? this.props.loadBalancerStore.loadBalancers.data.map(x => x.Name) : [],
+            Environments: this.props.miscStore.environments.data ? this.props.miscStore.environments.data.map(x => x.Name) : []
+        }
+
         return (
             <GenericTable
                 columns={this.columns}
@@ -215,6 +245,7 @@ class LoadBalancerFarmsTable extends Component {
                 expandable
                 onRowExpandToggle={this.onRowExpandToggle}
                 renderExpandedRow={this.renderExpandedRow}
+                distinctValues={distinctValuesObject}
                 {...this.props}
             />
         );
@@ -223,14 +254,18 @@ class LoadBalancerFarmsTable extends Component {
 
 function mapStateToProps(state) {
     return {
-        loadbalancerFarmsStore: state.LoadBalancerFarmsReducer
+        loadbalancerFarmsStore: state.LoadBalancerFarmsReducer,
+        loadBalancerStore: state.LoadBalancerReducer,
+        miscStore: state.MiscReducer
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
         setLoadBalancerPoolStatusAction,
-        setLoadBalancerPoolStatusLoadingAction
+        setLoadBalancerPoolStatusLoadingAction,
+        getLoadBalancersAction,
+        getEnvironmentsAction
     }, dispatch);
 }
 

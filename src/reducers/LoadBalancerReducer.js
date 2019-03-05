@@ -7,6 +7,10 @@ const initialState = {
 const LoadBalancerReducer = (state = initialState, action) => {
     switch (action.type) {
         case GET_LOADBALANCERS:
+            // sort the data for distinct values for GT
+            if (action.payload.success && action.payload.data) {
+                action.payload.data = action.payload.data.sort((a, b) => (a.Name > b.Name) ? 1 : -1)
+            }
             return Object.assign({}, state, { loadBalancers: action.payload })
         case GET_LOADBALANCERS_TOKENS:
             var temp = Object.assign({}, state.loadBalancers)
