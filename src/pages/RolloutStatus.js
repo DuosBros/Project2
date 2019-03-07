@@ -514,7 +514,7 @@ class RolloutStatus extends React.Component {
                 )
             }
             else {
-                if (x.rolloutStatus !== null) {
+                if (x.rolloutStatus) {
 
                     if (x.rolloutStatus.length === 0) {
                         segmentContent = (
