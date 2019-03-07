@@ -5,7 +5,7 @@ import _ from 'lodash';
 
 import { Grid, Header, Segment, Message, Icon } from 'semantic-ui-react';
 import { getServers } from '../requests/ServerAxios';
-import { getServersAction } from '../actions/ServerActions';
+import { getServersAction } from '../utils/actions';
 import ServersTable from '../components/ServersTable';
 import { getServerState, getDismeState } from '../utils/HelperFunction';
 import ErrorMessage from '../components/ErrorMessage';

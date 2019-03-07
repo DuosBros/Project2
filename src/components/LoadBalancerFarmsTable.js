@@ -4,14 +4,12 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { getLoadBalancerPoolStatus } from '../requests/LoadBalancerFarmsAxios';
-import { setLoadBalancerPoolStatusAction, setLoadBalancerPoolStatusLoadingAction } from '../actions/LoadBalancerFarmsAction';
 import { Dimmer, Loader, Button, Icon, Popup } from 'semantic-ui-react';
 import GenericTable from './GenericTable';
 import VsStatus from './VsStatus';
 import LBPoolStatus from './LBPoolStatus';
 import { getAvailabiltyAndEnabledState } from '../utils/HelperFunction';
-import { getEnvironmentsAction } from '../actions/MiscActions';
-import { getLoadBalancersAction } from '../actions/LoadBalancerAction';
+import { getLoadBalancersAction, getEnvironmentsAction, setLoadBalancerPoolStatusAction, setLoadBalancerPoolStatusLoadingAction } from '../utils/actions';
 import { getLoadBalancers } from '../requests/LoadBalancerAxios';
 import { getStages } from '../requests/VersionStatusAxios';
 

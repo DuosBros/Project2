@@ -1,4 +1,4 @@
-import { SEARCH_SERVERS, SEARCH_SERVICE_SHORTCUTS, TOGGLE_VERTICAL_MENU, TOGGLE_USER_DETAILS } from '../constants/HeaderConstants';
+import { SEARCH_SERVERS, SEARCH_SERVICE_SHORTCUTS, TOGGLE_VERTICAL_MENU, TOGGLE_USER_DETAILS } from '../utils/constants';
 
 const headerInitialState = {
     searchServerResult: [],

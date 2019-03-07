@@ -3,7 +3,7 @@ import {
     GET_SERVICES, GET_SERVICE_DETAILS_BY_SHORTCUTS, REMOVE_SERVICE_DETAILS,
     REMOVE_ALL_SERVICE_DETAILS,
     GET_HIGHAVAILABILITIES
-} from '../constants/ServiceConstants';
+} from '../utils/constants';
 import { getServerState, getDismeState } from '../utils/HelperFunction';
 import { errorColor } from '../appConfig';
 

@@ -5,7 +5,7 @@ import { Grid, Header, Segment, Message, Icon, Popup } from 'semantic-ui-react';
 import _ from 'lodash';
 
 import { getServices } from '../requests/ServiceAxios';
-import { getServicesAction } from '../actions/ServiceActions';
+import { getServicesAction } from '../utils/actions';
 import ErrorMessage from '../components/ErrorMessage';
 import { mapDataForGenericChart } from '../utils/HelperFunction';
 import BarChartWithRawData from '../charts/BarChartWithRawData';

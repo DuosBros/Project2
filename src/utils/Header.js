@@ -4,7 +4,7 @@ import { Menu, Dropdown } from 'semantic-ui-react'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { searchServersAction, searchServiceShortcutAction, toggleVerticalMenuAction, toggleUserDetailsAction } from '../actions/HeaderActions';
+import { searchServersAction, searchServiceShortcutAction, toggleVerticalMenuAction, toggleUserDetailsAction } from '../utils/actions';
 import { searchServers, searchServiceShortcut } from '../requests/HeaderAxios';
 
 import { isNum, debounce } from '../utils/HelperFunction';

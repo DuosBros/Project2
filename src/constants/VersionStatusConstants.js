@@ -1,4 +1,0 @@
-export const GET_STAGES = 'GET_STAGES';
-export const GET_VERSION = 'GET_VERSION';
-export const GET_VERSIONS = 'GET_VERSIONS';
-export const REMOVE_ALL_VERSIONS = 'REMOVE_ALL_VERSIONS';

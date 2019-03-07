@@ -6,7 +6,7 @@ import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
 
 import { sendAuthenticationData } from '../requests/LoginAxios';
-import { authenticateAction, authenticationStartedAction, authenticateEndedAction, authenticateOKAction, authenticationFailedAction } from '../actions/BaseAction';
+import { authenticateAction, authenticationStartedAction, authenticateEndedAction, authenticateOKAction, authenticationFailedAction } from '../utils/actions';
 import { APP_TITLE } from '../appConfig';
 
 class Login extends React.Component {

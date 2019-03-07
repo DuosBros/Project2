@@ -1,4 +1,4 @@
-import { GET_VIRTUALMACHINES } from '../constants/VirtualMachineConstants';
+import { GET_VIRTUALMACHINES } from '../utils/constants';
 
 const initialState = {
     virtualMachines: { success: true }

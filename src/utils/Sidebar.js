@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { toggleVerticalMenuAction } from '../actions/HeaderActions';
+import { toggleVerticalMenuAction } from '../utils/actions';
 import { isAdmin } from './HelperFunction';
 
 

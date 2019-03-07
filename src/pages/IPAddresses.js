@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 
 import { Grid, Header, Segment, Message, Icon } from 'semantic-ui-react';
-import { getIPAddressesAction } from '../actions/IPAddressActions';
+import { getIPAddressesAction } from '../utils/actions';
 import { getIPAddresses } from '../requests/IPAddressAxios';
 import IPAddressesTable from '../components/IPAddressesTable';
 import ErrorMessage from '../components/ErrorMessage';

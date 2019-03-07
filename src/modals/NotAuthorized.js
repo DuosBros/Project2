@@ -3,7 +3,7 @@ import { Button, Modal, List } from 'semantic-ui-react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import { toggleNotAuthorizedModalAction } from '../actions/BaseAction';
+import { toggleNotAuthorizedModalAction } from '../utils/actions';
 
 class NotAuthorized extends React.Component {
 

@@ -4,16 +4,13 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
-import { toggleLoadBalancerFarmsTasksModalAction } from '../actions/ServiceActions';
-import { toggleNotAuthorizedModalAction } from '../actions/BaseAction'
-import { getAllLoadBalancerFarmsAction } from '../actions/LoadBalancerFarmsAction'
+import { toggleLoadBalancerFarmsTasksModalAction, getServiceDetailsAction, toggleNotAuthorizedModalAction, getAllLoadBalancerFarmsAction } from '../utils/actions';
 
 import { isAdmin, groupBy } from '../utils/HelperFunction';
 import NotAuthorized from './NotAuthorized';
 import LoadBalancerFarmsTable from '../components/LoadBalancerFarmsTable';
 import { getAllLoadBalancerFarms, saveLoadBalancerFarmsChanges } from '../requests/LoadBalancerFarmsAxios';
 import { getServiceDetails } from '../requests/ServiceAxios';
-import { getServiceDetailsAction } from '../actions/ServiceActions';
 import ErrorMessage from '../components/ErrorMessage';
 
 class LoadBalancerFarmsTasks extends React.Component {

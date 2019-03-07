@@ -1,1 +1,0 @@
-export const GET_ENVIRONMENTS = 'GET_ENVIRONMENTS';

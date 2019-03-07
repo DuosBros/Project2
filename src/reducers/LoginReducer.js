@@ -1,4 +1,4 @@
-import { SEND_AUTHENTICATION_DATA } from '../constants/LoginConstants';
+import { SEND_AUTHENTICATION_DATA } from '../utils/constants';
 
 const loginInitialState = {
     currentUser: {},

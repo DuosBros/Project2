@@ -1,4 +1,4 @@
-import { GET_HEALTHCHECKS } from '../constants/HealthCheckConstants';
+import { GET_HEALTHCHECKS } from '../utils/constants';
 
 const initialState = {
     healthChecks: { success: true }

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 
-import { getAllLoadBalancerFarmsAction } from '../actions/LoadBalancerFarmsAction';
+import { getAllLoadBalancerFarmsAction } from '../utils/actions';
 import { getAllLoadBalancerFarms } from '../requests/LoadBalancerFarmsAxios';
 import { Grid, Header, Segment, Message, Icon } from 'semantic-ui-react';
 import LoadBalancerFarmsTable from '../components/LoadBalancerFarmsTable';

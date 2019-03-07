@@ -1,4 +1,4 @@
-import { GET_SERVER_DETAILS, GET_VM_DETAILS, GET_SERVER_SCOM_ALERTS, GET_SERVERS, GET_SERVER_STATS } from '../constants/ServerConstants';
+import { GET_SERVER_DETAILS, GET_VM_DETAILS, GET_SERVER_SCOM_ALERTS, GET_SERVERS, GET_SERVER_STATS } from '../utils/constants';
 import { getServerState, getDismeState } from '../utils/HelperFunction';
 import { errorColor } from '../appConfig';
 

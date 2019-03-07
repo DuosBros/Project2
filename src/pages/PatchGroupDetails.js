@@ -5,7 +5,7 @@ import _ from 'lodash';
 
 import { Grid, Header, Segment, Message, Icon } from 'semantic-ui-react';
 import { getPatchGroupDetails, getPatchGroupServers } from '../requests/PatchGroupAxios';
-import { getPatchGroupDetailsAction, getPatchGroupServersAction } from '../actions/PatchGroupActions';
+import { getPatchGroupDetailsAction, getPatchGroupServersAction } from '../utils/actions';
 import ErrorMessage from '../components/ErrorMessage';
 import ServersTable from '../components/ServersTable';
 import { getServerState, getDismeState } from '../utils/HelperFunction';

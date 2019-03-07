@@ -1,4 +1,4 @@
-import { GET_LOADBALANCERS, GET_LOADBALANCERS_TOKENS, DELETE_LOADBALANCER_TOKEN } from '../constants/LoadBalancerConstants';
+import { GET_LOADBALANCERS, GET_LOADBALANCERS_TOKENS, DELETE_LOADBALANCER_TOKEN } from '../utils/constants';
 
 const initialState = {
     loadBalancers: { success: true }

@@ -1,4 +1,4 @@
-import { GET_ENVIRONMENTS } from '../constants/MiscConstants';
+import { GET_ENVIRONMENTS } from '../utils/constants';
 
 const initialState = {
     environments: { success: true }

@@ -6,7 +6,7 @@ import _ from 'lodash';
 import { Grid, Header, Segment, Message, Icon, Button, Input, Modal, Form, Popup } from 'semantic-ui-react';
 import ErrorMessage from '../components/ErrorMessage';
 import { getActiveDirectories, createActiveDirectory, editActiveDirectories, deleteActiveDirectory } from '../requests/ActiveDirectoryAxios';
-import { getActiveDirectoriesAction, createActiveDirectoryAction, editActiveDirectoryAction, deleteActiveDirectoryAction } from '../actions/ActiveDirectoryActions';
+import { getActiveDirectoriesAction, createActiveDirectoryAction, editActiveDirectoryAction, deleteActiveDirectoryAction } from '../utils/actions';
 import ActiveDirectoryTable from '../components/ActiveDirectoryTable';
 import { APP_TITLE } from '../appConfig';
 

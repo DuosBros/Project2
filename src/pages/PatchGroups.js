@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 
-import { getPatchGroupsAction } from '../actions/PatchGroupActions';
+import { getPatchGroupsAction } from '../utils/actions';
 import { getPatchGroups } from '../requests/PatchGroupAxios';
 import { Grid, Header, Segment, Message, Icon } from 'semantic-ui-react';
 import PatchGroupsTable from '../components/PatchGroupsTable';

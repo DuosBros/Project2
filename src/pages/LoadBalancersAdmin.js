@@ -6,7 +6,7 @@ import _ from 'lodash';
 import { Grid, Header, Segment, Message, Icon } from 'semantic-ui-react';
 import ErrorMessage from '../components/ErrorMessage';
 import { getLoadBalancers, getLoadBalancersTokens, deleteLoadBalancerToken } from '../requests/LoadBalancerAxios';
-import { getLoadBalancersAction, getLoadBalancersTokensAction, deleteLoadBalancerTokenAction } from '../actions/LoadBalancerAction';
+import { getLoadBalancersAction, getLoadBalancersTokensAction, deleteLoadBalancerTokenAction } from '../utils/actions';
 import LoadBalancersTable from '../components/LoadBalancersTable';
 import { APP_TITLE } from '../appConfig';
 

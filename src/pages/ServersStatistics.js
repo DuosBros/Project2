@@ -5,9 +5,8 @@ import { Grid, Header, Segment, Message, Icon, Popup, Dropdown, Form } from 'sem
 import _ from 'lodash';
 
 import { getServers } from '../requests/ServerAxios';
-import { getServersAction } from '../actions/ServerActions';
 import { getVirtualMachines } from '../requests/VirtualMachineAxios';
-import { getVirtualMachinesAction } from '../actions/VirtualMachineAction';
+import { getVirtualMachinesAction, getServersAction } from '../utils/actions';
 import ErrorMessage from '../components/ErrorMessage';
 import { mapDataForGenericChart, getUniqueValuesOfKey } from '../utils/HelperFunction';
 import BarChartWithRawData from '../charts/BarChartWithRawData';

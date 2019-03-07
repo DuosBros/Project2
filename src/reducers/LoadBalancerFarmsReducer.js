@@ -1,7 +1,7 @@
 import {
     GET_LOADBALANCER_FARMS,
     SET_LOADBALANCER_POOL_STATUS,
-    SET_LOADBALANCER_POOL_STATUS_LOADING } from '../constants/LoadBalancerFarmsConstants';
+    SET_LOADBALANCER_POOL_STATUS_LOADING } from '../utils/constants';
 
 const initialState = {
     loadBalancerFarms: { success: true },

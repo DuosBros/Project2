@@ -1,4 +1,4 @@
-import { GET_AGENTLOGS } from '../constants/AgentLogConstants';
+import { GET_AGENTLOGS } from '../utils/constants';
 import moment from 'moment';
 
 const initialState = {

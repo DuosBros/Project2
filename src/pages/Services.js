@@ -5,7 +5,7 @@ import _ from 'lodash';
 
 import { Grid, Header, Segment, Message, Icon } from 'semantic-ui-react';
 import { getServices, getHighAvailabilities } from '../requests/ServiceAxios';
-import { getServicesAction, getHighAvailabilitiesAction } from '../actions/ServiceActions';
+import { getServicesAction, getHighAvailabilitiesAction } from '../utils/actions';
 import ServiceTable from '../components/ServiceTable';
 import ErrorMessage from '../components/ErrorMessage';
 import { APP_TITLE } from '../appConfig';

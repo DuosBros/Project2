@@ -5,7 +5,7 @@ import _ from 'lodash';
 
 import { Grid, Header, Segment, Message, Icon } from 'semantic-ui-react';
 import { getHealthChecks } from '../requests/HealthCheckAxios';
-import { getHealthChecksAction } from '../actions/HealthCheckAction';
+import { getHealthChecksAction } from '../utils/actions';
 import ErrorMessage from '../components/ErrorMessage';
 import HealthChecksTable from '../components/HealthChecksTable';
 import { APP_TITLE } from '../appConfig';

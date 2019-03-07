@@ -13,7 +13,7 @@ import ServiceDetails from '../pages/ServiceDetails';
 import Login from '../pages/Login';
 import UserDetails from '../modals/UserDetails';
 
-import { authenticateAction, authenticationStartedAction, authenticateEndedAction, authenticateOKAction, authenticationFailedAction } from '../actions/BaseAction';
+import { authenticateAction, authenticationStartedAction, authenticateEndedAction, authenticateOKAction, authenticationFailedAction } from '../utils/actions';
 import { authenticate } from '../requests/BaseAxios';
 import { debounce, isAdmin } from '../utils/HelperFunction';
 

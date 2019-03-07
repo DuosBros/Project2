@@ -1,4 +1,4 @@
-import { GET_STAGES, GET_VERSION, REMOVE_ALL_VERSIONS } from '../constants/VersionStatusConstants';
+import { GET_STAGES, GET_VERSION, REMOVE_ALL_VERSIONS } from '../utils/constants';
 
 const serverInitialState = {
     stages: { success: true, data: [] },

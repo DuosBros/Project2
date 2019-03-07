@@ -1,9 +1,8 @@
 import {
     GET_DISME_APPLICATIONS, REMOVE_ROLLOUT_STATUS,
-    GET_ROLLOUT_STATUS, DELETE_ALL_ROLLOUT_STATUSES
-} from '../constants/RolloutStatusConstants';
-import { GET_HEALTHS } from '../constants/ServiceConstants';
-import { GET_VERSIONS } from '../constants/VersionStatusConstants';
+    GET_ROLLOUT_STATUS, DELETE_ALL_ROLLOUT_STATUSES,
+    GET_VERSIONS, GET_HEALTHS
+} from '../utils/constants';
 
 const initialState = {
     dismeApplications: { success: true, data: [] },

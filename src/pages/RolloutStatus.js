@@ -6,13 +6,11 @@ import keyboardKey from 'keyboard-key'
 
 import {
     getDismeApplicationsAction, getRolloutStatusAction,
-    deleteAllRoloutStatusesAction, removeRolloutStatusAction
-} from '../actions/RolloutStatusActions';
-
-import {
+    deleteAllRoloutStatusesAction, removeRolloutStatusAction,
     getServiceDetailsByShortcutsAction, removeServiceDetailsAction,
-    removeAllServiceDetailsAction, getHealthsAction, getVersionsAction
-} from '../actions/ServiceActions';
+    removeAllServiceDetailsAction, getHealthsAction, getVersionsAction,
+    searchServiceShortcutAction
+} from '../utils/actions';
 
 import { getDismeApplications, getServiceByShortcut, getHealths, getVersionsForRollout } from '../requests/ServiceAxios';
 import { Grid, Header, Segment, Dropdown, Table, Button, Message, Icon, TextArea, Form } from 'semantic-ui-react';
@@ -21,7 +19,6 @@ import DismeStatus from '../components/DismeStatus';
 import { DISME_SERVICE_URL, DISME_SERVICE_PLACEHOLDER, APP_TITLE } from '../appConfig';
 import SimpleTable from '../components/SimpleTable';
 import { searchServiceShortcut } from '../requests/HeaderAxios';
-import { searchServiceShortcutAction } from '../actions/HeaderActions';
 import { debounce, sleep, isValidIPv4, isNum } from '../utils/HelperFunction';
 import { getRolloutStatus } from '../requests/RolloutStatusAxios';
 import RolloutStatusTable from '../components/RolloutStatusTable';

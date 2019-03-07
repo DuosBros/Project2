@@ -6,10 +6,10 @@ import { Grid, Header, Segment, Table, Button, Dropdown, Message, Icon, TextArea
 import { Link } from 'react-router-dom';
 
 import { getDismeApplications, getServiceByShortcut } from '../requests/ServiceAxios';
-import { getServiceDetailsByShortcutsAction, removeServiceDetailsAction, removeAllServiceDetailsAction } from '../actions/ServiceActions';
-import { getStagesAction, getVersionsAction, removeAllVersionsAction } from '../actions/VersionStatusActions';
-import { searchServiceShortcutAction } from '../actions/HeaderActions';
-import { getDismeApplicationsAction } from '../actions/RolloutStatusActions';
+import { getServiceDetailsByShortcutsAction, removeServiceDetailsAction, removeAllServiceDetailsAction,
+    getStagesAction, getVersionAction, removeAllVersionsAction,searchServiceShortcutAction,
+    getDismeApplicationsAction
+ } from '../utils/actions';
 import { DISME_SERVICE_URL, DISME_SERVICE_PLACEHOLDER, APP_TITLE } from '../appConfig';
 import DismeStatus from '../components/DismeStatus';
 import ErrorMessage from '../components/ErrorMessage';
@@ -274,10 +274,10 @@ class VersionStatus extends React.Component {
 
             getVersions(payload)
                 .then(res => {
-                    this.props.getVersionsAction({ success: true, data: res.data.data })
+                    this.props.getVersionAction({ success: true, data: res.data.data })
                 })
                 .catch(err => {
-                    this.props.getVersionsAction({ success: false, error: err })
+                    this.props.getVersionAction({ success: false, error: err })
                 })
                 .finally(() => {
                     this.setState({ getVersionsStarted: true });
@@ -692,7 +692,7 @@ function mapDispatchToProps(dispatch) {
         getServiceDetailsByShortcutsAction,
         getDismeApplicationsAction,
         getStagesAction,
-        getVersionsAction,
+        getVersionAction,
         searchServiceShortcutAction,
         removeServiceDetailsAction,
         removeAllServiceDetailsAction,

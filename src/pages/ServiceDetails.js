@@ -5,7 +5,7 @@ import _ from 'lodash';
 import { Grid, Header, Segment, Icon, List, Button, Message, Image } from 'semantic-ui-react';
 import moment from 'moment';
 
-import { getServiceDetailsAction, toggleLoadBalancerFarmsTasksModalAction, removeAllServiceDetailsAction } from '../actions/ServiceActions';
+import { getServiceDetailsAction, toggleLoadBalancerFarmsTasksModalAction, removeAllServiceDetailsAction } from '../utils/actions';
 import { getServiceDetails } from '../requests/ServiceAxios';
 import ServersTable from '../components/ServersTable';
 import WebsitesTable from '../components/WebsitesTable';

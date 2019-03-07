@@ -5,7 +5,7 @@ import _ from 'lodash';
 
 import { Grid, Header, Segment, Message, Icon } from 'semantic-ui-react';
 import { getAgentLogs } from '../requests/AgentLogAxios';
-import { getAgentLogsAction } from '../actions/AgentLogActions';
+import { getAgentLogsAction } from '../utils/actions';
 import ErrorMessage from '../components/ErrorMessage';
 import AgentLogTable from '../components/AgentLogTable';
 import { APP_TITLE } from '../appConfig';

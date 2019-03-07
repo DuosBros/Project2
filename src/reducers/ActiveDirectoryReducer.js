@@ -1,4 +1,4 @@
-import { GET_ACTIVEDIRECTORIES, CREATE_ACTIVEDIRECTORY, EDIT_ACTIVEDIRECTORY, DELETE_ACTIVEDIRECTORY } from '../constants/ActiveDirectoryConstants';
+import { GET_ACTIVEDIRECTORIES, CREATE_ACTIVEDIRECTORY, EDIT_ACTIVEDIRECTORY, DELETE_ACTIVEDIRECTORY } from '../utils/constants';
 
 const initialState = {
     activeDirectories: { success: true }

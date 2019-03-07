@@ -10,7 +10,7 @@ import ServerStatus from '../components/ServerStatus';
 import WebsitesTable from '../components/WebsitesTable';
 import WebChecksTable from '../components/WebChecksTable';
 
-import { getServerDetailsAction, getVmDetailsAction, getServerScomAlertsAction, getServerStatsAction } from '../actions/ServerActions';
+import { getServerDetailsAction, getVmDetailsAction, getServerScomAlertsAction, getServerStatsAction } from '../utils/actions';
 import { getServerDetails, getServerScomAlerts, getDiskUsageDetails } from '../requests/ServerAxios';
 
 import { errorColor, APP_TITLE } from '../appConfig';

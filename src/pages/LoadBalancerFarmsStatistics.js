@@ -5,7 +5,7 @@ import { Grid, Header, Segment, Message, Icon } from 'semantic-ui-react';
 import _ from 'lodash';
 
 import { getAllLoadBalancerFarms } from '../requests/LoadBalancerFarmsAxios';
-import { getAllLoadBalancerFarmsAction } from '../actions/LoadBalancerFarmsAction';
+import { getAllLoadBalancerFarmsAction } from '../utils/actions';
 import { mapDataForGenericChart, getUniqueValuesOfKey, mapDataForStackedGenericBarChart } from '../utils/HelperFunction';
 import ErrorMessage from '../components/ErrorMessage';
 import BarChartWithRawData from '../charts/BarChartWithRawData';

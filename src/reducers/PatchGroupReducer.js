@@ -1,4 +1,4 @@
-import { GET_PATCHGROUPS, GET_PATCHGROUP_DETAILS, GET_PATCHGROUP_SERVERS } from '../constants/PatchGroupConstants';
+import { GET_PATCHGROUPS, GET_PATCHGROUP_DETAILS, GET_PATCHGROUP_SERVERS } from '../utils/constants';
 
 const initialState = {
     patchGroups: { success: true },

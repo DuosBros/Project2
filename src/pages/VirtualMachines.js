@@ -5,7 +5,7 @@ import _ from 'lodash';
 
 import { Grid, Header, Segment, Message, Icon } from 'semantic-ui-react';
 import { getVirtualMachines } from '../requests/VirtualMachineAxios';
-import { getVirtualMachinesAction } from '../actions/VirtualMachineAction';
+import { getVirtualMachinesAction } from '../utils/actions';
 import VirtualMachinesTable from '../components/VirtualMachinesTable';
 import ErrorMessage from '../components/ErrorMessage';
 import { APP_TITLE } from '../appConfig';

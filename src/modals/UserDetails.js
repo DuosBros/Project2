@@ -3,7 +3,7 @@ import { Button, Modal, List } from 'semantic-ui-react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import { toggleUserDetailsAction } from '../actions/HeaderActions';
+import { toggleUserDetailsAction } from '../utils/actions';
 
 class UserDetails extends React.Component {
 

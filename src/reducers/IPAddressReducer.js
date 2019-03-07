@@ -1,4 +1,4 @@
-import { GET_IPADDRESSES } from '../constants/IPAddressConstants';
+import { GET_IPADDRESSES } from '../utils/constants';
 
 const initialState = {
     ipAddresses: { success: true }
