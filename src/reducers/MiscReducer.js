@@ -1,7 +1,8 @@
-import { GET_ENVIRONMENTS } from '../utils/constants';
+import { GET_ENVIRONMENTS, GET_SERVICE_VIRTUALMACHINES } from '../utils/constants';
 
 const initialState = {
-    environments: { success: true }
+    environments: { success: true },
+    serviceVirtualMachines: { success: true }
 }
 
 const MiscReducer = (state = initialState, action) => {
@@ -12,6 +13,8 @@ const MiscReducer = (state = initialState, action) => {
                 action.payload.data = action.payload.data.sort((a, b) => (a.Name > b.Name) ? 1 : -1)
             }
             return Object.assign({}, state, { environments: action.payload })
+        case GET_SERVICE_VIRTUALMACHINES:
+            return Object.assign({}, state, { serviceVirtualMachines: action.payload })
         default:
             return state;
     }

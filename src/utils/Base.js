@@ -42,6 +42,7 @@ import ActiveDirectoryAdmin from '../pages/ActiveDirectoryAdmin';
 import AgentLogs from '../pages/AgentLogs';
 import NotFound from '../pages/NotFound';
 import PrivateRoute from './PrivateRoute';
+import ServiceVirtualMachine from '../pages/ServiceVirtualMachine';
 
 class Base extends React.Component {
     constructor(props) {
@@ -150,6 +151,7 @@ class Base extends React.Component {
                                     <Route path='/statistics/services' component={ServicesStatistics} />
                                     <Route path='/statistics/servers' component={ServersStatistics} />
                                     <Route path='/statistics/loadbalancerfarms' component={LoadBalancerFarmsStatistics} />
+                                    <Route path='/statistics/servicevirtualmachines' component={ServiceVirtualMachine} />
                                     <Route component={NotFound} />
                                 </Switch>
                             </ErrorBoundary>

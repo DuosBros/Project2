@@ -68,6 +68,9 @@ class Sidebar extends React.Component {
                             <Menu.Item as={Link} to='/statistics/loadbalancerfarms' >
                                 LoadBalancer Farms
                             </Menu.Item>
+                            <Menu.Item as={Link} to='/statistics/servicevirtualmachines' >
+                                Service Virtual Machines
+                            </Menu.Item>
                         </Menu.Menu>
                     </Menu.Item>
                     {
