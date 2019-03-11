@@ -38,12 +38,6 @@ export default class HealthChecksTable extends React.PureComponent {
             exportableByDefault: false
         },
         {
-            name: "RegistryKey",
-            prop: "RegistryKey",
-            visibleByDefault: false,
-            collapsing: true,
-        },
-        {
             name: "Local IP",
             prop: "LocalIP",
             width: 1,
@@ -52,6 +46,17 @@ export default class HealthChecksTable extends React.PureComponent {
             name: "Port",
             prop: "Port",
             width: 1,
+        },
+        {
+            name: "RegistryKey",
+            prop: "RegistryKey",
+            visibleByDefault: false,
+            collapsing: true,
+        },
+        {
+            name: "Healthcheck URL",
+            prop: "Url",
+            visibleByDefault: false,
         }
     ]
 
