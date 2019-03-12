@@ -166,6 +166,11 @@ export default class ServersTable extends React.PureComponent {
                 <DismeStatus size='small' dismeStatus={data.Disme} />
             </>
         );
+
+        if(Array.isArray(data.IPs)) {
+            data.IPs = data.IPs.join(",")
+        }
+
         return data;
     }
 

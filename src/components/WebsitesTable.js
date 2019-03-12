@@ -39,7 +39,9 @@ export default class WebsitesTable extends React.PureComponent {
             prop: "Bindings",
             display: "BindingsDisplay",
             width: 1,
-            collapsing: true
+            collapsing: true,
+            sortable: false,
+            searchable: false,
         },
         {
             name: "Framework",
