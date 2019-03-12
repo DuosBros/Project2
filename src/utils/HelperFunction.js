@@ -274,6 +274,14 @@ export const isAdmin = (user) => {
     return false;
 }
 
+export const isUser = (user) => {
+    if (user.IsLocoUser === true) {
+        return true
+    }
+
+    return false;
+}
+
 export const sleep = (milliseconds) => {
     return new Promise(resolve => setTimeout(resolve, milliseconds))
 }
