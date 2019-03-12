@@ -9,7 +9,7 @@ import { getServiceDetailsAction, toggleLoadBalancerFarmsTasksModalAction, remov
 import { getServiceDetails } from '../requests/ServiceAxios';
 import ServersTable from '../components/ServersTable';
 import WebsitesTable from '../components/WebsitesTable';
-import { isAdmin } from '../utils/HelperFunction';
+import { isAdmin, isUser } from '../utils/HelperFunction';
 import LoadBalancerFarmsTable from '../components/LoadBalancerFarmsTable';
 import DismeStatus from '../components/DismeStatus';
 import { DISME_SERVICE_URL, DISME_SERVICE_PLACEHOLDER, APP_TITLE } from '../appConfig';
@@ -205,7 +205,7 @@ class ServiceDetails extends React.Component {
                                 icon='content' />
                             <Button
                                 id="primaryButton"
-                                disabled={!isAdmin(this.props.baseStore.currentUser)}
+                                disabled={!isUser(this.props.baseStore.currentUser)}
                                 onClick={() => this.props.toggleLoadBalancerFarmsTasksModalAction()}
                                 style={{ padding: '0.3em', bottom: '0.1em' }}
                                 size="small"
