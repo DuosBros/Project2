@@ -6,7 +6,7 @@ import _ from 'lodash';
 
 import { toggleLoadBalancerFarmsTasksModalAction, getServiceDetailsAction, toggleNotAuthorizedModalAction, getAllLoadBalancerFarmsAction } from '../utils/actions';
 
-import { isAdmin, groupBy } from '../utils/HelperFunction';
+import { isAdmin, groupBy, isUser } from '../utils/HelperFunction';
 import NotAuthorized from './NotAuthorized';
 import LoadBalancerFarmsTable from '../components/LoadBalancerFarmsTable';
 import { getAllLoadBalancerFarms, saveLoadBalancerFarmsChanges } from '../requests/LoadBalancerFarmsAxios';
@@ -213,7 +213,7 @@ class LoadBalancerFarmsTasks extends React.Component {
         }
 
         // render modal
-        if (isAdmin(this.props.baseStore.currentUser)) {
+        if (isUser(this.props.baseStore.currentUser)) {
             if (!_.isEmpty(serviceDetails)) {
                 var allLoadBalancerFarms = this.props.loadBalancerFarmsStore.loadBalancerFarms.data
                 var filteredLoadBalancerFarms = null;
