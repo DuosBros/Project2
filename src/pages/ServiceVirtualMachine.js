@@ -9,9 +9,6 @@ import { getServiceVirtualMachines } from '../requests/MiscAxios';
 import ErrorMessage from '../components/ErrorMessage';
 
 class ServiceVirtualMachine extends React.Component {
-    constructor(props) {
-        super(props)
-    }
 
     componentDidMount() {
         this.fetchData()

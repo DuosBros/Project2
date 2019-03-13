@@ -212,11 +212,6 @@ export default class ServiceVirtualMachinesTable extends React.PureComponent {
         },
     ];
 
-    constructor(props) {
-        super(props)
-
-    }
-
     transformDataRow(data) {
 
         data.Links = (

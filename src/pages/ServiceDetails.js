@@ -9,7 +9,7 @@ import { getServiceDetailsAction, toggleLoadBalancerFarmsTasksModalAction, remov
 import { getServiceDetails } from '../requests/ServiceAxios';
 import ServersTable from '../components/ServersTable';
 import WebsitesTable from '../components/WebsitesTable';
-import { isAdmin, isUser } from '../utils/HelperFunction';
+import { isUser } from '../utils/HelperFunction';
 import LoadBalancerFarmsTable from '../components/LoadBalancerFarmsTable';
 import DismeStatus from '../components/DismeStatus';
 import { DISME_SERVICE_URL, DISME_SERVICE_PLACEHOLDER, APP_TITLE } from '../appConfig';
