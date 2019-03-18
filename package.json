@@ -1,6 +1,6 @@
 {
   "name": "bwin.loco.client",
-  "version": "0.22.1",
+  "version": "0.22.2",
   "private": true,
   "dependencies": {
     "axios": "^0.18.0",
