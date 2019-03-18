@@ -155,6 +155,10 @@ class ServiceDetails extends React.Component {
                                             <dd>{serviceDetailsData.Service[0].Owner}</dd>
                                             <dt>Responsible Team:</dt>
                                             <dd>{serviceDetailsData.Service[0].ResponsibleTeam}</dd>
+                                            <dt>Label:</dt>
+                                            <dd>{serviceDetailsData.Service[0].Label}</dd>
+                                            <dt>Application:</dt>
+                                            <dd>{serviceDetailsData.Service[0].Application}</dd>
                                         </dl>
                                         <dl className="dl-horizontal">
                                             <dt>
