@@ -88,7 +88,8 @@ class Base extends React.Component {
     }
 
     render() {
-
+        const { width } = this.state;
+        var isMobile = width <= 766;
 
         if (!this.props.baseStore.authenticationDone) {
             return (
@@ -120,8 +121,8 @@ class Base extends React.Component {
             <div>
                 <BrowserRouter>
                     <ScrollToTop>
-                        <Route path="/:entityType?/:entityId?" component={Header} />
-                        <Sidebar />
+                        <Route path="/:entityType?/:entityId?" render={(props) => <Header {...props} isMobile={isMobile} />} />
+                        <Sidebar isMobile={isMobile} />
                         <LoadBalancerFarmsTasks show={this.props.serviceStore.showLoadBalancerFarmsTasksModal} />
                         <UserDetails userDetails={this.props.baseStore.currentUser} show={this.props.headerStore.showUserDetails} />
                         <div id="bodyWrapper" {...wideClass}>

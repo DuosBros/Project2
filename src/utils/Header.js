@@ -1,5 +1,5 @@
 import React from 'react';
-import { Menu, Dropdown } from 'semantic-ui-react'
+import { Menu, Dropdown, Icon } from 'semantic-ui-react'
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -16,6 +16,10 @@ class Header extends React.Component {
 
     constructor(props) {
         super(props);
+
+        this.state = {
+            showMobileMenu: false
+        }
 
         this.handleSearchServers = this.handleSearchServers.bind(this);
         this.handleSearchServiceShortcut = this.handleSearchServiceShortcut.bind(this);
@@ -63,11 +67,42 @@ class Header extends React.Component {
         }
     }
 
+    toggleMobileMenu = () => {
+        this.setState({
+            showMobileMenu: !this.state.showMobileMenu
+        })
+    }
+
     render() {
-        return (
-            <div id="header">
-                <Menu stackable >
-                    <Menu.Item header content='LeanOpsConfigurationOverview' onClick={() => this.props.history.push('/')} />
+
+        let { isMobile } = this.props;
+        let { showMobileMenu } = this.state;
+        let showMenuItems, menuItems, menu;
+
+        if (!showMobileMenu) {
+            if (isMobile) {
+                menuItems = (
+                    <Menu.Item>
+                        LeanOpsConfigurationOverview
+                        <Icon name='content' style={{ cursor: 'pointer', position: 'absolute', right: '0px' }} onClick={this.toggleMobileMenu} />
+                    </Menu.Item>
+                )
+            }
+            else {
+                showMenuItems = true
+            }
+        }
+        else {
+            showMenuItems = true
+        }
+
+        if (showMenuItems) {
+            menuItems = (
+                <>
+                    <Menu.Item header onClick={() => this.props.history.push('/')}>
+                        LeanOpsConfigurationOverview
+                        {isMobile ? (<Icon name='content' style={{ cursor: 'pointer', position: 'absolute', right: '0px' }} onClick={this.toggleMobileMenu} />) : null}
+                    </Menu.Item>
                     <Menu.Item className='headerSearchInput'>
                         <ShortcutFocus shortcut="q" focusSelector="input">
                             <Dropdown
@@ -115,7 +150,19 @@ class Header extends React.Component {
                     <Menu.Menu position='right'>
                         <Menu.Item content={this.props.baseStore.currentUser.Identity} onClick={() => this.props.toggleUserDetailsAction()} />
                     </Menu.Menu>
-                </Menu>
+                </>
+            )
+        }
+
+        menu = (
+            <Menu stackable >
+                {menuItems}
+            </Menu>
+        )
+
+        return (
+            <div id="header">
+                {menu}
             </div>
         );
     }
