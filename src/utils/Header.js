@@ -9,6 +9,8 @@ import { searchServers, searchServiceShortcut } from '../requests/HeaderAxios';
 
 import { isNum, debounce } from '../utils/HelperFunction';
 import ShortcutFocus from '../components/ShortcutFocus';
+import SearchBox from '../components/SearchBox';
+import { SN_INC_SEARCH_URL, INCIDENT_PLACEHOLDER, VERSION1_PLACEHOLDER, VERSION1_SEARCH_URL } from '../appConfig';
 
 class Header extends React.Component {
 
@@ -98,6 +100,16 @@ class Header extends React.Component {
                                 onSearchChange={this.handleServiceShortcutSearchChange}
                                 search
                             />
+                        </ShortcutFocus>
+                    </Menu.Item>
+                    <Menu.Item className='headerSearchInput'>
+                        <ShortcutFocus shortcut="e" focusSelector="input">
+                            <SearchBox placeholder="Press 'e' to search in SNOW" url={SN_INC_SEARCH_URL} pattern={INCIDENT_PLACEHOLDER} />
+                        </ShortcutFocus>
+                    </Menu.Item>
+                    <Menu.Item className='headerSearchInput'>
+                        <ShortcutFocus shortcut="r" focusSelector="input">
+                            <SearchBox placeholder="Press 'r' to search a v1 story" url={VERSION1_SEARCH_URL} pattern={VERSION1_PLACEHOLDER} />
                         </ShortcutFocus>
                     </Menu.Item>
                     <Menu.Menu position='right'>
