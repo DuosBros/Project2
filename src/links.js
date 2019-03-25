@@ -101,11 +101,13 @@ export default {
         {
             "country": "us",
             "title": "NJ01",
+            "tooltip": "PANJLB01",
             "url": "https://10.92.12.4/"
         },
         {
             "country": "us",
             "title": "NJ02",
+            "tooltip": "PANJLB02",
             "url": "https://10.92.12.5/"
         }
     ],
@@ -418,7 +420,7 @@ export default {
                     },
                     {
                         "title": "BCD Fetcher",
-                        "url": "http://v3.bdf.bwin.prod/",
+                        "url": "http://v3.bdf.prod.env.works/",
                         "icon": "bdf.jpg"
                     },
                     {
