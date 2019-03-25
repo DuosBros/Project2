@@ -5,6 +5,7 @@ import { Table, Grid, Message, Input, Button, Icon, Label, Popup, Dropdown } fro
 import Pagination from 'semantic-ui-react-button-pagination';
 import ExportFromJSON from 'export-from-json'
 import { filterInArrayOfObjects, isNum, debounce, pick } from '../utils/HelperFunction';
+import { getExcelFile } from '../requests/MiscAxios';
 
 const DEFAULT_COLUMN_PROPS = {
     collapsing: false,
@@ -156,15 +157,15 @@ export default class GenericTable extends Component {
         const optionMapper = (e, i) => ({ key: i, text: e, value: i });
         let columnDistinctValues = {};
 
-        for(let c of columns.filter(e => e.searchable === "distinct")) {
+        for (let c of columns.filter(e => e.searchable === "distinct")) {
             let values;
-            if(Array.isArray(fromProps[c.prop])) {
+            if (Array.isArray(fromProps[c.prop])) {
                 values = fromProps[c.prop].map(optionMapper);
             } else {
                 values = data.map(e => e[c.prop])
-                .filter(e =>
-                    e !== undefined &&
-                    e !== null)
+                    .filter(e =>
+                        e !== undefined &&
+                        e !== null)
                     .map(e => e.toString());
 
                 values = _.uniq(values).sort().map(optionMapper);
@@ -275,15 +276,15 @@ export default class GenericTable extends Component {
     }
 
     buildColumnFilter(key, needle) {
-        if(typeof needle === "number") {
+        if (typeof needle === "number") {
             // TODO find cleaner solution
-            if(needle === -1) {
+            if (needle === -1) {
                 return null;
             }
             return heystack => (
                 heystack[key] !== undefined &&
                 heystack[key] !== null &&
-                heystack[key].toString() === this.state.columnDistinctValues[key][needle+1].text.toString()
+                heystack[key].toString() === this.state.columnDistinctValues[key][needle + 1].text.toString()
             );
         }
         let func = this.buildFilter(needle);
@@ -431,7 +432,7 @@ export default class GenericTable extends Component {
         return a.toString().localeCompare(b.toString());
     }
 
-    handleExport = (e, { value: type }) => {
+    handleExport = async (e, { value: type }) => {
         const { data, columns, visibleColumnsList } = this.state;
 
         // only export visible and exportable columns
@@ -457,6 +458,8 @@ export default class GenericTable extends Component {
         }
         else {
             const fileName = new Date().toISOString()
+
+            // await getExcelFile(fileName, type, dataToExport)
 
             ExportFromJSON({ data: dataToExport, fileName: fileName, exportType: type })
         }
@@ -913,7 +916,7 @@ export default class GenericTable extends Component {
                     <Table.Row key={'expanded' + rowKey}>
                         {/* +1 because there is extra column for toggling */}
                         <Table.Cell />
-                        <Table.Cell style={{borderLeft: 'none', paddingTop: '0px'}} colSpan={visibleColumns.length}>{this.props.renderExpandedRow(rowKey, data)}</Table.Cell>
+                        <Table.Cell style={{ borderLeft: 'none', paddingTop: '0px' }} colSpan={visibleColumns.length}>{this.props.renderExpandedRow(rowKey, data)}</Table.Cell>
                     </Table.Row>
                 ));
             }
