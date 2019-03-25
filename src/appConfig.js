@@ -5,6 +5,7 @@ export const NODE_ENV = process.env.NODE_ENV
 export const APP_TITLE = "LOCO V2 - "
 
 export const LOCO_API = NODE_ENV === 'development' ? 'http://loco.dev.env.works/Api/' : 'https://loco.prod.env.works/Api/';
+// export const LOCO_API = "http://localhost:24298/Api/"
 export const PM_API = "https://pm.bwin.corp/api/"
 
 export const DEFAULT_TIME_FRAME = 720 // in minutes
