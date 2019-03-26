@@ -1,4 +1,5 @@
-import { GET_SERVER_DETAILS, GET_VM_DETAILS, GET_SERVER_SCOM_ALERTS, GET_SERVERS, GET_SERVER_STATS } from '../utils/constants';
+import { GET_SERVER_DETAILS, GET_VM_DETAILS, GET_SERVER_SCOM_ALERTS, GET_SERVERS, GET_SERVER_STATS,
+    GET_SERVER_DEPLOYMENTS } from '../utils/constants';
 import { getServerState, getDismeState } from '../utils/HelperFunction';
 import { errorColor } from '../appConfig';
 
@@ -45,6 +46,12 @@ const ServerReducer = (state = serverInitialState, action) => {
             var temp = Object.assign({}, state.serverDetails)
             if (temp.data) {
                 temp.data.serverStats = action.payload
+            }
+            return Object.assign({}, state, { serverDetails: temp })
+        case GET_SERVER_DEPLOYMENTS:
+            var temp = Object.assign({}, state.serverDetails)
+            if (temp.data) {
+                temp.data.deploymentStats = action.payload
             }
             return Object.assign({}, state, { serverDetails: temp })
         default:
