@@ -11,7 +11,8 @@ const DEFAULT_COLUMN_PROPS = {
     sortable: true,
     searchable: true,
     visibleByDefault: true,
-    exportable: true
+    exportable: true,
+    skipRendering: false
 }
 
 export default class GenericTable extends Component {
@@ -21,6 +22,7 @@ export default class GenericTable extends Component {
             name: PropTypes.string.isRequired,
             collapsing: PropTypes.bool,
             exportable: PropTypes.bool,
+            skipRendering: PropTypes.bool,
             searchable: PropTypes.oneOfType([
                 PropTypes.bool,
                 PropTypes.oneOf(["distinct"])
@@ -107,7 +109,7 @@ export default class GenericTable extends Component {
             showTableHeader: props.tableHeader,
             sortColumn: null,
             sortDirection: null,
-            visibleColumnsList: columns.filter(c => c.visibleByDefault).map(c => c.prop),
+            visibleColumnsList: columns.filter(c => c.visibleByDefault && !c.skipRendering).map(c => c.prop),
         }
 
         if (Array.isArray(this.state.data)) {
@@ -156,15 +158,15 @@ export default class GenericTable extends Component {
         const optionMapper = (e, i) => ({ key: i, text: e, value: i });
         let columnDistinctValues = {};
 
-        for(let c of columns.filter(e => e.searchable === "distinct")) {
+        for (let c of columns.filter(e => e.searchable === "distinct")) {
             let values;
-            if(Array.isArray(fromProps[c.prop])) {
+            if (Array.isArray(fromProps[c.prop])) {
                 values = fromProps[c.prop].map(optionMapper);
             } else {
                 values = data.map(e => e[c.prop])
-                .filter(e =>
-                    e !== undefined &&
-                    e !== null)
+                    .filter(e =>
+                        e !== undefined &&
+                        e !== null)
                     .map(e => e.toString());
 
                 values = _.uniq(values).sort().map(optionMapper);
@@ -275,15 +277,15 @@ export default class GenericTable extends Component {
     }
 
     buildColumnFilter(key, needle) {
-        if(typeof needle === "number") {
+        if (typeof needle === "number") {
             // TODO find cleaner solution
-            if(needle === -1) {
+            if (needle === -1) {
                 return null;
             }
             return heystack => (
                 heystack[key] !== undefined &&
                 heystack[key] !== null &&
-                heystack[key].toString() === this.state.columnDistinctValues[key][needle+1].text.toString()
+                heystack[key].toString() === this.state.columnDistinctValues[key][needle + 1].text.toString()
             );
         }
         let func = this.buildFilter(needle);
@@ -913,7 +915,7 @@ export default class GenericTable extends Component {
                     <Table.Row key={'expanded' + rowKey}>
                         {/* +1 because there is extra column for toggling */}
                         <Table.Cell />
-                        <Table.Cell style={{borderLeft: 'none', paddingTop: '0px'}} colSpan={visibleColumns.length}>{this.props.renderExpandedRow(rowKey, data)}</Table.Cell>
+                        <Table.Cell style={{ borderLeft: 'none', paddingTop: '0px' }} colSpan={visibleColumns.length}>{this.props.renderExpandedRow(rowKey, data)}</Table.Cell>
                     </Table.Row>
                 ));
             }
