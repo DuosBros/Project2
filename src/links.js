@@ -109,6 +109,12 @@ export default {
             "title": "NJ02",
             "tooltip": "PANJLB02",
             "url": "https://10.92.12.5/"
+        },
+        {
+            "country": "us",
+            "title": "NJ03",
+            "tooltip": "nj3-lb",
+            "url": "https://10.188.128.10"
         }
     ],
     "list": [
