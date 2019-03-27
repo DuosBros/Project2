@@ -2,7 +2,8 @@ import {
     GET_SERVICE_DETAILS, TOGGLE_LOADBALANCERFARMS_TASKS,
     GET_SERVICES, GET_SERVICE_DETAILS_BY_SHORTCUTS, REMOVE_SERVICE_DETAILS,
     REMOVE_ALL_SERVICE_DETAILS,
-    GET_HIGHAVAILABILITIES
+    GET_HIGHAVAILABILITIES,
+    GET_SERVICE_DEPLOYMENTS
 } from '../utils/constants';
 import { getServerState, getDismeState } from '../utils/HelperFunction';
 import { errorColor } from '../appConfig';
@@ -86,7 +87,12 @@ const ServiceReducer = (state = serviceInitialState, action) => {
             }
 
             return Object.assign({}, state, { services: temp })
-
+        case GET_SERVICE_DEPLOYMENTS:
+            temp = Object.assign({}, state.serviceDetails)
+            if (temp.data) {
+                temp.data.deploymentStats = action.payload
+            }
+            return Object.assign({}, state, { serviceDetails: temp })
         default:
             return state;
     }

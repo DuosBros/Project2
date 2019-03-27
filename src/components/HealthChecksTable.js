@@ -57,6 +57,11 @@ export default class HealthChecksTable extends React.PureComponent {
             name: "Healthcheck URL",
             prop: "Url",
             visibleByDefault: false,
+        },
+        {
+            name: "KB URL",
+            prop: "Knowledgebasearticle",
+            visibleByDefault: false,
         }
     ]
 

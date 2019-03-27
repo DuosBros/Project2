@@ -11,6 +11,8 @@ export const PM_API = NODE_ENV === 'development' ? 'http://localhost:8080/api/' 
 export const DEFAULT_TIME_FRAME = 720 // in minutes
 export const DEFAULT_INTERVAL = 60 // in minutes
 export const DEFAULT_SERVER_DEPLOYMENT_COUNT = 8
+export const DEFAULT_SERVICE_DEPLOYMENT_COUNT = 30
+export const DEFAULT_SERVICE_DEPLOYMENT_TO_RENDER = 2
 
 export const KIBANA_CONFIG = {
     "prod": {

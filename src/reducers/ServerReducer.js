@@ -52,7 +52,7 @@ const ServerReducer = (state = serverInitialState, action) => {
             }
             return Object.assign({}, state, { serverDetails: temp })
         case GET_SERVER_DEPLOYMENTS:
-            var temp = Object.assign({}, state.serverDetails)
+            temp = Object.assign({}, state.serverDetails)
             if (temp.data) {
                 temp.data.deploymentStats = action.payload
             }
