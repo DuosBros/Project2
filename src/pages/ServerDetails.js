@@ -463,7 +463,7 @@ class ServerDetails extends React.Component {
                     </Grid.Column>
                 </Grid.Row>
                 <Grid.Row>
-                    <Grid.Column width={scomAlertsSuccess && scomAlertsData ? (scomAlertsData.length > 0 ? 6 : 11) : (11)}>
+                    <Grid.Column width={scomAlertsSuccess && scomAlertsData ? (scomAlertsData.length > 0 ? 6 : 13) : (13)}>
                         <Header block attached='top' as='h4'>
                             Disme Services
                                     <Button onClick={() => this.handleToggleShowingContent("dismeservices")} floated='right' icon='content' />
@@ -476,7 +476,7 @@ class ServerDetails extends React.Component {
                             )
                         }
                     </Grid.Column>
-                    <Grid.Column width={scomAlertsSuccess && scomAlertsData ? (scomAlertsData.length > 0 ? 10 : 5) : (5)}>
+                    <Grid.Column width={scomAlertsSuccess && scomAlertsData ? (scomAlertsData.length > 0 ? 10 : 3) : (3)}>
                         <Header
                             block
                             attached='top'
