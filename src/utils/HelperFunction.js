@@ -8,7 +8,7 @@ export const mapDataForMinMaxAvgChart = (data) => {
     }))
 }
 
-export const axiosHandler = function(a) {
+export const axiosHandler = function (a) {
     // TODO set error field on error handler
     return a.then(
         response => ({ success: true, data: response.data }),
@@ -315,3 +315,25 @@ export const promiseMap = function (n, arr, transformer, ignoreErrors) {
     return Promise.all(tasks)
         .then(() => res);
 };
+
+export const convertToCSV = (array) => {
+    if (!array) return;
+    if (!array[0]) return;
+
+    var str = '';
+    var keys = Object.keys(array[0])
+    str = keys.join(',') + '\r\n';
+
+    for (var i = 0; i < array.length; i++) {
+        var line = '';
+        for (var index in array[i]) {
+            if (line !== '') line += ','
+
+            line += array[i][index];
+        }
+
+        str += line + '\r\n';
+    }
+
+    return str;
+}

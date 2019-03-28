@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { Table, Grid, Message, Input, Button, Icon, Label, Popup, Dropdown } from 'semantic-ui-react'
 import Pagination from 'semantic-ui-react-button-pagination';
-import ExportFromJSON from 'export-from-json'
-import { filterInArrayOfObjects, isNum, debounce, pick } from '../utils/HelperFunction';
-import { getExcelFile } from '../requests/MiscAxios';
+import { filterInArrayOfObjects, isNum, debounce, pick, convertToCSV } from '../utils/HelperFunction';
+import { exportDataToExcel } from '../requests/MiscAxios';
+import FileSaver from 'file-saver';
 
 const DEFAULT_COLUMN_PROPS = {
     collapsing: false,
@@ -89,6 +89,7 @@ export default class GenericTable extends Component {
         let columnDistinctValues = this.generateDistinctValues(columns, props.data, props.distinctValues);
 
         this.state = {
+            showGenericModal: { show: false },
             columnDistinctValues,
             columns,
             columnToggle: columns.filter(c => c.visibleByDefault === false).length > 0,
@@ -434,8 +435,8 @@ export default class GenericTable extends Component {
         return a.toString().localeCompare(b.toString());
     }
 
-    handleExport = async (e, { value: type }) => {
-        const { data, columns, visibleColumnsList } = this.state;
+    handleExport = async (data, type) => {
+        const { columns, visibleColumnsList } = this.state;
 
         // only export visible and exportable columns
         let columnsToExport = columns
@@ -443,27 +444,34 @@ export default class GenericTable extends Component {
             .map(c => { return { label: c.name, key: c.prop } });
         let dataToExport = pick(data, columnsToExport.map(x => x.key));
 
-        if (type === "txt" || type === "json") {
-            const fileName = new Date().toISOString() + "." + type
+        const fileName = new Date().toISOString() + "_" + document.title
+        
+        if (type === "json" || type === "csv") {
 
             var a = document.createElement("a");
             document.body.appendChild(a);
             a.style = "display: none";
 
-            var json = JSON.stringify(dataToExport),
-                blob = new Blob([json], { type: "octet/stream" }),
-                url = window.URL.createObjectURL(blob);
+            var json;
+            if (type === "csv") {
+                json = convertToCSV(dataToExport)
+            }
+            else {
+                json = JSON.stringify(dataToExport)
+            }
+            let blob = new Blob([json], { type: "octet/stream" })
+            let url = window.URL.createObjectURL(blob);
             a.href = url;
-            a.download = fileName;
+            a.download = fileName + "." + type;
             a.click();
             window.URL.revokeObjectURL(url);
         }
         else {
-            const fileName = new Date().toISOString()
-
-            // await getExcelFile(fileName, type, dataToExport)
-
-            ExportFromJSON({ data: dataToExport, fileName: fileName, exportType: type })
+            exportDataToExcel(dataToExport, fileName, document.title)
+                .then((res) => {
+                    let blob = new Blob([res.data], { type: 'vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8' });
+                    FileSaver.saveAs(blob, fileName + '.xlsx')
+                })
         }
     }
 
@@ -488,7 +496,7 @@ export default class GenericTable extends Component {
         this.setState({ showTableHeader: true });
     }
 
-    renderTableFunctions(numRecords) {
+    renderTableFunctions(data) {
         const {
             columns,
             columnToggle,
@@ -575,31 +583,23 @@ export default class GenericTable extends Component {
                                 <Dropdown icon={<Icon className="iconMargin" name='share' />} item text='Export'>
                                     <Dropdown.Menu>
                                         <Dropdown.Item
-                                            onClick={this.handleExport}
-                                            value={ExportFromJSON.types.txt}
-                                            icon={<Icon name='file text outline' />}
-                                            text='Export to TXT' />
-                                        <Dropdown.Item
-                                            onClick={this.handleExport}
-                                            value={ExportFromJSON.types.json}
+                                            onClick={() => this.handleExport(data, "json")}
                                             icon={<Icon name='file text outline' />}
                                             text='Export to JSON' />
                                         <Dropdown.Item
-                                            onClick={this.handleExport}
-                                            value={ExportFromJSON.types.csv}
+                                            onClick={() => this.handleExport(data, "csv")}
                                             icon={<Icon name='file text outline' />}
                                             text='Export to CSV' />
                                         <Dropdown.Item
-                                            onClick={this.handleExport}
-                                            value={ExportFromJSON.types.xls}
+                                            onClick={() => this.handleExport(data, "xlsx")}
                                             icon={<Icon name='file excel' />}
-                                            text='Export to XLS' />
+                                            text='Export to XLSX' />
                                     </Dropdown.Menu>
                                 </Dropdown>
                             </Grid.Column>
                             <Grid.Column width={3}>
                                 <div style={{ float: "right", margin: "0 20px", display: limit === 0 ? "none" : "visible" }}>
-                                    <span>Showing {numRecords > 0 ? this.state.offset + 1 : 0} to {numRecords < limit ? numRecords : this.state.offset + limit} of {numRecords} entries</span>
+                                    <span>Showing {data.length > 0 ? this.state.offset + 1 : 0} to {data.length < limit ? data.length : this.state.offset + limit} of {data.length} entries</span>
                                 </div>
                             </Grid.Column>
                             <Grid.Column width={4}>
@@ -927,7 +927,7 @@ export default class GenericTable extends Component {
             prevRow = data;
         });
 
-        var tableFunctionsGrid = this.renderTableFunctions(filteredData.length);
+        var tableFunctionsGrid = this.renderTableFunctions(filteredData);
 
         return (
             <div className="generic table">
