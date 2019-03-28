@@ -43,6 +43,7 @@ import AgentLogs from '../pages/AgentLogs';
 import NotFound from '../pages/NotFound';
 import PrivateRoute from './PrivateRoute';
 import ServiceVirtualMachine from '../pages/ServiceVirtualMachine';
+import GenericModal from '../components/GenericModal';
 
 class Base extends React.Component {
     constructor(props) {
@@ -117,10 +118,24 @@ class Base extends React.Component {
             wideClass.className = "wide"
         }
 
+        let genericModal;
+        if (this.props.baseStore.showGenericModal) {
+            genericModal = (
+                <GenericModal
+                    show={this.props.baseStore.showGenericModal}
+                    header={this.props.baseStore.modal.modalHeader}
+                    content={this.props.baseStore.modal.modalContent}
+                    redirectTo={this.props.baseStore.modal.redirectTo}
+                    parentProps={this.props.baseStore.modal.parentProps}
+                    err={this.props.baseStore.modal.err} />
+            )
+        }
+
         return (
             <div>
                 <BrowserRouter>
                     <ScrollToTop>
+                        {genericModal}
                         <Route path="/:entityType?/:entityId?" render={(props) => <Header {...props} isMobile={isMobile} />} />
                         <Sidebar isMobile={isMobile} />
                         <LoadBalancerFarmsTasks show={this.props.serviceStore.showLoadBalancerFarmsTasksModal} />
