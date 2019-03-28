@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { LOCO_API } from '../appConfig';
+import { LOCO_API, PM_API } from '../appConfig';
 
 export function getServiceDetails(serviceId) {
     return axios.get(LOCO_API + 'service/' + serviceId + '/full');
@@ -27,4 +27,8 @@ export function getVersionsForRollout(serviceId, serverIdsPayload) {
 
 export function getHighAvailabilities() {
     return axios.get(LOCO_API + 'highavailability')
+}
+
+export function getServiceDeploymentStats(serviceShortcut, count) {
+    return axios.get(PM_API + 'deploymentStats/service/history/' + serviceShortcut + '/' + count)
 }

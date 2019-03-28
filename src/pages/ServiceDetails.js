@@ -2,17 +2,20 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
-import { Grid, Header, Segment, Icon, List, Button, Message, Image } from 'semantic-ui-react';
+import { Grid, Header, Segment, Icon, List, Button, Message, Image, Popup } from 'semantic-ui-react';
 import moment from 'moment';
 
-import { getServiceDetailsAction, toggleLoadBalancerFarmsTasksModalAction, removeAllServiceDetailsAction } from '../utils/actions';
-import { getServiceDetails } from '../requests/ServiceAxios';
+import {
+    getServiceDetailsAction, toggleLoadBalancerFarmsTasksModalAction, removeAllServiceDetailsAction,
+    getServiceDeploymentStatsAction
+} from '../utils/actions';
+import { getServiceDetails, getServiceDeploymentStats } from '../requests/ServiceAxios';
 import ServersTable from '../components/ServersTable';
 import WebsitesTable from '../components/WebsitesTable';
-import { isUser } from '../utils/HelperFunction';
+import { isUser, groupBy } from '../utils/HelperFunction';
 import LoadBalancerFarmsTable from '../components/LoadBalancerFarmsTable';
 import DismeStatus from '../components/DismeStatus';
-import { DISME_SERVICE_URL, DISME_SERVICE_PLACEHOLDER, APP_TITLE } from '../appConfig';
+import { DISME_SERVICE_URL, DISME_SERVICE_PLACEHOLDER, APP_TITLE, DEFAULT_SERVICE_DEPLOYMENT_COUNT, DEFAULT_SERVICE_DEPLOYMENT_TO_RENDER } from '../appConfig';
 import Kibana from '../utils/Kibana';
 import ErrorMessage from '../components/ErrorMessage';
 
@@ -26,28 +29,40 @@ class ServiceDetails extends React.Component {
             servers: true,
             websites: true,
         }
-        // this.updateService();
     }
 
     componentDidMount() {
         this.updateService();
     }
 
-    updateService = () => {
-        getServiceDetails(this.props.match.params.id)
-            .then(res => {
-                this.props.getServiceDetailsAction({ success: true, data: res.data })
-                
-                if (res.data[0]) {
-                    document.title = APP_TITLE + res.data[0].Name;
-                }
-                else {
-                    document.title = APP_TITLE + "Service Details"
-                }
+    updateService = async () => {
+        let res;
+        try {
+            res = await getServiceDetails(this.props.match.params.id)
+            this.props.getServiceDetailsAction({ success: true, data: res.data })
+            if (res.data.Service[0]) {
+                document.title = APP_TITLE + res.data.Service[0].Name;
+            }
+            else {
+                document.title = APP_TITLE + "Service Details"
+            }
+        }
+        catch (err) {
+            this.props.getServiceDetailsAction({ success: false, error: err })
+        }
 
+        if (res.data.Service[0]) {
+            this.fetchServiceDeploymentAndHandleData(res.data.Service[0].Shortcut)
+        }
+    }
+
+    fetchServiceDeploymentAndHandleData = (serviceShortcut) => {
+        getServiceDeploymentStats(serviceShortcut, DEFAULT_SERVICE_DEPLOYMENT_COUNT)
+            .then(res => {
+                this.props.getServiceDeploymentStatsAction({ success: true, data: res.data.deployments })
             })
             .catch(err => {
-                this.props.getServiceDetailsAction({ success: false, error: err })
+                this.props.getServiceDeploymentStatsAction({ success: false, error: err })
             })
     }
 
@@ -101,6 +116,62 @@ class ServiceDetails extends React.Component {
             );
         }
 
+        let deploymentsSegment;
+
+        if (!serviceDetailsData.deploymentStats) {
+            deploymentsSegment = (
+                <div className="messageBox">
+                    <Message info icon>
+                        <Icon name='circle notched' loading />
+                        <Message.Content>
+                            <Message.Header>Fetching deployment stats</Message.Header>
+                        </Message.Content>
+                    </Message>
+                </div>
+            );
+        }
+        else {
+            let deploymentStatsData = Array.isArray(serviceDetailsData.deploymentStats.data) ? serviceDetailsData.deploymentStats.data : null
+
+            if (!serviceDetailsData.deploymentStats.success) {
+                deploymentsSegment = (
+                    <ErrorMessage handleRefresh={this.fetchServerDeploymentAndHandleData} error={serviceDetailsData.deploymentStats.error} />
+                );
+            }
+
+            if (deploymentStatsData.length <= 0) {
+                deploymentsSegment = "No data available"
+            }
+            else {
+                let deploymentsSegmentItems = deploymentStatsData.map((x,i) => {
+                    var grouped = groupBy(x.history, "version");
+                    var keys = Object.keys(grouped).sort((a, b) => b - a).slice(0, DEFAULT_SERVICE_DEPLOYMENT_TO_RENDER);
+                    return (
+                        <React.Fragment key={i}>
+                            <dt>
+                                {x.stage}
+                            </dt>
+                            <dd>
+                                {keys.map((y, j) => {
+                                    return (
+                                        <div key={j}>
+                                            {grouped[y][0].version} | {grouped[y][0].userName} {grouped[y][0].changeNumber && (" | " + grouped[y][0].changeNumber)}
+                                            <Popup closeOnPortalMouseLeave={true} trigger={<Icon size='small' name='question' />}><Popup.Content><pre>{JSON.stringify(grouped[y][0], null, 2)}</pre></Popup.Content></Popup>
+                                        </div>
+                                    )
+                                })}
+                            </dd>
+                        </React.Fragment>
+                    )
+                })
+                deploymentsSegment = (
+                    <dl className="dl-horizontal">
+                        {deploymentsSegmentItems}
+                    </dl>
+                )
+            }
+        }
+
         // render page
         return (
             <Grid stackable>
@@ -119,7 +190,7 @@ class ServiceDetails extends React.Component {
                         <Segment style={{ marginBottom: '0px' }} attached="bottom">
                             <Grid stackable>
                                 <Grid.Row>
-                                    <Grid.Column width={8}>
+                                    <Grid.Column width={5}>
                                         <dl className="dl-horizontal">
                                             <dt>Shortcut:</dt>
                                             <dd>{serviceDetailsData.Service[0].Shortcut}</dd>
@@ -149,7 +220,7 @@ class ServiceDetails extends React.Component {
 
 
                                     </Grid.Column>
-                                    <Grid.Column width={8}>
+                                    <Grid.Column width={5}>
                                         <dl className="dl-horizontal">
                                             <dt>Owner:</dt>
                                             <dd>{serviceDetailsData.Service[0].Owner}</dd>
@@ -184,6 +255,11 @@ class ServiceDetails extends React.Component {
                                                 <a target="_blank" href={_.replace(DISME_SERVICE_URL, new RegExp(DISME_SERVICE_PLACEHOLDER, "g"), serviceDetailsData.Service[0].DismeID)} rel="noopener noreferrer">Details</a>
                                             </dd>
                                         </dl>
+                                    </Grid.Column>
+                                    <Grid.Column width={6}>
+                                        <Header as='h5'>Latest deployments:</Header>
+                                        <br />
+                                        {deploymentsSegment}
                                     </Grid.Column>
                                 </Grid.Row>
                             </Grid>
@@ -278,7 +354,8 @@ function mapDispatchToProps(dispatch) {
     return bindActionCreators({
         getServiceDetailsAction,
         toggleLoadBalancerFarmsTasksModalAction,
-        removeAllServiceDetailsAction
+        removeAllServiceDetailsAction,
+        getServiceDeploymentStatsAction
     }, dispatch);
 }
 

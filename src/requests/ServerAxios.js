@@ -18,6 +18,9 @@ export function getServers() {
 }
 
 export function getDiskUsageDetails(serverName) {
-    // TODO    
     return axios.get(PM_API + 'serverStats/' + serverName + "/" + DEFAULT_TIME_FRAME + "/" + DEFAULT_INTERVAL)
+}
+
+export function getServerDeploymentStats(serverName, count) {
+    return axios.get(PM_API + 'deploymentStats/server/history/' + serverName + "/" + count)
 }

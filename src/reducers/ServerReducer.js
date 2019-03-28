@@ -1,4 +1,5 @@
-import { GET_SERVER_DETAILS, GET_VM_DETAILS, GET_SERVER_SCOM_ALERTS, GET_SERVERS, GET_SERVER_STATS } from '../utils/constants';
+import { GET_SERVER_DETAILS, GET_VM_DETAILS, GET_SERVER_SCOM_ALERTS, GET_SERVERS, GET_SERVER_STATS,
+    GET_SERVER_DEPLOYMENTS } from '../utils/constants';
 import { getServerState, getDismeState } from '../utils/HelperFunction';
 import { errorColor } from '../appConfig';
 
@@ -13,13 +14,16 @@ const ServerReducer = (state = serverInitialState, action) => {
     switch (action.type) {
         case GET_SERVER_DETAILS:
             if (action.payload.data) {
-                if (action.payload.data.OperatingSystem.search(new RegExp("linux", "i")) >= 0) {
-                    if (action.payload.data.VM) {
-                        if (action.payload.data.VM.Status === "Running") {
-                            action.payload.data.ServerStateID = 1
+                if(action.payload.data.OperatingSystem) {
+                    if (action.payload.data.OperatingSystem.search(new RegExp("linux", "i")) >= 0) {
+                        if (action.payload.data.VM) {
+                            if (action.payload.data.VM.Status === "Running") {
+                                action.payload.data.ServerStateID = 1
+                            }
                         }
                     }
                 }
+                
                 action.payload.data.ServerState = getServerState(action.payload.data.ServerStateID)
                 action.payload.data.Disme = getDismeState(action.payload.data.Disme)
 
@@ -45,6 +49,12 @@ const ServerReducer = (state = serverInitialState, action) => {
             var temp = Object.assign({}, state.serverDetails)
             if (temp.data) {
                 temp.data.serverStats = action.payload
+            }
+            return Object.assign({}, state, { serverDetails: temp })
+        case GET_SERVER_DEPLOYMENTS:
+            temp = Object.assign({}, state.serverDetails)
+            if (temp.data) {
+                temp.data.deploymentStats = action.payload
             }
             return Object.assign({}, state, { serverDetails: temp })
         default:

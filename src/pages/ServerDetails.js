@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Grid, Header, Segment, Icon, List, Button, Message, Image } from 'semantic-ui-react';
+import { Grid, Header, Segment, Icon, List, Button, Message, Image, Popup } from 'semantic-ui-react';
 import _ from 'lodash';
 import moment from 'moment'
 
@@ -10,10 +10,13 @@ import ServerStatus from '../components/ServerStatus';
 import WebsitesTable from '../components/WebsitesTable';
 import WebChecksTable from '../components/WebChecksTable';
 
-import { getServerDetailsAction, getVmDetailsAction, getServerScomAlertsAction, getServerStatsAction } from '../utils/actions';
-import { getServerDetails, getServerScomAlerts, getDiskUsageDetails } from '../requests/ServerAxios';
+import {
+    getServerDetailsAction, getVmDetailsAction, getServerScomAlertsAction, getServerStatsAction,
+    getServerDeploymentStatsAction
+} from '../utils/actions';
+import { getServerDetails, getServerScomAlerts, getDiskUsageDetails, getServerDeploymentStats } from '../requests/ServerAxios';
 
-import { errorColor, APP_TITLE } from '../appConfig';
+import { errorColor, APP_TITLE, DEFAULT_SERVER_DEPLOYMENT_COUNT } from '../appConfig';
 
 import Kibana from '../utils/Kibana';
 import LoadBalancerFarmsTable from '../components/LoadBalancerFarmsTable';
@@ -48,62 +51,57 @@ class ServerDetails extends React.Component {
         this.updateServer();
     }
 
-    updateServer = () => {
-        getServerDetails(this.props.match.params.id)
+    updateServer = async () => {
+        let serverRes;
+        try {
+            serverRes = await getServerDetails(this.props.match.params.id)
+            this.props.getServerDetailsAction({ success: true, data: serverRes.data })
+            if (serverRes.data) {
+                document.title = APP_TITLE + serverRes.data.ServerName;
+            }
+            else {
+                document.title = APP_TITLE + "Server Details"
+            }
+        }
+        catch (err) {
+            this.props.getServerDetailsAction({ success: false, error: err });
+        }
+        let shouldContinue = false
+        if (serverRes.data) {
+            shouldContinue = true
+        }
+
+        if (!shouldContinue) return
+
+        // these calls can be run parallely
+        getServerScomAlerts(serverRes.data.ServerName)
             .then(res => {
-                this.props.getServerDetailsAction({ success: true, data: res.data })
-
-                if (res.data) {
-                    document.title = APP_TITLE + res.data.ServerName;
-                }
-                else {
-                    document.title = APP_TITLE + "Server Details"
-                }
-
-                return res
+                this.props.getServerScomAlertsAction({ success: true, data: res.data })
             })
-            .catch((err) => {
-                this.props.getServerDetailsAction({ success: false, error: err });
-            })
-            .then(res => {
-                if (!res) {
-                    return
-                }
-
-                if (_.isEmpty(res.data)) {
-                    return
-                }
-                getServerScomAlerts(res.data.ServerName)
-                    .then(res => {
-                        if (!_.isEmpty(res)) {
-                            this.props.getServerScomAlertsAction({ success: true, data: res.data })
-                        }
-                    })
-                    .catch((err) => {
-                        this.props.getServerScomAlertsAction({ success: false, error: err });
-                    })
-
-                return res
-            })
-            .catch((err) => {
+            .catch(err => {
                 this.props.getServerScomAlertsAction({ success: false, error: err });
             })
-            .then((res) => {
-                if (!res) {
-                    return
-                }
 
-                if (_.isEmpty(res.data)) {
-                    return
-                }
-
-                return getDiskUsageDetails(res.data.ServerName)
-            })
+        getDiskUsageDetails(serverRes.data.ServerName)
             .then(res => {
                 this.props.getServerStatsAction({ success: true, data: res.data })
             })
             .catch(err => {
                 this.props.getServerStatsAction({ success: false, error: err })
+            })
+
+        this.fetchServerDeploymentAndHandleData(serverRes.data.ServerName);
+
+
+    }
+
+    fetchServerDeploymentAndHandleData = (serverName) => {
+        getServerDeploymentStats(serverName, DEFAULT_SERVER_DEPLOYMENT_COUNT)
+            .then(res => {
+                this.props.getServerDeploymentStatsAction({ success: true, data: res.data.deployments })
+            })
+            .catch(err => {
+                this.props.getServerDeploymentStatsAction({ success: false, error: err })
             })
     }
 
@@ -229,6 +227,7 @@ class ServerDetails extends React.Component {
                 )
             }
             else {
+
                 let diskUsageDetails = "No data available"
                 let diskUsageTs;
                 if (serverDetailsData.serverStats.data.diskUsage) {
@@ -251,7 +250,7 @@ class ServerDetails extends React.Component {
 
                 let cpuUsageDetails = "No data available"
 
-                if (serverDetailsData.serverStats.data.cpuUtilization.length !== 0) {
+                if (serverDetailsData.serverStats.data.cpuUtilization) {
                     cpuUsageDetails = (
                         <MinMaxAvgAreaChart data={mapDataForMinMaxAvgChart(serverDetailsData.serverStats.data.cpuUtilization)} />
                     )
@@ -259,7 +258,7 @@ class ServerDetails extends React.Component {
 
                 let memoryUsageDetails = "No data available";
 
-                if (serverDetailsData.serverStats.data.memoryUsage.length !== 0) {
+                if (serverDetailsData.serverStats.data.memoryUsage) {
                     memoryUsageDetails = (
                         <MinMaxAvgAreaChart data={mapDataForMinMaxAvgChart(serverDetailsData.serverStats.data.memoryUsage)} />
                     )
@@ -284,6 +283,52 @@ class ServerDetails extends React.Component {
             }
         }
 
+        let deploymentsSegment;
+
+        if (!serverDetailsData.deploymentStats) {
+            deploymentsSegment = (
+                <div className="messageBox">
+                    <Message info icon>
+                        <Icon name='circle notched' loading />
+                        <Message.Content>
+                            <Message.Header>Fetching deployment stats</Message.Header>
+                        </Message.Content>
+                    </Message>
+                </div>
+            );
+        }
+        else {
+            let deploymentStatsData = Array.isArray(serverDetailsData.deploymentStats.data) ? serverDetailsData.deploymentStats.data : null
+
+            if (!serverDetailsData.deploymentStats.success) {
+                deploymentsSegment = (
+                    <ErrorMessage handleRefresh={this.fetchServerDeploymentAndHandleData} error={serverDetailsData.deploymentStats.error} />
+                );
+            }
+
+            if (deploymentStatsData.length <= 0) {
+                deploymentsSegment = "No data available"
+            }
+            else {
+                let deploymentsSegmentItems = deploymentStatsData.map((x, i) => {
+                    return (
+                        <List.Item key={i}>
+                            <List.Header>
+                                {moment(x.deployDateTime).local().format("HH:mm DD.MM.YYYY")} | {x.userName} <Popup closeOnPortalMouseLeave={true} trigger={<Icon size='small' name='question' />}><Popup.Content><pre>{JSON.stringify(x, null, 2)}</pre></Popup.Content></Popup>
+                            </List.Header>
+                            Version: {x.version} {x.changeNumber && " | CHG: " + x.changeNumber}
+                        </List.Item>
+                    )
+                })
+                deploymentsSegment = (
+                    <List>
+                        {deploymentsSegmentItems}
+                    </List>
+                )
+            }
+        }
+
+
 
         // render page
         return (
@@ -303,7 +348,7 @@ class ServerDetails extends React.Component {
                         <Segment attached>
                             <Grid stackable>
                                 <Grid.Row>
-                                    <Grid.Column width={5}>
+                                    <Grid.Column width={4}>
                                         <dl className="dl-horizontal">
                                             <dt>Server Name:</dt>
                                             <dd>{serverDetailsData.ServerName}</dd>
@@ -338,7 +383,7 @@ class ServerDetails extends React.Component {
                                             <dd>{serverDetailsData.Domain}</dd>
                                         </dl>
                                     </Grid.Column>
-                                    <Grid.Column width={5}>
+                                    <Grid.Column width={3}>
                                         <dl className="dl-horizontal">
                                             <dt>OS:</dt>
                                             <dd>{OSIcon} {serverDetailsData.OperatingSystem}</dd>
@@ -376,7 +421,11 @@ class ServerDetails extends React.Component {
                                     </Grid.Column>
                                     <Grid.Column width={6}>
                                         {serverStatsSegment}
-
+                                    </Grid.Column>
+                                    <Grid.Column width={3}>
+                                        <strong>Latest deployments:</strong>
+                                        <br />
+                                        {deploymentsSegment}
                                     </Grid.Column>
                                     <Grid.Column width={16}>
                                         <dl className="dl-horizontal">
@@ -405,13 +454,11 @@ class ServerDetails extends React.Component {
                                 <Button onClick={() => this.handleToggleShowingContent("webchecks")} floated='right' icon='content' />
                         </Header>
                         {
-                            webchecks ? (
+                            webchecks && (
                                 <Segment attached='bottom'>
                                     <WebChecksTable data={serverDetailsData.WebChecks} tableHeader={false} compact="very" />
                                 </Segment>
-                            ) : (
-                                    null
-                                )
+                            )
                         }
                     </Grid.Column>
                 </Grid.Row>
@@ -422,13 +469,11 @@ class ServerDetails extends React.Component {
                                     <Button onClick={() => this.handleToggleShowingContent("dismeservices")} floated='right' icon='content' />
                         </Header>
                         {
-                            dismeservices ? (
+                            dismeservices && (
                                 <Segment attached='bottom'>
                                     <ServiceTable data={serverDetailsData.ServicesFull} tableHeader="hidden" compact="very" />
                                 </Segment>
-                            ) : (
-                                    null
-                                )
+                            )
                         }
                     </Grid.Column>
                     <Grid.Column width={scomAlertsSuccess && scomAlertsData ? (scomAlertsData.length > 0 ? 10 : 5) : (5)}>
@@ -444,13 +489,11 @@ class ServerDetails extends React.Component {
                             scomAlertsSegment) : (
                                 // show the scom segment if there is a scom error eventhough it was collapsed on the previous server details page
                                 // sorry to whoever has to troubleshoot this
-                                scomAlertsSuccess && scomAlertsData ? (
-                                    scomAlertsData.length > 0 ? (
+                                scomAlertsSuccess && scomAlertsData && (
+                                    scomAlertsData.length > 0 && (
                                         scomAlertsSegment
-                                    ) : (
-                                            null
-                                        )
-                                ) : (null)
+                                    )
+                                )
                             )}
                     </Grid.Column>
                 </Grid.Row>
@@ -461,13 +504,11 @@ class ServerDetails extends React.Component {
                                 <Button onClick={() => this.handleToggleShowingContent("websites")} floated='right' icon='content' />
                         </Header>
                         {
-                            websites ? (
+                            websites && (
                                 <Segment attached='bottom'>
                                     <WebsitesTable data={serverDetailsData.Websites} disableGrouping={true} tableHeader="hidden" />
                                 </Segment>
-                            ) : (
-                                    null
-                                )
+                            )
                         }
 
                     </Grid.Column>
@@ -479,13 +520,11 @@ class ServerDetails extends React.Component {
                                 <Button onClick={() => this.handleToggleShowingContent("loadbalancerfarms")} floated='right' icon='content' />
                         </Header>
                         {
-                            loadbalancerfarms ? (
+                            loadbalancerfarms && (
                                 <Segment attached='bottom'>
                                     <LoadBalancerFarmsTable data={serverDetailsData.LoadBalancerFarms} isEdit={false} />
                                 </Segment>
-                            ) : (
-                                    null
-                                )
+                            )
                         }
 
                     </Grid.Column>
@@ -497,15 +536,12 @@ class ServerDetails extends React.Component {
                                 <Button onClick={() => this.handleToggleShowingContent("windowsservices")} floated='right' icon='content' />
                         </Header>
                         {
-                            windowsservices ? (
+                            windowsservices && (
                                 <Segment attached='bottom'>
                                     <WindowsServicesTable data={serverDetailsData.WindowsServices} tableHeader={false} compact="very" />
                                 </Segment>
-                            ) : (
-                                    null
-                                )
+                            )
                         }
-
                     </Grid.Column>
                 </Grid.Row>
             </Grid>
@@ -524,7 +560,8 @@ function mapDispatchToProps(dispatch) {
         getServerDetailsAction,
         getVmDetailsAction,
         getServerScomAlertsAction,
-        getServerStatsAction
+        getServerStatsAction,
+        getServerDeploymentStatsAction
     }, dispatch);
 }
 
