@@ -124,7 +124,7 @@ class RolloutStatus extends React.Component {
         this.setState({ loadingServiceDetails: true, applicationDropdownValue: value });
         var filteredApps = this.props.rolloutStatusStore.dismeApplications.data.filter(x => x.value === value);
 
-        var shortcuts = filteredApps.map(x => x.services.map(y => y.Shortcut))[0];
+        var shortcuts = filteredApps[0].services.sort((a,b) => a.Shortcut > b.Shortcut ? 1 : -1).map(x => x.Shortcut);
 
         var joinedShortcuts = shortcuts.join(",")
         this.props.history.push("/rolloutstatus?services=" + joinedShortcuts)
