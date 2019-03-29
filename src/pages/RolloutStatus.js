@@ -124,7 +124,7 @@ class RolloutStatus extends React.Component {
         this.setState({ loadingServiceDetails: true, applicationDropdownValue: value });
         var filteredApps = this.props.rolloutStatusStore.dismeApplications.data.filter(x => x.value === value);
 
-        var shortcuts = filteredApps[0].services.sort((a,b) => a.Shortcut > b.Shortcut ? 1 : -1).map(x => x.Shortcut);
+        var shortcuts = filteredApps[0].services.sort((a, b) => a.Shortcut > b.Shortcut ? 1 : -1).map(x => x.Shortcut);
 
         var joinedShortcuts = shortcuts.join(",")
         this.props.history.push("/rolloutstatus?services=" + joinedShortcuts)
@@ -137,15 +137,10 @@ class RolloutStatus extends React.Component {
 
     handleApplicationDropdownOnSearchChange = (e) => {
         if (e.target.value.length > 1) {
-
             var filtered = this.props.rolloutStatusStore.dismeApplications.data.filter(x => x.text.toString().search(new RegExp(x.text, "i")) >= 0)
             this.setState({ dismeApplicationsFiltered: filtered });
         }
     }
-
-    // getRolloutStatus(services) {
-    //     var ids = services.map(x => x.Id)
-    // }
 
     handleInputOnChange = (e, { value }) => {
 
@@ -180,73 +175,6 @@ class RolloutStatus extends React.Component {
             .catch(err => {
                 this.props.getServiceDetailsByShortcutsAction({ success: false, error: err })
             })
-    }
-
-    getHealthsAndVersions = (serviceId, refreshTriggered) => {
-
-        if (refreshTriggered) {
-            var health = {
-                success: true,
-                serviceId: serviceId
-
-            }
-
-            this.props.getHealthsAction(health)
-
-            var version = {
-                success: true,
-                serviceId: serviceId,
-            }
-
-            this.props.getVersionsAction(version)
-        }
-
-        var cloned = Object.assign([], this.props.rolloutStatusStore.rolloutStatuses);
-
-
-        cloned.filter(x => x.isLoading === false).forEach(element => {
-
-            var serviceId = element.serviceId;
-
-            var ips = element.rolloutStatus.map(x => x.Ip).filter(x => isValidIPv4(x));
-            var serverIds = element.rolloutStatus.map(x => x.Serverid).filter(x => isNum(x) && x !== 0);
-
-            if (ips.length > 0) {
-                var getHealthsPayload = {}
-                getHealthsPayload.Ip = ips
-                getHealths(serviceId, getHealthsPayload)
-                    .then(res => {
-                        var temp = {
-                            success: true,
-                            serviceId: serviceId,
-                            data: res.data
-                        }
-
-                        this.props.getHealthsAction(temp)
-                    })
-                    .catch(err => {
-                        this.props.getHealthsAction({ success: false, error: err, serviceId: serviceId })
-                    })
-            }
-
-            if (serverIds.length > 0) {
-                var getVersionsPayload = {}
-                getVersionsPayload.Id = serverIds
-                getVersionsForRollout(serviceId, getVersionsPayload)
-                    .then(res => {
-                        var temp = {
-                            success: true,
-                            serviceId: serviceId,
-                            data: res.data
-                        }
-
-                        this.props.getVersionsAction(temp)
-                    })
-                    .catch(err => {
-                        this.props.getVersionsAction({ success: false, error: err, serviceId: serviceId })
-                    })
-            }
-        });
     }
 
     handleSearchServiceShortcut(value) {
@@ -303,9 +231,12 @@ class RolloutStatus extends React.Component {
         });
     }
 
-    getRolloutStatuses = () => {
+    getRolloutStatuses = async () => {
+
+        // wiping previous rollout statuses
         this.props.deleteAllRoloutStatusesAction()
 
+        // mapping segments for UI (loading and header info)
         var segments = Object.assign([], this.state.segments)
 
         this.props.serviceStore.serviceDetails.data.forEach(x => {
@@ -322,11 +253,10 @@ class RolloutStatus extends React.Component {
         })
 
 
-        this.setState({
-            segments: segments
-        });
+        this.setState({ segments: segments });
 
-        this.props.serviceStore.serviceDetails.data.forEach(x => {
+        // for every service in store, get the rollout status
+        this.props.serviceStore.serviceDetails.data.forEach(async x => {
             if (x === null) {
                 return
             }
@@ -337,15 +267,13 @@ class RolloutStatus extends React.Component {
             var object = {
                 serviceName: shortcut,
                 serviceId: serviceId,
-                rolloutStatus: null,
                 isLoading: true
             }
 
             this.props.getRolloutStatusAction(object)
 
-            sleep(1000).then(() => {
-                this.getRolloutStatusAndHandleResult(shortcut, serviceId, false);
-            })
+            await sleep(1500)
+            this.getRolloutStatusAndHandleResult(shortcut, serviceId);
         });
     }
 
@@ -370,48 +298,103 @@ class RolloutStatus extends React.Component {
     }
 
     handleRefreshRolloutStatus = (shortcut, serviceId) => {
+        // if the segment is not showing -> show the segment if refresh is toggled
         this.handleToggleShowingContent(shortcut, true)
+
+        // preparing the objects which will be sent to reducer to indicate a fresh state
 
         var object = {
             serviceName: shortcut,
             serviceId: serviceId,
-            rolloutStatus: null,
             isLoading: true
         }
 
+        var health = {
+            success: true,
+            serviceId: serviceId
+
+        }
+
+        var version = {
+            success: true,
+            serviceId: serviceId,
+        }
+
+        this.props.getHealthsAction(health)
+        this.props.getVersionsAction(version)
         this.props.getRolloutStatusAction(object)
-
-        this.getRolloutStatusAndHandleResult(shortcut, serviceId, true);
-
+        this.getRolloutStatusAndHandleResult(shortcut, serviceId);
     }
 
-    getRolloutStatusAndHandleResult = (shortcut, serviceId, refreshTriggered) => {
-        getRolloutStatus(shortcut)
-            .then(res => {
+    getRolloutStatusAndHandleResult = async (shortcut, serviceId) => {
+        let res;
+        let object = {
+            serviceName: shortcut,
+            serviceId: serviceId,
+            isLoading: false
+        };
 
-                var object = {
-                    serviceName: shortcut,
-                    serviceId: serviceId,
-                    rolloutStatus: res.data,
-                    isLoading: false
-                }
+        // get rollout status details
+        try {
+            res = await getRolloutStatus(shortcut)
+            object.rolloutStatus = res.data;
+            this.props.getRolloutStatusAction(object)
+        }
+        catch (err) {
+            object.err = err
+            this.props.getRolloutStatusAction(object)
+        }
 
-                this.props.getRolloutStatusAction(object)
-            })
-            .catch(err => {
-                var object = {
-                    serviceName: shortcut,
-                    serviceId: serviceId,
-                    rolloutStatus: [],
-                    err: err,
-                    isLoading: false
-                }
-                this.props.getRolloutStatusAction(object)
-            })
-            .then(() => {
-                this.getHealthsAndVersions(serviceId, refreshTriggered)
-            })
+        // get health and version info
+        if (res) {
+            this.getHealthsAndVersions()
+        }
     }
+
+    getHealthsAndVersions = () => {
+
+        let cloned = Object.assign([], this.props.rolloutStatusStore.rolloutStatuses);
+
+        // it needs to be done sequentionally because of API
+        cloned.filter(x => x.isLoading === false).forEach(async element => {
+
+            const serviceId = element.serviceId;
+
+            const ips = element.rolloutStatus.map(x => x.Ip).filter(x => isValidIPv4(x));
+            const serverIds = element.rolloutStatus.map(x => x.Serverid).filter(x => isNum(x) && x !== 0);
+
+            if (ips.length > 0) {
+                let getHealthsPayload = { Ip: ips }
+                try {
+                    let res = await getHealths(serviceId, getHealthsPayload)
+
+                    this.props.getHealthsAction({ success: true, serviceId: serviceId, data: res.data })
+                }
+                catch (err) {
+                    this.props.getHealthsAction({ success: false, error: err, serviceId: serviceId })
+                }
+            }
+            else {
+                this.props.getHealthsAction({ success: false, serviceId: serviceId, error: "No data" })
+            }
+
+            if (serverIds.length > 0) {
+                let getVersionsPayload = { Id: serverIds }
+                try {
+                    let res = await getVersionsForRollout(serviceId, getVersionsPayload)
+
+                    this.props.getVersionsAction({ success: true, serviceId: serviceId, data: res.data })
+                }
+                catch (err) {
+                    this.props.getVersionsAction({ success: false, error: err, serviceId: serviceId })
+                }
+            }
+            else {
+                this.props.getVersionsAction({ success: false, serviceId: serviceId, error: "No data" })
+            }
+        });
+    }
+
 
     render() {
         var { showAllSegments } = this.state;
@@ -686,7 +669,7 @@ class RolloutStatus extends React.Component {
                                     <Grid.Column verticalAlign="bottom" width={2} >
                                         <Button
                                             disabled={serviceDetails ? false : true}
-                                            onClick={() => this.getRolloutStatuses()}
+                                            onClick={this.getRolloutStatuses}
                                             fluid
                                             primary
                                             content="Get Rollout Statuses" />
