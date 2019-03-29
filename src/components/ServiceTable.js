@@ -29,6 +29,7 @@ export default class ServiceTable extends React.PureComponent {
         {
             name: "Owner",
             prop: "Owner",
+            searchable: "distinct",
             width: 1
         },
         {
