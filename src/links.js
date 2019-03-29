@@ -323,7 +323,6 @@ export default {
             },
             {
                 "SectionTitle": "Network",
-                "url": "http://nwtools.intranet/lbtools",
                 "items": [
                     {
                         "title": "Grafana",
@@ -349,16 +348,6 @@ export default {
                         "title": "Graylog",
                         "url": "https://graylog.is.icepor.com/streams/5a830699976923360016a406/search?rangetype=relative&fields=message%2Csource&width=1444&highlightMessage=&relative=28800&q=hsl_action%3Dcentral_block",
                         "icon": "graylog.png"
-                    },
-                    {
-                        "title": "F5 Vanilla Health",
-                        "url": "http://nwtools.intranet/f5_checker.html",
-                        "icon": "vanilla.png"
-                    },
-                    {
-                        "title": "DR IPs",
-                        "url": "https://nwtools.icepor.com/dr/list_dr_dns.html",
-                        "icon": "dr.png"
                     },
                     {
                         "title": "Offlinepages",

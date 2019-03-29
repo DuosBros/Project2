@@ -52,7 +52,7 @@ export const errorColor = '#f2005614'
 export const LBNAME_SUFFIX_WITH_IS = ".is.icepor.com"
 export const LBNAME_SUFFIX = ".icepor.com"
 
-export const NWTOOLS_URL = 'http://nwtools.intranet/'
+export const NWTOOLS_URL = 'https://nw-api.is.icepor.com/'
 
 export const CHART_COLORS = ['#8884d8', '#82ca9d', '#ffc658'];
 // TODO:
