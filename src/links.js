@@ -160,6 +160,11 @@ export default {
                         "icon": "wikipedia.png"
                     },
                     {
+                        "title": "Linux Wiki",
+                        "url": "https://wiki.bwinparty.corp/linux",
+                        "icon": "wikipedia.png"
+                    },
+                    {
                         "title": "B2C WM 2018",
                         "url": "https://wiki.bwinparty.corp/WM2018",
                         "icon": "wikipedia.png"

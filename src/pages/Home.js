@@ -124,7 +124,8 @@ export default class Home extends React.Component {
                         {buttons}
                         <Divider hidden />
                         <div>
-                            <Input onChange={this.handleChange} name="filterLinks" placeholder='Search...'></Input>
+                            <Input value={this.state.filterLinks} onChange={this.handleChange} name="filterLinks" placeholder='Search...'></Input>
+                            <Button onClick={() => this.handleChange(null, {name: "filterLinks", value: ""})} circular icon="close" id="homeSecondIcon" style={{ visibility: (this.state.filterLinks === "" ? "hidden" : "visible") }} />
                         </div>
                     </Grid.Column>
                     <Grid.Column width={8}>
