@@ -162,9 +162,7 @@ export default class GenericTable extends Component {
 
         for (let c of columns.filter(e => e.searchable === "distinct")) {
             let values;
-            if (Array.isArray(fromProps[c.prop])) {
-                values = fromProps[c.prop].map(optionMapper);
-            } else {
+            if (!fromProps) {
                 values = data.map(e => e[c.prop])
                     .filter(e =>
                         e !== undefined &&
@@ -172,6 +170,11 @@ export default class GenericTable extends Component {
                     .map(e => e.toString());
 
                 values = _.uniq(values).sort().map(optionMapper);
+            }
+            else {
+                if (Array.isArray(fromProps[c.prop])) {
+                    values = fromProps[c.prop].map(optionMapper);
+                }
             }
             values.unshift(unfilteredOption);
             columnDistinctValues[c.prop] = values;
@@ -445,7 +448,7 @@ export default class GenericTable extends Component {
         let dataToExport = pick(data, columnsToExport.map(x => x.key));
 
         const fileName = new Date().toISOString() + "_" + document.title
-        
+
         if (type === "json" || type === "csv") {
 
             var a = document.createElement("a");
