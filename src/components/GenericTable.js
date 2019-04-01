@@ -161,7 +161,7 @@ export default class GenericTable extends Component {
         let columnDistinctValues = {};
 
         for (let c of columns.filter(e => e.searchable === "distinct")) {
-            let values;
+            let values = [];
             if (!fromProps) {
                 values = data.map(e => e[c.prop])
                     .filter(e =>
@@ -470,7 +470,14 @@ export default class GenericTable extends Component {
             window.URL.revokeObjectURL(url);
         }
         else {
-            exportDataToExcel(dataToExport, fileName, document.title)
+            let payload = {
+                sheets: [{
+                    name: document.title,
+                    data: dataToExport
+                }]
+            }
+
+            exportDataToExcel(payload, fileName)
                 .then((res) => {
                     let blob = new Blob([res.data], { type: 'vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8' });
                     FileSaver.saveAs(blob, fileName + '.xlsx')
