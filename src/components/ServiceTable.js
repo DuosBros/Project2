@@ -55,16 +55,19 @@ export default class ServiceTable extends React.PureComponent {
         {
             name: "Is In IXI [#]",
             prop: "isIXIAndServerCount",
+            sortable: false,
             width: 1,
         },
         {
             name: "Is In TSI [#]",
             prop: "isTSIAndServerCount",
+            sortable: false,
             width: 1,
         },
         {
             name: "Is HA",
             prop: "isHA",
+            sortable: false,
             width: 1,
         },
         {
