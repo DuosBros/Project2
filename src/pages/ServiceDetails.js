@@ -267,8 +267,8 @@ class ServiceDetails extends React.Component {
                         <Header attached>
                             <List>
                                 <List.Item>
-                                    <List.Content floated='left'>Last Update: {moment(serviceDetailsData.Service.LastUpdate).local().format("HH:mm:ss DD.MM.YYYY")} </List.Content>
-                                    <List.Content floated='right'>Created: {moment(serviceDetailsData.Service.CreatedAt).local().format("HH:mm:ss DD.MM.YYYY")}</List.Content>
+                                    <List.Content floated='left'>Last Update: {moment(serviceDetailsData.Service[0].LastUpdate).local().format("HH:mm:ss DD.MM.YYYY")} </List.Content>
+                                    <List.Content floated='right'>Created: {moment(serviceDetailsData.Service[0].CreatedAt).local().format("HH:mm:ss DD.MM.YYYY")}</List.Content>
                                 </List.Item>
                             </List>
                         </Header>
