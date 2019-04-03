@@ -86,7 +86,7 @@ export default class GenericTable extends Component {
         }
 
         let multiSearch = this.multiSearchFilterFromInput(props.multiSearchInput);
-        let columnDistinctValues = this.generateDistinctValues(columns, props.data, props.distinctValues);
+        let columnDistinctValues = GenericTable.generateDistinctValues(columns, props.data, props.distinctValues);
 
         this.state = {
             showGenericModal: { show: false },
@@ -115,7 +115,7 @@ export default class GenericTable extends Component {
         }
 
         if (Array.isArray(this.state.data)) {
-            this.state.data = this.sort(this.state.data, null);
+            this.state.data = GenericTable.sort(this.state.data, this.state.grouping, null);
         }
 
         this.updateMultiFilter = debounce(this.updateMultiFilter, 400);
@@ -155,7 +155,7 @@ export default class GenericTable extends Component {
         };
     }
 
-    generateDistinctValues(columns, data, fromProps) {
+    static generateDistinctValues(columns, data, fromProps) {
         const unfilteredOption = { key: -1, text: (<em>unfiltered</em>), value: -1 };
         const optionMapper = (e, i) => ({ key: i, text: e, value: i });
         let columnDistinctValues = {};
@@ -182,40 +182,42 @@ export default class GenericTable extends Component {
         return columnDistinctValues;
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (this.props.data !== nextProps.data) {
+    static getDerivedStateFromProps(nextProps, state) {
+        console.log("a");
+        if (state.data !== nextProps.data) {
             let data;
             if (nextProps.data !== null && Array.isArray(nextProps.data)) {
-                data = this.sort(nextProps.data, null);
+                data = GenericTable.sort(nextProps.data, state.grouping, null);
             }
 
-            let columnDistinctValues = this.generateDistinctValues(this.state.columns, data, nextProps.distinctValues)
-            this.setState({ data, columnDistinctValues });
-        } else if (this.props.distictValues !== nextProps.distictValues) { // else if, so we don't generate distinct values twice
-            let columnDistinctValues = this.generateDistinctValues(this.state.columns, this.state.data, nextProps.distinctValues)
-            this.setState({ columnDistinctValues });
+            let columnDistinctValues = GenericTable.generateDistinctValues(state.columns, data, nextProps.distinctValues)
+            return { data, columnDistinctValues };
+        } else if (state.distictValues !== nextProps.distictValues) { // else if, so we don't generate distinct values twice
+            let columnDistinctValues = GenericTable.generateDistinctValues(state.columns, state.data, nextProps.distinctValues)
+            return { columnDistinctValues };
         }
     }
 
     handleSort = clickedColumn => () => {
-        let { sortColumn, data, sortDirection } = this.state
 
-        if (sortColumn !== clickedColumn) {
-            this.setState({
-                sortColumn: clickedColumn,
-                data: this.sort(data, clickedColumn, 'ascending'),
-                sortDirection: 'ascending',
+        this.setState(prev => {
+            let { sortColumn, data, grouping, sortDirection } = prev;
+            if (sortColumn !== clickedColumn) {
+
+                return {
+                    sortColumn: clickedColumn,
+                    data: GenericTable.sort(data, grouping, clickedColumn, 'ascending'),
+                    sortDirection: 'ascending',
+                    expandedRows: []
+                };
+            }
+
+            sortDirection = sortDirection === 'ascending' ? 'descending' : 'ascending';
+            return {
+                data: GenericTable.sort(data, grouping, sortColumn, sortDirection),
+                sortDirection,
                 expandedRows: []
-            });
-
-            return;
-        }
-
-        sortDirection = sortDirection === 'ascending' ? 'descending' : 'ascending';
-        this.setState({
-            data: this.sort(data, sortColumn, sortDirection),
-            sortDirection,
-            expandedRows: []
+            };
         });
     }
 
@@ -398,18 +400,18 @@ export default class GenericTable extends Component {
         });
     }
 
-    sort(data, by, direction) {
+    static sort(data, grouping, by, direction) {
         data = data.slice();
-        data.sort(this.comparatorGrouped.bind(this, direction, by));
+        data.sort(GenericTable.comparatorGrouped.bind(this, direction, grouping, by));
         return data
     }
 
-    comparatorGrouped(direction, prop, a, b) {
+    static comparatorGrouped(direction, grouping, prop, a, b) {
         let sortFactor = direction === "descending" ? -1 : 1;
 
         var res;
-        for (let g of this.state.grouping) {
-            res = this.compareBase(a[g.prop], b[g.prop]);
+        for (let g of grouping) {
+            res = GenericTable.compareBase(a[g.prop], b[g.prop]);
 
             if (res !== 0) {
                 return res;
@@ -418,10 +420,10 @@ export default class GenericTable extends Component {
         if (prop === null) {
             return res;
         }
-        return sortFactor * this.compareBase(a[prop], b[prop]);
+        return sortFactor * GenericTable.compareBase(a[prop], b[prop]);
     }
 
-    compareBase(a, b) {
+    static compareBase(a, b) {
         if (a === null) {
             return b === null ? 0 : -1;
         } else if (b === null) {
