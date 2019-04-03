@@ -87,14 +87,20 @@ export default {
             "url": "https://10.162.128.10/"
         },
         {
+            "country": "ie",
+            "title": "IE/DUB INT",
+            "tooltip": "dub-lb2",
+            "url": "https://10.184.250.10/"
+        },
+        {
             "country": "gi",
-            "title": "GI",
+            "title": "GI INT",
             "tooltip": "gib2-lb2",
             "url": "https://10.166.222.56/"
         },
         {
             "country": "gg",
-            "title": "GG",
+            "title": "GG INT",
             "tooltip": "gci-lb2",
             "url": "https://10.169.222.56/"
         },
