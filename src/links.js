@@ -88,6 +88,12 @@ export default {
         },
         {
             "country": "ie",
+            "title": "IE/DUB EXT",
+            "tooltip": "dub-lb1",
+            "url": "https://10.184.252.10/"
+        },
+        {
+            "country": "ie",
             "title": "IE/DUB INT",
             "tooltip": "dub-lb2",
             "url": "https://10.184.250.10/"
@@ -99,10 +105,11 @@ export default {
             "url": "https://10.166.222.56/"
         },
         {
-            "country": "gg",
+            // "country": "gg",
             "title": "GG INT",
             "tooltip": "gci-lb2",
-            "url": "https://10.169.222.56/"
+            "url": "https://10.169.222.56/",
+            "icon": "gg.png"
         },
         {
             "country": "us",

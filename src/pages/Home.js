@@ -1,9 +1,7 @@
 import React from 'react';
 import { Grid, List, Popup, Divider, Header, Image, Flag, Input, Button } from 'semantic-ui-react';
-import SearchBox from '../components/SearchBox';
-import ShortcutFocus from '../components/ShortcutFocus';
 
-import { INCIDENT_PLACEHOLDER, SN_INC_SEARCH_URL, VERSION1_SEARCH_URL, VERSION1_PLACEHOLDER, APP_TITLE } from '../appConfig';
+import { APP_TITLE } from '../appConfig';
 import links from '../links';
 
 export default class Home extends React.Component {
@@ -19,7 +17,7 @@ export default class Home extends React.Component {
     componentDidMount() {
         document.title = APP_TITLE + "Home";
     }
-    
+
     handleChange = (e, { name, value }) => {
         this.setState({ [name]: value })
     }
@@ -44,7 +42,10 @@ export default class Home extends React.Component {
                     <Grid.Column key={j}>
                         <Popup trigger={
                             <a href={lb.url} target="_blank" rel="noopener noreferrer">
-                                <Flag name={lb.country} /> {lb.title}
+                                {lb.icon ? (
+                                    <Image style={{marginRight: '0.5em'}} inline src={process.env.PUBLIC_URL + "icons/" + lb.icon} />
+                                ) : (<Flag name={lb.country} />)}
+                                {lb.title}
                             </a>
                         } content={lb.tooltip} />
                     </Grid.Column>
@@ -120,24 +121,12 @@ export default class Home extends React.Component {
         return (
             <Grid>
                 <Grid.Row>
-                    <Grid.Column width={8}>
+                    <Grid.Column>
                         {buttons}
                         <Divider hidden />
                         <div>
                             <Input value={this.state.filterLinks} onChange={this.handleChange} name="filterLinks" placeholder='Search...'></Input>
-                            <Button onClick={() => this.handleChange(null, {name: "filterLinks", value: ""})} circular icon="close" id="homeSecondIcon" style={{ visibility: (this.state.filterLinks === "" ? "hidden" : "visible") }} />
-                        </div>
-                    </Grid.Column>
-                    <Grid.Column width={8}>
-                        <div>
-                            <ShortcutFocus shortcut="s" focusSelector="input">
-                                <SearchBox placeholder="INCxxxxxx (Press 's')" url={SN_INC_SEARCH_URL} pattern={INCIDENT_PLACEHOLDER} />
-                            </ShortcutFocus>
-                        </div>
-                        <div>
-                            <ShortcutFocus shortcut="v" focusSelector="input">
-                                <SearchBox placeholder="B-xxxxxxx (Press 'v')" url={VERSION1_SEARCH_URL} pattern={VERSION1_PLACEHOLDER} />
-                            </ShortcutFocus>
+                            <Button onClick={() => this.handleChange(null, { name: "filterLinks", value: "" })} circular icon="close" id="homeSecondIcon" style={{ visibility: (this.state.filterLinks === "" ? "hidden" : "visible") }} />
                         </div>
                     </Grid.Column>
                 </Grid.Row>
