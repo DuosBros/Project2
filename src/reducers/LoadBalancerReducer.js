@@ -13,7 +13,7 @@ const LoadBalancerReducer = (state = initialState, action) => {
             }
             return Object.assign({}, state, { loadBalancers: action.payload })
         case GET_LOADBALANCERS_TOKENS:
-            var temp = Object.assign({}, state.loadBalancers)
+            let temp = Object.assign({}, state.loadBalancers)
             temp.data = temp.data.slice();
             if (temp.success && temp.data && action.payload.data) {
                 action.payload.data.forEach(element => {
@@ -28,17 +28,18 @@ const LoadBalancerReducer = (state = initialState, action) => {
 
             return Object.assign({}, state, { loadBalancers: temp })
         case DELETE_LOADBALANCER_TOKEN:
-            var temp1 = Object.assign({}, state.loadBalancers)
+            temp = Object.assign({}, state.loadBalancers)
+            temp.data = temp.data.slice();
             if (action.payload.success) {
 
-                var index = temp1.data.findIndex(x => x.Id === action.payload.data)
+                var index = temp.data.findIndex(x => x.Id === action.payload.data)
 
                 if (index >= 0) {
-                    delete temp1.data[index].token
-                    delete temp1.data[index].expiration
+                    delete temp.data[index].token
+                    delete temp.data[index].expiration
                 }
             }
-            return Object.assign({}, state, { loadBalancers: temp1 })
+            return Object.assign({}, state, { loadBalancers: temp })
         default:
             return state;
     }
