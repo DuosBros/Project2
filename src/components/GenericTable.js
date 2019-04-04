@@ -425,9 +425,9 @@ export default class GenericTable extends Component {
     }
 
     static compareBase(a, b) {
-        if (a === null) {
+        if (a === null || a === undefined) {
             return b === null ? 0 : -1;
-        } else if (b === null) {
+        } else if (b === null || b === undefined) {
             return 1;
         }
         if (typeof a === "number" && typeof b === "number") {
