@@ -88,12 +88,6 @@ export default {
         },
         {
             "country": "ie",
-            "title": "IE/DUB EXT",
-            "tooltip": "dub-lb1",
-            "url": "https://10.184.252.10/"
-        },
-        {
-            "country": "ie",
             "title": "IE/DUB INT",
             "tooltip": "dub-lb2",
             "url": "https://10.184.250.10/"

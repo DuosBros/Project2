@@ -131,7 +131,8 @@ class ServiceDetails extends React.Component {
             );
         }
         else {
-            let deploymentStatsData = Array.isArray(serviceDetailsData.deploymentStats.data) ? serviceDetailsData.deploymentStats.data : null
+            let deploymentStatsData = Array.isArray(serviceDetailsData.deploymentStats.data)
+                ? serviceDetailsData.deploymentStats.data : null
 
             if (!serviceDetailsData.deploymentStats.success) {
                 deploymentsSegment = (
@@ -139,36 +140,41 @@ class ServiceDetails extends React.Component {
                 );
             }
 
-            if (deploymentStatsData.length <= 0) {
+            if (!deploymentStatsData) {
                 deploymentsSegment = "No data available"
             }
             else {
-                let deploymentsSegmentItems = deploymentStatsData.map((x,i) => {
-                    var grouped = groupBy(x.history, "version");
-                    var keys = Object.keys(grouped).sort((a, b) => b - a).slice(0, DEFAULT_SERVICE_DEPLOYMENT_TO_RENDER);
-                    return (
-                        <React.Fragment key={i}>
-                            <dt>
-                                {x.stage}
-                            </dt>
-                            <dd>
-                                {keys.map((y, j) => {
-                                    return (
-                                        <div key={j}>
-                                            {grouped[y][0].version} | {grouped[y][0].userName} {grouped[y][0].changeNumber && (" | " + grouped[y][0].changeNumber)}
-                                            <Popup closeOnPortalMouseLeave={true} trigger={<Icon size='small' name='question' />}><Popup.Content><pre>{JSON.stringify(grouped[y][0], null, 2)}</pre></Popup.Content></Popup>
-                                        </div>
-                                    )
-                                })}
-                            </dd>
-                        </React.Fragment>
+                if (deploymentStatsData.length <= 0) {
+                    deploymentsSegment = "No data available"
+                }
+                else {
+                    let deploymentsSegmentItems = deploymentStatsData.map((x, i) => {
+                        var grouped = groupBy(x.history, "version");
+                        var keys = Object.keys(grouped).sort((a, b) => b - a).slice(0, DEFAULT_SERVICE_DEPLOYMENT_TO_RENDER);
+                        return (
+                            <React.Fragment key={i}>
+                                <dt>
+                                    {x.stage}
+                                </dt>
+                                <dd>
+                                    {keys.map((y, j) => {
+                                        return (
+                                            <div key={j}>
+                                                {grouped[y][0].version} | {grouped[y][0].userName} {grouped[y][0].changeNumber && (" | " + grouped[y][0].changeNumber)}
+                                                <Popup closeOnPortalMouseLeave={true} trigger={<Icon size='small' name='question' />}><Popup.Content><pre>{JSON.stringify(grouped[y][0], null, 2)}</pre></Popup.Content></Popup>
+                                            </div>
+                                        )
+                                    })}
+                                </dd>
+                            </React.Fragment>
+                        )
+                    })
+                    deploymentsSegment = (
+                        <dl className="dl-horizontal">
+                            {deploymentsSegmentItems}
+                        </dl>
                     )
-                })
-                deploymentsSegment = (
-                    <dl className="dl-horizontal">
-                        {deploymentsSegmentItems}
-                    </dl>
-                )
+                }
             }
         }
 
