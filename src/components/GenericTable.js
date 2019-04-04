@@ -94,6 +94,7 @@ export default class GenericTable extends Component {
             columns,
             columnToggle: columns.filter(c => c.visibleByDefault === false).length > 0,
             data: props.data,
+            propData: props.data,
             expandedRows: [],
             filterInputs,
             filterInputsChanged,
@@ -183,19 +184,19 @@ export default class GenericTable extends Component {
     }
 
     static getDerivedStateFromProps(nextProps, state) {
-        console.log("a");
-        if (state.data !== nextProps.data) {
+        if (state.propData !== nextProps.data) {
             let data;
             if (nextProps.data !== null && Array.isArray(nextProps.data)) {
                 data = GenericTable.sort(nextProps.data, state.grouping, null);
             }
 
             let columnDistinctValues = GenericTable.generateDistinctValues(state.columns, data, nextProps.distinctValues)
-            return { data, columnDistinctValues };
+            return { data, columnDistinctValues, propData: nextProps.data };
         } else if (state.distictValues !== nextProps.distictValues) { // else if, so we don't generate distinct values twice
             let columnDistinctValues = GenericTable.generateDistinctValues(state.columns, state.data, nextProps.distinctValues)
             return { columnDistinctValues };
         }
+        return null;
     }
 
     handleSort = clickedColumn => () => {
@@ -400,9 +401,9 @@ export default class GenericTable extends Component {
         });
     }
 
-    static sort(data, grouping, by, direction) {
-        data = data.slice();
-        data.sort(GenericTable.comparatorGrouped.bind(this, direction, grouping, by));
+    static sort(input, grouping, by, direction) {
+        const data = input.slice();
+        data.sort((a, b) => GenericTable.comparatorGrouped(direction, grouping, by, a, b));
         return data
     }
 
