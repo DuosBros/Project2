@@ -28,7 +28,8 @@
     "eject": "react-scripts eject",
     "eslint": "eslint",
     "lint": "eslint src",
-    "lint-fix": "eslint --fix src"
+    "lint-fix": "eslint --fix src",
+    "version": "git add package.json"
   },
   "eslintConfig": {
     "extends": "react-app"
