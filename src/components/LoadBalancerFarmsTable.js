@@ -226,6 +226,11 @@ class LoadBalancerFarmsTable extends Component {
         );
     }
 
+    getDataKey(data) {
+        return data.IpAddress + "-" + data.Name + "-" + data.VsStatusLastUpdate;
+    }
+
+
     render() {
 
         let distinctValuesObject = {
@@ -235,6 +240,7 @@ class LoadBalancerFarmsTable extends Component {
 
         return (
             <GenericTable
+                getDataKey={this.getDataKey}
                 columns={this.columns}
                 grouping={this.grouping}
                 transformDataRow={this.transformDataRow}
