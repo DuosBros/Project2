@@ -67,7 +67,7 @@ class LoadBalancerFarmsTable extends Component {
 
     columns = [
         {
-            name: "Data Center",
+            name: "DC",
             prop: "DataCenter",
             visibleByDefault: true,
             width: 1
