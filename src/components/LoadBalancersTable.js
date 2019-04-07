@@ -58,7 +58,7 @@ export default class LoadBalancersTable extends React.PureComponent {
             data.action = (
                 <Popup trigger={
                     <Button
-                        onClick={() => this.props.handleRemoveLBTokenOnClick(data.Id)}
+                        onClick={() => this.handleRemoveLBTokenOnClick(data.Id)}
                         style={{ padding: '0.3em' }}
                         size='medium'
                         icon={

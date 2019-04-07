@@ -1,6 +1,6 @@
 {
   "name": "bwin.loco.client",
-  "version": "0.24.1",
+  "version": "0.24.5",
   "private": true,
   "dependencies": {
     "axios": "^0.18.0",
@@ -24,7 +24,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "deploy": "react-scripts build && @powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./deployToProd.ps1",
-    "test": "jest",
+    "test": "bash -c 'CI=1 npx react-scripts test'",
     "eject": "react-scripts eject",
     "eslint": "eslint",
     "lint": "eslint src",
@@ -34,32 +34,10 @@
   "eslintConfig": {
     "extends": "react-app"
   },
-  "jest": {
-    "moduleNameMapper": {
-      "\\.(jpg|ico|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/mock/fileMock.js",
-      "\\.(css|less)$": "<rootDir>/mock/fileMock.js"
-    },
-    "verbose": true,
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-      "**/*.{js}",
-      "!**/node_modules/**",
-      "!**/public/**",
-      "!**/assets/**"
-    ]
-  },
   "browserslist": [
     ">0.2%",
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ],
-  "devDependencies": {
-    "@babel/core": "^7.4.0",
-    "@babel/plugin-proposal-class-properties": "^7.4.0",
-    "@babel/preset-env": "^7.4.2",
-    "babel-jest": "23.6.0",
-    "jest": "23.6.0",
-    "react-test-renderer": "^16.8.6"
-  }
+  ]
 }

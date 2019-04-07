@@ -177,6 +177,12 @@ export default class GenericTable extends Component {
                     values = fromProps[c.prop].map(optionMapper);
                 }
             }
+
+            let index = data.findIndex(x => x[c.prop] === undefined || x[c.prop] === null || x[c.prop].toString().trim().length === 0)
+            if (index >= 0) {
+                values.push({ key: -2, text: (<em>empty</em>), value: -2 });
+            }
+
             values.unshift(unfilteredOption);
             columnDistinctValues[c.prop] = values;
         }
@@ -290,6 +296,15 @@ export default class GenericTable extends Component {
             if (needle === -1) {
                 return null;
             }
+
+            if (needle === -2) {
+                return heystack => (
+                    heystack[key] === undefined ||
+                    heystack[key] === null ||
+                    heystack[key].toString().trim().length === 0
+                );
+            }
+
             return heystack => (
                 heystack[key] !== undefined &&
                 heystack[key] !== null &&
@@ -425,9 +440,9 @@ export default class GenericTable extends Component {
     }
 
     static compareBase(a, b) {
-        if (a === null) {
+        if (a === null || a === undefined) {
             return b === null ? 0 : -1;
-        } else if (b === null) {
+        } else if (b === null || b === undefined) {
             return 1;
         }
         if (typeof a === "number" && typeof b === "number") {

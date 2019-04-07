@@ -4,14 +4,17 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
-import { toggleLoadBalancerFarmsTasksModalAction, getServiceDetailsAction, toggleNotAuthorizedModalAction, getAllLoadBalancerFarmsAction } from '../utils/actions';
+import { toggleLoadBalancerFarmsTasksModalAction, getServiceDetailsAction, 
+    toggleNotAuthorizedModalAction, getAllLoadBalancerFarmsAction,
+    getServiceDeploymentStatsAction } from '../utils/actions';
 
 import { isAdmin, groupBy, isUser } from '../utils/HelperFunction';
 import NotAuthorized from './NotAuthorized';
 import LoadBalancerFarmsTable from '../components/LoadBalancerFarmsTable';
 import { getAllLoadBalancerFarms, saveLoadBalancerFarmsChanges } from '../requests/LoadBalancerFarmsAxios';
-import { getServiceDetails } from '../requests/ServiceAxios';
+import { getServiceDetails, getServiceDeploymentStats } from '../requests/ServiceAxios';
 import ErrorMessage from '../components/ErrorMessage';
+import {DEFAULT_SERVICE_DEPLOYMENT_COUNT} from '../appConfig'
 
 class LoadBalancerFarmsTasks extends React.Component {
 
@@ -51,10 +54,10 @@ class LoadBalancerFarmsTasks extends React.Component {
         var keys = Object.keys(grouped);
 
         let errors = false;
-        for(let key of keys) {
+        for (let key of keys) {
             try {
                 await saveLoadBalancerFarmsChanges(serviceDetails.Id, grouped[key].map(x => x.Id).join(','), key);
-            } catch(err) {
+            } catch (err) {
                 errors = true;
 
                 let lbid = parseInt(key);
@@ -76,12 +79,21 @@ class LoadBalancerFarmsTasks extends React.Component {
         // refresh the service details to get re-render this modal
         try {
             let res = await getServiceDetails(serviceDetails.Id);
+            if (res.data.Service[0]) {
+                getServiceDeploymentStats(res.data.Service[0].Shortcut, DEFAULT_SERVICE_DEPLOYMENT_COUNT)
+                    .then(res => {
+                        this.props.getServiceDeploymentStatsAction({ success: true, data: res.data.deployments })
+                    })
+                    .catch(err => {
+                        this.props.getServiceDeploymentStatsAction({ success: false, error: err })
+                    })
+            }
             this.props.getServiceDetailsAction({ success: true, data: res.data });
-        } catch(err) {
+        } catch (err) {
             this.props.getServiceDetailsAction({ success: false, error: err });
         }
 
-        if(!errors) {
+        if (!errors) {
             this.props.toggleLoadBalancerFarmsTasksModalAction();
         } else {
             this.setState({ isErrorOnSave: true });
@@ -346,7 +358,8 @@ function mapDispatchToProps(dispatch) {
         toggleLoadBalancerFarmsTasksModalAction,
         toggleNotAuthorizedModalAction,
         getAllLoadBalancerFarmsAction,
-        getServiceDetailsAction
+        getServiceDetailsAction,
+        getServiceDeploymentStatsAction
     }, dispatch);
 }
 
