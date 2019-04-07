@@ -160,7 +160,7 @@ class ServiceDetails extends React.Component {
                                     {keys.map((y, j) => {
                                         return (
                                             <div key={j}>
-                                                {grouped[y][0].version} | {grouped[y][0].userName} {grouped[y][0].changeNumber && (" | " + grouped[y][0].changeNumber)}
+                                                {grouped[y][0].version} | {grouped[y][0].userName} {grouped[y][0].changeNumber && (" | " + grouped[y][0].changeNumber)} | {moment(grouped[y][0].deployDateTime).local().fromNow()}
                                                 <Popup closeOnPortalMouseLeave={true} trigger={<Icon size='small' name='question' />}><Popup.Content><pre>{JSON.stringify(grouped[y][0], null, 2)}</pre></Popup.Content></Popup>
                                             </div>
                                         )
