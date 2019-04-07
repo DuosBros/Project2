@@ -287,14 +287,12 @@ class ServerDetails extends React.Component {
 
         if (!serverDetailsData.deploymentStats) {
             deploymentsSegment = (
-                <div className="messageBox">
-                    <Message info icon>
-                        <Icon name='circle notched' loading />
-                        <Message.Content>
-                            <Message.Header>Fetching deployment stats</Message.Header>
-                        </Message.Content>
-                    </Message>
-                </div>
+                <Message info icon>
+                    <Icon name='circle notched' loading />
+                    <Message.Content>
+                        <Message.Header>Fetching deployment stats</Message.Header>
+                    </Message.Content>
+                </Message>
             );
         }
         else {
