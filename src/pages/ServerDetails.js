@@ -306,7 +306,7 @@ class ServerDetails extends React.Component {
                 );
             }
 
-            if (deploymentStatsData.length <= 0) {
+            if (!deploymentStatsData || deploymentStatsData.length <= 0) {
                 deploymentsSegment = "No data available"
             }
             else {
