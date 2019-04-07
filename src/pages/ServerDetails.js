@@ -314,7 +314,7 @@ class ServerDetails extends React.Component {
                     return (
                         <List.Item key={i}>
                             <List.Header>
-                                {moment(x.deployDateTime).local().format("DD.MM.YYYY HH:mm")} | {x.userName} <Popup closeOnPortalMouseLeave={true} trigger={<Icon size='small' name='question' />}><Popup.Content><pre>{JSON.stringify(x, null, 2)}</pre></Popup.Content></Popup>
+                                {moment(x.deployDateTime).local().fromNow()} | {x.userName} <Popup closeOnPortalMouseLeave={true} trigger={<Icon size='small' name='question' />}><Popup.Content><pre>{JSON.stringify(x, null, 2)}</pre></Popup.Content></Popup>
                             </List.Header>
                             Version: {x.version} {x.changeNumber && " | CHG: " + x.changeNumber}
                         </List.Item>
