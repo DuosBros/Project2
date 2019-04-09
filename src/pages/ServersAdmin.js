@@ -1,8 +1,8 @@
 import React from 'react';
 import { Grid, Header, Segment, Message, Icon } from 'semantic-ui-react';
-import ServersTable from '../components/ServersTable';
 import { APP_TITLE } from '../appConfig';
 import ErrorMessage from '../components/ErrorMessage';
+import ServersAdminTable from '../components/ServersAdminTable';
 
 class ServersAdmin extends React.PureComponent {
     componentDidMount() {
@@ -51,7 +51,11 @@ class ServersAdmin extends React.PureComponent {
                             Servers
                             </Header>
                         <Segment attached='bottom' >
-                            <ServersTable rowsPerPage={50} data={this.props.servers.data} compact="very" shouldIPColumnRender={false} />
+                            <ServersAdminTable
+                                rowsPerPage={50}
+                                data={this.props.servers.data}
+                                compact="very"
+                                handleDeleteServer={this.props.handleDeleteServer} />
                         </Segment>
                     </Grid.Column>
                 </Grid.Row>

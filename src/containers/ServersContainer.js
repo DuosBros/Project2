@@ -2,8 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { getServers } from '../requests/ServerAxios';
-import { getServersAction } from '../utils/actions';
+import { getServers, deleteServer } from '../requests/ServerAxios';
+import { getServersAction, deleteServerAction, showGenericModalAction } from '../utils/actions';
 import ServersAdmin from '../pages/ServersAdmin';
 import { ROUTE_SERVERS_ADMIN, ROUTE_SERVERS } from '../utils/constants';
 import Servers from '../pages/Servers';
@@ -24,12 +24,25 @@ class ServersContainer extends React.PureComponent {
             })
     }
 
+    handleDeleteServer = (id) => {
+        deleteServer(id)
+            .then(() => {
+                this.props.deleteServerAction(id)
+            })
+            .catch(err => {
+                this.props.showGenericModalAction({
+                    err: err,
+                    header: "Failed to delete server"
+                })
+            })
+    }
+
     render() {
         let pathname = this.props.location.pathname;
 
         if (pathname === ROUTE_SERVERS_ADMIN) {
             return (
-                <ServersAdmin servers={this.props.serverStore.servers} fetchServersAndHandleResult={this.fetchServersAndHandleResult} />
+                <ServersAdmin servers={this.props.serverStore.servers} fetchServersAndHandleResult={this.fetchServersAndHandleResult} handleDeleteServer={this.handleDeleteServer} />
             )
         }
         else if (pathname === ROUTE_SERVERS) {
@@ -51,7 +64,9 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
-        getServersAction
+        getServersAction,
+        deleteServerAction,
+        showGenericModalAction
     }, dispatch);
 }
 
