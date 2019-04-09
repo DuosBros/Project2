@@ -1,18 +1,15 @@
 import React from 'react';
-
 import { Grid, Header, Segment, Message, Icon } from 'semantic-ui-react';
 import ServersTable from '../components/ServersTable';
-import ErrorMessage from '../components/ErrorMessage';
 import { APP_TITLE } from '../appConfig';
+import ErrorMessage from '../components/ErrorMessage';
 
-export default class Servers extends React.Component {
-
+class ServersAdmin extends React.PureComponent {
     componentDidMount() {
-        document.title = APP_TITLE + "Servers"
+        document.title = APP_TITLE + "Servers Admin"
     }
 
     render() {
-
         // in case of error
         if (!this.props.servers.success) {
             return (
@@ -23,7 +20,7 @@ export default class Servers extends React.Component {
                                 Servers
                             </Header>
                             <Segment attached='bottom' >
-                                <ErrorMessage handleRefresh={this.fetchServersAndHandleResult} error={this.props.servers.error} />
+                                <ErrorMessage handleRefresh={this.props.fetchServersAndHandleResult} error={this.props.servers.success} />
                             </Segment>
                         </Grid.Column>
                     </Grid.Row>
@@ -62,3 +59,5 @@ export default class Servers extends React.Component {
         )
     }
 }
+
+export default ServersAdmin;

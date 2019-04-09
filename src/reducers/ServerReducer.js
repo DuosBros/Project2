@@ -23,7 +23,7 @@ const ServerReducer = (state = serverInitialState, action) => {
                         }
                     }
                 }
-                
+
                 action.payload.data.ServerState = getServerState(action.payload.data.ServerStateID)
                 action.payload.data.Disme = getDismeState(action.payload.data.Disme)
 
@@ -44,6 +44,13 @@ const ServerReducer = (state = serverInitialState, action) => {
         case GET_SERVER_SCOM_ALERTS:
             return Object.assign({}, state, { scomAlerts: action.payload })
         case GET_SERVERS:
+            if(action.payload.success && action.payload.data) {
+                action.payload.data = action.payload.data.map(server => {
+                    server.ServerState = getServerState(server.ServerStateID)
+                    server.Disme = getDismeState(server.Disme)
+                    return server
+                })
+            }
             return Object.assign({}, state, { servers: action.payload })
         case GET_SERVER_STATS:
             var temp = Object.assign({}, state.serverDetails)

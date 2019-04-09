@@ -23,7 +23,6 @@ import ServersTable from '../components/ServersTable';
 import PatchGroups from '../pages/PatchGroups';
 import RolloutStatus from '../pages/RolloutStatus';
 import VirtualMachines from '../pages/VirtualMachines';
-import Servers from '../pages/Servers';
 import Services from '../pages/Services';
 import LoadBalancerFarms from '../pages/LoadBalancerFarms';
 import IPAddresses from '../pages/IPAddresses';
@@ -44,6 +43,8 @@ import NotFound from '../pages/NotFound';
 import PrivateRoute from './PrivateRoute';
 import ServiceVirtualMachine from '../pages/ServiceVirtualMachine';
 import GenericModal from '../components/GenericModal';
+import ServersContainer from '../containers/ServersContainer';
+import { ROUTE_SERVERS, ROUTE_SERVERS_ADMIN } from './constants';
 
 class Base extends React.Component {
     constructor(props) {
@@ -153,7 +154,7 @@ class Base extends React.Component {
                                     <Route path='/patchgroup/:id' component={PatchGroupDetails} />
                                     <Route path='/service/:id' component={ServiceDetails} />
                                     <Route path='/virtualmachines' component={VirtualMachines} />
-                                    <Route path='/servers' component={Servers} />
+                                    <Route path={ROUTE_SERVERS} component={ServersContainer} />
                                     <Route path='/services' component={Services} />
                                     <Route path='/lbfarms' component={LoadBalancerFarms} />
                                     <Route path='/ipaddresses' component={IPAddresses} />
@@ -162,6 +163,7 @@ class Base extends React.Component {
                                     <PrivateRoute isAdmin={isAdmin(this.props.baseStore.currentUser)} exact path='/admin/loadbalancer' component={LoadBalancersAdmin} />
                                     <PrivateRoute isAdmin={isAdmin(this.props.baseStore.currentUser)} exact path='/admin/activedirectory' component={ActiveDirectoryAdmin} />
                                     <PrivateRoute isAdmin={isAdmin(this.props.baseStore.currentUser)} exact path='/admin/agentlogs' component={AgentLogs} />
+                                    <PrivateRoute isAdmin={isAdmin(this.props.baseStore.currentUser)} exact path={ROUTE_SERVERS_ADMIN} component={ServersContainer} />
                                     <Route path='/versionstatus' component={VersionStatus} />
                                     <Route path='/healthchecks' component={HealthChecks} />
                                     <Route path='/statistics/services' component={ServicesStatistics} />
