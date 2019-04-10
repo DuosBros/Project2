@@ -24,3 +24,7 @@ export function getDiskUsageDetails(serverName) {
 export function getServerDeploymentStats(serverName, count) {
     return axios.get(PM_API + 'deploymentStats/server/history/' + serverName + "/" + count)
 }
+
+export function deleteServer(id) {
+    return axios.delete(LOCO_API + 'server/' + id, { withCredentials: true });
+}
