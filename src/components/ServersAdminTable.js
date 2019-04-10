@@ -15,11 +15,16 @@ export default class ServersAdminTable extends React.PureComponent {
             width: 3
         },
         {
-            name: "Status | Disme",
-            prop: "state",
+            name: "Status",
+            prop: "ServerState",
+            display: "ServerStateStatus",
             width: 2,
-            sortable: false,
-            searchable: false
+        },
+        {
+            name: "Disme",
+            prop: "Disme",
+            display: "DismeStatus",
+            width: 2,
         },
         {
             name: "Owner",
@@ -111,12 +116,8 @@ export default class ServersAdminTable extends React.PureComponent {
         );
 
         data.ServerLink = (<Link to={'/server/' + data.Id}>{data.ServerName}</Link>);
-        data.state = (
-            <>
-                <ServerStatus size='small' serverState={data.ServerState} />
-                <DismeStatus size='small' dismeStatus={data.Disme} />
-            </>
-        );
+        data.ServerStateStatus = (<ServerStatus size='small' serverState={data.ServerState} />)
+        data.DismeStatus = (<DismeStatus size='small' dismeStatus={data.Disme} />)
 
         return data;
     }
