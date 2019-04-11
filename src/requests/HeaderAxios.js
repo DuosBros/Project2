@@ -8,3 +8,7 @@ export function searchServers(query) {
 export function searchServiceShortcut(query) {
     return axios.get(LOCO_API + 'Service/search?query=' + encodeURI(query));
 }
+
+export function searchServerByIp(ip) {
+    return axios.get(LOCO_API + 'Server/Ip/' + ip);
+}
