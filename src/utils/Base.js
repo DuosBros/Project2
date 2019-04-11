@@ -8,7 +8,6 @@ import Header from './Header';
 import Sidebar from './Sidebar';
 import Footer from './Footer';
 import Home from '../pages/Home';
-import ServerDetails from '../pages/ServerDetails';
 import ServiceDetails from '../pages/ServiceDetails';
 import Login from '../pages/Login';
 import UserDetails from '../modals/UserDetails';
@@ -30,7 +29,6 @@ import Admin from '../pages/Admin';
 import VersionStatus from '../pages/VersionStatus';
 import PatchGroupDetails from '../pages/PatchGroupDetails';
 import ServicesStatistics from '../pages/ServicesStatistics';
-import ServersStatistics from '../pages/ServersStatistics';
 import LoadBalancerFarmsStatistics from '../pages/LoadBalancerFarmsStatistics';
 import ErrorBoundary from '../components/ErrorBoundary';
 import HealthChecks from '../pages/HealthChecks';
@@ -44,7 +42,7 @@ import PrivateRoute from './PrivateRoute';
 import ServiceVirtualMachine from '../pages/ServiceVirtualMachine';
 import GenericModal from '../components/GenericModal';
 import ServersContainer from '../containers/ServersContainer';
-import { ROUTE_SERVERS, ROUTE_SERVERS_ADMIN } from './constants';
+import { ROUTE_SERVERS, ROUTE_SERVERS_ADMIN, ROUTE_SERVER_DETAILS, ROUTE_SERVER_STATISTICS } from './constants';
 
 class Base extends React.Component {
     constructor(props) {
@@ -147,7 +145,7 @@ class Base extends React.Component {
                                     <Route exact path='/site/check' render={() => <div>CHECK_OK</div>} />
                                     <Route exact path='/' component={Home} />
                                     <Route exact path='/login' component={Login} />
-                                    <Route path='/server/:id' component={ServerDetails} />
+                                    <Route path={ROUTE_SERVER_DETAILS} component={ServersContainer} />
                                     <Route path='/server' component={ServersTable} />
                                     <Route path='/rolloutstatus' component={RolloutStatus} />
                                     <Route path='/patchgroups' component={PatchGroups} />
@@ -167,7 +165,7 @@ class Base extends React.Component {
                                     <Route path='/versionstatus' component={VersionStatus} />
                                     <Route path='/healthchecks' component={HealthChecks} />
                                     <Route path='/statistics/services' component={ServicesStatistics} />
-                                    <Route path='/statistics/servers' component={ServersStatistics} />
+                                    <Route path={ROUTE_SERVER_STATISTICS} component={ServersContainer} />
                                     <Route path='/statistics/loadbalancerfarms' component={LoadBalancerFarmsStatistics} />
                                     <Route path='/statistics/servicevirtualmachines' component={ServiceVirtualMachine} />
                                     <Route component={NotFound} />
