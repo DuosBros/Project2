@@ -75,7 +75,7 @@ class ServerDetails extends React.Component {
         // in case of error
         if (!serverDetailsSuccess) {
             return (
-                <ErrorMessage handleRefresh={this.updateServer} error={this.props.serverDetails.error} />
+                <ErrorMessage handleRefresh={this.props.fetchServerDetails} error={this.props.serverDetails.error} />
             );
         }
 
@@ -230,7 +230,7 @@ class ServerDetails extends React.Component {
 
             if (!serverDetailsData.deploymentStats.success) {
                 deploymentsSegment = (
-                    <ErrorMessage handleRefresh={this.fetchServerDeploymentAndHandleData} error={serverDetailsData.deploymentStats.error} />
+                    <ErrorMessage handleRefresh={this.props.fetchServerDetails} error={serverDetailsData.deploymentStats.error} />
                 );
             }
 

@@ -149,7 +149,11 @@ class ServersContainer extends React.PureComponent {
         }
         else if (this.isCurrentlyOnServerDetails()) {
             return (
-                <ServerDetails serverDetails={this.props.serverStore.serverDetails} scomAlerts={this.props.serverStore.scomAlerts} fetchServersAndHandleResult={this.fetchServersAndHandleResult} />
+                <ServerDetails
+                    serverDetails={this.props.serverStore.serverDetails}
+                    scomAlerts={this.props.serverStore.scomAlerts}
+                    fetchServerDetails={this.fetchServerDetails}
+                    fetchServersAndHandleResult={this.fetchServersAndHandleResult} />
             )
         }
         else if (pathname === ROUTE_SERVER_STATISTICS) {
