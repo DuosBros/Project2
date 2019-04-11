@@ -27,7 +27,7 @@ const ExpandedRowLBPoolMembersContent = (props) => {
     )
 }
 
-class LoadBalancerFarmsTable extends Component {
+class LoadBalancerFarmsTable extends Pure.Component {
     static defaultProps = {
         defaultShowBETAPools: false
     }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Label } from 'semantic-ui-react';
 import { getAvailabiltyAndEnabledState } from '../utils/HelperFunction';
 
@@ -24,4 +24,4 @@ const VsStatus = (props) => {
     )
 }
 
-export default VsStatus;
+export default memo(VsStatus);

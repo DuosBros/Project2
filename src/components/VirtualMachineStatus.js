@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Label } from 'semantic-ui-react';
 
 const VirtualMachineStatus = (props) => {
@@ -11,5 +11,5 @@ const VirtualMachineStatus = (props) => {
     )
 }
 
-export default VirtualMachineStatus;
+export default memo(VirtualMachineStatus);
 

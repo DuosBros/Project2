@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Label, Popup } from 'semantic-ui-react';
 
 const VanillaHealthStatus = (props) => {
@@ -36,5 +36,5 @@ const VanillaHealthStatus = (props) => {
     )
 }
 
-export default VanillaHealthStatus;
+export default memo(VanillaHealthStatus);
 

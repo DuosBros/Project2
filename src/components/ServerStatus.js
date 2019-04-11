@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Label } from 'semantic-ui-react';
 
 const ServerStatus = (props) => {
@@ -24,5 +24,5 @@ const ServerStatus = (props) => {
     )
 }
 
-export default ServerStatus;
+export default memo(ServerStatus);
 
