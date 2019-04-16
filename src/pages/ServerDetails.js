@@ -36,7 +36,6 @@ class ServerDetails extends React.Component {
     }
 
     componentDidMount() {
-        // TODO implement
         if (this.props.serverDetails.data) {
             document.title = APP_TITLE + this.props.serverDetails.data.ServerName;
         }

@@ -59,3 +59,7 @@ export const ROUTE_SERVERS = '/servers';
 export const ROUTE_SERVERS_ADMIN = '/admin/servers';
 export const ROUTE_SERVER_DETAILS = '/server/:id';
 export const ROUTE_SERVER_STATISTICS = '/statistics/servers';
+
+export const ROUTE_SERVICES = '/services';
+export const ROUTE_SERVICES_DETAILS = '/service/:id';
+export const ROUTE_SERVICES_STATISTICS = '/statistics/services';

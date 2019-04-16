@@ -8,7 +8,6 @@ import Header from './Header';
 import Sidebar from './Sidebar';
 import Footer from './Footer';
 import Home from '../pages/Home';
-import ServiceDetails from '../pages/ServiceDetails';
 import Login from '../pages/Login';
 import UserDetails from '../modals/UserDetails';
 
@@ -18,17 +17,14 @@ import { debounce, isAdmin } from '../utils/HelperFunction';
 
 import { LOCO_API } from '../appConfig';
 import LoadBalancerFarmsTasks from '../modals/LoadBalancerFarmsTasks';
-import ServersTable from '../components/ServersTable';
 import PatchGroups from '../pages/PatchGroups';
 import RolloutStatus from '../pages/RolloutStatus';
 import VirtualMachines from '../pages/VirtualMachines';
-import Services from '../pages/Services';
 import LoadBalancerFarms from '../pages/LoadBalancerFarms';
 import IPAddresses from '../pages/IPAddresses';
 import Admin from '../pages/Admin';
 import VersionStatus from '../pages/VersionStatus';
 import PatchGroupDetails from '../pages/PatchGroupDetails';
-import ServicesStatistics from '../pages/ServicesStatistics';
 import LoadBalancerFarmsStatistics from '../pages/LoadBalancerFarmsStatistics';
 import ErrorBoundary from '../components/ErrorBoundary';
 import HealthChecks from '../pages/HealthChecks';
@@ -42,7 +38,8 @@ import PrivateRoute from './PrivateRoute';
 import ServiceVirtualMachine from '../pages/ServiceVirtualMachine';
 import GenericModal from '../components/GenericModal';
 import ServersContainer from '../containers/ServersContainer';
-import { ROUTE_SERVERS, ROUTE_SERVERS_ADMIN, ROUTE_SERVER_DETAILS, ROUTE_SERVER_STATISTICS } from './constants';
+import { ROUTE_SERVERS, ROUTE_SERVERS_ADMIN, ROUTE_SERVER_DETAILS, ROUTE_SERVER_STATISTICS, ROUTE_SERVICES, ROUTE_SERVICES_DETAILS, ROUTE_SERVICES_STATISTICS } from './constants';
+import ServiceContainer from '../containers/ServiceContainer';
 
 class Base extends React.Component {
     constructor(props) {
@@ -146,14 +143,13 @@ class Base extends React.Component {
                                     <Route exact path='/' component={Home} />
                                     <Route exact path='/login' component={Login} />
                                     <Route path={ROUTE_SERVER_DETAILS} component={ServersContainer} />
-                                    <Route path='/server' component={ServersTable} />
                                     <Route path='/rolloutstatus' component={RolloutStatus} />
                                     <Route path='/patchgroups' component={PatchGroups} />
                                     <Route path='/patchgroup/:id' component={PatchGroupDetails} />
-                                    <Route path='/service/:id' component={ServiceDetails} />
+                                    <Route path={ROUTE_SERVICES_DETAILS} component={ServiceContainer} />
                                     <Route path='/virtualmachines' component={VirtualMachines} />
                                     <Route path={ROUTE_SERVERS} component={ServersContainer} />
-                                    <Route path='/services' component={Services} />
+                                    <Route path={ROUTE_SERVICES} component={ServiceContainer} />
                                     <Route path='/lbfarms' component={LoadBalancerFarms} />
                                     <Route path='/ipaddresses' component={IPAddresses} />
                                     <Route exact path='/statistics' component={Statistics} />
@@ -164,7 +160,7 @@ class Base extends React.Component {
                                     <PrivateRoute isAdmin={isAdmin(this.props.baseStore.currentUser)} exact path={ROUTE_SERVERS_ADMIN} component={ServersContainer} />
                                     <Route path='/versionstatus' component={VersionStatus} />
                                     <Route path='/healthchecks' component={HealthChecks} />
-                                    <Route path='/statistics/services' component={ServicesStatistics} />
+                                    <Route path={ROUTE_SERVICES_STATISTICS} component={ServiceContainer} />
                                     <Route path={ROUTE_SERVER_STATISTICS} component={ServersContainer} />
                                     <Route path='/statistics/loadbalancerfarms' component={LoadBalancerFarmsStatistics} />
                                     <Route path='/statistics/servicevirtualmachines' component={ServiceVirtualMachine} />
