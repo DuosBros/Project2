@@ -19,11 +19,9 @@ import { LOCO_API } from '../appConfig';
 import LoadBalancerFarmsTasks from '../modals/LoadBalancerFarmsTasks';
 import RolloutStatus from '../pages/RolloutStatus';
 import VirtualMachines from '../pages/VirtualMachines';
-import LoadBalancerFarms from '../pages/LoadBalancerFarms';
 import IPAddresses from '../pages/IPAddresses';
 import Admin from '../pages/Admin';
 import VersionStatus from '../pages/VersionStatus';
-import LoadBalancerFarmsStatistics from '../pages/LoadBalancerFarmsStatistics';
 import ErrorBoundary from '../components/ErrorBoundary';
 import HealthChecks from '../pages/HealthChecks';
 import Statistics from '../pages/Statistics';
@@ -35,9 +33,10 @@ import NotFound from '../pages/NotFound';
 import PrivateRoute from './PrivateRoute';
 import GenericModal from '../components/GenericModal';
 import ServersContainer from '../containers/ServersContainer';
-import { ROUTE_SERVERS, ROUTE_SERVERS_ADMIN, ROUTE_SERVER_DETAILS, ROUTE_SERVER_STATISTICS, ROUTE_SERVICES, ROUTE_SERVICE_DETAILS, ROUTE_SERVICES_STATISTICS, ROUTE_SERVICE_VIRTUALMACHINES, ROUTE_PATCHGROUP_DETAILS, ROUTE_PATCHGROUPS } from './constants';
+import { ROUTE_SERVERS, ROUTE_SERVERS_ADMIN, ROUTE_SERVER_DETAILS, ROUTE_SERVER_STATISTICS, ROUTE_SERVICES, ROUTE_SERVICE_DETAILS, ROUTE_SERVICES_STATISTICS, ROUTE_SERVICE_VIRTUALMACHINES, ROUTE_PATCHGROUP_DETAILS, ROUTE_PATCHGROUPS, ROUTE_LBFARMS, ROUTE_LBFARMS_STATISTICS } from './constants';
 import ServiceContainer from '../containers/ServiceContainer';
 import PatchgroupContainer from '../containers/PatchgroupContainer';
+import LoadBalancerFarmContainer from '../containers/LoadBalancerFarmContainer';
 
 class Base extends React.Component {
     constructor(props) {
@@ -148,7 +147,7 @@ class Base extends React.Component {
                                     <Route path='/virtualmachines' component={VirtualMachines} />
                                     <Route path={ROUTE_SERVERS} component={ServersContainer} />
                                     <Route path={ROUTE_SERVICES} component={ServiceContainer} />
-                                    <Route path='/lbfarms' component={LoadBalancerFarms} />
+                                    <Route path={ROUTE_LBFARMS} component={LoadBalancerFarmContainer} />
                                     <Route path='/ipaddresses' component={IPAddresses} />
                                     <Route exact path='/statistics' component={Statistics} />
                                     <PrivateRoute isAdmin={isAdmin(this.props.baseStore.currentUser)} exact path='/admin' component={Admin} />
@@ -160,7 +159,7 @@ class Base extends React.Component {
                                     <Route path='/healthchecks' component={HealthChecks} />
                                     <Route path={ROUTE_SERVICES_STATISTICS} component={ServiceContainer} />
                                     <Route path={ROUTE_SERVER_STATISTICS} component={ServersContainer} />
-                                    <Route path='/statistics/loadbalancerfarms' component={LoadBalancerFarmsStatistics} />
+                                    <Route path={ROUTE_LBFARMS_STATISTICS} component={LoadBalancerFarmContainer} />
                                     <Route path={ROUTE_SERVICE_VIRTUALMACHINES} component={ServiceContainer} />
                                     <Route component={NotFound} />
                                 </Switch>

@@ -1,11 +1,7 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { Grid, Header, Segment, Message, Icon } from 'semantic-ui-react';
 import _ from 'lodash';
 
-import { getAllLoadBalancerFarms } from '../requests/LoadBalancerFarmsAxios';
-import { getAllLoadBalancerFarmsAction } from '../utils/actions';
 import { mapDataForGenericChart, getUniqueValuesOfKey, mapDataForStackedGenericBarChart } from '../utils/HelperFunction';
 import ErrorMessage from '../components/ErrorMessage';
 import BarChartWithRawData from '../charts/BarChartWithRawData';
@@ -24,24 +20,12 @@ let rawDataStyle = {
 class LoadBalancerFarmsStatistics extends React.Component {
 
     componentDidMount() {
-        this.fetchLoadBalancerFarmsAndHandleResult()
-
         document.title = APP_TITLE + "LoadBalancerFarms Statistics"
-    }
-
-    fetchLoadBalancerFarmsAndHandleResult = () => {
-        getAllLoadBalancerFarms()
-            .then(res => {
-                this.props.getAllLoadBalancerFarmsAction({ success: true, data: res.data })
-            })
-            .catch(err => {
-                this.props.getAllLoadBalancerFarmsAction({ success: false, error: err })
-            })
     }
 
     render() {
         // in case of error
-        if (!this.props.loadbalancerFarmsStore.loadBalancerFarms.success) {
+        if (!this.props.loadBalancerFarms.success) {
             return (
                 <Grid stackable>
                     <Grid.Row>
@@ -50,7 +34,7 @@ class LoadBalancerFarmsStatistics extends React.Component {
                                 LoadBalancer Farms
                             </Header>
                             <Segment attached='bottom' >
-                                <ErrorMessage handleRefresh={this.fetchLoadBalancerFarmsAndHandleResult} error={this.props.loadbalancerFarmsStore.loadBalancerFarms.error} />
+                                <ErrorMessage handleRefresh={this.props.fetchLoadBalancerFarmsAndHandleResult} error={this.props.loadBalancerFarms.error} />
                             </Segment>
                         </Grid.Column>
                     </Grid.Row>
@@ -59,7 +43,7 @@ class LoadBalancerFarmsStatistics extends React.Component {
         }
 
         // in case it's still loading data
-        if (_.isEmpty(this.props.loadbalancerFarmsStore.loadBalancerFarms.data)) {
+        if (_.isEmpty(this.props.loadBalancerFarms.data)) {
             return (
                 <div className="messageBox">
                     <Message info icon>
@@ -72,11 +56,11 @@ class LoadBalancerFarmsStatistics extends React.Component {
             )
         }
 
-        var mappedLbName = mapDataForGenericChart(this.props.loadbalancerFarmsStore.loadBalancerFarms.data, 'LbName');
-        var environments = getUniqueValuesOfKey(this.props.loadbalancerFarmsStore.loadBalancerFarms.data, 'Environment');
-        var mappedDataEnvironmentsPerLB = mapDataForStackedGenericBarChart(this.props.loadbalancerFarmsStore.loadBalancerFarms.data, 'LbName', environments, 'Environment')
-        var mappedDataPerDataCenter = mapDataForGenericChart(this.props.loadbalancerFarmsStore.loadBalancerFarms.data, 'DataCenter')
-        var mappedDataPerEnvironment = mapDataForGenericChart(this.props.loadbalancerFarmsStore.loadBalancerFarms.data, 'Environment')
+        var mappedLbName = mapDataForGenericChart(this.props.loadBalancerFarms.data, 'LbName');
+        var environments = getUniqueValuesOfKey(this.props.loadBalancerFarms.data, 'Environment');
+        var mappedDataEnvironmentsPerLB = mapDataForStackedGenericBarChart(this.props.loadBalancerFarms.data, 'LbName', environments, 'Environment')
+        var mappedDataPerDataCenter = mapDataForGenericChart(this.props.loadBalancerFarms.data, 'DataCenter')
+        var mappedDataPerEnvironment = mapDataForGenericChart(this.props.loadBalancerFarms.data, 'Environment')
         return (
             <Grid stackable>
                 <Grid.Row>
@@ -139,16 +123,4 @@ class LoadBalancerFarmsStatistics extends React.Component {
     }
 }
 
-function mapStateToProps(state) {
-    return {
-        loadbalancerFarmsStore: state.LoadBalancerFarmsReducer
-    };
-}
-
-function mapDispatchToProps(dispatch) {
-    return bindActionCreators({
-        getAllLoadBalancerFarmsAction
-    }, dispatch);
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(LoadBalancerFarmsStatistics);
+export default LoadBalancerFarmsStatistics;
