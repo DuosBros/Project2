@@ -4,15 +4,18 @@ import { bindActionCreators } from 'redux';
 
 import {
     getServicesAction, getServiceDeploymentStatsAction, showGenericModalAction,
-    getServiceDetailsAction, toggleLoadBalancerFarmsTasksModalAction, getHighAvailabilitiesAction
+    getServiceDetailsAction, toggleLoadBalancerFarmsTasksModalAction, getHighAvailabilitiesAction,
+    getServiceVirtualMachinesAction
 } from '../utils/actions';
-import { ROUTE_SERVICES, ROUTE_SERVICES_DETAILS, ROUTE_SERVICES_STATISTICS } from '../utils/constants';
+import { ROUTE_SERVICES, ROUTE_SERVICES_DETAILS, ROUTE_SERVICES_STATISTICS, ROUTE_SERVICE_VIRTUALMACHINES } from '../utils/constants';
 import NotFound from '../pages/NotFound';
 import { DEFAULT_SERVICE_DEPLOYMENT_COUNT } from '../appConfig';
 import { getServices, getServiceDetails, getServiceDeploymentStats, getHighAvailabilities } from '../requests/ServiceAxios';
 import ServicesStatistics from '../pages/ServicesStatistics';
 import ServiceDetails from '../pages/ServiceDetails';
 import Services from '../pages/Services';
+import ServiceVirtualMachine from '../pages/ServiceVirtualMachine';
+import { getServiceVirtualMachines } from '../requests/MiscAxios';
 
 class ServiceContainer extends React.PureComponent {
 
@@ -27,6 +30,9 @@ class ServiceContainer extends React.PureComponent {
         else if (pathname === ROUTE_SERVICES_STATISTICS) {
             this.fetchServicesAndHandleResult()
         }
+        else if (pathname === ROUTE_SERVICE_VIRTUALMACHINES) {
+            this.fetchServiceVirtualMachinesAndHandleData()
+        }
     }
 
     async fetchServicesAndHighAvailabilitiesAndHandleResult() {
@@ -34,6 +40,16 @@ class ServiceContainer extends React.PureComponent {
         if (res) {
             this.fetchHighAvailabilitiesAndHandleResult();
         }
+    }
+
+    fetchServiceVirtualMachinesAndHandleData = () => {
+        getServiceVirtualMachines()
+            .then(res => {
+                this.props.getServiceVirtualMachinesAction({ success: true, data: res.data })
+            })
+            .catch(err => {
+                this.props.getServiceVirtualMachinesAction({ success: false, error: err })
+            })
     }
 
     componentDidUpdate(prevProps) {
@@ -122,6 +138,13 @@ class ServiceContainer extends React.PureComponent {
                     services={this.props.serviceStore.services} />
             )
         }
+        else if (pathname === ROUTE_SERVICE_VIRTUALMACHINES) {
+            return (
+                <ServiceVirtualMachine
+                    fetchServicesAndHighAvailabilitiesAndHandleResult={this.fetchServicesAndHighAvailabilitiesAndHandleResult}
+                    serviceVirtualMachines={this.props.miscStore.serviceVirtualMachines} />
+            )
+        }
         else {
             // this shouldnt happen because react-router would throw NotFound component before even reaching here but you know...
             return <NotFound />
@@ -132,7 +155,8 @@ class ServiceContainer extends React.PureComponent {
 function mapStateToProps(state) {
     return {
         serviceStore: state.ServiceReducer,
-        baseStore: state.BaseReducer
+        baseStore: state.BaseReducer,
+        miscStore: state.MiscReducer
     };
 }
 
@@ -143,7 +167,8 @@ function mapDispatchToProps(dispatch) {
         showGenericModalAction,
         getServiceDetailsAction,
         toggleLoadBalancerFarmsTasksModalAction,
-        getHighAvailabilitiesAction
+        getHighAvailabilitiesAction,
+        getServiceVirtualMachinesAction
     }, dispatch);
 }
 

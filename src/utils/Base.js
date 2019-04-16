@@ -35,10 +35,9 @@ import ActiveDirectoryAdmin from '../pages/ActiveDirectoryAdmin';
 import AgentLogs from '../pages/AgentLogs';
 import NotFound from '../pages/NotFound';
 import PrivateRoute from './PrivateRoute';
-import ServiceVirtualMachine from '../pages/ServiceVirtualMachine';
 import GenericModal from '../components/GenericModal';
 import ServersContainer from '../containers/ServersContainer';
-import { ROUTE_SERVERS, ROUTE_SERVERS_ADMIN, ROUTE_SERVER_DETAILS, ROUTE_SERVER_STATISTICS, ROUTE_SERVICES, ROUTE_SERVICES_DETAILS, ROUTE_SERVICES_STATISTICS } from './constants';
+import { ROUTE_SERVERS, ROUTE_SERVERS_ADMIN, ROUTE_SERVER_DETAILS, ROUTE_SERVER_STATISTICS, ROUTE_SERVICES, ROUTE_SERVICES_DETAILS, ROUTE_SERVICES_STATISTICS, ROUTE_SERVICE_VIRTUALMACHINES } from './constants';
 import ServiceContainer from '../containers/ServiceContainer';
 
 class Base extends React.Component {
@@ -163,7 +162,7 @@ class Base extends React.Component {
                                     <Route path={ROUTE_SERVICES_STATISTICS} component={ServiceContainer} />
                                     <Route path={ROUTE_SERVER_STATISTICS} component={ServersContainer} />
                                     <Route path='/statistics/loadbalancerfarms' component={LoadBalancerFarmsStatistics} />
-                                    <Route path='/statistics/servicevirtualmachines' component={ServiceVirtualMachine} />
+                                    <Route path={ROUTE_SERVICE_VIRTUALMACHINES} component={ServiceContainer} />
                                     <Route component={NotFound} />
                                 </Switch>
                             </ErrorBoundary>

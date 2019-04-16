@@ -63,3 +63,4 @@ export const ROUTE_SERVER_STATISTICS = '/statistics/servers';
 export const ROUTE_SERVICES = '/services';
 export const ROUTE_SERVICES_DETAILS = '/service/:id';
 export const ROUTE_SERVICES_STATISTICS = '/statistics/services';
+export const ROUTE_SERVICE_VIRTUALMACHINES = '/statistics/servicevirtualmachines';
