@@ -61,6 +61,9 @@ export const ROUTE_SERVER_DETAILS = '/server/:id';
 export const ROUTE_SERVER_STATISTICS = '/statistics/servers';
 
 export const ROUTE_SERVICES = '/services';
-export const ROUTE_SERVICES_DETAILS = '/service/:id';
+export const ROUTE_SERVICE_DETAILS = '/service/:id';
 export const ROUTE_SERVICES_STATISTICS = '/statistics/services';
 export const ROUTE_SERVICE_VIRTUALMACHINES = '/statistics/servicevirtualmachines';
+
+export const ROUTE_PATCHGROUPS = '/patchgroups';
+export const ROUTE_PATCHGROUP_DETAILS = '/patchgroup/:id';

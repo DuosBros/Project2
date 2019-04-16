@@ -12,7 +12,7 @@ import { DISME_SERVICE_URL, DISME_SERVICE_PLACEHOLDER, APP_TITLE, DEFAULT_SERVIC
 import Kibana from '../utils/Kibana';
 import ErrorMessage from '../components/ErrorMessage';
 
-class ServiceDetails extends React.Component {
+class ServiceDetails extends React.PureComponent {
     constructor(props) {
         super(props);
 
@@ -24,12 +24,14 @@ class ServiceDetails extends React.Component {
         }
     }
 
-    componentDidMount() {
-        if (this.props.serviceDetails.data) {
-            document.title = APP_TITLE + this.props.serviceDetails.data.Service[0].Name;
-        }
-        else {
-            document.title = APP_TITLE + "Service Details"
+    componentDidUpdate(prevProps) {
+        if(prevProps !== this.props) {
+            if (this.props.serviceDetails.data) {
+                document.title = APP_TITLE + this.props.serviceDetails.data.Service[0].Name;
+            }
+            else {
+                document.title = APP_TITLE + "Service Details"
+            }
         }
     }
 

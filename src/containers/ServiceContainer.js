@@ -7,7 +7,7 @@ import {
     getServiceDetailsAction, toggleLoadBalancerFarmsTasksModalAction, getHighAvailabilitiesAction,
     getServiceVirtualMachinesAction
 } from '../utils/actions';
-import { ROUTE_SERVICES, ROUTE_SERVICES_DETAILS, ROUTE_SERVICES_STATISTICS, ROUTE_SERVICE_VIRTUALMACHINES } from '../utils/constants';
+import { ROUTE_SERVICES, ROUTE_SERVICE_DETAILS, ROUTE_SERVICES_STATISTICS, ROUTE_SERVICE_VIRTUALMACHINES } from '../utils/constants';
 import NotFound from '../pages/NotFound';
 import { DEFAULT_SERVICE_DEPLOYMENT_COUNT } from '../appConfig';
 import { getServices, getServiceDetails, getServiceDeploymentStats, getHighAvailabilities } from '../requests/ServiceAxios';
@@ -74,7 +74,7 @@ class ServiceContainer extends React.PureComponent {
     }
 
     isCurrentlyOnServiceDetails = () => {
-        return this.props.location.pathname.replace(this.props.match.params.id, ":id") === ROUTE_SERVICES_DETAILS ? true : false;
+        return this.props.location.pathname.replace(this.props.match.params.id, ":id") === ROUTE_SERVICE_DETAILS ? true : false;
     }
 
     fetchServiceDetails = async () => {

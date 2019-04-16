@@ -19,7 +19,7 @@ import MinMaxAvgAreaChart from '../charts/MinMaxAvgAreaChart';
 import { mapDataForMinMaxAvgChart } from '../utils/HelperFunction';
 import WindowsServicesTable from '../components/WindowsServicesTable';
 
-class ServerDetails extends React.Component {
+class ServerDetails extends React.PureComponent {
 
     constructor(props) {
         super(props);
@@ -35,12 +35,14 @@ class ServerDetails extends React.Component {
         }
     }
 
-    componentDidMount() {
-        if (this.props.serverDetails.data) {
-            document.title = APP_TITLE + this.props.serverDetails.data.ServerName;
-        }
-        else {
-            document.title = APP_TITLE + "Server Details"
+    componentDidUpdate(prevProps) {
+        if (prevProps !== this.props) {
+            if (this.props.serverDetails.data) {
+                document.title = APP_TITLE + this.props.serverDetails.data.ServerName;
+            }
+            else {
+                document.title = APP_TITLE + "Server Details"
+            }
         }
     }
 
