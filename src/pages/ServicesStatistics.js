@@ -1,11 +1,7 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { Grid, Header, Segment, Message, Icon, Popup } from 'semantic-ui-react';
 import _ from 'lodash';
 
-import { getServices } from '../requests/ServiceAxios';
-import { getServicesAction } from '../utils/actions';
 import ErrorMessage from '../components/ErrorMessage';
 import { mapDataForGenericChart } from '../utils/HelperFunction';
 import BarChartWithRawData from '../charts/BarChartWithRawData';
@@ -23,19 +19,7 @@ class ServicesStatistics extends React.Component {
         }
     }
     componentDidMount() {
-        this.fetchServicesAndHandleResult()
-
         document.title = APP_TITLE + "Services Statistics"
-    }
-
-    fetchServicesAndHandleResult = () => {
-        getServices()
-            .then(res => {
-                this.props.getServicesAction({ success: true, data: res.data })
-            })
-            .catch(err => {
-                this.props.getServicesAction({ success: false, error: err })
-            })
     }
 
     handleExpandCollapseButton = (prop) => {
@@ -44,7 +28,7 @@ class ServicesStatistics extends React.Component {
 
     render() {
         // in case of error
-        if (!this.props.serviceStore.services.success) {
+        if (!this.props.services.success) {
             return (
                 <Grid stackable>
                     <Grid.Row>
@@ -53,7 +37,7 @@ class ServicesStatistics extends React.Component {
                                 Services Statistics
                             </Header>
                             <Segment attached='bottom' >
-                                <ErrorMessage handleRefresh={this.fetchServicesAndHandleResult} error={this.props.serviceStore.services.error} />
+                                <ErrorMessage handleRefresh={this.fetchServicesAndHandleResult} error={this.props.services.error} />
                             </Segment>
                         </Grid.Column>
                     </Grid.Row>
@@ -63,7 +47,7 @@ class ServicesStatistics extends React.Component {
         }
 
         // in case it's still loading data
-        if (_.isEmpty(this.props.serviceStore.services.data)) {
+        if (_.isEmpty(this.props.services.data)) {
             return (
                 <div className="messageBox">
                     <Message info icon>
@@ -76,9 +60,9 @@ class ServicesStatistics extends React.Component {
             )
         }
 
-        var mappedDataOwner = mapDataForGenericChart(this.props.serviceStore.services.data, 'Owner', { Status: /^(?!removed$)/i }, true);
+        var mappedDataOwner = mapDataForGenericChart(this.props.services.data, 'Owner', { Status: /^(?!removed$)/i }, true);
 
-        var mappedDataComponentSteward = mapDataForGenericChart(this.props.serviceStore.services.data, 'ResponsibleTeam', { Status: /^(?!removed$)/i });
+        var mappedDataComponentSteward = mapDataForGenericChart(this.props.services.data, 'ResponsibleTeam', { Status: /^(?!removed$)/i });
 
         if (!this.state.expandComponentSteward) {
             var half_length = Math.ceil(mappedDataComponentSteward.length / 2);
@@ -86,7 +70,7 @@ class ServicesStatistics extends React.Component {
             mappedDataComponentSteward = mappedDataComponentSteward.splice(0, half_length);
         }
 
-        var mappedDataLabel = mapDataForGenericChart(this.props.serviceStore.services.data, 'Label', { Status: /^(?!removed$)/i }, true);
+        var mappedDataLabel = mapDataForGenericChart(this.props.services.data, 'Label', { Status: /^(?!removed$)/i }, true);
 
         if (!this.state.expandLabel) {
             half_length = Math.ceil(mappedDataLabel.length / 2);
@@ -94,7 +78,7 @@ class ServicesStatistics extends React.Component {
             mappedDataLabel = mappedDataLabel.splice(0, half_length);
         }
 
-        var mappedDataFramework = mapDataForGenericChart(this.props.serviceStore.services.data, 'Framework', { Status: /^(?!removed$)/i });
+        var mappedDataFramework = mapDataForGenericChart(this.props.services.data, 'Framework', { Status: /^(?!removed$)/i });
 
         if (!this.state.expandFramework) {
             half_length = Math.ceil(mappedDataFramework.length / 2);
@@ -102,9 +86,9 @@ class ServicesStatistics extends React.Component {
             mappedDataFramework = mappedDataFramework.splice(0, half_length);
         }
 
-        var mappedDataDevelopmentFramework = mapDataForGenericChart(this.props.serviceStore.services.data, 'DevFramework', { Status: /^(?!removed$)/i });
+        var mappedDataDevelopmentFramework = mapDataForGenericChart(this.props.services.data, 'DevFramework', { Status: /^(?!removed$)/i });
 
-        var mappedDataStatus = mapDataForGenericChart(this.props.serviceStore.services.data, 'Status');
+        var mappedDataStatus = mapDataForGenericChart(this.props.services.data, 'Status');
 
         // render page
         return (
@@ -223,16 +207,4 @@ class ServicesStatistics extends React.Component {
     }
 }
 
-function mapStateToProps(state) {
-    return {
-        serviceStore: state.ServiceReducer
-    };
-}
-
-function mapDispatchToProps(dispatch) {
-    return bindActionCreators({
-        getServicesAction
-    }, dispatch);
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(ServicesStatistics);
+export default ServicesStatistics;

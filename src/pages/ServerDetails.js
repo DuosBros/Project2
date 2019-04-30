@@ -1,6 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { Grid, Header, Segment, Icon, List, Button, Message, Image, Popup } from 'semantic-ui-react';
 import _ from 'lodash';
 import moment from 'moment'
@@ -10,13 +8,7 @@ import ServerStatus from '../components/ServerStatus';
 import WebsitesTable from '../components/WebsitesTable';
 import WebChecksTable from '../components/WebChecksTable';
 
-import {
-    getServerDetailsAction, getVmDetailsAction, getServerScomAlertsAction, getServerStatsAction,
-    getServerDeploymentStatsAction
-} from '../utils/actions';
-import { getServerDetails, getServerScomAlerts, getDiskUsageDetails, getServerDeploymentStats } from '../requests/ServerAxios';
-
-import { errorColor, APP_TITLE, DEFAULT_SERVER_DEPLOYMENT_COUNT } from '../appConfig';
+import { errorColor, APP_TITLE } from '../appConfig';
 
 import Kibana from '../utils/Kibana';
 import LoadBalancerFarmsTable from '../components/LoadBalancerFarmsTable';
@@ -27,7 +19,7 @@ import MinMaxAvgAreaChart from '../charts/MinMaxAvgAreaChart';
 import { mapDataForMinMaxAvgChart } from '../utils/HelperFunction';
 import WindowsServicesTable from '../components/WindowsServicesTable';
 
-class ServerDetails extends React.Component {
+class ServerDetails extends React.PureComponent {
 
     constructor(props) {
         super(props);
@@ -43,74 +35,13 @@ class ServerDetails extends React.Component {
         }
     }
 
-    componentWillUnmount() {
-        this.props.getServerScomAlertsAction({ success: true })
-    }
-
-    componentDidMount() {
-        this.updateServer();
-    }
-
-    updateServer = async () => {
-        let serverRes;
-        try {
-            serverRes = await getServerDetails(this.props.match.params.id)
-            this.props.getServerDetailsAction({ success: true, data: serverRes.data })
-            if (serverRes.data) {
-                document.title = APP_TITLE + serverRes.data.ServerName;
+    componentDidUpdate(prevProps) {
+        if (prevProps !== this.props) {
+            if (this.props.serverDetails.data) {
+                document.title = APP_TITLE + this.props.serverDetails.data.ServerName;
             }
             else {
                 document.title = APP_TITLE + "Server Details"
-            }
-        }
-        catch (err) {
-            this.props.getServerDetailsAction({ success: false, error: err });
-        }
-        let shouldContinue = false
-        if (serverRes.data) {
-            shouldContinue = true
-        }
-
-        if (!shouldContinue) return
-
-        // these calls can be run parallely
-        getServerScomAlerts(serverRes.data.ServerName)
-            .then(res => {
-                this.props.getServerScomAlertsAction({ success: true, data: res.data })
-            })
-            .catch(err => {
-                this.props.getServerScomAlertsAction({ success: false, error: err });
-            })
-
-        getDiskUsageDetails(serverRes.data.ServerName)
-            .then(res => {
-                this.props.getServerStatsAction({ success: true, data: res.data })
-            })
-            .catch(err => {
-                this.props.getServerStatsAction({ success: false, error: err })
-            })
-
-        this.fetchServerDeploymentAndHandleData(serverRes.data.ServerName);
-
-
-    }
-
-    fetchServerDeploymentAndHandleData = (serverName) => {
-        getServerDeploymentStats(serverName, DEFAULT_SERVER_DEPLOYMENT_COUNT)
-            .then(res => {
-                this.props.getServerDeploymentStatsAction({ success: true, data: res.data.deployments })
-            })
-            .catch(err => {
-                this.props.getServerDeploymentStatsAction({ success: false, error: err })
-            })
-    }
-
-    componentDidUpdate(prevProps) {
-
-        if (this.props.match && this.props.match.params) {
-            const params = this.props.match.params;
-            if (params.id && params.id !== prevProps.match.params.id) {
-                this.updateServer();
             }
         }
     }
@@ -133,11 +64,11 @@ class ServerDetails extends React.Component {
     }
 
     render() {
-        var serverDetailsSuccess = this.props.serverStore.serverDetails.success;
-        var serverDetailsData = this.props.serverStore.serverDetails.data;
+        var serverDetailsSuccess = this.props.serverDetails.success;
+        var serverDetailsData = this.props.serverDetails.data;
 
-        var scomAlertsSuccess = this.props.serverStore.scomAlerts.success;
-        var scomAlertsData = this.props.serverStore.scomAlerts.data;
+        var scomAlertsSuccess = this.props.scomAlerts.success;
+        var scomAlertsData = this.props.scomAlerts.data;
         var OSIcon, scomAlertsSegment;
 
         const { webchecks, dismeservices, loadbalancerfarms, windowsservices, websites, scomalerts } = this.state;
@@ -145,7 +76,7 @@ class ServerDetails extends React.Component {
         // in case of error
         if (!serverDetailsSuccess) {
             return (
-                <ErrorMessage handleRefresh={this.updateServer} error={this.props.serverStore.serverDetails.error} />
+                <ErrorMessage handleRefresh={this.props.fetchServerDetails} error={this.props.serverDetails.error} />
             );
         }
 
@@ -168,7 +99,7 @@ class ServerDetails extends React.Component {
             // in case of error
             if (!scomAlertsSuccess) {
                 scomAlertsSegment = (
-                    <ErrorMessage handleRefresh={this.updateServer} error={this.props.serverStore.serverDetails.error} />
+                    <ErrorMessage handleRefresh={this.props.fetchServersAndHandleResult} error={this.props.serverDetails.error} />
                 )
             }
             else {
@@ -300,7 +231,7 @@ class ServerDetails extends React.Component {
 
             if (!serverDetailsData.deploymentStats.success) {
                 deploymentsSegment = (
-                    <ErrorMessage handleRefresh={this.fetchServerDeploymentAndHandleData} error={serverDetailsData.deploymentStats.error} />
+                    <ErrorMessage handleRefresh={this.props.fetchServerDetails} error={serverDetailsData.deploymentStats.error} />
                 );
             }
 
@@ -337,7 +268,7 @@ class ServerDetails extends React.Component {
                             Server Info - {serverDetailsData.ServerName}
                             <Button
                                 floated='right'
-                                onClick={() => this.handleToggleShowAllSegments()}
+                                onClick={this.handleToggleShowAllSegments}
                                 content={(scomalerts || webchecks || dismeservices || loadbalancerfarms || windowsservices || websites) ? 'Hide All Segments' : 'Show All Segments'}
                                 icon='content'
                                 labelPosition='right'
@@ -547,20 +478,4 @@ class ServerDetails extends React.Component {
     }
 }
 
-function mapStateToProps(state) {
-    return {
-        serverStore: state.ServerReducer
-    };
-}
-
-function mapDispatchToProps(dispatch) {
-    return bindActionCreators({
-        getServerDetailsAction,
-        getVmDetailsAction,
-        getServerScomAlertsAction,
-        getServerStatsAction,
-        getServerDeploymentStatsAction
-    }, dispatch);
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(ServerDetails);
+export default ServerDetails;

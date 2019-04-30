@@ -23,7 +23,7 @@ export default class Servers extends React.Component {
                                 Servers
                             </Header>
                             <Segment attached='bottom' >
-                                <ErrorMessage handleRefresh={this.fetchServersAndHandleResult} error={this.props.servers.error} />
+                                <ErrorMessage handleRefresh={this.props.fetchServersAndHandleResult} error={this.props.servers.error} />
                             </Segment>
                         </Grid.Column>
                     </Grid.Row>
