@@ -227,7 +227,7 @@ class LoadBalancerFarmsTable extends React.PureComponent {
     }
 
     getDataKey(data) {
-        return data.IpAddress + "-" + data.Name + "-" + data.VsStatusLastUpdate + "-" + data.Pool + "-" + data.Label;
+        return data.Id + "-" + data.IpAddress + "-" + data.Name + "-" + data.VsStatusLastUpdate + "-" + data.Pool + "-" + data.Label;
     }
 
 
