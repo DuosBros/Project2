@@ -11,7 +11,7 @@ import Home from '../pages/Home';
 import Login from '../pages/Login';
 import UserDetails from '../modals/UserDetails';
 
-import { authenticateAction, authenticationStartedAction, authenticateEndedAction, authenticateOKAction, authenticationFailedAction } from '../utils/actions';
+import { authenticateAction, authenticationStartedAction, authenticateEndedAction, authenticateOKAction, authenticationFailedAction, toggleUserDetailsAction } from '../utils/actions';
 import { authenticate } from '../requests/BaseAxios';
 import { debounce, isAdmin } from '../utils/HelperFunction';
 
@@ -132,7 +132,7 @@ class Base extends React.Component {
                         <Route path="/:entityType?/:entityId?" render={(props) => <Header {...props} isMobile={isMobile} />} />
                         <Sidebar isMobile={isMobile} />
                         <LoadBalancerFarmsTasks show={this.props.serviceStore.showLoadBalancerFarmsTasksModal} />
-                        <UserDetails userDetails={this.props.baseStore.currentUser} show={this.props.headerStore.showUserDetails} />
+                        <UserDetails toggleUserDetailsAction={this.props.toggleUserDetailsAction} userDetails={this.props.baseStore.currentUser} show={this.props.headerStore.showUserDetails} />
                         <div id="bodyWrapper" {...wideClass}>
                             <ErrorBoundary>
                                 <Switch>
@@ -183,11 +183,12 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
-        authenticateAction: authenticateAction,
-        authenticationStartedAction: authenticationStartedAction,
-        authenticateEndedAction: authenticateEndedAction,
-        authenticateOKAction: authenticateOKAction,
-        authenticationFailedAction: authenticationFailedAction
+        authenticateAction,
+        authenticationStartedAction,
+        authenticateEndedAction,
+        authenticateOKAction,
+        authenticationFailedAction,
+        toggleUserDetailsAction
     }, dispatch);
 }
 
