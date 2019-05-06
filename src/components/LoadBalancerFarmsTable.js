@@ -234,8 +234,8 @@ class LoadBalancerFarmsTable extends React.PureComponent {
     render() {
 
         let distinctValuesObject = {
-            LBName: this.props.loadBalancerStore.loadBalancers.data ? this.props.loadBalancerStore.loadBalancers.data.map(x => x.Name) : [],
-            Environments: this.props.miscStore.environments.data ? this.props.miscStore.environments.data.map(x => x.Name) : []
+            LbName: this.props.loadBalancerStore.loadBalancers.data ? this.props.loadBalancerStore.loadBalancers.data.map(x => x.Name) : [],
+            Environment: this.props.miscStore.environments.data ? this.props.miscStore.environments.data.map(x => x.Name) : []
         }
 
         return (
