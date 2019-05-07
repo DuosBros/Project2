@@ -1,30 +1,26 @@
 import React from 'react';
-import _ from 'lodash';
-
 import { Grid, Header, Segment, Message, Icon } from 'semantic-ui-react';
-import PatchGroupsTable from '../components/PatchGroupsTable';
-import ErrorMessage from '../components/ErrorMessage';
 import { APP_TITLE } from '../appConfig';
+import ErrorMessage from '../components/ErrorMessage';
+import ServersAdminTable from '../components/ServersAdminTable';
 
-class PatchGroups extends React.Component {
-
+class ServersAdmin extends React.PureComponent {
     componentDidMount() {
-        document.title = APP_TITLE + "Patchgroups"
+        document.title = APP_TITLE + "Servers Admin"
     }
 
     render() {
-
         // in case of error
-        if (!this.props.patchGroups.success) {
+        if (!this.props.servers.success) {
             return (
                 <Grid stackable>
                     <Grid.Row>
                         <Grid.Column>
                             <Header block attached='top' as='h4'>
-                                Patch groups
-                        </Header>
+                                Servers
+                            </Header>
                             <Segment attached='bottom' >
-                                <ErrorMessage handleRefresh={this.props.fetchPatchGroupsAndHandleResult} error={this.props.patchGroupStore.patchGroups.error} />
+                                <ErrorMessage handleRefresh={this.props.fetchServersAndHandleResult} error={this.props.servers.success} />
                             </Segment>
                         </Grid.Column>
                     </Grid.Row>
@@ -33,13 +29,13 @@ class PatchGroups extends React.Component {
         }
 
         // in case it's still loading data
-        if (_.isEmpty(this.props.patchGroups.data)) {
+        if (!this.props.servers.data) {
             return (
                 <div className="messageBox">
                     <Message info icon>
                         <Icon name='circle notched' loading />
                         <Message.Content>
-                            <Message.Header>Fetching patch groups</Message.Header>
+                            <Message.Header>Fetching servers</Message.Header>
                         </Message.Content>
                     </Message>
                 </div>
@@ -52,10 +48,14 @@ class PatchGroups extends React.Component {
                 <Grid.Row>
                     <Grid.Column>
                         <Header block attached='top' as='h4'>
-                            Patch groups
-                        </Header>
+                            Servers
+                            </Header>
                         <Segment attached='bottom' >
-                            <PatchGroupsTable compact="very" rowsPerPage={45} data={this.props.patchGroups.data} />
+                            <ServersAdminTable
+                                rowsPerPage={50}
+                                data={this.props.servers.data}
+                                compact="very"
+                                handleDeleteServer={this.props.handleDeleteServer} />
                         </Segment>
                     </Grid.Column>
                 </Grid.Row>
@@ -64,4 +64,4 @@ class PatchGroups extends React.Component {
     }
 }
 
-export default PatchGroups;
+export default ServersAdmin;

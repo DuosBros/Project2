@@ -1,75 +1,61 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button, Modal, List } from 'semantic-ui-react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 
-import { toggleUserDetailsAction } from '../utils/actions';
+import Henlo from '../components/Henlo';
 
-class UserDetails extends React.Component {
+const UserDetails = (props) => {
 
-    render() {
-        return (
-            <Modal
+    const [count, setCount] = useState(0);
 
-                size='mini'
-                open={this.props.show}
-                closeOnEscape={true}
-                closeIcon={true}
-                onClose={() => this.props.toggleUserDetailsAction()}
-            >
-                <Modal.Header>User Details</Modal.Header>
-                <Modal.Content>
-                    <List  verticalAlign='middle'>
-                        <List.Item>
-                            <List.Content floated='left'>Identity: </List.Content>
-                            <List.Content floated='right'>
-                                {this.props.userDetails.Identity}
-                            </List.Content>
-                        </List.Item>
-                        <List.Item>
-                            <List.Content floated='left'>Authenticated: </List.Content>
-                            <List.Content floated='right'>
-                                {this.props.userDetails.IsAuthenticated ? 'true' : 'false'}
-                            </List.Content>
-                        </List.Item>
-                        <List.Item>
-                            <List.Content floated='left'>Loco User: </List.Content>
-                            <List.Content floated='right'>
-                                {this.props.userDetails.IsLocoUser ? 'true' : 'false'}
-                            </List.Content>
-                        </List.Item>
-                        <List.Item>
-                            <List.Content floated='left'>Loco Admin: </List.Content>
-                            <List.Content floated='right'>
-                                {this.props.userDetails.IsLocoAdmin ? 'true' : 'false'}
-                            </List.Content>
-                        </List.Item>
-                    </List>
-                </Modal.Content>
-                <Modal.Actions>
-                    <Button
-                        onClick={() => this.props.toggleUserDetailsAction()}
-                        positive
-                        labelPosition='right'
-                        icon='checkmark'
-                        content='Close'
-                    />
-                </Modal.Actions>
-            </Modal>
-        )
-    }
+    return (
+        <Modal
+            size='mini'
+            open={props.show}
+            closeOnEscape={true}
+            closeIcon={true}
+            onClose={() => props.toggleUserDetailsAction()}
+        >
+            {count === 2 && <Henlo show={true} />}
+            <Modal.Header>User Details</Modal.Header>
+            <Modal.Content>
+                <List verticalAlign='middle'>
+                    <List.Item>
+                        <List.Content floated='left'>Identity: </List.Content>
+                        <List.Content onClick={() => setCount(count + 1)} floated='right'>
+                            {props.userDetails.Identity}
+                        </List.Content>
+                    </List.Item>
+                    <List.Item>
+                        <List.Content floated='left'>Authenticated: </List.Content>
+                        <List.Content floated='right'>
+                            {props.userDetails.IsAuthenticated ? 'true' : 'false'}
+                        </List.Content>
+                    </List.Item>
+                    <List.Item>
+                        <List.Content floated='left'>Loco User: </List.Content>
+                        <List.Content floated='right'>
+                            {props.userDetails.IsLocoUser ? 'true' : 'false'}
+                        </List.Content>
+                    </List.Item>
+                    <List.Item>
+                        <List.Content floated='left'>Loco Admin: </List.Content>
+                        <List.Content floated='right'>
+                            {props.userDetails.IsLocoAdmin ? 'true' : 'false'}
+                        </List.Content>
+                    </List.Item>
+                </List>
+            </Modal.Content>
+            <Modal.Actions>
+                <Button
+                    onClick={() => props.toggleUserDetailsAction()}
+                    positive
+                    labelPosition='right'
+                    icon='checkmark'
+                    content='Close'
+                />
+            </Modal.Actions>
+        </Modal>
+    )
 }
 
-function mapStateToProps(state) {
-    return {
-        headerStore: state.HeaderReducer
-    };
-}
-
-function mapDispatchToProps(dispatch) {
-    return bindActionCreators({
-        toggleUserDetailsAction
-    }, dispatch);
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(UserDetails);
+export default UserDetails;

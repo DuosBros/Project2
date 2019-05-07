@@ -53,3 +53,20 @@ export const GET_SERVER_DEPLOYMENTS = 'GET_SERVER_DEPLOYMENTS'
 export const GET_SERVICE_DEPLOYMENTS = 'GET_SERVICE_DEPLOYMENTS'
 export const CLOSE_GENERIC_MODAL = 'CLOSE_GENERIC_MODAL'
 export const SHOW_GENERIC_MODAL = 'SHOW_GENERIC_MODAL'
+export const DELETE_SERVER = 'DELETE_SERVER'
+
+export const ROUTE_SERVERS = '/servers';
+export const ROUTE_SERVERS_ADMIN = '/admin/servers';
+export const ROUTE_SERVER_DETAILS = '/server/:id';
+export const ROUTE_SERVER_STATISTICS = '/statistics/servers';
+
+export const ROUTE_SERVICES = '/services';
+export const ROUTE_SERVICE_DETAILS = '/service/:id';
+export const ROUTE_SERVICES_STATISTICS = '/statistics/services';
+export const ROUTE_SERVICE_VIRTUALMACHINES = '/statistics/servicevirtualmachines';
+
+export const ROUTE_PATCHGROUPS = '/patchgroups';
+export const ROUTE_PATCHGROUP_DETAILS = '/patchgroup/:id';
+
+export const ROUTE_LBFARMS = '/lbfarms';
+export const ROUTE_LBFARMS_STATISTICS = '/statistics/loadbalancerfarms';

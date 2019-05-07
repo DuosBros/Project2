@@ -7,6 +7,7 @@ import { bindActionCreators } from 'redux';
 
 import { toggleVerticalMenuAction } from '../utils/actions';
 import { isAdmin } from './HelperFunction';
+import { ROUTE_SERVERS, ROUTE_SERVERS_ADMIN } from './constants';
 
 
 class Sidebar extends React.Component {
@@ -26,7 +27,7 @@ class Sidebar extends React.Component {
                         <Menu.Header>Home</Menu.Header>
                     </Menu.Item>
                     <Menu.Item>
-                        <Menu.Header as={Link} to='/servers'>Server</Menu.Header>
+                        <Menu.Header as={Link} to={ROUTE_SERVERS}>Server</Menu.Header>
                         <Menu.Menu>
                             <Menu.Item as={Link} to='/patchgroups'>
                                 Patch Groups
@@ -86,6 +87,9 @@ class Sidebar extends React.Component {
                                     </Menu.Item>
                                     <Menu.Item as={Link} to='/admin/agentlogs' >
                                         Agent logs
+                                    </Menu.Item>
+                                    <Menu.Item as={Link} to={ROUTE_SERVERS_ADMIN} >
+                                        Manage Servers
                                     </Menu.Item>
                                 </Menu.Menu>
                             </Menu.Item>

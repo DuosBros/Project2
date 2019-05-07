@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Label } from 'semantic-ui-react';
 
 const AvailabilityStatus = (props) => {
@@ -11,4 +11,4 @@ const AvailabilityStatus = (props) => {
     )
 }
 
-export default AvailabilityStatus;
+export default memo(AvailabilityStatus);

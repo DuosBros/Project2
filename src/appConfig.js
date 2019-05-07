@@ -6,7 +6,7 @@ export const APP_TITLE = "LOCO V2 - "
 
 export const LOCO_API = NODE_ENV === 'development' ? 'http://loco.dev.env.works/Api/' : 'https://loco.prod.env.works/Api/';
 // export const LOCO_API = "http://localhost:24298/Api/"
-export const PM_API = NODE_ENV === 'development' ? 'http://pm.fholzer.dev.env.works/api/' : "https://pm.bwin.corp/api/"
+export const PM_API = NODE_ENV === 'development' ? 'https://pm.bwin.corp/api/' : "https://pm.bwin.corp/api/"
 
 export const DEFAULT_TIME_FRAME = 720 // in minutes
 export const DEFAULT_INTERVAL = 60 // in minutes
@@ -29,6 +29,10 @@ export const KIBANA_CONFIG = {
             "winlogbeat2": {
                 "indexId": "3d424b00-6284-11e8-b346-c9ba44719072",
                 "dashboardId": "cbfd81a0-77fd-11e8-be52-174e84611352"
+            },
+            "appAndWinlog": {
+                "indexId": "ef081300-39ad-11e9-920d-6d2e8798c8a2",
+                "dashboardId": "13e225a0-3b6e-11e9-920d-6d2e8798c8a2"
             }
         }
     }

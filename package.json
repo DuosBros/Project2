@@ -1,6 +1,6 @@
 {
   "name": "bwin.loco.client",
-  "version": "0.24.5",
+  "version": "0.27.1",
   "private": true,
   "dependencies": {
     "axios": "^0.18.0",
@@ -29,7 +29,8 @@
     "eslint": "eslint",
     "lint": "eslint src",
     "lint-fix": "eslint --fix src",
-    "version": "git add package.json"
+    "version": "git add package.json",
+    "postversion": "git push && git push --tags"
   },
   "eslintConfig": {
     "extends": "react-app"

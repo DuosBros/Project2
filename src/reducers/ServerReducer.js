@@ -1,5 +1,8 @@
-import { GET_SERVER_DETAILS, GET_VM_DETAILS, GET_SERVER_SCOM_ALERTS, GET_SERVERS, GET_SERVER_STATS,
-    GET_SERVER_DEPLOYMENTS } from '../utils/constants';
+import {
+    GET_SERVER_DETAILS, GET_VM_DETAILS, GET_SERVER_SCOM_ALERTS, GET_SERVERS, GET_SERVER_STATS,
+    GET_SERVER_DEPLOYMENTS,
+    DELETE_SERVER
+} from '../utils/constants';
 import { getServerState, getDismeState } from '../utils/HelperFunction';
 import { errorColor } from '../appConfig';
 
@@ -12,9 +15,18 @@ const serverInitialState = {
 
 const ServerReducer = (state = serverInitialState, action) => {
     switch (action.type) {
+        case DELETE_SERVER:
+            let servers = state.servers.data.slice()
+            let index = servers.findIndex(x => x.Id === action.payload)
+
+            if (index >= 0) {
+                servers.splice(index, 1)
+            }
+
+            return Object.assign({}, state, { servers: { success: state.servers.success, data: servers } })
         case GET_SERVER_DETAILS:
             if (action.payload.data) {
-                if(action.payload.data.OperatingSystem) {
+                if (action.payload.data.OperatingSystem) {
                     if (action.payload.data.OperatingSystem.search(new RegExp("linux", "i")) >= 0) {
                         if (action.payload.data.VM) {
                             if (action.payload.data.VM.Status === "Running") {
@@ -23,7 +35,7 @@ const ServerReducer = (state = serverInitialState, action) => {
                         }
                     }
                 }
-                
+
                 action.payload.data.ServerState = getServerState(action.payload.data.ServerStateID)
                 action.payload.data.Disme = getDismeState(action.payload.data.Disme)
 
@@ -44,6 +56,13 @@ const ServerReducer = (state = serverInitialState, action) => {
         case GET_SERVER_SCOM_ALERTS:
             return Object.assign({}, state, { scomAlerts: action.payload })
         case GET_SERVERS:
+            if (action.payload.success && action.payload.data) {
+                action.payload.data = action.payload.data.map(server => {
+                    server.ServerState = getServerState(server.ServerStateID)
+                    server.Disme = getDismeState(server.Disme)
+                    return server
+                })
+            }
             return Object.assign({}, state, { servers: action.payload })
         case GET_SERVER_STATS:
             var temp = Object.assign({}, state.serverDetails)

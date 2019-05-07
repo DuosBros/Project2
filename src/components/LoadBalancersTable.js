@@ -33,11 +33,6 @@ export default class LoadBalancersTable extends React.PureComponent {
             width: 2
         },
         {
-            name: "LB Token",
-            prop: "token",
-            width: 2
-        },
-        {
             name: "Expiration",
             prop: "expiration",
             width: 2
@@ -54,7 +49,7 @@ export default class LoadBalancersTable extends React.PureComponent {
 
     transformDataRow(data) {
         data.expiration = data.expiration ? moment(data.expiration).local().format("HH:mm:ss DD.MM.YYYY") : null
-        if(data.token) {
+        if(data.expiration) {
             data.action = (
                 <Popup trigger={
                     <Button

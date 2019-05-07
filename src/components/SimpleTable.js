@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Table } from 'semantic-ui-react';
 
 const SimpleTable = (props) => (
-    
+
     <Table selectable compact={props.compact} basic='very' size='small'>
         <Table.Header>
             <Table.Row>
@@ -22,4 +22,4 @@ const SimpleTable = (props) => (
 
 )
 
-export default SimpleTable;
+export default memo(SimpleTable);

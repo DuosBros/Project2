@@ -1,12 +1,7 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { Grid, Header, Segment, Message, Icon, Popup, Dropdown, Form } from 'semantic-ui-react';
 import _ from 'lodash';
 
-import { getServers } from '../requests/ServerAxios';
-import { getVirtualMachines } from '../requests/VirtualMachineAxios';
-import { getVirtualMachinesAction, getServersAction } from '../utils/actions';
 import ErrorMessage from '../components/ErrorMessage';
 import { mapDataForGenericChart, getUniqueValuesOfKey } from '../utils/HelperFunction';
 import BarChartWithRawData from '../charts/BarChartWithRawData';
@@ -44,34 +39,7 @@ class ServersStatistics extends React.Component {
         inputs: []
     }
     componentDidMount() {
-        this.fetchServersAndHandleResult()
-        this.fetchVirtualMachinesAndHandleResult()
-
         document.title = APP_TITLE + "Servers Statistics"
-    }
-
-    fetchServersAndHandleResult = () => {
-        getServers()
-            .then(res => {
-                this.props.getServersAction(
-                    {
-                        success: true,
-                        data: res.data
-                    })
-            })
-            .catch(err => {
-                this.props.getServersAction({ success: false, error: err })
-            })
-    }
-
-    fetchVirtualMachinesAndHandleResult = () => {
-        getVirtualMachines()
-            .then(res => {
-                this.props.getVirtualMachinesAction({ success: true, data: res.data })
-            })
-            .catch(err => {
-                this.props.getVirtualMachinesAction({ success: false, error: err })
-            })
     }
 
     handlePropertyDropdownOnChange = (e, { value }, i) => {
@@ -94,7 +62,7 @@ class ServersStatistics extends React.Component {
                             value={input}
                             selection
                             onChange={(e, m) => this.handlePropertyDropdownOnChange(e, m, i)}
-                            options={Object.keys(this.props.serverStore.servers.data[0]).map(x =>
+                            options={Object.keys(this.props.servers.data[0]).map(x =>
                                 ({
                                     value: x,
                                     text: x
@@ -125,7 +93,7 @@ class ServersStatistics extends React.Component {
                         className='leftMargin bottomMargin'
                         selection
                         onChange={(e, m) => this.handlePropertyDropdownOnChange(e, m, i)}
-                        options={Object.keys(this.props.serverStore.servers.data[0]).map(x =>
+                        options={Object.keys(this.props.servers.data[0]).map(x =>
                             ({
                                 value: x,
                                 text: x
@@ -146,7 +114,7 @@ class ServersStatistics extends React.Component {
 
     render() {
         // in case of error
-        if (!this.props.serverStore.servers.success) {
+        if (!this.props.servers.success) {
             return (
                 <Grid stackable>
                     <Grid.Row>
@@ -155,7 +123,7 @@ class ServersStatistics extends React.Component {
                                 Servers
                             </Header>
                             <Segment attached='bottom' >
-                                <ErrorMessage handleRefresh={this.fetchServersAndHandleResult} error={this.props.serverStore.servers.error} />
+                                <ErrorMessage handleRefresh={this.props.fetchServersAndHandleResult} error={this.props.servers.error} />
                             </Segment>
                         </Grid.Column>
                     </Grid.Row>
@@ -164,7 +132,7 @@ class ServersStatistics extends React.Component {
         }
 
         // in case it's still loading data
-        if (_.isEmpty(this.props.serverStore.servers.data)) {
+        if (_.isEmpty(this.props.servers.data)) {
             return (
                 <div className="messageBox">
                     <Message info icon>
@@ -178,7 +146,7 @@ class ServersStatistics extends React.Component {
         }
 
         // in case it's still loading data
-        if (!this.props.virtualMachineStore.virtualMachines.data && this.props.virtualMachineStore.virtualMachines.success) {
+        if (!this.props.virtualMachines.data && this.props.virtualMachines.success) {
             return (
                 <div className="messageBox">
                     <Message info icon>
@@ -191,17 +159,17 @@ class ServersStatistics extends React.Component {
             )
         }
 
-        var mappedDataOwner = mapDataForGenericChart(this.props.serverStore.servers.data, 'ServerOwner');
+        var mappedDataOwner = mapDataForGenericChart(this.props.servers.data, 'ServerOwner');
 
-        var mappedDataOperatingSystem = mapDataForGenericChart(this.props.serverStore.servers.data, 'OperatingSystem');
+        var mappedDataOperatingSystem = mapDataForGenericChart(this.props.servers.data, 'OperatingSystem');
 
-        var mappedDataEnvironment = mapDataForGenericChart(this.props.serverStore.servers.data, 'Environment');
+        var mappedDataEnvironment = mapDataForGenericChart(this.props.servers.data, 'Environment');
 
-        var mappedDataDataCenter = mapDataForGenericChart(this.props.serverStore.servers.data, 'DataCenter');
+        var mappedDataDataCenter = mapDataForGenericChart(this.props.servers.data, 'DataCenter');
 
         var mappedDataVirtualCloud;
-        if (this.props.virtualMachineStore.virtualMachines.success) {
-            mappedDataVirtualCloud = mapDataForGenericChart(this.props.virtualMachineStore.virtualMachines.data, 'Cloud', { Cloud: /^LO_/i });
+        if (this.props.virtualMachines.success) {
+            mappedDataVirtualCloud = mapDataForGenericChart(this.props.virtualMachines.data, 'Cloud', { Cloud: /^LO_/i });
         }
 
         var counter = 0;
@@ -209,7 +177,7 @@ class ServersStatistics extends React.Component {
         var pieChart = null;
         this.state.inputs.forEach(() => counter++)
         if (counter === 3) {
-            var data = this.props.serverStore.servers.data.filter(x => x[this.state.inputs[0]] === this.state.inputs[2])
+            var data = this.props.servers.data.filter(x => x[this.state.inputs[0]] === this.state.inputs[2])
             mappedCombinedData = mapDataForGenericChart(data, this.state.inputs[1]);
 
             pieChart = (
@@ -220,7 +188,7 @@ class ServersStatistics extends React.Component {
             )
         }
 
-        var options = Object.keys(this.props.serverStore.servers.data[0]).map(x =>
+        var options = Object.keys(this.props.servers.data[0]).map(x =>
             ({
                 value: x,
                 text: x
@@ -319,7 +287,7 @@ class ServersStatistics extends React.Component {
                                 label="Property Name" />
                             <DropDownForCombinedPieChart
                                 handlePropertyDropdownOnChange={this.handlePropertyDropdownOnChange}
-                                options={getUniqueValuesOfKey(this.props.serverStore.servers.data, this.state.inputs[0]).slice(0, 15).map(x =>
+                                options={getUniqueValuesOfKey(this.props.servers.data, this.state.inputs[0]).slice(0, 15).map(x =>
                                     ({
                                         value: x,
                                         text: x
@@ -342,18 +310,4 @@ class ServersStatistics extends React.Component {
     }
 }
 
-function mapStateToProps(state) {
-    return {
-        serverStore: state.ServerReducer,
-        virtualMachineStore: state.VirtualMachineReducer
-    };
-}
-
-function mapDispatchToProps(dispatch) {
-    return bindActionCreators({
-        getServersAction,
-        getVirtualMachinesAction
-    }, dispatch);
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(ServersStatistics);
+export default ServersStatistics;

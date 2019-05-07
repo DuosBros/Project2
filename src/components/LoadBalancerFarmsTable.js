@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -27,7 +27,7 @@ const ExpandedRowLBPoolMembersContent = (props) => {
     )
 }
 
-class LoadBalancerFarmsTable extends Component {
+class LoadBalancerFarmsTable extends React.PureComponent {
     static defaultProps = {
         defaultShowBETAPools: false
     }
@@ -227,15 +227,15 @@ class LoadBalancerFarmsTable extends Component {
     }
 
     getDataKey(data) {
-        return data.IpAddress + "-" + data.Name + "-" + data.VsStatusLastUpdate;
+        return data.Id + "-" + data.IpAddress + "-" + data.Name + "-" + data.VsStatusLastUpdate + "-" + data.Pool + "-" + data.Label;
     }
 
 
     render() {
 
         let distinctValuesObject = {
-            LBName: this.props.loadBalancerStore.loadBalancers.data ? this.props.loadBalancerStore.loadBalancers.data.map(x => x.Name) : [],
-            Environments: this.props.miscStore.environments.data ? this.props.miscStore.environments.data.map(x => x.Name) : []
+            LbName: this.props.loadBalancerStore.loadBalancers.data ? this.props.loadBalancerStore.loadBalancers.data.map(x => x.Name) : [],
+            Environment: this.props.miscStore.environments.data ? this.props.miscStore.environments.data.map(x => x.Name) : []
         }
 
         return (

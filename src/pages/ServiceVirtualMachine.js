@@ -1,32 +1,19 @@
 import React from 'react';
 import { Grid, Header, Segment, Message, Icon } from 'semantic-ui-react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 import ServiceVirtualMachinesTable from '../components/ServiceVirtualMachinesTable'
-import { getServiceVirtualMachinesAction } from '../utils/actions';
-import { getServiceVirtualMachines } from '../requests/MiscAxios';
 import ErrorMessage from '../components/ErrorMessage';
+import { APP_TITLE } from '../appConfig';
 
 class ServiceVirtualMachine extends React.Component {
 
     componentDidMount() {
-        this.fetchData()
-    }
-
-    fetchData = () => {
-        getServiceVirtualMachines()
-            .then(res => {
-                this.props.getServiceVirtualMachinesAction({ success: true, data: res.data })
-            })
-            .catch(err => {
-                this.props.getServiceVirtualMachinesAction({ success: false, error: err })
-            })
+        document.title = APP_TITLE + "Service Virtual Machines"
     }
 
     render() {
         // in case of error
-        if (!this.props.miscStore.serviceVirtualMachines.success) {
+        if (!this.props.serviceVirtualMachines.success) {
             return (
                 <Grid stackable>
                     <Grid.Row>
@@ -35,7 +22,7 @@ class ServiceVirtualMachine extends React.Component {
                                 Service Virtual Machines
                             </Header>
                             <Segment attached='bottom' >
-                                <ErrorMessage handleRefresh={this.fetchData} error={this.props.miscStore.serviceVirtualMachines.error} />
+                                <ErrorMessage handleRefresh={this.fetchServicesAndHighAvailabilitiesAndHandleResult} error={this.props.serviceVirtualMachines.error} />
                             </Segment>
                         </Grid.Column>
                     </Grid.Row>
@@ -44,7 +31,7 @@ class ServiceVirtualMachine extends React.Component {
         }
 
         // in case it's still loading data
-        if (_.isEmpty(this.props.miscStore.serviceVirtualMachines.data)) {
+        if (_.isEmpty(this.props.serviceVirtualMachines.data)) {
             return (
                 <div className="messageBox">
                     <Message info icon>
@@ -66,7 +53,7 @@ class ServiceVirtualMachine extends React.Component {
                             Service Virtual Machines
                             </Header>
                         <Segment attached='bottom' >
-                            <ServiceVirtualMachinesTable compact="very" rowsPerPage={45} data={this.props.miscStore.serviceVirtualMachines.data} />
+                            <ServiceVirtualMachinesTable compact="very" rowsPerPage={45} data={this.props.serviceVirtualMachines.data} />
                         </Segment>
                     </Grid.Column>
                 </Grid.Row>
@@ -75,16 +62,4 @@ class ServiceVirtualMachine extends React.Component {
     }
 }
 
-function mapStateToProps(state) {
-    return {
-        miscStore: state.MiscReducer
-    };
-}
-
-function mapDispatchToProps(dispatch) {
-    return bindActionCreators({
-        getServiceVirtualMachinesAction
-    }, dispatch);
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(ServiceVirtualMachine);
+export default ServiceVirtualMachine;

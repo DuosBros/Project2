@@ -1,25 +1,18 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 import { Grid, Header, Segment, Icon, List, Button, Message, Image, Popup } from 'semantic-ui-react';
 import moment from 'moment';
 
-import {
-    getServiceDetailsAction, toggleLoadBalancerFarmsTasksModalAction, removeAllServiceDetailsAction,
-    getServiceDeploymentStatsAction
-} from '../utils/actions';
-import { getServiceDetails, getServiceDeploymentStats } from '../requests/ServiceAxios';
 import ServersTable from '../components/ServersTable';
 import WebsitesTable from '../components/WebsitesTable';
 import { isUser, groupBy } from '../utils/HelperFunction';
 import LoadBalancerFarmsTable from '../components/LoadBalancerFarmsTable';
 import DismeStatus from '../components/DismeStatus';
-import { DISME_SERVICE_URL, DISME_SERVICE_PLACEHOLDER, APP_TITLE, DEFAULT_SERVICE_DEPLOYMENT_COUNT, DEFAULT_SERVICE_DEPLOYMENT_TO_RENDER } from '../appConfig';
+import { DISME_SERVICE_URL, DISME_SERVICE_PLACEHOLDER, APP_TITLE, DEFAULT_SERVICE_DEPLOYMENT_TO_RENDER } from '../appConfig';
 import Kibana from '../utils/Kibana';
 import ErrorMessage from '../components/ErrorMessage';
 
-class ServiceDetails extends React.Component {
+class ServiceDetails extends React.PureComponent {
     constructor(props) {
         super(props);
 
@@ -31,46 +24,13 @@ class ServiceDetails extends React.Component {
         }
     }
 
-    componentDidMount() {
-        this.updateService();
-    }
-
-    updateService = async () => {
-        let res;
-        try {
-            res = await getServiceDetails(this.props.match.params.id)
-            this.props.getServiceDetailsAction({ success: true, data: res.data })
-            if (res.data.Service[0]) {
-                document.title = APP_TITLE + res.data.Service[0].Name;
+    componentDidUpdate(prevProps) {
+        if(prevProps !== this.props) {
+            if (this.props.serviceDetails.data) {
+                document.title = APP_TITLE + this.props.serviceDetails.data.Service[0].Name;
             }
             else {
                 document.title = APP_TITLE + "Service Details"
-            }
-        }
-        catch (err) {
-            this.props.getServiceDetailsAction({ success: false, error: err })
-        }
-
-        if (res.data.Service[0]) {
-            this.fetchServiceDeploymentAndHandleData(res.data.Service[0].Shortcut)
-        }
-    }
-
-    fetchServiceDeploymentAndHandleData = (serviceShortcut) => {
-        getServiceDeploymentStats(serviceShortcut, DEFAULT_SERVICE_DEPLOYMENT_COUNT)
-            .then(res => {
-                this.props.getServiceDeploymentStatsAction({ success: true, data: res.data.deployments })
-            })
-            .catch(err => {
-                this.props.getServiceDeploymentStatsAction({ success: false, error: err })
-            })
-    }
-
-    componentDidUpdate(prevProps) {
-        if (this.props.match && this.props.match.params) {
-            const params = this.props.match.params;
-            if (params.id && params.id !== prevProps.match.params.id) {
-                this.updateService();
             }
         }
     }
@@ -91,14 +51,14 @@ class ServiceDetails extends React.Component {
     }
 
     render() {
-        const serviceDetailsSuccess = this.props.serviceStore.serviceDetails.success;
-        const serviceDetailsData = Array.isArray(this.props.serviceStore.serviceDetails.data) ? null : this.props.serviceStore.serviceDetails.data
+        const serviceDetailsSuccess = this.props.serviceDetails.success;
+        const serviceDetailsData = Array.isArray(this.props.serviceDetails.data) ? null : this.props.serviceDetails.data
         const { assignedLoadBalancerFarms, servers, websites } = this.state;
 
         // in case of error
         if (!serviceDetailsSuccess) {
             return (
-                <ErrorMessage handleRefresh={this.updateService} error={this.props.serviceStore.serviceDetails.error} />
+                <ErrorMessage handleRefresh={this.props.fetchServiceDetails} error={this.props.serviceDetails.error} />
             );
         }
 
@@ -160,7 +120,7 @@ class ServiceDetails extends React.Component {
                                     {keys.map((y, j) => {
                                         return (
                                             <div key={j}>
-                                                {grouped[y][0].version} | {grouped[y][0].userName} {grouped[y][0].changeNumber && (" | " + grouped[y][0].changeNumber)}
+                                                {grouped[y][0].version} | {grouped[y][0].userName} {grouped[y][0].changeNumber && (" | " + grouped[y][0].changeNumber)} | {moment(grouped[y][0].deployDateTime).local().fromNow()}
                                                 <Popup closeOnPortalMouseLeave={true} trigger={<Icon size='small' name='question' />}><Popup.Content><pre>{JSON.stringify(grouped[y][0], null, 2)}</pre></Popup.Content></Popup>
                                             </div>
                                         )
@@ -244,6 +204,7 @@ class ServiceDetails extends React.Component {
                                             </dt>
                                             <dd>
                                                 <a target="_blank" rel="noopener noreferrer" href={Kibana.dashboardLinkBuilder("prod", "winlogbeat2").addFilter("env", "PROD").addFilter("app", serviceDetailsData.Service[0].Shortcut).build()}>Eventlog</a><br />
+                                                <a target="_blank" rel="noopener noreferrer" href={Kibana.dashboardLinkBuilder("prod", "appAndWinlog").addFilter("env", "PROD").addFilter("app", serviceDetailsData.Service[0].Shortcut).build()}>Applog</a><br />
                                                 <a target="_blank" rel="noopener noreferrer" href={Kibana.dashboardLinkBuilder("prod", "cpuAndRam").addFilter("app", serviceDetailsData.Service[0].Shortcut).setQuery("NOT beat.hostname:*PRE*").build()}>PerfCounter</a>
                                             </dd>
                                             <dt>
@@ -291,7 +252,7 @@ class ServiceDetails extends React.Component {
                                 icon='content' />
                             <Button
                                 id="primaryButton"
-                                disabled={!isUser(this.props.baseStore.currentUser)}
+                                disabled={!isUser(this.props.currentUser)}
                                 onClick={() => this.props.toggleLoadBalancerFarmsTasksModalAction()}
                                 style={{ padding: '0.3em', bottom: '0.1em' }}
                                 size="small"
@@ -349,20 +310,4 @@ class ServiceDetails extends React.Component {
     }
 }
 
-function mapStateToProps(state) {
-    return {
-        serviceStore: state.ServiceReducer,
-        baseStore: state.BaseReducer
-    };
-}
-
-function mapDispatchToProps(dispatch) {
-    return bindActionCreators({
-        getServiceDetailsAction,
-        toggleLoadBalancerFarmsTasksModalAction,
-        removeAllServiceDetailsAction,
-        getServiceDeploymentStatsAction
-    }, dispatch);
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(ServiceDetails);
+export default ServiceDetails;

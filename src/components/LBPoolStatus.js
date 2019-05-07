@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Label } from 'semantic-ui-react';
 import { getAvailabiltyAndEnabledState } from '../utils/HelperFunction';
 
@@ -23,4 +23,4 @@ const LBPoolStatus = (props) => {
     )
 }
 
-export default LBPoolStatus;
+export default memo(LBPoolStatus);

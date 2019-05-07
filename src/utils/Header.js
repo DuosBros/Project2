@@ -5,9 +5,9 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { searchServersAction, searchServiceShortcutAction, toggleVerticalMenuAction, toggleUserDetailsAction } from '../utils/actions';
-import { searchServers, searchServiceShortcut } from '../requests/HeaderAxios';
+import { searchServers, searchServiceShortcut, searchServerByIp } from '../requests/HeaderAxios';
 
-import { isNum, debounce } from '../utils/HelperFunction';
+import { isNum, debounce, isValidIPv4 } from '../utils/HelperFunction';
 import ShortcutFocus from '../components/ShortcutFocus';
 import SearchBox from '../components/SearchBox';
 import { SN_INC_SEARCH_URL, INCIDENT_PLACEHOLDER, VERSION1_PLACEHOLDER, VERSION1_SEARCH_URL } from '../appConfig';
@@ -28,10 +28,26 @@ class Header extends React.Component {
     }
 
     handleSearchServers(value) {
-        searchServers(value.trim())
-            .then(res => {
-                this.props.searchServersAction(res.data.map(e => ({ text: e.Name, value: e.Id })))
-            })
+        let trimed = value.trim();
+
+        if (isValidIPv4(trimed)) {
+            searchServerByIp(trimed)
+                .then(res => {
+                    let payload = [{
+                        text: `${res.data.ServerName} (${res.data.IpAddress})`,
+                        value: res.data.ServerId
+                    }]
+
+                    this.props.searchServersAction(payload)
+                })
+        }
+        else {
+            searchServers(trimed)
+                .then(res => {
+                    this.props.searchServersAction(res.data.map(e => ({ text: e.Name, value: e.Id })))
+                })
+        }
+
     }
 
     handleServerSearchChange = (e) => {
@@ -55,7 +71,7 @@ class Header extends React.Component {
     }
 
     handleSearchServiceShortcut(value) {
-        searchServiceShortcut(value)
+        searchServiceShortcut(value.trim())
             .then(res => {
                 this.props.searchServiceShortcutAction(res.data.map(e => ({ text: e.Name, value: e.Id })))
             })
@@ -71,6 +87,10 @@ class Header extends React.Component {
         this.setState({
             showMobileMenu: !this.state.showMobileMenu
         })
+    }
+
+    trimmedSearch(heystack, needle) {
+        return heystack.filter(e => e.text.toLowerCase().indexOf(needle.toLowerCase().trim()) > -1);
     }
 
     render() {
@@ -116,7 +136,7 @@ class Header extends React.Component {
                                 placeholder='Press &apos;q&apos; to search a server'
                                 value=""
                                 onSearchChange={this.handleServerSearchChange}
-                                search
+                                search={this.trimmedSearch}
                             />
                         </ShortcutFocus>
                     </Menu.Item>
@@ -133,7 +153,7 @@ class Header extends React.Component {
                                 placeholder='Press &apos;w&apos; to search a service'
                                 value=""
                                 onSearchChange={this.handleServiceShortcutSearchChange}
-                                search
+                                search={this.trimmedSearch}
                             />
                         </ShortcutFocus>
                     </Menu.Item>

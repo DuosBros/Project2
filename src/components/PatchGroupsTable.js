@@ -5,17 +5,20 @@ import { Link } from 'react-router-dom';
 export default class PatchGroupsTable extends React.PureComponent {
     columns = [
         {
+            name: "Id",
+            prop: "Id",
+            width: 1,
+        },
+        {
             name: "Name",
             prop: "Name",
             display: "NameLink",
             width: 4,
-            collapsing: true
         },
         {
             name: "AD Path",
             prop: "ADPATH",
             width: 4,
-            collapsing: true
         },
         {
             name: "Country",
@@ -36,7 +39,6 @@ export default class PatchGroupsTable extends React.PureComponent {
             name: "# Servers",
             prop: "ServerCount",
             width: 1,
-            collapsing: true
         }
     ]
 
