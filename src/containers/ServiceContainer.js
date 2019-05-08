@@ -87,7 +87,7 @@ class ServiceContainer extends React.PureComponent {
             this.props.getServiceDetailsAction({ success: false, error: err })
         }
 
-        if (res.data.Service[0]) {
+        if (res.data && res.data.Service[0]) {
             this.fetchServiceDeploymentAndHandleData(res.data.Service[0].Shortcut)
         }
     }
