@@ -15,12 +15,12 @@ import PatchGroupDetails from '../pages/PatchGroupDetails';
 class PatchgroupContainer extends React.PureComponent {
 
     componentDidMount() {
-        let pathname = this.props.location.pathname;
-        if (pathname === ROUTE_PATCHGROUPS) {
-            this.fetchPatchGroupsAndHandleResult();
-        }
-        else if (this.isCurrentlyOnPatchGroupDetails()) {
-            this.updatePatchGroupDetails();
+        this.fetchAllData();
+    }
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.location.key !== this.props.location.key) {
+            this.fetchAllData()
         }
     }
 
@@ -72,6 +72,16 @@ class PatchgroupContainer extends React.PureComponent {
             })
     }
 
+
+    fetchAllData() {
+        let pathname = this.props.location.pathname;
+        if (pathname === ROUTE_PATCHGROUPS) {
+            this.fetchPatchGroupsAndHandleResult();
+        }
+        else if (this.isCurrentlyOnPatchGroupDetails()) {
+            this.updatePatchGroupDetails();
+        }
+    }
 
     render() {
         let pathname = this.props.location.pathname;

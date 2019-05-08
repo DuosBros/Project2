@@ -20,6 +20,10 @@ import { getServiceVirtualMachines } from '../requests/MiscAxios';
 class ServiceContainer extends React.PureComponent {
 
     async componentDidMount() {
+        this.fetchAllData()
+    }
+
+    fetchAllData = async () => {
         let pathname = this.props.location.pathname;
         if (pathname === ROUTE_SERVICES) {
             await this.fetchServicesAndHighAvailabilitiesAndHandleResult();
@@ -53,6 +57,10 @@ class ServiceContainer extends React.PureComponent {
     }
 
     componentDidUpdate(prevProps) {
+        if (prevProps.location.key !== this.props.location.key) {
+            this.fetchAllData()
+        }
+
         if (this.isCurrentlyOnServiceDetails()) {
             if (this.props.match && this.props.match.params) {
                 const params = this.props.match.params;
