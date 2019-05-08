@@ -19,20 +19,28 @@ import ServersStatistics from '../pages/ServersStatistics';
 class ServersContainer extends React.PureComponent {
 
     componentDidMount() {
+        this.fetchAllData();
+    }
+
+    fetchAllData = async () => {
         let pathname = this.props.location.pathname;
         if (pathname === ROUTE_SERVERS || pathname === ROUTE_SERVERS_ADMIN) {
-            this.fetchServersAndHandleResult()
+            this.fetchServersAndHandleResult();
         }
         else if (this.isCurrentlyOnServerDetails()) {
-            this.fetchServerDetails()
+            this.fetchServerDetails();
         }
         else if (pathname === ROUTE_SERVER_STATISTICS) {
-            this.fetchServersAndHandleResult()
-            this.fetchVirtualMachinesAndHandleResult()
+            this.fetchServersAndHandleResult();
+            this.fetchVirtualMachinesAndHandleResult();
         }
     }
 
     componentDidUpdate(prevProps) {
+        if (prevProps.location.key !== this.props.location.key) {
+            this.fetchAllData()
+        }
+        
         if (this.isCurrentlyOnServerDetails()) {
             if (this.props.match && this.props.match.params) {
                 const params = this.props.match.params;

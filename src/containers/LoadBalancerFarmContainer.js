@@ -12,9 +12,12 @@ import LoadBalancerFarmsStatistics from '../pages/LoadBalancerFarmsStatistics';
 class LoadBalancerFarmContainer extends React.PureComponent {
 
     componentDidMount() {
-        let pathname = this.props.location.pathname;
-        if (pathname === ROUTE_LBFARMS_STATISTICS || pathname === ROUTE_LBFARMS) {
-            this.fetchLoadBalancerFarmsAndHandleResult();
+        this.fetchAllData();
+    }
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.location.key !== this.props.location.key) {
+            this.fetchAllData()
         }
     }
 
@@ -26,6 +29,13 @@ class LoadBalancerFarmContainer extends React.PureComponent {
             .catch(err => {
                 this.props.getAllLoadBalancerFarmsAction({ success: false, error: err })
             })
+    }
+
+    fetchAllData = () => {
+        let pathname = this.props.location.pathname;
+        if (pathname === ROUTE_LBFARMS_STATISTICS || pathname === ROUTE_LBFARMS) {
+            this.fetchLoadBalancerFarmsAndHandleResult();
+        }
     }
 
     render() {
