@@ -59,5 +59,14 @@ export const LBNAME_SUFFIX = ".icepor.com"
 export const NWTOOLS_URL = 'https://nw-api.is.icepor.com/'
 
 export const CHART_COLORS = ['#8884d8', '#82ca9d', '#ffc658'];
-// TODO:
-// proper error handling
+
+export const DEFAULT_TEAMS = [
+    { key: 0, text: "B2C", value: "B2C" },
+    // { key: 1, text: "B2B", value: "B2B" },
+    // { key: 2, text: "Linux", value: "Linux" }
+]
+
+export const LTMB2CTYPES = [
+    { key: 0, text: "Frontend", value: "Frontend" },
+    { key: 1, text: "Backend", value: "Backend" },
+]

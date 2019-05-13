@@ -16,11 +16,13 @@ import LoadBalancerReducer from '../reducers/LoadBalancerReducer';
 import ActiveDirectoryReducer from '../reducers/ActiveDirectoryReducer';
 import AgentLogReducer from '../reducers/AgentLogReducer';
 import MiscReducer from '../reducers/MiscReducer';
+import LTMReducer from '../reducers/LTMReducer';
 
 const CommonReducer = combineReducers({
     HeaderReducer, BaseReducer, ServerReducer, ServiceReducer, LoginReducer, LoadBalancerFarmsReducer,
     PatchGroupReducer, RolloutStatusReducer, VirtualMachineReducer, IPAddressReducer, VersionStatusReducer,
-    HealthCheckReducer, LoadBalancerReducer, ActiveDirectoryReducer, AgentLogReducer, MiscReducer
+    HealthCheckReducer, LoadBalancerReducer, ActiveDirectoryReducer, AgentLogReducer, MiscReducer,
+    LTMReducer
 });
 
 export default CommonReducer;

@@ -91,6 +91,9 @@ class Sidebar extends React.Component {
                                     <Menu.Item as={Link} to={ROUTE_SERVERS_ADMIN} >
                                         Manage Servers
                                     </Menu.Item>
+                                    <Menu.Item as={Link} to='/admin/ltm' >
+                                        LTM
+                                    </Menu.Item>
                                 </Menu.Menu>
                             </Menu.Item>
                         ) : null
