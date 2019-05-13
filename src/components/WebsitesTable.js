@@ -29,7 +29,7 @@ export default class WebsitesTable extends React.PureComponent {
             collapsing: true
         },
         {
-            name: "AppPool Name",
+            name: "Site Name",
             prop: "SiteName",
             width: 3,
             collapsing: true
