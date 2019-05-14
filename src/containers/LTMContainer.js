@@ -71,6 +71,7 @@ class LTMContainer extends React.PureComponent {
     }
 
     fetchLTM = (data) => {
+        this.props.fetchLTMJsonAction({ success: true })
         let payload = {};
         payload.Type = data.Type
         payload.Service = data.Service

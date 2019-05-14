@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Header, Segment, Dropdown, TextArea, Message, Icon, Form, Button } from 'semantic-ui-react';
+import { Grid, Header, Segment, Dropdown, Message, Icon, Button } from 'semantic-ui-react';
 import { DEFAULT_TEAMS, APP_TITLE } from '../appConfig';
 import LTMForm from '../components/LTMForm';
 import ErrorMessage from '../components/ErrorMessage';
@@ -86,7 +86,7 @@ class LTM extends React.PureComponent {
                 <Grid.Row>
                     <Grid.Column>
                         <Header block attached='top' as='h4'>
-                            LTM Setup
+                            [Beta] LTM Setup - check the output of json
                         </Header>
                         <Segment attached='bottom' >
                             <Grid>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Grid, Dropdown, Button, Checkbox, Segment } from 'semantic-ui-react';
+import { Form, Grid, Dropdown, Button, Segment } from 'semantic-ui-react';
 import { DEFAULT_TEAMS, LTMB2CTYPES } from '../appConfig';
 import ServiceSearchDropdown from './ServiceSearchDropdown';
 import { mapArrayForDropdown } from '../utils/HelperFunction';
@@ -87,7 +87,7 @@ class LTMForm extends React.PureComponent {
                 <Grid.Row>
                     <Grid.Column>
                         <Form>
-                            <Segment.Group stacked>
+                            <Segment.Group piled>
                                 <Segment>
                                     <Form.Group widths="equal">
                                         <Form.Input placeholder="Without http:// or https://" label="Url:" fluid name="url" onChange={this.handleOnchange} />
@@ -108,30 +108,44 @@ class LTMForm extends React.PureComponent {
                                     </Form.Group>
                                 </Segment>
                                 <Segment>
-                                    <Form.Group>
-                                        <Dropdown
-                                            name="loadbalancers"
-                                            onChange={this.handleOnchange}
-                                            placeholder='Loadbalancers'
-                                            multiple
-                                            search
-                                            selection
-                                            options={mapArrayForDropdown(this.props.defaults.data.Lbs)}
-                                        />
-                                        <Dropdown
-                                            name="persistence"
-                                            onChange={this.handleOnchange}
-                                            placeholder='Persistences'
-                                            search
-                                            selection
-                                            value={this.state.persistence}
-                                            options={mapArrayForDropdown(this.props.defaults.data.DefaultPersistences)}
-                                        />
-                                    </Form.Group>
-                                    <Form.Checkbox name="ext" label='Externally available' onChange={this.toggleCheckbox} checked={this.state.ext} />
-                                    <Form.Checkbox disabled={this.state.ext} name="redirect" label='Redirect' onChange={this.toggleCheckbox} checked={this.state.ext || this.state.redirect} />
-                                    <Form.Checkbox disabled={this.state.ext} name="https" label='HTTPS' onChange={this.toggleCheckbox} checked={this.state.ext || this.state.https} />
-                                    <Form.Checkbox name="oneconnect" label='Oneconnect' onChange={this.toggleCheckbox} checked={this.state.oneconnect} />
+                                    <Grid stackable>
+                                        <Grid.Row>
+                                            <Grid.Column width={6}>
+                                                <strong>Load balancers</strong><br />
+                                                <Dropdown
+                                                    fluid
+                                                    name="loadbalancers"
+                                                    onChange={this.handleOnchange}
+                                                    placeholder='Loadbalancers'
+                                                    multiple
+                                                    search
+                                                    selection
+                                                    options={mapArrayForDropdown(this.props.defaults.data.Lbs)}
+                                                />
+                                            </Grid.Column>
+                                            <Grid.Column width={4}>
+                                                <strong>Persistence</strong><br />
+                                                <Dropdown
+                                                    fluid
+                                                    name="persistence"
+                                                    onChange={this.handleOnchange}
+                                                    placeholder='Persistences'
+                                                    search
+                                                    selection
+                                                    value={this.state.persistence}
+                                                    options={mapArrayForDropdown(this.props.defaults.data.DefaultPersistences)}
+                                                />
+                                            </Grid.Column>
+                                            <Grid.Column width={6}>
+                                                <Form.Checkbox name="ext" label='Externally available' onChange={this.toggleCheckbox} checked={this.state.ext} />
+                                                <Form.Checkbox disabled={this.state.ext} name="redirect" label='Redirect' onChange={this.toggleCheckbox} checked={this.state.ext || this.state.redirect} />
+                                                <Form.Checkbox disabled={this.state.ext} name="https" label='HTTPS' onChange={this.toggleCheckbox} checked={this.state.ext || this.state.https} />
+                                                <Form.Checkbox name="oneconnect" label='Oneconnect' onChange={this.toggleCheckbox} checked={this.state.oneconnect} />
+                                            </Grid.Column>
+                                        </Grid.Row>
+                                    </Grid>
+
+
                                 </Segment>
                             </Segment.Group>
                         </Form>
