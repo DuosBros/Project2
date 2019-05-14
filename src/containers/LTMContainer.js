@@ -12,6 +12,7 @@ import LTM from '../pages/LTM';
 import { getDefaultLTMConfig, fetchLTMJson } from '../requests/LTMAxios';
 import { getServiceDetailsByShortcutHandler, getServicesHandler } from '../handlers/ServiceHandler';
 import { searchServiceShortcut } from '../requests/HeaderAxios';
+import { LTMB2CTYPES } from '../appConfig';
 
 class LTMContainer extends React.PureComponent {
 
@@ -69,7 +70,32 @@ class LTMContainer extends React.PureComponent {
             })
     }
 
-    fetchLTM = (payload) => {
+    fetchLTM = (data) => {
+        let payload = {};
+        payload.Type = data.Type
+        payload.Service = data.Service
+
+        if (data.Type === LTMB2CTYPES[1].value) {
+            payload.Url = data.state.url
+            payload.Https = data.state.https
+            payload.Oneconnect = data.state.oneconnect
+            payload.Ext = data.state.ext
+            payload.Redirect = data.state.redirect
+            payload.Port = data.state.port
+            payload.Persistence = data.state.persistence
+            payload.MonitorType = data.state.monitorType
+            payload.MonitorNamePostfix = data.state.monitorNamePostfix
+            payload.MonitorCodeEndpoint = data.state.monitorCodeEndpoint
+            payload.MonitorResponse = data.state.monitorResponse
+            payload.MonitorInterval = data.state.monitorInterval
+            payload.MonitorTimeout = data.state.monitorTimeout
+            payload.Lb = data.state.loadbalancers
+            if (data.state.monitorName !== this.props.ltmStore.ltmDefault.data.MonitorName) {
+                payload.MonitorName = data.state.monitorName
+            }
+            payload.HTTP_Profile = data.state.httpProfile
+        }
+
         fetchLTMJson(payload)
             .then(res => {
                 this.props.fetchLTMJsonAction({ success: true, data: res.data })
@@ -114,7 +140,8 @@ class LTMContainer extends React.PureComponent {
                     labels={labels}
                     fetchLTM={this.fetchLTM}
                     ltmJson={this.props.ltmStore.ltmJson}
-                    saveLTMJson={this.saveLTMJson} />
+                    saveLTMJson={this.saveLTMJson}
+                    defaults={this.props.ltmStore.ltmDefault} />
             )
         }
         else {

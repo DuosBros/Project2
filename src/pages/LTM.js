@@ -55,16 +55,13 @@ class LTM extends React.PureComponent {
                 let json = JSON.stringify(this.state.modifiedJSON ? this.state.modifiedJSON : this.props.ltmJson.data, null, 4);
                 LTMJson = (
                     <>
-
                         <Header block attached='top' as='h4'>
                             <Button color="black" onClick={() => this.props.saveLTMJson({ data: json, payload: this.state.LTMPayload })}>
                                 Download
                             </Button>
-                            {/* <Button color="black" onClick={this.copyToClipboard}>
-                                Copy to clipboard
-                            </Button> */}
                         </Header>
                         <ReactJson
+                            style={{ padding: '1em' }}
                             name={false}
                             theme="solarized"
                             collapseStringsAfterLength={false}
@@ -83,7 +80,6 @@ class LTM extends React.PureComponent {
                 )
             }
         }
-
 
         return (
             <Grid stackable>
@@ -110,6 +106,7 @@ class LTM extends React.PureComponent {
                                             selectedService={this.props.selectedService}
                                             labels={this.props.labels}
                                             fetchLTM={this.fetchLTM}
+                                            defaults={this.props.defaults}
                                         />
                                     </Grid.Column>
                                 </Grid.Row>
