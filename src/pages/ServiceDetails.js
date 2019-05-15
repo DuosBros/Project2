@@ -109,7 +109,7 @@ class ServiceDetails extends React.PureComponent {
                 }
                 else {
                     let deploymentsSegmentItems = deploymentStatsData.map((x, i) => {
-                        var grouped = groupBy(x.history, "version");
+                        var grouped = groupBy(x.history, "changeNumber");
                         var keys = Object.keys(grouped).sort((a, b) => b - a).slice(0, DEFAULT_SERVICE_DEPLOYMENT_TO_RENDER);
                         return (
                             <React.Fragment key={i}>
