@@ -23,6 +23,9 @@ class LTMForm extends React.PureComponent {
 
     toggleCheckbox = (e, { name, checked }) => {
         this.setState({ [name]: checked })
+        if (name === "ext" && checked === true) {
+            this.setState({ https: true, redirect: true });
+        }
     }
 
     handleTypeDropdownOnchange = (e, { name }) => {
@@ -54,7 +57,7 @@ class LTMForm extends React.PureComponent {
         let form, typeRow, generateLTMJsonColumn, backendOverrides;
 
         if (this.state.type === LTMB2CTYPES[0].value ||
-            (this.state.type === LTMB2CTYPES[1].value &&
+            ((this.state.type === LTMB2CTYPES[1].value || this.props.team === DEFAULT_TEAMS[1].value) &&
                 this.state.url.length > 0 &&
                 this.state.port.length > 0 &&
                 this.state.httpProfile.length > 0 &&
@@ -73,7 +76,7 @@ class LTMForm extends React.PureComponent {
             )
         }
 
-        if (this.state.type === LTMB2CTYPES[1].value) {
+        if (this.state.type === LTMB2CTYPES[1].value || this.props.team === DEFAULT_TEAMS[1].value) {
             let monitorName = this.state.monitorName;
             if (this.state.url.length > 0) {
                 monitorName = monitorName.replace("<url>", this.state.url)
@@ -137,8 +140,12 @@ class LTMForm extends React.PureComponent {
                                                 />
                                             </Grid.Column>
                                             <Grid.Column width={6}>
-                                                <Form.Checkbox name="ext" label='Externally available' onChange={this.toggleCheckbox} checked={this.state.ext} />
-                                                <Form.Checkbox disabled={this.state.ext} name="redirect" label='Redirect' onChange={this.toggleCheckbox} checked={this.state.ext || this.state.redirect} />
+                                                {this.props.team === DEFAULT_TEAMS[0].value && (
+                                                    <>
+                                                        <Form.Checkbox name="ext" label='Externally available' onChange={this.toggleCheckbox} checked={this.state.ext} />
+                                                        <Form.Checkbox disabled={this.state.ext} name="redirect" label='Redirect' onChange={this.toggleCheckbox} checked={this.state.ext || this.state.redirect} />
+                                                    </>
+                                                )}
                                                 <Form.Checkbox disabled={this.state.ext} name="https" label='HTTPS' onChange={this.toggleCheckbox} checked={this.state.ext || this.state.https} />
                                                 <Form.Checkbox name="oneconnect" label='Oneconnect' onChange={this.toggleCheckbox} checked={this.state.oneconnect} />
                                             </Grid.Column>
@@ -161,39 +168,48 @@ class LTMForm extends React.PureComponent {
                         <strong>Type:</strong>
                         <Dropdown name="type" onChange={this.handleOnchange} fluid selection options={LTMB2CTYPES} />
                     </Grid.Column>
-                    {generateLTMJsonColumn}
                 </Grid.Row>
             )
         }
 
         if (this.props.team === DEFAULT_TEAMS[0].value) {
             form = (
-                <Grid>
-                    <Grid.Row columns={4}>
-                        <Grid.Column width={4}>
-                            <strong>Service:</strong>
-                            <Form.Input value={this.props.selectedService} fluid disabled></Form.Input>
-                        </Grid.Column>
-                        <Grid.Column width={4}>
-                            <strong>Search service:</strong>
-                            <ServiceSearchDropdown
-                                className="search"
-                                handleServiceChange={this.props.handleServiceChange}
-                                options={this.props.searchServiceShortcutsResult}
-                                handleServiceShortcutSearchChange={this.props.handleServiceShortcutSearchChange} />
-                        </Grid.Column>
-                        <Grid.Column width={4}></Grid.Column>
-                        <Grid.Column width={4}></Grid.Column>
-                    </Grid.Row>
+                <>
                     {typeRow}
                     {backendOverrides}
-                </Grid>
+                </>
             )
         }
+
+        if (this.props.team === DEFAULT_TEAMS[1].value) {
+            form = (
+                <>
+                    {backendOverrides}
+                </>
+            )
+        }
+
         return (
-            <>
+            <Grid>
+                <Grid.Row columns={4}>
+                    <Grid.Column width={4}>
+                        <strong>Search service:</strong>
+                        <ServiceSearchDropdown
+                            className="search"
+                            handleServiceChange={this.props.handleServiceChange}
+                            options={this.props.searchServiceShortcutsResult}
+                            handleServiceShortcutSearchChange={this.props.handleServiceShortcutSearchChange} />
+                        <strong>Service:</strong>
+                        <Form.Input value={this.props.selectedService} fluid disabled></Form.Input>
+                    </Grid.Column>
+                    <Grid.Column width={4}>
+                    </Grid.Column>
+                    <Grid.Column width={4}></Grid.Column>
+                    <Grid.Column width={4}></Grid.Column>
+                </Grid.Row>
                 {form}
-            </>
+                {generateLTMJsonColumn}
+            </Grid >
         );
     }
 }

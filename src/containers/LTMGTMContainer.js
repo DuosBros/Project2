@@ -8,16 +8,16 @@ import {
 } from '../utils/actions';
 import { ROUTE_ADMIN_LTM } from '../utils/constants';
 import NotFound from '../pages/NotFound';
-import LTM from '../pages/LTM';
+import LTMGTM from '../pages/LTMGTM';
 import { getDefaultLTMConfig, fetchLTMJson } from '../requests/LTMAxios';
 import { getServiceDetailsByShortcutHandler, getServicesHandler } from '../handlers/ServiceHandler';
 import { searchServiceShortcut } from '../requests/HeaderAxios';
-import { LTMB2CTYPES } from '../appConfig';
+import { LTMB2CTYPES, DEFAULT_TEAMS } from '../appConfig';
 
-class LTMContainer extends React.PureComponent {
+class LTMGTMContainer extends React.PureComponent {
 
     state = {
-        team: "b2c",
+        team: "B2C",
         selectedService: "",
     }
 
@@ -61,6 +61,7 @@ class LTMContainer extends React.PureComponent {
     }
 
     getDefaultsAndHandleData = (team) => {
+        this.setState({ team: team });
         getDefaultLTMConfig(team)
             .then(res => {
                 this.props.getDefaultLTMConfigAction({ success: true, data: res.data })
@@ -71,12 +72,13 @@ class LTMContainer extends React.PureComponent {
     }
 
     fetchLTM = (data) => {
-        this.props.fetchLTMJsonAction({ success: true })
+        this.props.fetchLTMJsonAction({ success: true, isFetching: true })
         let payload = {};
         payload.Type = data.Type
         payload.Service = data.Service
+        payload.Team = this.state.team
 
-        if (data.Type === LTMB2CTYPES[1].value) {
+        if (data.Type === LTMB2CTYPES[1].value || this.state.team === DEFAULT_TEAMS[1].value) {
             payload.Url = data.state.url
             payload.Https = data.state.https
             payload.Oneconnect = data.state.oneconnect
@@ -99,10 +101,10 @@ class LTMContainer extends React.PureComponent {
 
         fetchLTMJson(payload)
             .then(res => {
-                this.props.fetchLTMJsonAction({ success: true, data: res.data })
+                this.props.fetchLTMJsonAction({ success: true, data: res.data, isFetching: false })
             })
             .catch(err => {
-                this.props.fetchLTMJsonAction({ success: false, error: err })
+                this.props.fetchLTMJsonAction({ success: false, error: err, isFetching: false })
             })
     }
 
@@ -132,7 +134,7 @@ class LTMContainer extends React.PureComponent {
             }
 
             return (
-                <LTM
+                <LTMGTM
                     getDefaultsAndHandleData={this.getDefaultsAndHandleData}
                     searchServiceShortcutsResult={this.props.headerStore.searchServiceShortcutsResult.slice(0, 10)}
                     handleServiceChange={this.handleServiceChange}
@@ -142,7 +144,8 @@ class LTMContainer extends React.PureComponent {
                     fetchLTM={this.fetchLTM}
                     ltmJson={this.props.ltmStore.ltmJson}
                     saveLTMJson={this.saveLTMJson}
-                    defaults={this.props.ltmStore.ltmDefault} />
+                    defaults={this.props.ltmStore.ltmDefault}
+                    team={this.state.team} />
             )
         }
         else {
@@ -171,4 +174,4 @@ function mapDispatchToProps(dispatch) {
     }, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LTMContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(LTMGTMContainer);

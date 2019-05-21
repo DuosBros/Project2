@@ -2,7 +2,8 @@ import { GET_ENVIRONMENTS, GET_SERVICE_VIRTUALMACHINES } from '../utils/constant
 
 const initialState = {
     environments: { success: true },
-    serviceVirtualMachines: { success: true }
+    serviceVirtualMachines: { success: true },
+    stages: { success: true }
 }
 
 const MiscReducer = (state = initialState, action) => {

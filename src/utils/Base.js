@@ -13,7 +13,7 @@ import UserDetails from '../modals/UserDetails';
 
 import { authenticateAction, authenticationStartedAction, authenticateEndedAction, authenticateOKAction, authenticationFailedAction, toggleUserDetailsAction } from '../utils/actions';
 import { authenticate } from '../requests/BaseAxios';
-import { debounce, isAdmin } from '../utils/HelperFunction';
+import { debounce, isAdmin, isUser } from '../utils/HelperFunction';
 
 import { LOCO_API } from '../appConfig';
 import LoadBalancerFarmsTasks from '../modals/LoadBalancerFarmsTasks';
@@ -37,7 +37,7 @@ import { ROUTE_SERVERS, ROUTE_SERVERS_ADMIN, ROUTE_SERVER_DETAILS, ROUTE_SERVER_
 import ServiceContainer from '../containers/ServiceContainer';
 import PatchgroupContainer from '../containers/PatchgroupContainer';
 import LoadBalancerFarmContainer from '../containers/LoadBalancerFarmContainer';
-import LTMContainer from '../containers/LTMContainer';
+import LTMGTMContainer from '../containers/LTMGTMContainer';
 
 class Base extends React.Component {
     constructor(props) {
@@ -151,12 +151,12 @@ class Base extends React.Component {
                                     <Route path={ROUTE_LBFARMS} component={LoadBalancerFarmContainer} />
                                     <Route path='/ipaddresses' component={IPAddresses} />
                                     <Route exact path='/statistics' component={Statistics} />
-                                    <PrivateRoute isAdmin={isAdmin(this.props.baseStore.currentUser)} exact path='/admin' component={Admin} />
+                                    <Route exact path='/admin' render={(props) => <Admin isAdmin={isAdmin(this.props.baseStore.currentUser)} {...props} />} />
                                     <PrivateRoute isAdmin={isAdmin(this.props.baseStore.currentUser)} exact path='/admin/loadbalancer' component={LoadBalancersAdmin} />
                                     <PrivateRoute isAdmin={isAdmin(this.props.baseStore.currentUser)} exact path='/admin/activedirectory' component={ActiveDirectoryAdmin} />
                                     <PrivateRoute isAdmin={isAdmin(this.props.baseStore.currentUser)} exact path='/admin/agentlogs' component={AgentLogs} />
                                     <PrivateRoute isAdmin={isAdmin(this.props.baseStore.currentUser)} exact path={ROUTE_SERVERS_ADMIN} component={ServersContainer} />
-                                    <PrivateRoute isAdmin={isAdmin(this.props.baseStore.currentUser)} exact path={ROUTE_ADMIN_LTM} component={LTMContainer} />
+                                    <PrivateRoute isAdmin={isUser(this.props.baseStore.currentUser)} exact path={ROUTE_ADMIN_LTM} component={LTMGTMContainer} />
                                     <Route path='/versionstatus' component={VersionStatus} />
                                     <Route path='/healthchecks' component={HealthChecks} />
                                     <Route path={ROUTE_SERVICES_STATISTICS} component={ServiceContainer} />

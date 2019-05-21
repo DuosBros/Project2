@@ -4,13 +4,14 @@ import { DEFAULT_TEAMS, APP_TITLE } from '../appConfig';
 import LTMForm from '../components/LTMForm';
 import ErrorMessage from '../components/ErrorMessage';
 import ReactJson from 'react-json-view'
+import GTMForm from '../components/GTMForm';
 
-class LTM extends React.PureComponent {
+class LTMGTM extends React.PureComponent {
 
     state = {
-        team: "B2C",
         LTMPayload: "",
-        modifiedJSON: null
+        modifiedJSON: null,
+        ltmJsonSegment: true
     }
 
     componentDidMount() {
@@ -30,16 +31,32 @@ class LTM extends React.PureComponent {
         this.setState({ modifiedJSON: e.updated_src });
     }
 
-    render() {
-        let LTMJson;
+    handleToggleShowingContent = (segment) => {
+        this.setState({ [segment]: !this.state[segment] });
+    }
 
-        if (this.state.LTMPayload) {
-            if (!this.props.ltmJson.success) {
+    render() {
+        let LTMJson, GTMSegment;
+
+        if (!this.props.ltmJson.success) {
+            LTMJson = (
+                <ErrorMessage error={this.props.ltmJson.error} />
+            );
+        }
+        else {
+            let json = JSON.stringify(this.state.modifiedJSON ? this.state.modifiedJSON : this.props.ltmJson.data, null, 4);
+
+            if (!this.state.ltmJsonSegment) {
                 LTMJson = (
-                    <ErrorMessage error={this.props.ltmJson.error} />
-                );
+                    <Header block attached='top' as='h4'>
+                        <Button id="skip" color="black" onClick={() => this.props.saveLTMJson({ data: json, payload: this.state.LTMPayload })}>
+                            Download
+                        </Button>
+                        <Button onClick={() => this.handleToggleShowingContent("ltmJsonSegment")} floated='right' icon='content' />
+                    </Header>
+                )
             }
-            else if (!this.props.ltmJson.data) {
+            else if (this.props.ltmJson.isFetching) {
                 LTMJson = (
                     <div className="messageBox">
                         <Message info icon>
@@ -51,14 +68,14 @@ class LTM extends React.PureComponent {
                     </div>
                 );
             }
-            else {
-                let json = JSON.stringify(this.state.modifiedJSON ? this.state.modifiedJSON : this.props.ltmJson.data, null, 4);
+            else if (this.props.ltmJson.data) {
                 LTMJson = (
                     <>
                         <Header block attached='top' as='h4'>
-                            <Button color="black" onClick={() => this.props.saveLTMJson({ data: json, payload: this.state.LTMPayload })}>
+                            <Button id="skip" color="black" onClick={() => this.props.saveLTMJson({ data: json, payload: this.state.LTMPayload })}>
                                 Download
                             </Button>
+                            <Button onClick={() => this.handleToggleShowingContent("ltmJsonSegment")} floated='right' icon='content' />
                         </Header>
                         <ReactJson
                             style={{ padding: '1em' }}
@@ -78,28 +95,57 @@ class LTM extends React.PureComponent {
                         />
                     </>
                 )
+
             }
         }
 
+        GTMSegment = (
+            <Segment attached='bottom' >
+                <Grid>
+                    <Grid.Row>
+                        <Grid.Column>
+                            <GTMForm
+                                team={this.props.team}
+                                handleServiceChange={this.props.handleServiceChange}
+                                searchServiceShortcutsResult={this.props.searchServiceShortcutsResult}
+                                handleServiceShortcutSearchChange={this.props.handleServiceShortcutSearchChange}
+                                selectedService={this.props.selectedService}
+                                labels={this.props.labels}
+                                fetchLTM={this.fetchLTM}
+                                defaults={this.props.defaults}
+                            />
+                        </Grid.Column>
+                    </Grid.Row>
+                </Grid>
+            </Segment>
+        )
+
         return (
             <Grid stackable>
+                {/* <Grid.Row>
+                    <Grid.Column>
+                        <Header block attached='top' as='h4'>
+                            [Beta] GTM Setup - check the output of json
+                        </Header>
+                        {GTMSegment}
+                    </Grid.Column>
+                </Grid.Row> */}
                 <Grid.Row>
                     <Grid.Column>
                         <Header block attached='top' as='h4'>
-                            [Beta] LTM Setup - check the output of json
+                            [Beta] LTM Setup - check the output of json!
                         </Header>
                         <Segment attached='bottom' >
                             <Grid>
                                 <Grid.Row>
                                     <Grid.Column width={4}>
                                         <strong>Team:</strong>
-                                        <Dropdown fluid text={this.state.team} defaultValue={this.state.team} onChange={this.handleTeamDropdownChange} options={DEFAULT_TEAMS} selection />
+                                        <Dropdown fluid defaultValue={this.state.team} onChange={this.handleTeamDropdownChange} options={DEFAULT_TEAMS} selection />
                                     </Grid.Column>
                                 </Grid.Row>
                                 <Grid.Row>
                                     <Grid.Column>
                                         <LTMForm
-                                            team={this.state.team}
                                             handleServiceChange={this.props.handleServiceChange}
                                             searchServiceShortcutsResult={this.props.searchServiceShortcutsResult}
                                             handleServiceShortcutSearchChange={this.props.handleServiceShortcutSearchChange}
@@ -107,6 +153,7 @@ class LTM extends React.PureComponent {
                                             labels={this.props.labels}
                                             fetchLTM={this.fetchLTM}
                                             defaults={this.props.defaults}
+                                            team={this.props.team}
                                         />
                                     </Grid.Column>
                                 </Grid.Row>
@@ -124,4 +171,4 @@ class LTM extends React.PureComponent {
     }
 }
 
-export default LTM;
+export default LTMGTM;

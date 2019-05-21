@@ -2,7 +2,7 @@ import { GET_DEFAULT_LTM_CONFIG, FETCH_LTM_JSON } from '../utils/constants';
 
 const initialState = {
     ltmDefault: { success: true },
-    ltmJson: { success: true }
+    ltmJson: { success: true, isFetching: false }
 }
 
 const LTMReducer = (state = initialState, action) => {

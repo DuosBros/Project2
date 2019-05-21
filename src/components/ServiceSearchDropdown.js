@@ -4,6 +4,7 @@ import React from 'react';
 const ServiceSearchDropdown = (props) => {
     return (
         <Dropdown
+            id="serviceSearchDropdown"
             className={props.className && props.className}
             icon='search'
             selection
