@@ -62,7 +62,7 @@ export const CHART_COLORS = ['#8884d8', '#82ca9d', '#ffc658'];
 
 export const DEFAULT_TEAMS = [
     { key: 0, text: "B2C", value: "B2C" },
-    { key: 1, text: "B2B", value: "B2B" },
+    { key: 1, text: "Trading", value: "Trading" },
     // { key: 2, text: "Linux", value: "Linux" }
 ]
 
