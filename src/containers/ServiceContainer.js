@@ -10,12 +10,13 @@ import {
 import { ROUTE_SERVICES, ROUTE_SERVICE_DETAILS, ROUTE_SERVICES_STATISTICS, ROUTE_SERVICE_VIRTUALMACHINES } from '../utils/constants';
 import NotFound from '../pages/NotFound';
 import { DEFAULT_SERVICE_DEPLOYMENT_COUNT } from '../appConfig';
-import { getServices, getServiceDetails, getServiceDeploymentStats, getHighAvailabilities } from '../requests/ServiceAxios';
+import { getServiceDetails, getServiceDeploymentStats, getHighAvailabilities } from '../requests/ServiceAxios';
 import ServicesStatistics from '../pages/ServicesStatistics';
 import ServiceDetails from '../pages/ServiceDetails';
 import Services from '../pages/Services';
 import ServiceVirtualMachine from '../pages/ServiceVirtualMachine';
 import { getServiceVirtualMachines } from '../requests/MiscAxios';
+import { getServicesHandler } from '../handlers/ServiceHandler';
 
 class ServiceContainer extends React.PureComponent {
 
@@ -110,14 +111,8 @@ class ServiceContainer extends React.PureComponent {
             })
     }
 
-    fetchServicesAndHandleResult = () => {
-        getServices()
-            .then(res => {
-                this.props.getServicesAction({ success: true, data: res.data })
-            })
-            .catch(err => {
-                this.props.getServicesAction({ success: false, error: err })
-            })
+    fetchServicesAndHandleResult = async () => {
+        await getServicesHandler(this.props.getServicesAction)
     }
 
     render() {

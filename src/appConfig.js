@@ -4,7 +4,7 @@ export const NODE_ENV = process.env.NODE_ENV
 
 export const APP_TITLE = "LOCO V2 - "
 
-export const LOCO_API = NODE_ENV === 'development' ? 'http://loco.dev.env.works/Api/' : 'https://loco.prod.env.works/Api/';
+export const LOCO_API = NODE_ENV === 'development' ? 'http://loco.dev.env.works/Api/' : 'http://loco.prod.env.works/Api/';
 // export const LOCO_API = "http://localhost:24298/Api/"
 export const PM_API = NODE_ENV === 'development' ? 'https://pm.bwin.corp/api/' : "https://pm.bwin.corp/api/"
 
@@ -59,5 +59,14 @@ export const LBNAME_SUFFIX = ".icepor.com"
 export const NWTOOLS_URL = 'https://nw-api.is.icepor.com/'
 
 export const CHART_COLORS = ['#8884d8', '#82ca9d', '#ffc658'];
-// TODO:
-// proper error handling
+
+export const DEFAULT_TEAMS = [
+    { key: 0, text: "B2C", value: "B2C" },
+    { key: 1, text: "B2B", value: "B2B" },
+    // { key: 2, text: "Linux", value: "Linux" }
+]
+
+export const LTMB2CTYPES = [
+    { key: 0, text: "Frontend", value: "Frontend" },
+    { key: 1, text: "Backend", value: "Backend" },
+]

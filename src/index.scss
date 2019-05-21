@@ -42,6 +42,10 @@ html, body {
     top: 0.5em
 }
 
+#serviceSearchDropdown i.search.icon{
+    top: 0.5em
+}
+
 #verticalMenu {
     width: 200px;
     position: fixed;
@@ -111,7 +115,7 @@ html, body {
     margin-top: 1em
 }
 
-.ui.block.top.attached.header > button {
+.ui.block.top.attached.header > button:not(#skip) {
     background-color: #F3F4F5
 }
 

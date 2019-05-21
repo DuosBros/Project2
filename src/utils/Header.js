@@ -11,6 +11,7 @@ import { isNum, debounce, isValidIPv4 } from '../utils/HelperFunction';
 import ShortcutFocus from '../components/ShortcutFocus';
 import SearchBox from '../components/SearchBox';
 import { SN_INC_SEARCH_URL, INCIDENT_PLACEHOLDER, VERSION1_PLACEHOLDER, VERSION1_SEARCH_URL } from '../appConfig';
+import ServiceSearchDropdown from '../components/ServiceSearchDropdown';
 
 class Header extends React.Component {
 
@@ -142,19 +143,12 @@ class Header extends React.Component {
                     </Menu.Item>
                     <Menu.Item className='headerSearchInput'>
                         <ShortcutFocus shortcut="w" focusSelector="input">
-                            <Dropdown
-                                icon='search'
-                                selection
-                                onChange={this.handleServiceChange}
-                                options={this.props.headerStore.searchServiceShortcutsResult.slice(0, 10)}
-                                fluid
-                                selectOnBlur={false}
-                                selectOnNavigation={false}
+                            <ServiceSearchDropdown
                                 placeholder='Press &apos;w&apos; to search a service'
-                                value=""
-                                onSearchChange={this.handleServiceShortcutSearchChange}
-                                search={this.trimmedSearch}
-                            />
+                                handleServiceChange={this.handleServiceChange}
+                                options={this.props.headerStore.searchServiceShortcutsResult.slice(0, 10)}
+                                handleServiceShortcutSearchChange={this.handleServiceShortcutSearchChange}
+                                search={this.trimmedSearch} />
                         </ShortcutFocus>
                     </Menu.Item>
                     <Menu.Item className='headerSearchInput'>

@@ -8,3 +8,7 @@ export function getServiceVirtualMachines() {
 export function exportDataToExcel(data, fileName) {
     return axios.post(PM_API + 'export/' + fileName, data, { responseType: 'blob' })
 }
+
+export function getStages() {
+    return axios.get(LOCO_API + 'stage');
+}

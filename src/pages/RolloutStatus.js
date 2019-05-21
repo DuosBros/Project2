@@ -12,7 +12,7 @@ import {
     searchServiceShortcutAction
 } from '../utils/actions';
 
-import { getDismeApplications, getServiceByShortcut, getHealths, getVersionsForRollout } from '../requests/ServiceAxios';
+import { getDismeApplications, getHealths, getVersionsForRollout } from '../requests/ServiceAxios';
 import { Grid, Header, Segment, Dropdown, Table, Button, Message, Icon, TextArea, Form } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import DismeStatus from '../components/DismeStatus';
@@ -23,6 +23,8 @@ import { debounce, sleep, isValidIPv4, isNum } from '../utils/HelperFunction';
 import { getRolloutStatus } from '../requests/RolloutStatusAxios';
 import RolloutStatusTable from '../components/RolloutStatusTable';
 import ErrorMessage from '../components/ErrorMessage';
+import ServiceSearchDropdown from '../components/ServiceSearchDropdown';
+import { getServiceDetailsByShortcutHandler } from '../handlers/ServiceHandler';
 
 const DEFAULT_SEGMENT = [
     {
@@ -47,8 +49,6 @@ class RolloutStatus extends React.Component {
             segments: DEFAULT_SEGMENT
         }
 
-        this.getServiceDetails = this.getServiceDetails.bind(this);
-        this.getServiceDetails = debounce(this.getServiceDetails, 150);
         this.handleSearchServiceShortcut = this.handleSearchServiceShortcut.bind(this);
         this.handleSearchServiceShortcut = debounce(this.handleSearchServiceShortcut, 150);
     }
@@ -104,7 +104,6 @@ class RolloutStatus extends React.Component {
                             text: x.Application,
                             value: x.Application,
                             services: x.Service
-
                         }))
                 })
             })
@@ -119,7 +118,7 @@ class RolloutStatus extends React.Component {
             })
     }
 
-    handleApplicationDropdownOnChange = (e, { value }) => {
+    handleApplicationDropdownOnChange = async (e, { value }) => {
         this.props.deleteAllRoloutStatusesAction()
         this.setState({ loadingServiceDetails: true, applicationDropdownValue: value });
         var filteredApps = this.props.rolloutStatusStore.dismeApplications.data.filter(x => x.value === value);
@@ -132,7 +131,8 @@ class RolloutStatus extends React.Component {
             inputProductsValues: joinedShortcuts
         });
 
-        this.getServiceDetails(joinedShortcuts)
+        await getServiceDetailsByShortcutHandler(joinedShortcuts, this.props.getServiceDetailsByShortcutsAction);
+        this.setState({ loadingServiceDetails: false });
     }
 
     handleApplicationDropdownOnSearchChange = (e) => {
@@ -142,7 +142,7 @@ class RolloutStatus extends React.Component {
         }
     }
 
-    handleInputOnChange = (e, { value }) => {
+    handleInputOnChange = async (e, { value }) => {
 
         this.setState({ inputProductsValues: value });
 
@@ -157,24 +157,9 @@ class RolloutStatus extends React.Component {
 
         var valueToSearch = value.replace(/[^a-zA-Z0-9,_.-]/g, "")
         var uniqueValueToSearch = Array.from(new Set(valueToSearch.split(',')))
-        this.getServiceDetails(uniqueValueToSearch)
-    }
 
-    getServiceDetails(services) {
-        getServiceByShortcut(services)
-            .then(res => {
-                if (res.data) {
-                    this.props.getServiceDetailsByShortcutsAction({ success: true, data: res.data })
-                }
-                else {
-                    this.props.getServiceDetailsByShortcutsAction({ success: true, data: [] })
-                }
-
-                this.setState({ loadingServiceDetails: false });
-            })
-            .catch(err => {
-                this.props.getServiceDetailsByShortcutsAction({ success: false, error: err })
-            })
+        await getServiceDetailsByShortcutHandler(uniqueValueToSearch, this.props.getServiceDetailsByShortcutsAction);
+        this.setState({ loadingServiceDetails: false });
     }
 
     handleSearchServiceShortcut(value) {
@@ -191,13 +176,15 @@ class RolloutStatus extends React.Component {
         }
     }
 
-    handleServiceChange = (e, m) => {
+    handleServiceChange = async (e, m) => {
         var value = m.options.find(x => x.value === m.value).text;
 
         var servicesString = this.state.inputProductsValues ? this.state.inputProductsValues + "," + value : value
         this.props.history.push("/rolloutstatus?services=" + servicesString)
         this.setState({ inputProductsValues: servicesString });
-        this.getServiceDetails(servicesString)
+
+        await getServiceDetailsByShortcutHandler(servicesString, this.props.getServiceDetailsByShortcutsAction);
+        this.setState({ loadingServiceDetails: false });
     }
 
     handleToggleShowAllSegments = () => {
@@ -641,20 +628,11 @@ class RolloutStatus extends React.Component {
                                     </Grid.Column>
                                     <Grid.Column width={2} >
                                         <strong>Search for a service</strong>
-                                        <Dropdown
+                                        <ServiceSearchDropdown
                                             className="search"
-                                            icon='search'
-                                            selection
-                                            onChange={this.handleServiceChange}
+                                            handleServiceChange={this.handleServiceChange}
                                             options={this.props.headerStore.searchServiceShortcutsResult.filter(x => !this.state.inputProductsValues.split(",").includes(x.text)).slice(0, 10)}
-                                            fluid
-                                            selectOnBlur={false}
-                                            selectOnNavigation={false}
-                                            placeholder='Type to search'
-                                            value=""
-                                            onSearchChange={this.handleServiceShortcutSearchChange}
-                                            search
-                                        />
+                                            handleServiceShortcutSearchChange={this.handleServiceShortcutSearchChange} />
                                     </Grid.Column>
                                     <Grid.Column width={9} >
                                         <strong>List of services</strong><br />

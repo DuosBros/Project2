@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 
 import { toggleVerticalMenuAction } from '../utils/actions';
 import { isAdmin } from './HelperFunction';
-import { ROUTE_SERVERS, ROUTE_SERVERS_ADMIN } from './constants';
+import { ROUTE_SERVERS, ROUTE_SERVERS_ADMIN, ROUTE_ADMIN_LTM } from './constants';
 
 
 class Sidebar extends React.Component {
@@ -74,27 +74,34 @@ class Sidebar extends React.Component {
                             </Menu.Item>
                         </Menu.Menu>
                     </Menu.Item>
-                    {
-                        isAdmin(this.props.baseStore.currentUser) ? (
-                            <Menu.Item>
-                                <Menu.Header as={Link} to='/admin'>Admin</Menu.Header>
-                                <Menu.Menu>
-                                    <Menu.Item as={Link} to='/admin/loadbalancer' >
-                                        Loadbalancer
+
+                    <Menu.Item>
+                        <Menu.Header as={Link} to='/admin'>Admin</Menu.Header>
+                        <Menu.Menu>
+                            {
+                                isAdmin(this.props.baseStore.currentUser) && (
+                                    <>
+                                        <Menu.Item as={Link} to='/admin/loadbalancer' >
+                                            Loadbalancer
                                     </Menu.Item>
-                                    <Menu.Item as={Link} to='/admin/activedirectory' >
-                                        ActiveDirectory
+                                        <Menu.Item as={Link} to='/admin/activedirectory' >
+                                            ActiveDirectory
                                     </Menu.Item>
-                                    <Menu.Item as={Link} to='/admin/agentlogs' >
-                                        Agent logs
+                                        <Menu.Item as={Link} to='/admin/agentlogs' >
+                                            Agent logs
                                     </Menu.Item>
-                                    <Menu.Item as={Link} to={ROUTE_SERVERS_ADMIN} >
-                                        Manage Servers
+                                        <Menu.Item as={Link} to={ROUTE_SERVERS_ADMIN} >
+                                            Manage Servers
                                     </Menu.Item>
-                                </Menu.Menu>
+                                    </>
+                                )
+                            }
+                            <Menu.Item as={Link} to={ROUTE_ADMIN_LTM} >
+                                LTM & GTM
                             </Menu.Item>
-                        ) : null
-                    }
+                        </Menu.Menu>
+                    </Menu.Item>
+
                 </div>
             );
 

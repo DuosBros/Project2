@@ -251,7 +251,7 @@ class ServiceDetails extends React.PureComponent {
                                 floated='right'
                                 icon='content' />
                             <Button
-                                id="primaryButton"
+                                id="skip"
                                 disabled={!isUser(this.props.currentUser)}
                                 onClick={() => this.props.toggleLoadBalancerFarmsTasksModalAction()}
                                 style={{ padding: '0.3em', bottom: '0.1em' }}

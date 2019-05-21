@@ -1,5 +1,14 @@
 import moment from 'moment'
 
+export const mapArrayForDropdown = (data, prop) => {
+    if (prop) {
+        return data.map((x, i) => { return { key: i, text: x[prop], value: x[prop] } })
+    }
+    else {
+        return data.map((x, i) => { return { key: i, text: x, value: x } })
+    }
+}
+
 export const mapDataForMinMaxAvgChart = (data) => {
     return data.map(e => ({
         name: moment(e.ts).format("HH:mm"),

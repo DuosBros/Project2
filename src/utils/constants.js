@@ -54,6 +54,8 @@ export const GET_SERVICE_DEPLOYMENTS = 'GET_SERVICE_DEPLOYMENTS'
 export const CLOSE_GENERIC_MODAL = 'CLOSE_GENERIC_MODAL'
 export const SHOW_GENERIC_MODAL = 'SHOW_GENERIC_MODAL'
 export const DELETE_SERVER = 'DELETE_SERVER'
+export const GET_DEFAULT_LTM_CONFIG = 'GET_DEFAULT_LTM_CONFIG'
+export const FETCH_LTM_JSON = 'FETCH_LTM_JSON'
 
 export const ROUTE_SERVERS = '/servers';
 export const ROUTE_SERVERS_ADMIN = '/admin/servers';
@@ -70,3 +72,5 @@ export const ROUTE_PATCHGROUP_DETAILS = '/patchgroup/:id';
 
 export const ROUTE_LBFARMS = '/lbfarms';
 export const ROUTE_LBFARMS_STATISTICS = '/statistics/loadbalancerfarms';
+
+export const ROUTE_ADMIN_LTM = '/admin/ltm_gtm';
