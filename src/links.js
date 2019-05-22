@@ -352,8 +352,8 @@ export default {
                         "icon": "trustapi.png"
                     },
                     {
-                        "title": "Graylog",
-                        "url": "https://graylog.is.icepor.com/streams/5a830699976923360016a406/search?rangetype=relative&fields=message%2Csource&width=1444&highlightMessage=&relative=28800&q=hsl_action%3Dcentral_block",
+                        "title": "Graylog -> Kibana",
+                        "url": "https://kibana.is.icepor.com",
                         "icon": "graylog.png"
                     },
                     {
