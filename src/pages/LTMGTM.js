@@ -10,12 +10,14 @@ class LTMGTM extends React.PureComponent {
 
     state = {
         LTMPayload: "",
-        modifiedJSON: null,
-        ltmJsonSegment: true
+        modifiedLTMJSON: null,
+        modifiedGTMJSON: null,
+        isLtmJsonSegmentHidden: true,
+        isGtmJsonSegmentHidden: true
     }
 
     componentDidMount() {
-        document.title = APP_TITLE + "LTM JSON [" + this.state.team + "]"
+        document.title = APP_TITLE + "LTM GTM"
     }
 
     handleTeamDropdownChange = (e, { value }) => {
@@ -27,8 +29,16 @@ class LTMGTM extends React.PureComponent {
         this.setState({ LTMPayload: payload });
     }
 
-    handleEdit = (e, m) => {
-        this.setState({ modifiedJSON: e.updated_src });
+    fetchGTM = (payload) => {
+        this.props.fetchGTM(payload)
+    }
+
+    handleEditLTMJSON = (e, m) => {
+        this.setState({ modifiedLTMJSON: e.updated_src });
+    }
+
+    handleEditGTMJSON = (e, m) => {
+        this.setState({ modifiedGTMJSON: e.updated_src });
     }
 
     handleToggleShowingContent = (segment) => {
@@ -36,7 +46,7 @@ class LTMGTM extends React.PureComponent {
     }
 
     render() {
-        let LTMJson, GTMSegment;
+        let LTMJson, GTMSegment, GTMJson;
 
         if (!this.props.ltmJson.success) {
             LTMJson = (
@@ -44,15 +54,15 @@ class LTMGTM extends React.PureComponent {
             );
         }
         else {
-            let json = JSON.stringify(this.state.modifiedJSON ? this.state.modifiedJSON : this.props.ltmJson.data, null, 4);
+            let json = JSON.stringify(this.state.modifiedLTMJSON ? this.state.modifiedLTMJSON : this.props.ltmJson.data, null, 4);
 
-            if (!this.state.ltmJsonSegment) {
+            if (!this.state.isLtmJsonSegmentHidden) {
                 LTMJson = (
                     <Header block attached='top' as='h4'>
-                        <Button id="skip" color="black" onClick={() => this.props.saveLTMJson({ data: json, payload: this.state.LTMPayload })}>
+                        <Button id="skip" color="black" onClick={() => this.props.saveJson({ type: "LTM", data: json, payload: this.state.LTMPayload })}>
                             Download
                         </Button>
-                        <Button onClick={() => this.handleToggleShowingContent("ltmJsonSegment")} floated='right' icon='content' />
+                        <Button onClick={() => this.handleToggleShowingContent("isLtmJsonSegmentHidden")} floated='right' icon='content' />
                     </Header>
                 )
             }
@@ -72,10 +82,10 @@ class LTMGTM extends React.PureComponent {
                 LTMJson = (
                     <>
                         <Header block attached='top' as='h4'>
-                            <Button id="skip" color="black" onClick={() => this.props.saveLTMJson({ data: json, payload: this.state.LTMPayload })}>
+                            <Button id="skip" color="black" onClick={() => this.props.saveJson({ type: "LTM", data: json, payload: this.state.LTMPayload })}>
                                 Download
                             </Button>
-                            <Button onClick={() => this.handleToggleShowingContent("ltmJsonSegment")} floated='right' icon='content' />
+                            <Button onClick={() => this.handleToggleShowingContent("isLtmJsonSegmentHidden")} floated='right' icon='content' />
                         </Header>
                         <ReactJson
                             style={{ padding: '1em' }}
@@ -88,14 +98,74 @@ class LTMGTM extends React.PureComponent {
                             displayObjectSize={false}
                             displayDataTypes={false}
                             enableClipboard={true}
-                            onDelete={this.handleEdit}
-                            onAdd={this.handleEdit}
-                            onEdit={this.handleEdit}
+                            onDelete={this.handleEditLTMJSON}
+                            onAdd={this.handleEditLTMJSON}
+                            onEdit={this.handleEditLTMJSON}
                             iconStyle="square"
                         />
                     </>
                 )
 
+            }
+        }
+
+        if (!this.props.gtmJson.success) {
+            GTMJson = (
+                <ErrorMessage error={this.props.gtmJson.error} />
+            );
+        }
+        else {
+            let json = JSON.stringify(this.state.modifiedGTMJSON ? this.state.modifiedGTMJSON : this.props.gtmJson.data, null, 4);
+
+            if (!this.state.isGtmJsonSegmentHidden) {
+                GTMJson = (
+                    <Header block attached='top' as='h4'>
+                        <Button id="skip" color="black" onClick={() => this.props.saveJson({ type: "GTM", data: json, payload: this.state.LTMPayload })}>
+                            Download
+                        </Button>
+                        <Button onClick={() => this.handleToggleShowingContent("isGtmJsonSegmentHidden")} floated='right' icon='content' />
+                    </Header>
+                )
+            }
+            else if (this.props.gtmJson.isFetching) {
+                GTMJson = (
+                    <div className="messageBox">
+                        <Message info icon>
+                            <Icon name='circle notched' loading />
+                            <Message.Content>
+                                <Message.Header>Fetching GTM JSON</Message.Header>
+                            </Message.Content>
+                        </Message>
+                    </div>
+                );
+            }
+            else if (this.props.gtmJson.data) {
+                GTMJson = (
+                    <>
+                        <Header block attached='top' as='h4'>
+                            <Button id="skip" color="black" onClick={() => this.props.saveJson({ type: "GTM", data: json, payload: this.state.LTMPayload })}>
+                                Download
+                            </Button>
+                            <Button onClick={() => this.handleToggleShowingContent("isGtmJsonSegmentHidden")} floated='right' icon='content' />
+                        </Header>
+                        <ReactJson
+                            style={{ padding: '1em' }}
+                            name={false}
+                            theme="solarized"
+                            collapseStringsAfterLength={false}
+                            src={this.props.gtmJson.data}
+                            collapsed={false}
+                            indentWidth={4}
+                            displayObjectSize={false}
+                            displayDataTypes={false}
+                            enableClipboard={true}
+                            onDelete={this.handleEditGTMJSON}
+                            onAdd={this.handleEditGTMJSON}
+                            onEdit={this.handleEditGTMJSON}
+                            iconStyle="square"
+                        />
+                    </>
+                )
             }
         }
 
@@ -105,15 +175,14 @@ class LTMGTM extends React.PureComponent {
                     <Grid.Row>
                         <Grid.Column>
                             <GTMForm
-                                team={this.props.team}
-                                handleServiceChange={this.props.handleServiceChange}
-                                searchServiceShortcutsResult={this.props.searchServiceShortcutsResult}
-                                handleServiceShortcutSearchChange={this.props.handleServiceShortcutSearchChange}
-                                selectedService={this.props.selectedService}
-                                labels={this.props.labels}
-                                fetchLTM={this.fetchLTM}
-                                defaults={this.props.defaults}
+                                fetchGTM={this.fetchGTM}
+                                ltmJson={this.props.ltmJson.data}
                             />
+                        </Grid.Column>
+                    </Grid.Row>
+                    <Grid.Row>
+                        <Grid.Column>
+                            {GTMJson}
                         </Grid.Column>
                     </Grid.Row>
                 </Grid>
@@ -133,7 +202,7 @@ class LTMGTM extends React.PureComponent {
                 <Grid.Row>
                     <Grid.Column>
                         <Header block attached='top' as='h4'>
-                            [Beta] LTM Setup - check the output of json!
+                            LTM & GTM Setup - check the output of jsons!
                         </Header>
                         <Segment attached='bottom' >
                             <Grid>
@@ -152,15 +221,24 @@ class LTMGTM extends React.PureComponent {
                                             selectedService={this.props.selectedService}
                                             labels={this.props.labels}
                                             fetchLTM={this.fetchLTM}
+                                            fetchGTM={this.fetchGTM}
                                             defaults={this.props.defaults}
                                             team={this.props.team}
+                                            ltmJson={this.state.modifiedLTMJSON ? this.state.modifiedLTMJSON : this.props.ltmJson.data}
                                         />
                                     </Grid.Column>
                                 </Grid.Row>
-                                <Grid.Row>
+                                <Grid.Row columns={GTMJson ? 2 : 1}>
                                     <Grid.Column>
                                         {LTMJson}
                                     </Grid.Column>
+                                    {
+                                        GTMJson && (
+                                            <Grid.Column>
+                                                {GTMJson}
+                                            </Grid.Column>
+                                        )
+                                    }
                                 </Grid.Row>
                             </Grid>
                         </Segment>

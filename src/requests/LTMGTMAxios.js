@@ -8,3 +8,7 @@ export function getDefaultLTMConfig(team) {
 export function fetchLTMJson(payload) {
     return axios.post(LOCO_API + 'lbapi/json/ltm', payload)
 }
+
+export function fetchGTMJson(payload) {
+    return axios.post(LOCO_API + 'lbapi/json/gtm', payload)
+}

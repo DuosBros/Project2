@@ -4,12 +4,13 @@ import { bindActionCreators } from 'redux';
 
 import {
     getDefaultLTMConfigAction, getServiceDetailsByShortcutsAction,
-    searchServiceShortcutAction, getServicesAction, fetchLTMJsonAction
+    searchServiceShortcutAction, getServicesAction, fetchLTMJsonAction,
+    fetchGTMJsonAction
 } from '../utils/actions';
 import { ROUTE_ADMIN_LTM } from '../utils/constants';
 import NotFound from '../pages/NotFound';
 import LTMGTM from '../pages/LTMGTM';
-import { getDefaultLTMConfig, fetchLTMJson } from '../requests/LTMAxios';
+import { getDefaultLTMConfig, fetchLTMJson, fetchGTMJson } from '../requests/LTMGTMAxios';
 import { getServiceDetailsByShortcutHandler, getServicesHandler } from '../handlers/ServiceHandler';
 import { searchServiceShortcut } from '../requests/HeaderAxios';
 import { LTMB2CTYPES, DEFAULT_TEAMS } from '../appConfig';
@@ -54,7 +55,7 @@ class LTMGTMContainer extends React.PureComponent {
     fetchAllData = () => {
         let pathname = this.props.location.pathname;
         if (pathname === ROUTE_ADMIN_LTM) {
-            this.getDefaultsAndHandleData(this.state.team);
+            //this.getDefaultsAndHandleData(this.state.team);
             getServicesHandler(this.props.getServicesAction)
 
         }
@@ -93,7 +94,7 @@ class LTMGTMContainer extends React.PureComponent {
             payload.MonitorInterval = data.state.monitorInterval
             payload.MonitorTimeout = data.state.monitorTimeout
             payload.Lb = data.state.loadbalancers
-            if (data.state.monitorName !== this.props.ltmStore.ltmDefault.data.MonitorName) {
+            if (data.state.monitorName !== this.props.ltmgtmStore.ltmDefault.data.MonitorName) {
                 payload.MonitorName = data.state.monitorName
             }
             payload.HTTP_Profile = data.state.httpProfile
@@ -108,8 +109,22 @@ class LTMGTMContainer extends React.PureComponent {
             })
     }
 
-    saveLTMJson = (payload) => {
-        const fileName = new Date().toISOString() + "_" + document.title
+    fetchGTM = (data) => {
+        let payload = {
+            ltm: data.ltm
+        }
+        this.props.fetchGTMJsonAction({ success: true, isFetching: true })
+        fetchGTMJson(payload)
+            .then(res => {
+                this.props.fetchGTMJsonAction({ success: true, data: res.data, isFetching: false })
+            })
+            .catch(err => {
+                this.props.fetchGTMJsonAction({ success: false, error: err, isFetching: false })
+            })
+    }
+
+    saveJson = (payload) => {
+        const fileName = new Date().toISOString()
         var a = document.createElement("a");
         document.body.appendChild(a);
         a.style = "display: none";
@@ -117,7 +132,7 @@ class LTMGTMContainer extends React.PureComponent {
         let blob = new Blob([payload.data], { type: "octet/stream" })
         let url = window.URL.createObjectURL(blob);
         a.href = url;
-        a.download = payload.payload.Service + "_LTM_" + fileName + ".json";
+        a.download = payload.payload.Service + "_" + payload.type + "_" + fileName + ".json";
         a.click();
         window.URL.revokeObjectURL(url);
     }
@@ -142,9 +157,11 @@ class LTMGTMContainer extends React.PureComponent {
                     selectedService={this.state.selectedService}
                     labels={labels}
                     fetchLTM={this.fetchLTM}
-                    ltmJson={this.props.ltmStore.ltmJson}
-                    saveLTMJson={this.saveLTMJson}
-                    defaults={this.props.ltmStore.ltmDefault}
+                    fetchGTM={this.fetchGTM}
+                    gtmJson={this.props.ltmgtmStore.gtmJson}
+                    ltmJson={this.props.ltmgtmStore.ltmJson}
+                    saveJson={this.saveJson}
+                    defaults={this.props.ltmgtmStore.ltmDefault}
                     team={this.state.team} />
             )
         }
@@ -160,7 +177,7 @@ function mapStateToProps(state) {
         loadbalancerFarmsStore: state.LoadBalancerFarmsReducer,
         headerStore: state.HeaderReducer,
         serviceStore: state.ServiceReducer,
-        ltmStore: state.LTMReducer
+        ltmgtmStore: state.LTMGTMReducer
     };
 }
 
@@ -170,7 +187,8 @@ function mapDispatchToProps(dispatch) {
         getServiceDetailsByShortcutsAction,
         searchServiceShortcutAction,
         getServicesAction,
-        fetchLTMJsonAction
+        fetchLTMJsonAction,
+        fetchGTMJsonAction
     }, dispatch);
 }
 

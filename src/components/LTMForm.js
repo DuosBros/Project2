@@ -54,7 +54,7 @@ class LTMForm extends React.PureComponent {
 
 
     render() {
-        let form, typeRow, generateLTMJsonColumn, backendOverrides;
+        let form, typeRow, generateLTMJsonColumn, backendOverrides, generateGTMJsonColumn;
 
         if (this.state.type === LTMB2CTYPES[0].value ||
             ((this.state.type === LTMB2CTYPES[1].value || this.props.team === DEFAULT_TEAMS[1].value) &&
@@ -70,8 +70,16 @@ class LTMForm extends React.PureComponent {
                 this.state.monitorTimeout.toString().length > 0 &&
                 this.state.loadbalancers.length > 0)) {
             generateLTMJsonColumn = (
-                <Grid.Column width={4} >
-                    <Button primary onClick={() => this.props.fetchLTM({ Type: this.state.type, Service: this.props.selectedService, state: this.state })} content="GO" />
+                <Grid.Column>
+                    <Button primary onClick={() => this.props.fetchLTM({ Type: this.state.type, Service: this.props.selectedService, state: this.state })} content="Generate LTM JSON" />
+                </Grid.Column>
+            )
+        }
+
+        if (this.props.ltmJson) {
+            generateGTMJsonColumn = (
+                <Grid.Column>
+                    <Button primary onClick={() => this.props.fetchGTM({ ltm: this.props.ltmJson })} content="Generate GTM JSON" />
                 </Grid.Column>
             )
         }
@@ -165,8 +173,8 @@ class LTMForm extends React.PureComponent {
             typeRow = (
                 <Grid.Row columns={4} verticalAlign="bottom">
                     <Grid.Column width={4}>
-                        <strong>Type:</strong>
-                        <Dropdown name="type" onChange={this.handleOnchange} fluid selection options={LTMB2CTYPES} />
+                        <strong>Type:</strong> <br />
+                        <Dropdown name="type" onChange={this.handleOnchange} selection options={LTMB2CTYPES} />
                     </Grid.Column>
                 </Grid.Row>
             )
@@ -208,7 +216,10 @@ class LTMForm extends React.PureComponent {
                     <Grid.Column width={4}></Grid.Column>
                 </Grid.Row>
                 {form}
-                {generateLTMJsonColumn}
+                <Grid.Row columns={2}>
+                    {generateLTMJsonColumn}
+                    {generateGTMJsonColumn}
+                </Grid.Row>
             </Grid >
         );
     }
