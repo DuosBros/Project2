@@ -39,7 +39,7 @@ export const KIBANA_CONFIG = {
 }
 
 export const INCIDENT_PLACEHOLDER = "#INCIDENT_PLACEHOLDER"
-export const SN_INC_SEARCH_URL = "https://gvcgroup.service-now.com/nav_to.do?uri=textsearch.do?sysparm_ck=sysparm_tsgroups=%26sysparm_view=text_search%26sysparm_search=#INCIDENT_PLACEHOLDER"
+export const SN_INC_SEARCH_URL = "https://gvcgroup.service-now.com/nav_to.do?uri=text_search_exact_match.do?sysparm_search=#INCIDENT_PLACEHOLDER"
 
 export const VERSION1_PLACEHOLDER = "#VERSION1_PLACEHOLDER"
 export const VERSION1_SEARCH_URL = "https://www52.v1host.com/GVCGroup/Search.mvc/Advanced?q=#VERSION1_PLACEHOLDER"

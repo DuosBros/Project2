@@ -21,8 +21,12 @@ export default class SearchBox extends React.Component {
     }
 
     handleWindowOpen = () => {
-        var url = _.replace(this.props.url, new RegExp(this.props.pattern, "g"), this.state.value)
-        var win = window.open(url, '_blank');
+        const encodedSearchExpression = encodeURIComponent(this.state.value.trim());
+        const url = _.replace(this.props.url, new RegExp(this.props.pattern, "g"), encodedSearchExpression)
+        const win = window.open(url, '_blank');
+        try {
+            win.opener = null;
+        } catch(ex) {}
         win.focus();
     }
 
