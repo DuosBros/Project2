@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import { searchServersAction, searchServiceShortcutAction, toggleVerticalMenuAction, toggleUserDetailsAction } from '../utils/actions';
 import { searchServers, searchServiceShortcut, searchServerByIp } from '../requests/HeaderAxios';
 
-import { isNum, debounce, isValidIPv4 } from '../utils/HelperFunction';
+import { isNum, debounce, isValidIPv4, trimmedSearch } from '../utils/HelperFunction';
 import ShortcutFocus from '../components/ShortcutFocus';
 import SearchBox from '../components/SearchBox';
 import { SN_INC_SEARCH_URL, INCIDENT_PLACEHOLDER, VERSION1_PLACEHOLDER, VERSION1_SEARCH_URL } from '../appConfig';
@@ -90,9 +90,9 @@ class Header extends React.Component {
         })
     }
 
-    trimmedSearch(heystack, needle) {
-        return heystack.filter(e => e.text.toLowerCase().indexOf(needle.toLowerCase().trim()) > -1);
-    }
+    // trimmedSearch(heystack, needle) {
+    //     return heystack.filter(e => e.text.toLowerCase().indexOf(needle.toLowerCase().trim()) > -1);
+    // }
 
     render() {
 
@@ -137,7 +137,7 @@ class Header extends React.Component {
                                 placeholder='Press &apos;q&apos; to search a server'
                                 value=""
                                 onSearchChange={this.handleServerSearchChange}
-                                search={this.trimmedSearch}
+                                search={trimmedSearch}
                             />
                         </ShortcutFocus>
                     </Menu.Item>
@@ -148,7 +148,7 @@ class Header extends React.Component {
                                 handleServiceChange={this.handleServiceChange}
                                 options={this.props.headerStore.searchServiceShortcutsResult.slice(0, 10)}
                                 handleServiceShortcutSearchChange={this.handleServiceShortcutSearchChange}
-                                search={this.trimmedSearch} />
+                                search={trimmedSearch} />
                         </ShortcutFocus>
                     </Menu.Item>
                     <Menu.Item className='headerSearchInput'>

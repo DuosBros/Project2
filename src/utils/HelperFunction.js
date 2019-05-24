@@ -9,6 +9,10 @@ export const mapArrayForDropdown = (data, prop) => {
     }
 }
 
+export const trimmedSearch = (heystack, needle) => {
+    return heystack.filter(e => e.text.toLowerCase().indexOf(needle.toLowerCase().trim()) > -1);
+}
+
 export const mapDataForMinMaxAvgChart = (data) => {
     return data.map(e => ({
         name: moment(e.ts).format("HH:mm"),

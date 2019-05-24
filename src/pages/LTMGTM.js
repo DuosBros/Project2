@@ -4,7 +4,7 @@ import { DEFAULT_TEAMS, APP_TITLE } from '../appConfig';
 import LTMForm from '../components/LTMForm';
 import ErrorMessage from '../components/ErrorMessage';
 import ReactJson from 'react-json-view'
-import GTMForm from '../components/GTMForm';
+import GTM from '../modals/GTM';
 
 class LTMGTM extends React.PureComponent {
 
@@ -13,7 +13,8 @@ class LTMGTM extends React.PureComponent {
         modifiedLTMJSON: null,
         modifiedGTMJSON: null,
         isLtmJsonSegmentHidden: true,
-        isGtmJsonSegmentHidden: true
+        isGtmJsonSegmentHidden: true,
+        isGTMModalShowing: false
     }
 
     componentDidMount() {
@@ -45,9 +46,21 @@ class LTMGTM extends React.PureComponent {
         this.setState({ [segment]: !this.state[segment] });
     }
 
-    render() {
-        let LTMJson, GTMSegment, GTMJson;
+    toggleGTMModal = () => {
+        this.setState({ isGTMModalShowing: !this.state.isGTMModalShowing });
+    }
 
+    render() {
+        let LTMJson, GTMJson, GTMModal;
+
+        if (this.state.isGTMModalShowing) {
+            GTMModal = (
+                <GTM
+                    handleServerSearchChange={this.props.handleServerSearchChange}
+                    searchServerResult={this.props.searchServerResult}
+                    toggleGTMModal={this.toggleGTMModal} />
+            )
+        }
         if (!this.props.ltmJson.success) {
             LTMJson = (
                 <ErrorMessage error={this.props.ltmJson.error} />
@@ -169,36 +182,9 @@ class LTMGTM extends React.PureComponent {
             }
         }
 
-        GTMSegment = (
-            <Segment attached='bottom' >
-                <Grid>
-                    <Grid.Row>
-                        <Grid.Column>
-                            <GTMForm
-                                fetchGTM={this.fetchGTM}
-                                ltmJson={this.props.ltmJson.data}
-                            />
-                        </Grid.Column>
-                    </Grid.Row>
-                    <Grid.Row>
-                        <Grid.Column>
-                            {GTMJson}
-                        </Grid.Column>
-                    </Grid.Row>
-                </Grid>
-            </Segment>
-        )
-
         return (
             <Grid stackable>
-                {/* <Grid.Row>
-                    <Grid.Column>
-                        <Header block attached='top' as='h4'>
-                            [Beta] GTM Setup - check the output of json
-                        </Header>
-                        {GTMSegment}
-                    </Grid.Column>
-                </Grid.Row> */}
+                {GTMModal}
                 <Grid.Row>
                     <Grid.Column>
                         <Header block attached='top' as='h4'>
@@ -210,6 +196,9 @@ class LTMGTM extends React.PureComponent {
                                     <Grid.Column width={4}>
                                         <strong>Team:</strong>
                                         <Dropdown fluid defaultValue={this.state.team} onChange={this.handleTeamDropdownChange} options={DEFAULT_TEAMS} selection />
+                                    </Grid.Column>
+                                    <Grid.Column width={4} floated="right">
+                                        <Button onClick={() => this.toggleGTMModal()} content="Generate GTM JSON for non-prod stages" />
                                     </Grid.Column>
                                 </Grid.Row>
                                 <Grid.Row>

@@ -70,3 +70,9 @@ export const LTMB2CTYPES = [
     { key: 0, text: "Frontend", value: "Frontend" },
     { key: 1, text: "Backend", value: "Backend" },
 ]
+
+export const DETAULT_STAGES = [
+    { key: 0, text: "DEV", value: "DEV" },
+    { key: 1, text: "TEST", value: "TEST" },
+    { key: 2, text: "PRODUCTION", value: "PRODUCTION" },
+]

@@ -5,15 +5,16 @@ import { bindActionCreators } from 'redux';
 import {
     getDefaultLTMConfigAction, getServiceDetailsByShortcutsAction,
     searchServiceShortcutAction, getServicesAction, fetchLTMJsonAction,
-    fetchGTMJsonAction
+    fetchGTMJsonAction, searchServersAction
 } from '../utils/actions';
 import { ROUTE_ADMIN_LTM } from '../utils/constants';
 import NotFound from '../pages/NotFound';
 import LTMGTM from '../pages/LTMGTM';
 import { getDefaultLTMConfig, fetchLTMJson, fetchGTMJson } from '../requests/LTMGTMAxios';
 import { getServiceDetailsByShortcutHandler, getServicesHandler } from '../handlers/ServiceHandler';
-import { searchServiceShortcut } from '../requests/HeaderAxios';
+import { searchServiceShortcut, searchServerByIp, searchServers } from '../requests/HeaderAxios';
 import { LTMB2CTYPES, DEFAULT_TEAMS } from '../appConfig';
+import { isValidIPv4 } from '../utils/HelperFunction';
 
 class LTMGTMContainer extends React.PureComponent {
 
@@ -137,6 +138,35 @@ class LTMGTMContainer extends React.PureComponent {
         window.URL.revokeObjectURL(url);
     }
 
+    handleServerSearchChange = (e) => {
+        if (e.target.value.length > 1) {
+            this.handleSearchServers(e.target.value)
+        }
+    }
+
+    handleSearchServers(value) {
+        let trimed = value.trim();
+
+        if (isValidIPv4(trimed)) {
+            searchServerByIp(trimed)
+                .then(res => {
+                    let payload = [{
+                        text: `${res.data.ServerName} (${res.data.IpAddress})`,
+                        value: res.data.ServerId
+                    }]
+
+                    this.props.searchServersAction(payload)
+                })
+        }
+        else {
+            searchServers(trimed)
+                .then(res => {
+                    this.props.searchServersAction(res.data.map(e => ({ text: e.Name, value: e.Id })))
+                })
+        }
+
+    }
+
     render() {
         let pathname = this.props.location.pathname;
 
@@ -162,7 +192,9 @@ class LTMGTMContainer extends React.PureComponent {
                     ltmJson={this.props.ltmgtmStore.ltmJson}
                     saveJson={this.saveJson}
                     defaults={this.props.ltmgtmStore.ltmDefault}
-                    team={this.state.team} />
+                    team={this.state.team}
+                    searchServerResult={this.props.headerStore.searchServerResult}
+                    handleServerSearchChange={this.handleServerSearchChange} />
             )
         }
         else {
@@ -177,7 +209,7 @@ function mapStateToProps(state) {
         loadbalancerFarmsStore: state.LoadBalancerFarmsReducer,
         headerStore: state.HeaderReducer,
         serviceStore: state.ServiceReducer,
-        ltmgtmStore: state.LTMGTMReducer
+        ltmgtmStore: state.LTMGTMReducer,
     };
 }
 
@@ -188,7 +220,8 @@ function mapDispatchToProps(dispatch) {
         searchServiceShortcutAction,
         getServicesAction,
         fetchLTMJsonAction,
-        fetchGTMJsonAction
+        fetchGTMJsonAction,
+        searchServersAction
     }, dispatch);
 }
 
