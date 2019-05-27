@@ -18,7 +18,7 @@ import SimpleTable from '../components/SimpleTable';
 import { getStages, getVersions } from '../requests/VersionStatusAxios';
 import VersionStatusTable from '../components/VersionStatusTable';
 import { searchServiceShortcut } from '../requests/HeaderAxios';
-import { filterInArrayOfObjects, contains } from '../utils/HelperFunction';
+import { contains } from '../utils/HelperFunction';
 
 const DEFAULT_SEGMENT = [
     {
@@ -45,8 +45,7 @@ class VersionStatus extends React.Component {
             applicationDropdownValue: "",
             segments: DEFAULT_SEGMENT,
             selectedEnvironments: [],
-            alertNoEnvironmentsSelected: false,
-            getVersionsStarted: false
+            alertNoEnvironmentsSelected: false
         };
     }
     componentDidMount() {
@@ -136,7 +135,6 @@ class VersionStatus extends React.Component {
     }
 
     handleApplicationDropdownOnChange = (e, { value }) => {
-        // this.props.deleteAllRoloutStatusesAction()
         this.setState({ loadingServiceDetails: true, applicationDropdownValue: value });
         var filteredApps = this.props.rolloutStatusStore.dismeApplications.data.filter(x => x.value === value);
 
@@ -237,8 +235,6 @@ class VersionStatus extends React.Component {
     }
 
     getServiceDetails(services) {
-        this.props.removeAllVersionsAction();
-
         getServiceByShortcut(services)
             .then(res => {
                 if (res.data) {
@@ -256,11 +252,11 @@ class VersionStatus extends React.Component {
     }
 
     getVersions = () => {
-        this.setState({ getVersionsStarted: true });
+        this.props.getVersionAction({ success: true, data: {} })
         var services = this.props.serviceStore.serviceDetails.data.map(x => x.Service[0].Shortcut)
 
         if (this.state.selectedEnvironments.length === 0) {
-            this.setState({ alertNoEnvironmentsSelected: true, getVersionsStarted: true });
+            this.setState({ alertNoEnvironmentsSelected: true });
         }
         else {
             this.setState({ alertNoEnvironmentsSelected: false });
@@ -275,9 +271,6 @@ class VersionStatus extends React.Component {
                 })
                 .catch(err => {
                     this.props.getVersionAction({ success: false, error: err })
-                })
-                .finally(() => {
-                    this.setState({ getVersionsStarted: true });
                 })
         }
     }
@@ -393,7 +386,7 @@ class VersionStatus extends React.Component {
                         <Table.Row key={service.Service[0].Id}>
                             <Table.Cell>{service.Service[0].Name}</Table.Cell>
                             <Table.Cell>
-                                <Link to={'/service/' + service.Service[0].Id} target="_blank">{service.Service[0].Shortcut}</Link>
+                                <Link to={'/service/' + service.Service[0].Id}>{service.Service[0].Shortcut}</Link>
                             </Table.Cell>
                             <Table.Cell>
                                 <DismeStatus dismeStatus={service.Service[0].Status} />
@@ -504,7 +497,7 @@ class VersionStatus extends React.Component {
                     placeholder='Select one or more environments'
                     // onSearchChange={this.handleApplicationDropdownOnSearchChange}
                     search
-                    value={this.state.selectedEnvironments === "" ? "" : this.state.selectedEnvironments}
+                    value={selectedEnvironments === "" ? "" : selectedEnvironments}
                 />
             )
         }
@@ -514,58 +507,63 @@ class VersionStatus extends React.Component {
             )
         }
 
-        var versionStatusSegment;
+        var versionStatusSegment, versionStatusRow;
         if (!this.props.versionStatusStore.versions.success) {
             versionStatusSegment = (
-                <Grid.Row>
-                    <Grid.Column>
-                        <Header block attached='top' as='h4'>
-                            Version Info
-                            <Button
-                                basic
-                                style={{ padding: '0em', marginRight: '0.5em' }}
-                                onClick={() => this.handleToggleShowingContent("versionStatus")}
-                                floated='right'
-                                icon='content' />
-                        </Header>
-                        <Segment attached='bottom' >
-                            <ErrorMessage error={this.props.versionStatusStore.versions.error} />
-                        </Segment>
-                    </Grid.Column>
-                </Grid.Row>
+                <Segment attached='bottom' >
+                    <ErrorMessage error={this.props.versionStatusStore.versions.error} />
+                </Segment>
             );
         }
         else {
             versionStatusSegment = (
-                <Grid.Row>
-                    <Grid.Column>
-                        <Header block attached='top' as='h4'>
-                            Version Info
-                            <Button
-                                basic
-                                style={{ padding: '0em', marginRight: '0.5em' }}
-                                onClick={() => this.handleToggleShowingContent("versionStatus")}
-                                floated='right'
-                                icon='content' />
-                        </Header>
-                        <Segment attached='bottom' >
-                            <VersionStatusTable rowsPerPage={0} tableHeader={false} compact="very" data={this.props.versionStatusStore.versions.data} />
-                        </Segment>
-                    </Grid.Column>
-                </Grid.Row>
+                <Segment attached='bottom' >
+                    <VersionStatusTable rowsPerPage={0} tableHeader={false} compact="very" data={this.props.versionStatusStore.versions.data} />
+                </Segment>
             )
         }
 
-        if (this.props.serviceStore.serviceDetails.data) {
-            if (this.props.serviceStore.serviceDetails.data.length === 0 || selectedEnvironments.length === 0) {
-                versionStatusSegment = null
-            }
-        }
+        // if (this.props.serviceStore.serviceDetails.data) {
+        //     if (this.props.serviceStore.serviceDetails.data.length === 0 || selectedEnvironments.length === 0) {
+        //         versionStatusSegment = null
+        //     }
+        // }
 
-        if (this.state.getVersionsStarted === false) {
+        // if (this.state.getVersionsStarted === true) {
+        //     versionStatusSegment = (
+
+        //         <Segment attached='bottom' >
+        //             <Message info icon>
+        //                 <Icon name='circle notched' loading />
+        //                 <Message.Content>
+        //                     <Message.Header>Fetching version status</Message.Header>
+        //                 </Message.Content>
+        //             </Message>
+        //         </Segment>
+
+        //     )
+        // }
+
+        if (!this.state.segments.filter(x => x.segmentName === "versionStatus")[0].isShowing) {
             versionStatusSegment = null
         }
 
+        versionStatusRow = (
+            <Grid.Row>
+                <Grid.Column>
+                    <Header block attached='top' as='h4'>
+                        Version Info
+                 <Button
+                            basic
+                            style={{ padding: '0em', marginRight: '0.5em' }}
+                            onClick={() => this.handleToggleShowingContent("versionStatus")}
+                            floated='right'
+                            icon='content' />
+                    </Header>
+                    {versionStatusSegment}
+                </Grid.Column>
+            </Grid.Row>
+        )
 
         return (
             <Grid stackable>
@@ -644,21 +642,7 @@ class VersionStatus extends React.Component {
                     </Grid.Column>
                 </Grid.Row>
                 {serviceDetails}
-                {this.state.segments.filter(x => x.segmentName === "versionStatus")[0].isShowing ? (versionStatusSegment) : (
-                    <Grid.Row>
-                        <Grid.Column>
-                            <Header block attached='top' as='h4'>
-                                Version Info
-                             <Button
-                                    basic
-                                    style={{ padding: '0em', marginRight: '0.5em' }}
-                                    onClick={() => this.handleToggleShowingContent("versionStatus")}
-                                    floated='right'
-                                    icon='content' />
-                            </Header>
-                        </Grid.Column>
-                    </Grid.Row>
-                )}
+                {versionStatusRow}
             </Grid>
         )
     }
