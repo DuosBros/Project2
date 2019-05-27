@@ -252,13 +252,14 @@ class VersionStatus extends React.Component {
     }
 
     getVersions = () => {
-        this.props.getVersionAction({ success: true, data: {} })
-        var services = this.props.serviceStore.serviceDetails.data.map(x => x.Service[0].Shortcut)
-
         if (this.state.selectedEnvironments.length === 0) {
             this.setState({ alertNoEnvironmentsSelected: true });
+            return
         }
         else {
+            this.props.getVersionAction({ success: true, data: {} })
+            var services = this.props.serviceStore.serviceDetails.data.map(x => x.Service[0].Shortcut)
+
             this.setState({ alertNoEnvironmentsSelected: false });
 
             var payload = {};
@@ -420,47 +421,6 @@ class VersionStatus extends React.Component {
             })
         }
 
-        var serviceDetails;
-        if (this.state.inputProductsValues) {
-            serviceDetails = (
-                <Grid.Row>
-                    <Grid.Column>
-                        <Header block attached='top' as='h4'>
-                            Service details
-                            <Button
-                                basic
-                                style={{ padding: '0em', marginRight: '0.5em' }}
-                                onClick={() => this.handleToggleShowingContent("serviceDetails")}
-                                floated='right'
-                                icon='content' />
-                        </Header>
-                        {
-                            this.state.loadingServiceDetails ? (
-                                <Segment attached='bottom'>
-                                    <Message info icon>
-                                        <Icon name='circle notched' loading />
-                                        <Message.Content>
-                                            <Message.Header>Fetching service details</Message.Header>
-                                        </Message.Content>
-                                    </Message>
-                                </Segment>
-                            ) : (
-                                    this.state.segments.filter(x => x.segmentName === "serviceDetails")[0].isShowing && (
-                                        <Segment attached='bottom'>
-                                            <SimpleTable columnProperties={serviceTableColumnProperties} body={servicesTableRows} compact="very" />
-                                        </Segment>
-                                    )
-                                )
-                        }
-
-                    </Grid.Column>
-                </Grid.Row>
-            )
-        }
-        else {
-            serviceDetails = null
-        }
-
         var dismeApplicationsDropdown;
         if (this.props.rolloutStatusStore.dismeApplications.success) {
             dismeApplicationsDropdown = (
@@ -529,27 +489,6 @@ class VersionStatus extends React.Component {
             )
         }
 
-        // if (this.props.serviceStore.serviceDetails.data) {
-        //     if (this.props.serviceStore.serviceDetails.data.length === 0 || selectedEnvironments.length === 0) {
-        //         versionStatusSegment = null
-        //     }
-        // }
-
-        // if (this.state.getVersionsStarted === true) {
-        //     versionStatusSegment = (
-
-        //         <Segment attached='bottom' >
-        //             <Message info icon>
-        //                 <Icon name='circle notched' loading />
-        //                 <Message.Content>
-        //                     <Message.Header>Fetching version status</Message.Header>
-        //                 </Message.Content>
-        //             </Message>
-        //         </Segment>
-
-        //     )
-        // }
-
         if (!this.state.segments.filter(x => x.segmentName === "versionStatus")[0].isShowing) {
             versionStatusSegment = null
         }
@@ -570,6 +509,48 @@ class VersionStatus extends React.Component {
                 </Grid.Column>
             </Grid.Row>
         )
+
+        var serviceDetails;
+        if (this.state.inputProductsValues) {
+            serviceDetails = (
+                <Grid.Row>
+                    <Grid.Column>
+                        <Header block attached='top' as='h4'>
+                            Service details
+                            <Button
+                                basic
+                                style={{ padding: '0em', marginRight: '0.5em' }}
+                                onClick={() => this.handleToggleShowingContent("serviceDetails")}
+                                floated='right'
+                                icon='content' />
+                        </Header>
+                        {
+                            this.state.loadingServiceDetails ? (
+                                <Segment attached='bottom'>
+                                    <Message info icon>
+                                        <Icon name='circle notched' loading />
+                                        <Message.Content>
+                                            <Message.Header>Fetching service details</Message.Header>
+                                        </Message.Content>
+                                    </Message>
+                                </Segment>
+                            ) : (
+                                    this.state.segments.filter(x => x.segmentName === "serviceDetails")[0].isShowing && (
+                                        <Segment attached='bottom'>
+                                            <SimpleTable columnProperties={serviceTableColumnProperties} body={servicesTableRows} compact="very" />
+                                        </Segment>
+                                    )
+                                )
+                        }
+
+                    </Grid.Column>
+                </Grid.Row>
+            )
+        }
+        else {
+            serviceDetails = null
+            versionStatusRow = null
+        }
 
         return (
             <Grid stackable>
