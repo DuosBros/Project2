@@ -434,22 +434,25 @@ class VersionStatus extends React.Component {
                                 floated='right'
                                 icon='content' />
                         </Header>
-                        <Segment attached='bottom'>
-                            {
-                                this.state.loadingServiceDetails ? (
+                        {
+                            this.state.loadingServiceDetails ? (
+                                <Segment attached='bottom'>
                                     <Message info icon>
                                         <Icon name='circle notched' loading />
                                         <Message.Content>
                                             <Message.Header>Fetching service details</Message.Header>
                                         </Message.Content>
                                     </Message>
-                                ) : (
-                                        this.state.segments.filter(x => x.segmentName === "serviceDetails")[0].isShowing ? (
+                                </Segment>
+                            ) : (
+                                    this.state.segments.filter(x => x.segmentName === "serviceDetails")[0].isShowing && (
+                                        <Segment attached='bottom'>
                                             <SimpleTable columnProperties={serviceTableColumnProperties} body={servicesTableRows} compact="very" />
-                                        ) : (null)
+                                        </Segment>
                                     )
-                            }
-                        </Segment>
+                                )
+                        }
+
                     </Grid.Column>
                 </Grid.Row>
             )
@@ -514,6 +517,9 @@ class VersionStatus extends React.Component {
                     <ErrorMessage error={this.props.versionStatusStore.versions.error} />
                 </Segment>
             );
+        }
+        else if (!this.props.versionStatusStore.versions.data) {
+            versionStatusSegment = null;
         }
         else {
             versionStatusSegment = (
