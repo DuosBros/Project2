@@ -6,10 +6,11 @@ import { Grid, Header, Segment, Table, Button, Dropdown, Message, Icon, TextArea
 import { Link } from 'react-router-dom';
 
 import { getDismeApplications, getServiceByShortcut } from '../requests/ServiceAxios';
-import { getServiceDetailsByShortcutsAction, removeServiceDetailsAction, removeAllServiceDetailsAction,
-    getStagesAction, getVersionAction, removeAllVersionsAction,searchServiceShortcutAction,
+import {
+    getServiceDetailsByShortcutsAction, removeServiceDetailsAction, removeAllServiceDetailsAction,
+    getStagesAction, getVersionAction, removeAllVersionsAction, searchServiceShortcutAction,
     getDismeApplicationsAction
- } from '../utils/actions';
+} from '../utils/actions';
 import { DISME_SERVICE_URL, DISME_SERVICE_PLACEHOLDER, APP_TITLE } from '../appConfig';
 import DismeStatus from '../components/DismeStatus';
 import ErrorMessage from '../components/ErrorMessage';
@@ -147,7 +148,7 @@ class VersionStatus extends React.Component {
             inputProductsValues: joinedShortcuts
         });
 
-        this.getServiceDetailsAndVersions(joinedShortcuts)
+        this.getServiceDetails(joinedShortcuts)
     }
 
     handleEnvironmentDropdownOnChange = (e, { value }) => {
@@ -175,7 +176,7 @@ class VersionStatus extends React.Component {
         if (this.props.serviceStore.serviceDetails.success && this.props.serviceStore.serviceDetails.data) {
             var shortcuts = this.props.serviceStore.serviceDetails.data.map(x => x.Service[0].Shortcut)
             if (shortcuts.length !== 0)
-                this.getServiceDetailsAndVersions(shortcuts);
+                this.getServiceDetails(shortcuts);
         }
     }
 
@@ -212,7 +213,7 @@ class VersionStatus extends React.Component {
 
         var valueToSearch = value.replace(/[^a-zA-Z0-9,_.-]/g, "")
         var uniqueValueToSearch = Array.from(new Set(valueToSearch.split(',')))
-        this.getServiceDetailsAndVersions(uniqueValueToSearch)
+        this.getServiceDetails(uniqueValueToSearch)
     }
 
     handleToggleShowAllSegments = () => {
@@ -234,7 +235,7 @@ class VersionStatus extends React.Component {
         }
     }
 
-    getServiceDetailsAndVersions(services) {
+    getServiceDetails(services) {
         this.props.removeAllVersionsAction();
 
         getServiceByShortcut(services)
@@ -251,11 +252,6 @@ class VersionStatus extends React.Component {
             .catch(err => {
                 this.props.getServiceDetailsByShortcutsAction({ success: false, error: err })
             })
-        // .then((res) => {
-        //     if (res) {
-        //         this.getVersions(services)
-        //     }
-        // })
     }
 
     getVersions = () => {
@@ -295,7 +291,7 @@ class VersionStatus extends React.Component {
         }
 
         this.setState({ inputProductsValues: servicesString });
-        this.getServiceDetailsAndVersions(servicesString.split(","))
+        this.getServiceDetails(servicesString.split(","))
     }
 
     handleServiceShortcutSearchChange = (e) => {
@@ -316,7 +312,7 @@ class VersionStatus extends React.Component {
         var split = this.state.inputProductsValues.split(",")
 
         var filtered = split.filter(x => x !== service.Shortcut)
-        this.getServiceDetailsAndVersions(filtered);
+        this.getServiceDetails(filtered);
 
         var joined = filtered.join(",")
         var url = new URL(document.location.href)
@@ -527,7 +523,7 @@ class VersionStatus extends React.Component {
                             <Button
                                 basic
                                 style={{ padding: '0em', marginRight: '0.5em' }}
-                                onClick={() => this.handleToggleShowingContent("versionInfo")}
+                                onClick={() => this.handleToggleShowingContent("versionStatus")}
                                 floated='right'
                                 icon='content' />
                         </Header>
@@ -538,31 +534,6 @@ class VersionStatus extends React.Component {
                 </Grid.Row>
             );
         }
-        // else if (!this.props.versionStatusStore.versions.data || this.state.getVersionsStarted === true) {
-        //     versionStatusSegment = (
-        //         <Grid.Row>
-        //             <Grid.Column>
-        //                 <Header block attached='top' as='h4'>
-        //                     Version Info
-        //                 <Button
-        //                         basic
-        //                         style={{ padding: '0em', marginRight: '0.5em' }}
-        //                         onClick={() => this.handleToggleShowingContent("versionInfo")}
-        //                         floated='right'
-        //                         icon='content' />
-        //                 </Header>
-        //                 <Segment attached='bottom' >
-        //                     <Message info icon>
-        //                         <Icon name='circle notched' loading />
-        //                         <Message.Content>
-        //                             <Message.Header>Fetching version statuses</Message.Header>
-        //                         </Message.Content>
-        //                     </Message>
-        //                 </Segment>
-        //             </Grid.Column>
-        //         </Grid.Row>
-        //     )
-        // }
         else {
             versionStatusSegment = (
                 <Grid.Row>
@@ -572,7 +543,7 @@ class VersionStatus extends React.Component {
                             <Button
                                 basic
                                 style={{ padding: '0em', marginRight: '0.5em' }}
-                                onClick={() => this.handleToggleShowingContent("versionInfo")}
+                                onClick={() => this.handleToggleShowingContent("versionStatus")}
                                 floated='right'
                                 icon='content' />
                         </Header>
@@ -672,7 +643,21 @@ class VersionStatus extends React.Component {
                     </Grid.Column>
                 </Grid.Row>
                 {serviceDetails}
-                {this.state.segments.filter(x => x.segmentName === "versionStatus")[0].isShowing ? (versionStatusSegment) : (null)}
+                {this.state.segments.filter(x => x.segmentName === "versionStatus")[0].isShowing ? (versionStatusSegment) : (
+                    <Grid.Row>
+                        <Grid.Column>
+                            <Header block attached='top' as='h4'>
+                                Version Info
+                             <Button
+                                    basic
+                                    style={{ padding: '0em', marginRight: '0.5em' }}
+                                    onClick={() => this.handleToggleShowingContent("versionStatus")}
+                                    floated='right'
+                                    icon='content' />
+                            </Header>
+                        </Grid.Column>
+                    </Grid.Row>
+                )}
             </Grid>
         )
     }
