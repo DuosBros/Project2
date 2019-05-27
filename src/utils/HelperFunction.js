@@ -149,6 +149,10 @@ export const groupBy = (items, key) => items.reduce(
     {},
 );
 
+export const contains = (sourceString, pattern) => {
+    return sourceString.toString().search(new RegExp(pattern, "i")) >= 0
+}
+
 const REGEX_DIGITS = /^\d+$/;
 export const isNum = (value) => {
     if (value === null || value === undefined) {

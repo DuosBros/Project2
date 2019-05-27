@@ -18,6 +18,7 @@ import SimpleTable from '../components/SimpleTable';
 import { getStages, getVersions } from '../requests/VersionStatusAxios';
 import VersionStatusTable from '../components/VersionStatusTable';
 import { searchServiceShortcut } from '../requests/HeaderAxios';
+import { filterInArrayOfObjects, contains } from '../utils/HelperFunction';
 
 const DEFAULT_SEGMENT = [
     {
@@ -311,7 +312,7 @@ class VersionStatus extends React.Component {
     removeServiceFromSearch = (service) => {
         var split = this.state.inputProductsValues.split(",")
 
-        var filtered = split.filter(x => x !== service.Shortcut)
+        var filtered = split.filter(x => !contains(x, service.Shortcut))
         this.getServiceDetails(filtered);
 
         var joined = filtered.join(",")
