@@ -4,7 +4,6 @@ import React from 'react';
 const ServerSearchMultipleDropdown = (props) => {
     return (
         <Dropdown
-            fluid
             multiple
             value={[]}
             id="serverSearchDropdown"

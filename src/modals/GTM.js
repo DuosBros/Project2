@@ -1,4 +1,4 @@
-import { Modal, Button, Grid, Dropdown, Input, Form, TextArea, Label, Icon } from "semantic-ui-react";
+import { Modal, Button, Grid, Dropdown, Input, Form, Label, Icon } from "semantic-ui-react";
 import React from 'react';
 import { LTMB2CTYPES, DETAULT_STAGES } from "../appConfig";
 import { trimmedSearch } from "../utils/HelperFunction";
