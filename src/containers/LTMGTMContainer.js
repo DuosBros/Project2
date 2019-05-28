@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import {
     getDefaultLTMConfigAction, getServiceDetailsByShortcutsAction,
     searchServiceShortcutAction, getServicesAction, fetchLTMJsonAction,
-    fetchGTMJsonAction, searchServersAction
+    fetchGTMJsonAction, searchServersAction, fetchNonProdGTMJsonAction
 } from '../utils/actions';
 import { ROUTE_ADMIN_LTM } from '../utils/constants';
 import NotFound from '../pages/NotFound';
@@ -110,17 +110,34 @@ class LTMGTMContainer extends React.PureComponent {
             })
     }
 
-    fetchGTM = (data) => {
-        let payload = {
-            ltm: data.ltm
+    fetchGTM = (data, isProd) => {
+        let payload;
+        if (data.ltm) {
+            payload = {
+                ltm: data.ltm
+            }
         }
+        else {
+            payload = data
+        }
+
         this.props.fetchGTMJsonAction({ success: true, isFetching: true })
         fetchGTMJson(payload)
             .then(res => {
-                this.props.fetchGTMJsonAction({ success: true, data: res.data, isFetching: false })
+                if (isProd) {
+                    this.props.fetchGTMJsonAction({ success: true, data: res.data, isFetching: false })
+                }
+                else {
+                    this.props.fetchNonProdGTMJsonAction({ success: true, data: res.data, isFetching: false })
+                }
             })
             .catch(err => {
-                this.props.fetchGTMJsonAction({ success: false, error: err, isFetching: false })
+                if (isProd) {
+                    this.props.fetchGTMJsonAction({ success: false, error: err, isFetching: false })
+                }
+                else {
+                    this.props.fetchNonProdGTMJsonAction({ success: true, error: err, isFetching: false })
+                }
             })
     }
 
@@ -133,7 +150,7 @@ class LTMGTMContainer extends React.PureComponent {
         let blob = new Blob([payload.data], { type: "octet/stream" })
         let url = window.URL.createObjectURL(blob);
         a.href = url;
-        a.download = payload.payload.Service + "_" + payload.type + "_" + fileName + ".json";
+        a.download = payload.payload ? (payload.payload.Service + "_" + payload.type + "_" + fileName + ".json") : (payload.type + "_" + fileName + ".json");
         a.click();
         window.URL.revokeObjectURL(url);
     }
@@ -189,6 +206,7 @@ class LTMGTMContainer extends React.PureComponent {
                     fetchLTM={this.fetchLTM}
                     fetchGTM={this.fetchGTM}
                     gtmJson={this.props.ltmgtmStore.gtmJson}
+                    nonProdGtmJson={this.props.ltmgtmStore.nonProdGtmJson}
                     ltmJson={this.props.ltmgtmStore.ltmJson}
                     saveJson={this.saveJson}
                     defaults={this.props.ltmgtmStore.ltmDefault}
@@ -221,7 +239,8 @@ function mapDispatchToProps(dispatch) {
         getServicesAction,
         fetchLTMJsonAction,
         fetchGTMJsonAction,
-        searchServersAction
+        searchServersAction,
+        fetchNonProdGTMJsonAction
     }, dispatch);
 }
 

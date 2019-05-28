@@ -56,9 +56,12 @@ class LTMGTM extends React.PureComponent {
         if (this.state.isGTMModalShowing) {
             GTMModal = (
                 <GTM
+                    nonProdGtmJson={this.props.nonProdGtmJson}
                     handleServerSearchChange={this.props.handleServerSearchChange}
                     searchServerResult={this.props.searchServerResult}
-                    toggleGTMModal={this.toggleGTMModal} />
+                    toggleGTMModal={this.toggleGTMModal}
+                    fetchGTM={this.fetchGTM}
+                    saveJson={this.props.saveJson} />
             )
         }
         if (!this.props.ltmJson.success) {
@@ -118,7 +121,6 @@ class LTMGTM extends React.PureComponent {
                         />
                     </>
                 )
-
             }
         }
 

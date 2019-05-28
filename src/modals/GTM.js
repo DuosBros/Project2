@@ -1,12 +1,17 @@
-import { Modal, Button, Grid, Dropdown, Input, Form, Label, Icon } from "semantic-ui-react";
+import { Modal, Button, Grid, Dropdown, Input, Form, Label, Icon, Header, Message } from "semantic-ui-react";
 import React from 'react';
-import { LTMB2CTYPES, DETAULT_STAGES } from "../appConfig";
+import { LTMB2CTYPES } from "../appConfig";
 import { trimmedSearch } from "../utils/HelperFunction";
 import ServerSearchMultipleDropdown from "../components/ServerSearchMultipleDropdown";
+import ReactJson from "react-json-view";
+import ErrorMessage from "../components/ErrorMessage";
 
 class GTM extends React.PureComponent {
     state = {
-        selectedServers: []
+        selectedServers: [],
+        domain: "",
+        isGtmJsonSegmentHidden: true,
+        modifiedGTMJSON: null
     }
 
     closeModal = () => {
@@ -23,6 +28,10 @@ class GTM extends React.PureComponent {
         }
     }
 
+    handleToggleShowingContent = (segment) => {
+        this.setState({ [segment]: !this.state[segment] });
+    }
+
     handleServerChange = (e, { options, value }) => {
         let serverToAdd = options.find(x => x.value === value[0])
         this.setState({ selectedServers: [...this.state.selectedServers, serverToAdd.text] })
@@ -35,6 +44,15 @@ class GTM extends React.PureComponent {
         this.setState({ selectedServers: array });
     }
 
+    handleGenerateNonProdGTM = () => {
+        let payload = {
+            Type: this.state.type,
+            Domain: this.state.domain,
+            Servers: this.state.selectedServers
+        }
+
+        this.props.fetchGTM(payload, false)
+    }
     render() {
         let serverLabels = this.state.selectedServers.map(x => {
             return (
@@ -44,6 +62,75 @@ class GTM extends React.PureComponent {
                 </Label>
             )
         })
+
+        let generateButton, GTMJson;
+
+        if (this.state.type && this.state.domain && this.state.selectedServers.length > 0) {
+            generateButton = (
+                <Button onClick={this.handleGenerateNonProdGTM} primary icon='checkmark' content="Generate GTM JSON" />
+            )
+        }
+
+        if (!this.props.nonProdGtmJson.success) {
+            GTMJson = (
+                <ErrorMessage error={this.props.nonProdGtmJson.error} />
+            );
+        }
+        else {
+            let json = JSON.stringify(this.state.modifiedGTMJSON ? this.state.modifiedGTMJSON : this.props.nonProdGtmJson.data, null, 4);
+
+            if (!this.state.isGtmJsonSegmentHidden) {
+                GTMJson = (
+                    <Header block attached='top' as='h4'>
+                        <Button id="skip" color="black" onClick={() => this.props.saveJson({ type: "GTM", data: json })}>
+                            Download
+                        </Button>
+                        <Button onClick={() => this.handleToggleShowingContent("isGtmJsonSegmentHidden")} floated='right' icon='content' />
+                    </Header>
+                )
+            }
+            else if (this.props.nonProdGtmJson.isFetching) {
+                GTMJson = (
+                    <div className="messageBox">
+                        <Message info icon>
+                            <Icon name='circle notched' loading />
+                            <Message.Content>
+                                <Message.Header>Fetching GTM JSON</Message.Header>
+                            </Message.Content>
+                        </Message>
+                    </div>
+                );
+            }
+            else if (this.props.nonProdGtmJson.data) {
+                GTMJson = (
+                    <>
+                        <Header block attached='top' as='h4'>
+                            <Button id="skip" color="black" onClick={() => this.props.saveJson({ type: "GTM", data: json })}>
+                                Download
+                            </Button>
+                            <Button onClick={() => this.handleToggleShowingContent("isGtmJsonSegmentHidden")} floated='right' icon='content' />
+                        </Header>
+                        <ReactJson
+                            style={{ padding: '1em' }}
+                            name={false}
+                            theme="solarized"
+                            collapseStringsAfterLength={false}
+                            src={this.props.nonProdGtmJson.data}
+                            collapsed={false}
+                            indentWidth={4}
+                            displayObjectSize={false}
+                            displayDataTypes={false}
+                            enableClipboard={true}
+                            onDelete={this.handleEditGTMJSON}
+                            onAdd={this.handleEditGTMJSON}
+                            onEdit={this.handleEditGTMJSON}
+                            iconStyle="square"
+                        />
+                    </>
+                )
+            }
+        }
+
         return (
             <Modal
                 size='large'
@@ -67,10 +154,6 @@ class GTM extends React.PureComponent {
                                         <strong>Domain:</strong>
                                         <Input name="domain" onChange={this.handleOnchange} />
                                     </Form.Field>
-                                    <Form.Field>
-                                        <strong>Stage:</strong>
-                                        <Dropdown multiple name="type" onChange={this.handleOnchange} selection options={DETAULT_STAGES} />
-                                    </Form.Field>
                                 </Form>
                             </Grid.Column>
                             <Grid.Column width={4}>
@@ -92,21 +175,20 @@ class GTM extends React.PureComponent {
                             <Grid.Column width={8}>
                                 <strong>Selected servers:</strong> <br />
                                 {serverLabels}
-                                {/* <Form>
-                                    <Form.Field>
-                                        <Form.Input></Form.Input>
-                                    </Form.Field>
-                                </Form> */}
+                            </Grid.Column>
+                        </Grid.Row>
+                        <Grid.Row>
+                            <Grid.Column>
+                                {GTMJson}
                             </Grid.Column>
                         </Grid.Row>
                     </Grid>
                 </Modal.Content>
                 <Modal.Actions>
+                    {generateButton}
                     <Button
                         onClose={() => this.closeModal()}
-                        positive
                         labelPosition='right'
-                        icon='checkmark'
                         content='Close'
                     />
                 </Modal.Actions>

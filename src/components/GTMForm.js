@@ -6,7 +6,7 @@ class GTMForm extends Component {
     render() {
         let generateGTMFromLTMButton;
         if (this.props.ltmJson) {
-            generateGTMFromLTMButton = <Button content="Generate GTM from LTM" onClick={() => this.props.fetchGTM({ ltm: this.props.ltmJson })} />
+            generateGTMFromLTMButton = <Button content="Generate GTM from LTM" onClick={() => this.props.fetchGTM({ ltm: this.props.ltmJson }, true)} />
         }
         else {
             generateGTMFromLTMButton = (<Popup position="right center" trigger={

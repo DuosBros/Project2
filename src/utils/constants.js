@@ -57,6 +57,7 @@ export const DELETE_SERVER = 'DELETE_SERVER'
 export const GET_DEFAULT_LTM_CONFIG = 'GET_DEFAULT_LTM_CONFIG'
 export const FETCH_LTM_JSON = 'FETCH_LTM_JSON'
 export const FETCH_GTM_JSON = 'FETCH_GTM_JSON'
+export const FETCH_NONPROD_GTM_JSON = 'FETCH_NONPROD_GTM_JSON'
 
 export const ROUTE_SERVERS = '/servers';
 export const ROUTE_SERVERS_ADMIN = '/admin/servers';

@@ -6,13 +6,10 @@ const ServerSearchMultipleDropdown = (props) => {
         <Dropdown
             multiple
             value={[]}
-            id="serverSearchDropdown"
             className={props.className && props.className}
             icon='search'
             selection
-            // onLabelClick={props.handleServerChange}
             onChange={props.handleServerChange}
-            // value={props.value}
             options={props.options}
             fluid
             selectOnBlur={false}
