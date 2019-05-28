@@ -6,7 +6,7 @@ import ServerSearchMultipleDropdown from "../components/ServerSearchMultipleDrop
 import ReactJson from "react-json-view";
 import ErrorMessage from "../components/ErrorMessage";
 
-class GTM extends React.PureComponent {
+class NonProdGTM extends React.PureComponent {
     state = {
         selectedServers: [],
         domain: "",
@@ -197,4 +197,4 @@ class GTM extends React.PureComponent {
     }
 }
 
-export default GTM;
+export default NonProdGTM;

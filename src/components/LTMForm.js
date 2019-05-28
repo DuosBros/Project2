@@ -79,7 +79,7 @@ class LTMForm extends React.PureComponent {
         if (this.props.ltmJson) {
             generateGTMJsonColumn = (
                 <Grid.Column>
-                    <Button primary onClick={() => this.props.fetchGTM({ ltm: this.props.ltmJson })} content="Generate GTM JSON" />
+                    <Button primary onClick={() => this.props.fetchGTM({ ltm: this.props.ltmJson }, true)} content="Generate GTM JSON" />
                 </Grid.Column>
             )
         }

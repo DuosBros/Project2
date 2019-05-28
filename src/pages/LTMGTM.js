@@ -4,7 +4,7 @@ import { DEFAULT_TEAMS, APP_TITLE } from '../appConfig';
 import LTMForm from '../components/LTMForm';
 import ErrorMessage from '../components/ErrorMessage';
 import ReactJson from 'react-json-view'
-import GTM from '../modals/GTM';
+import NonProdGTM from '../modals/NonProdGTM';
 
 class LTMGTM extends React.PureComponent {
 
@@ -30,8 +30,8 @@ class LTMGTM extends React.PureComponent {
         this.setState({ LTMPayload: payload });
     }
 
-    fetchGTM = (payload) => {
-        this.props.fetchGTM(payload)
+    fetchGTM = (payload, isProd) => {
+        this.props.fetchGTM(payload, isProd)
     }
 
     handleEditLTMJSON = (e, m) => {
@@ -55,7 +55,7 @@ class LTMGTM extends React.PureComponent {
 
         if (this.state.isGTMModalShowing) {
             GTMModal = (
-                <GTM
+                <NonProdGTM
                     nonProdGtmJson={this.props.nonProdGtmJson}
                     handleServerSearchChange={this.props.handleServerSearchChange}
                     searchServerResult={this.props.searchServerResult}
