@@ -15,12 +15,14 @@ export const getServiceDetailsByShortcutHandler = (services, getServiceDetailsBy
         })
 }
 
-export const getServicesHandler = (getServicesAction) => {
-    getServices()
-        .then(res => {
+export const getServicesHandler = async (getServicesAction) => {
+    try {
+        let res = await getServices();
+        if (res) {
             getServicesAction({ success: true, data: res.data })
-        })
-        .catch(err => {
-            getServicesAction({ success: false, error: err })
-        })
+            return res;
+        }
+    } catch (err) {
+        getServicesAction({ success: false, error: err })
+    }
 }

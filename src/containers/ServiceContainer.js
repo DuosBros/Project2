@@ -41,7 +41,7 @@ class ServiceContainer extends React.PureComponent {
     }
 
     async fetchServicesAndHighAvailabilitiesAndHandleResult() {
-        let res = await this.fetchServicesAndHandleResult();
+        let res = this.fetchServicesAndHandleResult();
         if (res) {
             this.fetchHighAvailabilitiesAndHandleResult();
         }
@@ -111,8 +111,8 @@ class ServiceContainer extends React.PureComponent {
             })
     }
 
-    fetchServicesAndHandleResult = async () => {
-        await getServicesHandler(this.props.getServicesAction)
+    fetchServicesAndHandleResult = () => {
+        return getServicesHandler(this.props.getServicesAction)
     }
 
     render() {
