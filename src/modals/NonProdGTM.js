@@ -1,4 +1,4 @@
-import { Modal, Button, Grid, Dropdown, Input, Form, Label, Icon, Header, Message } from "semantic-ui-react";
+import { Modal, Button, Grid, Dropdown, Input, Form, Label, Icon, Header, Message, Popup, PopupContent } from "semantic-ui-react";
 import React from 'react';
 import { LTMB2CTYPES } from "../appConfig";
 import { trimmedSearch } from "../utils/HelperFunction";
@@ -160,6 +160,15 @@ class NonProdGTM extends React.PureComponent {
                                 <Form>
                                     <Form.Field>
                                         <strong>Servers:</strong>
+                                        <Popup
+                                            on="click"
+                                            inverted
+                                            trigger={<Icon name="question circle" />}>
+                                            <PopupContent>
+                                                Double click on input prevents typing. Feel free to
+                                                <a target="_blank" rel="noopener noreferrer" href='https://vie.git.bwinparty.com/leanops/Loco/bwin.loco.client/blob/master/src/modals/NonProdGTM.js#L163'> fork </a>and fix this as I give up.
+                                            </PopupContent>
+                                        </Popup>
                                         <ServerSearchMultipleDropdown
                                             value={this.state.selectedServers}
                                             placeholder='Type to search a server'
@@ -187,8 +196,7 @@ class NonProdGTM extends React.PureComponent {
                 <Modal.Actions>
                     {generateButton}
                     <Button
-                        onClose={() => this.closeModal()}
-                        labelPosition='right'
+                        onClick={() => this.closeModal()}
                         content='Close'
                     />
                 </Modal.Actions>
