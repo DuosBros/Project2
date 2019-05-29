@@ -11,7 +11,7 @@ import RolloutStatusReducer from '../reducers/RolloutStatusReducer';
 import VirtualMachineReducer from '../reducers/VirtualMachineReducer';
 import IPAddressReducer from '../reducers/IPAddressReducer';
 import VersionStatusReducer from '../reducers/VersionStatusReducer';
-import HealthCheckReducer from '../reducers/HealthCheckReducer';
+import HealthReducer from '../reducers/HealthReducer';
 import LoadBalancerReducer from '../reducers/LoadBalancerReducer';
 import ActiveDirectoryReducer from '../reducers/ActiveDirectoryReducer';
 import AgentLogReducer from '../reducers/AgentLogReducer';
@@ -21,7 +21,7 @@ import LTMGTMReducer from '../reducers/LTMGTMReducer';
 const CommonReducer = combineReducers({
     HeaderReducer, BaseReducer, ServerReducer, ServiceReducer, LoginReducer, LoadBalancerFarmsReducer,
     PatchGroupReducer, RolloutStatusReducer, VirtualMachineReducer, IPAddressReducer, VersionStatusReducer,
-    HealthCheckReducer, LoadBalancerReducer, ActiveDirectoryReducer, AgentLogReducer, MiscReducer,
+    HealthReducer, LoadBalancerReducer, ActiveDirectoryReducer, AgentLogReducer, MiscReducer,
     LTMGTMReducer
 });
 

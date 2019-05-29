@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 
 import { toggleVerticalMenuAction } from '../utils/actions';
 import { isAdmin } from './HelperFunction';
-import { ROUTE_SERVERS, ROUTE_SERVERS_ADMIN, ROUTE_ADMIN_LTM } from './constants';
+import { ROUTE_SERVERS, ROUTE_SERVERS_ADMIN, ROUTE_ADMIN_LTM, ROUTE_HEALTHCHECKS, ROUTE_HEALTH } from './constants';
 
 
 class Sidebar extends React.Component {
@@ -46,9 +46,7 @@ class Sidebar extends React.Component {
                             <Menu.Item as={Link} to='/versionstatus' >
                                 Version Status
                             </Menu.Item>
-                            <Menu.Item as={Link} to='/healthchecks' >
-                                Health Checks
-                            </Menu.Item>
+
                         </Menu.Menu>
                     </Menu.Item>
                     <Menu.Item>
@@ -56,6 +54,14 @@ class Sidebar extends React.Component {
                     </Menu.Item>
                     <Menu.Item>
                         <Menu.Header as={Link} to='/ipaddresses'>IP Addresses</Menu.Header>
+                    </Menu.Item>
+                    <Menu.Item>
+                        <Menu.Header as={Link} to={ROUTE_HEALTH}>Health</Menu.Header>
+                        <Menu.Menu>
+                            <Menu.Item as={Link} to={ROUTE_HEALTHCHECKS} >
+                                Health Checks
+                            </Menu.Item>
+                        </Menu.Menu>
                     </Menu.Item>
                     <Menu.Item>
                         <Menu.Header as={Link} to='/statistics'>Statistics</Menu.Header>
