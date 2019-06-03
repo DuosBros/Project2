@@ -165,7 +165,7 @@ class NonProdGTM extends React.PureComponent {
                                             inverted
                                             trigger={<Icon name="question circle" />}>
                                             <PopupContent>
-                                                Double click on input prevents typing. Feel free to
+                                                Double click on input after word "Type " in placeholder prevents typing. Feel free to
                                                 <a target="_blank" rel="noopener noreferrer" href='https://vie.git.bwinparty.com/leanops/Loco/bwin.loco.client/blob/master/src/modals/NonProdGTM.js#L163'> fork </a>and fix this as I give up.
                                             </PopupContent>
                                         </Popup>
