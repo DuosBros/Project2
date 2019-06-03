@@ -5,7 +5,7 @@ import AvailabilityStatus from '../components/AvailabilityStatus';
 import EnabledStatus from '../components/EnabledStatus';
 import VanillaHealthStatus from './VanillaHealthStatus';
 import { Icon } from 'semantic-ui-react';
-import { LBNAME_SUFFIX_WITH_IS, NWTOOLS_URL, LBNAME_SUFFIX } from '../appConfig';
+import { LBNAME_SUFFIX_WITH_IS, NWTOOLS_URL, LBNAME_SUFFIX, LOCO_API } from '../appConfig';
 
 export default class RolloutStatusTable extends React.PureComponent {
 
@@ -92,13 +92,13 @@ export default class RolloutStatusTable extends React.PureComponent {
 
         if ('healthInfo' in data) {
             if (data.healthInfo) {
-                if(data.healthInfo.err) {
+                if (data.healthInfo.err) {
                     data.Health = "Error occured - try again"
                 }
                 else {
                     data.Health = Array.isArray(data.healthInfo) ?
                         <VanillaHealthStatus
-                            url={NWTOOLS_URL + 'f5_curl.php?url=/Common/' + data.Pool + "&host=" + data.Ip}
+                            url={LOCO_API + 'healthcheck/content?url=' + data.healthInfo[3] + "&ip=" + data.Ip + "&host=" + data.healthInfo[4]}
                             status={data.healthInfo}
                             size='small' />
                         : "No data"
@@ -123,7 +123,7 @@ export default class RolloutStatusTable extends React.PureComponent {
         if ('versionInfo' in data) {
             if (data.versionInfo) {
 
-                if(data.versionInfo.err) {
+                if (data.versionInfo.err) {
                     data.Version = "Error occured - try again"
                 }
                 else {
@@ -155,7 +155,7 @@ export default class RolloutStatusTable extends React.PureComponent {
                 transformDataRow={this.transformDataRow}
                 getDataKey={this.getDataKey}
                 {...this.props}
-                />
+            />
         );
     }
 }
