@@ -6,7 +6,7 @@ import ErrorMessage from '../components/ErrorMessage';
 import HealthChecksTable from '../components/HealthChecksTable';
 import { APP_TITLE } from '../appConfig';
 
-class HealthChecks extends React.Component {
+class HealthChecks extends React.PureComponent {
 
     componentDidMount() {
         document.title = APP_TITLE + "HealthChecks";

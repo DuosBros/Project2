@@ -11,8 +11,8 @@ import { ROUTE_ADMIN_LTM } from '../utils/constants';
 import NotFound from '../pages/NotFound';
 import LTMGTM from '../pages/LTMGTM';
 import { getDefaultLTMConfig, fetchLTMJson, fetchGTMJson } from '../requests/LTMGTMAxios';
-import { getServiceDetailsByShortcutHandler, getServicesHandler } from '../handlers/ServiceHandler';
-import { searchServiceShortcut, searchServerByIp, searchServers } from '../requests/HeaderAxios';
+import { getServiceDetailsByShortcutHandler, getServicesHandler, handleServiceShortcutSearch } from '../handlers/ServiceHandler';
+import { searchServerByIp, searchServers } from '../requests/HeaderAxios';
 import { LTMB2CTYPES, DEFAULT_TEAMS } from '../appConfig';
 import { isValidIPv4 } from '../utils/HelperFunction';
 
@@ -40,17 +40,7 @@ class LTMGTMContainer extends React.PureComponent {
     }
 
     handleServiceShortcutSearchChange = (e) => {
-        if (e.target.value.length > 1) {
-            this.handleSearchServiceShortcut(e.target.value)
-        }
-    }
-
-    handleSearchServiceShortcut(value) {
-        searchServiceShortcut(value)
-            .then(res => {
-                this.props.searchServiceShortcutAction(res.data.map(e => ({ text: e.Name, value: e.Id })))
-            })
-        // no catch because it can throw errors while user is typing
+        handleServiceShortcutSearch(e, this.props.searchServiceShortcutAction)
     }
 
     fetchAllData = () => {

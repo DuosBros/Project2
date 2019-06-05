@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import { getDismeApplications, getServiceByShortcut } from '../requests/ServiceAxios';
 import {
     getServiceDetailsByShortcutsAction, removeServiceDetailsAction, removeAllServiceDetailsAction,
-    getStagesAction, getVersionAction, removeAllVersionsAction, searchServiceShortcutAction,
+    getStagesAction, getVersionsAction, removeAllVersionsAction, searchServiceShortcutAction,
     getDismeApplicationsAction
 } from '../utils/actions';
 import { DISME_SERVICE_URL, DISME_SERVICE_PLACEHOLDER, APP_TITLE } from '../appConfig';
@@ -257,7 +257,7 @@ class VersionStatus extends React.Component {
             return
         }
         else {
-            this.props.getVersionAction({ success: true, data: {} })
+            this.props.getVersionsAction({ success: true, data: {} })
             var services = this.props.serviceStore.serviceDetails.data.map(x => x.Service[0].Shortcut)
 
             this.setState({ alertNoEnvironmentsSelected: false });
@@ -268,10 +268,10 @@ class VersionStatus extends React.Component {
 
             getVersions(payload)
                 .then(res => {
-                    this.props.getVersionAction({ success: true, data: res.data.data })
+                    this.props.getVersionsAction({ success: true, data: res.data.data })
                 })
                 .catch(err => {
-                    this.props.getVersionAction({ success: false, error: err })
+                    this.props.getVersionsAction({ success: false, error: err })
                 })
         }
     }
@@ -649,7 +649,7 @@ function mapDispatchToProps(dispatch) {
         getServiceDetailsByShortcutsAction,
         getDismeApplicationsAction,
         getStagesAction,
-        getVersionAction,
+        getVersionsAction,
         searchServiceShortcutAction,
         removeServiceDetailsAction,
         removeAllServiceDetailsAction,

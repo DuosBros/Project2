@@ -17,10 +17,6 @@ export function getServices() {
     return axios.get(LOCO_API + 'service');
 }
 
-export function getHealths(serviceId, ipsPayload) {
-    return axios.post(LOCO_API + 'service/' + serviceId + '/health', ipsPayload)
-}
-
 export function getVersionsForRollout(serviceId, serverIdsPayload) {
     return axios.post(LOCO_API + 'service/' + serviceId + '/version', serverIdsPayload)
 }
@@ -31,4 +27,8 @@ export function getHighAvailabilities() {
 
 export function getServiceDeploymentStats(serviceShortcut, count) {
     return axios.get(PM_API + 'deploymentStats/service/history/' + serviceShortcut + '/' + count)
+}
+
+export function getServiceServers(serviceShortcut) {
+    return axios.get(LOCO_API + 'service/name/' + serviceShortcut + '/server')
 }

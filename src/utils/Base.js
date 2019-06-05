@@ -23,7 +23,6 @@ import IPAddresses from '../pages/IPAddresses';
 import Admin from '../pages/Admin';
 import VersionStatus from '../pages/VersionStatus';
 import ErrorBoundary from '../components/ErrorBoundary';
-import HealthChecks from '../pages/HealthChecks';
 import Statistics from '../pages/Statistics';
 import LoadBalancersAdmin from '../pages/LoadBalancersAdmin';
 import ScrollToTop from './ScrollToTop';

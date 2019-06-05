@@ -159,7 +159,7 @@ class NonProdGTM extends React.PureComponent {
                             <Grid.Column width={4}>
                                 <Form>
                                     <Form.Field>
-                                        <strong>Servers:</strong>
+                                        <strong>Search servers:</strong>
                                         <Popup
                                             on="click"
                                             inverted

@@ -8,3 +8,7 @@ export function getStages() {
 export function getVersions(payload) {
     return axios.post(LOCO_API + 'Service/version/name', payload)
 }
+
+export function getVersionsByServiceId(serviceId, servers) {
+    return axios.post(LOCO_API + 'Service/' + serviceId + '/version', servers)
+}

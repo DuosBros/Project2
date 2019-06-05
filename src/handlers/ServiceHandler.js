@@ -1,4 +1,5 @@
 import { getServiceByShortcut, getServices } from "../requests/ServiceAxios";
+import { searchServiceShortcut } from "../requests/HeaderAxios";
 
 export const getServiceDetailsByShortcutHandler = (services, getServiceDetailsByShortcutsAction) => {
     getServiceByShortcut(services)
@@ -24,5 +25,14 @@ export const getServicesHandler = async (getServicesAction) => {
         }
     } catch (err) {
         getServicesAction({ success: false, error: err })
+    }
+}
+
+export const handleServiceShortcutSearch = (e, searchServiceShortcutAction) => {
+    if (e.target.value.length > 1) {
+        searchServiceShortcut(e.target.value.trim())
+            .then(res => {
+                searchServiceShortcutAction(res.data.map(e => ({ text: e.Name, value: e.Id })))
+            })
     }
 }

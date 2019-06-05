@@ -8,11 +8,12 @@ import {
     getDismeApplicationsAction, getRolloutStatusAction,
     deleteAllRoloutStatusesAction, removeRolloutStatusAction,
     getServiceDetailsByShortcutsAction, removeServiceDetailsAction,
-    removeAllServiceDetailsAction, getHealthsAction, getVersionsAction,
+    removeAllServiceDetailsAction, getHealthsRolloutStatusAction, getVersionsRolloutStatusAction,
     searchServiceShortcutAction
 } from '../utils/actions';
 
-import { getDismeApplications, getHealths, getVersionsForRollout } from '../requests/ServiceAxios';
+import { getDismeApplications, getVersionsForRollout } from '../requests/ServiceAxios';
+import { getHealths } from '../requests/HealthAxios';
 import { Grid, Header, Segment, Dropdown, Table, Button, Message, Icon, TextArea, Form } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import DismeStatus from '../components/DismeStatus';
@@ -307,8 +308,8 @@ class RolloutStatus extends React.Component {
             serviceId: serviceId,
         }
 
-        this.props.getHealthsAction(health)
-        this.props.getVersionsAction(version)
+        this.props.getHealthsRolloutStatusAction(health)
+        this.props.getVersionsRolloutStatusAction(version)
         this.props.getRolloutStatusAction(object)
         this.getRolloutStatusAndHandleResult(shortcut, serviceId);
     }
@@ -355,14 +356,14 @@ class RolloutStatus extends React.Component {
                 try {
                     let res = await getHealths(serviceId, getHealthsPayload)
 
-                    this.props.getHealthsAction({ success: true, serviceId: serviceId, data: res.data })
+                    this.props.getHealthsRolloutStatusAction({ success: true, serviceId: serviceId, data: res.data })
                 }
                 catch (err) {
-                    this.props.getHealthsAction({ success: false, error: err, serviceId: serviceId })
+                    this.props.getHealthsRolloutStatusAction({ success: false, error: err, serviceId: serviceId })
                 }
             }
             else {
-                this.props.getHealthsAction({ success: false, serviceId: serviceId, error: "No data" })
+                this.props.getHealthsRolloutStatusAction({ success: false, serviceId: serviceId, error: "No data" })
             }
 
             if (serverIds.length > 0) {
@@ -370,14 +371,14 @@ class RolloutStatus extends React.Component {
                 try {
                     let res = await getVersionsForRollout(serviceId, getVersionsPayload)
 
-                    this.props.getVersionsAction({ success: true, serviceId: serviceId, data: res.data })
+                    this.props.getVersionsRolloutStatusAction({ success: true, serviceId: serviceId, data: res.data })
                 }
                 catch (err) {
-                    this.props.getVersionsAction({ success: false, error: err, serviceId: serviceId })
+                    this.props.getVersionsRolloutStatusAction({ success: false, error: err, serviceId: serviceId })
                 }
             }
             else {
-                this.props.getVersionsAction({ success: false, serviceId: serviceId, error: "No data" })
+                this.props.getVersionsRolloutStatusAction({ success: false, serviceId: serviceId, error: "No data" })
             }
         });
     }
@@ -682,8 +683,8 @@ function mapDispatchToProps(dispatch) {
         getRolloutStatusAction,
         deleteAllRoloutStatusesAction,
         removeAllServiceDetailsAction,
-        getHealthsAction,
-        getVersionsAction
+        getHealthsRolloutStatusAction,
+        getVersionsRolloutStatusAction
     }, dispatch);
 }
 

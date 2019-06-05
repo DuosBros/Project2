@@ -3,12 +3,15 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import {
-    getHealthChecksAction
+    getHealthChecksAction, searchServiceShortcutAction, getServiceServersAction, deleteServiceServerAction,
+    getVersionsAction, getHealthsAction
 } from '../utils/actions';
 import { ROUTE_HEALTHCHECKS, ROUTE_HEALTH } from '../utils/constants';
 import NotFound from '../pages/NotFound';
-import { getHealthChecks } from '../requests/HealthCheckAxios';
+import { getHealthChecks } from '../requests/HealthAxios';
 import HealthChecks from '../pages/HealthChecks';
+import Health from '../pages/Health';
+import { handleServiceShortcutSearch } from '../handlers/ServiceHandler';
 
 class HealthContainer extends React.PureComponent {
 
@@ -30,6 +33,9 @@ class HealthContainer extends React.PureComponent {
             })
     }
 
+    handleServiceShortcutSearchChange = (e) => {
+        handleServiceShortcutSearch(e, this.props.searchServiceShortcutAction)
+    }
 
     render() {
         let pathname = this.props.location.pathname;
@@ -45,7 +51,14 @@ class HealthContainer extends React.PureComponent {
 
         if (pathname === ROUTE_HEALTH) {
             return (
-                <Health />
+                <Health
+                    serviceServers={this.props.serviceStore.serviceServers}
+                    handleServiceShortcutSearchChange={this.handleServiceShortcutSearchChange}
+                    options={this.props.headerStore.searchServiceShortcutsResult.slice(0, 10)}
+                    getServiceServersAction={this.props.getServiceServersAction}
+                    deleteServiceServerAction={this.props.deleteServiceServerAction}
+                    getVersionsAction={this.props.getVersionsAction}
+                    getHealthsAction={this.props.getHealthsAction} />
             )
         }
 
@@ -56,13 +69,20 @@ class HealthContainer extends React.PureComponent {
 
 function mapStateToProps(state) {
     return {
-        healthStore: state.HealthReducer
+        healthStore: state.HealthReducer,
+        headerStore: state.HeaderReducer,
+        serviceStore: state.ServiceReducer
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return bindActionCreators({
-        getHealthChecksAction
+        getHealthChecksAction,
+        searchServiceShortcutAction,
+        getServiceServersAction,
+        deleteServiceServerAction,
+        getVersionsAction,
+        getHealthsAction
     }, dispatch);
 }
 

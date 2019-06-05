@@ -1,7 +1,7 @@
 import {
     GET_DISME_APPLICATIONS, REMOVE_ROLLOUT_STATUS,
     GET_ROLLOUT_STATUS, DELETE_ALL_ROLLOUT_STATUSES,
-    GET_VERSIONS, GET_HEALTHS
+    GET_VERSIONS_ROLLOUTSTATUS, GET_HEALTHS_ROLLOUTSTATUS
 } from '../utils/constants';
 
 const initialState = {
@@ -47,7 +47,7 @@ const RolloutStatusReducer = (state = initialState, action) => {
             return copy;
         case DELETE_ALL_ROLLOUT_STATUSES:
             return Object.assign({}, state, { rolloutStatuses: [] })
-        case GET_HEALTHS:
+        case GET_HEALTHS_ROLLOUTSTATUS:
             copy = Object.assign([], state.rolloutStatuses);
             index = copy.findIndex(x => x.serviceId === action.payload.serviceId);
 
@@ -75,7 +75,7 @@ const RolloutStatusReducer = (state = initialState, action) => {
             copy[index].rolloutStatus = mappedRolloutStatuses
 
             return Object.assign({}, state, { rolloutStatuses: copy })
-        case GET_VERSIONS:
+        case GET_VERSIONS_ROLLOUTSTATUS:
             copy = Object.assign([], state.rolloutStatuses);
             index = copy.findIndex(x => x.serviceId === action.payload.serviceId);
 

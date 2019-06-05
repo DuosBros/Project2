@@ -3,7 +3,9 @@ import {
     GET_SERVICES, GET_SERVICE_DETAILS_BY_SHORTCUTS, REMOVE_SERVICE_DETAILS,
     REMOVE_ALL_SERVICE_DETAILS,
     GET_HIGHAVAILABILITIES,
-    GET_SERVICE_DEPLOYMENTS
+    GET_SERVICE_DEPLOYMENTS,
+    GET_SERVICE_SERVERS,
+    DELETE_SERVICE_SERVER
 } from '../utils/constants';
 import { getServerState, getDismeState } from '../utils/HelperFunction';
 import { errorColor } from '../appConfig';
@@ -11,7 +13,8 @@ import { errorColor } from '../appConfig';
 const serviceInitialState = {
     showLoadBalancerFarmsTasksModal: false,
     serviceDetails: { success: true },
-    services: { success: true }
+    services: { success: true },
+    serviceServers: { success: true }
 }
 
 const ServiceReducer = (state = serviceInitialState, action) => {
@@ -93,6 +96,21 @@ const ServiceReducer = (state = serviceInitialState, action) => {
                 temp.data.deploymentStats = action.payload
             }
             return Object.assign({}, state, { serviceDetails: temp })
+        case GET_SERVICE_SERVERS:
+            if (action.payload.success && action.payload.data) {
+                action.payload.data = action.payload.data.map(server => {
+                    server.ServerState = getServerState(server.ServerStateID)
+                    server.Disme = getDismeState(server.Disme)
+                    return server
+                })
+            }
+
+            return Object.assign({}, state, { serviceServers: action.payload })
+        case DELETE_SERVICE_SERVER:
+            let servers = state.serviceServers.data.slice();
+            servers = servers.filter(x => x.Id !== action.payload)
+
+            return Object.assign({}, state, { serviceServers: { data: servers, success: state.serviceServers.success } })
         default:
             return state;
     }
