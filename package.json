@@ -24,7 +24,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "deploy": "react-scripts build && @powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./deployToProd.ps1",
+    "deploy": "react-scripts build && @powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./deploy.ps1 -env 'prod'",
+    "deployToBeta": "react-scripts build && @powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./deploy.ps1 -env 'beta'",
     "test": "bash -c 'CI=1 npx react-scripts test'",
     "eject": "react-scripts eject",
     "eslint": "eslint",
