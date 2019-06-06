@@ -7,7 +7,7 @@ import {
     searchServiceShortcutAction, getServicesAction, fetchLTMJsonAction,
     fetchGTMJsonAction, searchServersAction, fetchNonProdGTMJsonAction
 } from '../utils/actions';
-import { ROUTE_ADMIN_LTM } from '../utils/constants';
+import { ROUTE_ADMIN_LTMGTM } from '../utils/constants';
 import NotFound from '../pages/NotFound';
 import LTMGTM from '../pages/LTMGTM';
 import { getDefaultLTMConfig, fetchLTMJson, fetchGTMJson } from '../requests/LTMGTMAxios';
@@ -55,8 +55,8 @@ class LTMGTMContainer extends React.PureComponent {
 
     fetchAllData = () => {
         let pathname = this.props.location.pathname;
-        if (pathname === ROUTE_ADMIN_LTM) {
-            //this.getDefaultsAndHandleData(this.state.team);
+        if (pathname === ROUTE_ADMIN_LTMGTM) {
+            this.getDefaultsAndHandleData(this.state.team);
             getServicesHandler(this.props.getServicesAction)
 
         }
@@ -187,7 +187,7 @@ class LTMGTMContainer extends React.PureComponent {
     render() {
         let pathname = this.props.location.pathname;
 
-        if (pathname === ROUTE_ADMIN_LTM) {
+        if (pathname === ROUTE_ADMIN_LTMGTM) {
 
             let labels;
             if (this.props.serviceStore.services.success && this.props.serviceStore.services.data) {

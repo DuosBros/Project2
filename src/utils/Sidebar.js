@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 
 import { toggleVerticalMenuAction } from '../utils/actions';
 import { isAdmin } from './HelperFunction';
-import { ROUTE_SERVERS, ROUTE_SERVERS_ADMIN, ROUTE_ADMIN_LTM } from './constants';
+import { ROUTE_SERVERS, ROUTE_SERVERS_ADMIN, ROUTE_ADMIN_LTMGTM } from './constants';
 
 
 class Sidebar extends React.Component {
@@ -96,7 +96,7 @@ class Sidebar extends React.Component {
                                     </>
                                 )
                             }
-                            <Menu.Item as={Link} to={ROUTE_ADMIN_LTM} >
+                            <Menu.Item as={Link} to={ROUTE_ADMIN_LTMGTM} >
                                 LTM & GTM
                             </Menu.Item>
                         </Menu.Menu>

@@ -5,7 +5,7 @@ import AvailabilityStatus from '../components/AvailabilityStatus';
 import EnabledStatus from '../components/EnabledStatus';
 import VanillaHealthStatus from './VanillaHealthStatus';
 import { Icon } from 'semantic-ui-react';
-import { LBNAME_SUFFIX_WITH_IS, NWTOOLS_URL, LBNAME_SUFFIX, LOCO_API } from '../appConfig';
+import { LBNAME_SUFFIX_WITH_IS, LBNAME_SUFFIX, LOCO_API } from '../appConfig';
 
 export default class RolloutStatusTable extends React.PureComponent {
 

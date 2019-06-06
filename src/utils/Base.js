@@ -33,7 +33,7 @@ import NotFound from '../pages/NotFound';
 import PrivateRoute from './PrivateRoute';
 import GenericModal from '../components/GenericModal';
 import ServersContainer from '../containers/ServersContainer';
-import { ROUTE_SERVERS, ROUTE_SERVERS_ADMIN, ROUTE_SERVER_DETAILS, ROUTE_SERVER_STATISTICS, ROUTE_SERVICES, ROUTE_SERVICE_DETAILS, ROUTE_SERVICES_STATISTICS, ROUTE_SERVICE_VIRTUALMACHINES, ROUTE_PATCHGROUP_DETAILS, ROUTE_PATCHGROUPS, ROUTE_LBFARMS, ROUTE_LBFARMS_STATISTICS, ROUTE_ADMIN_LTM } from './constants';
+import { ROUTE_SERVERS, ROUTE_SERVERS_ADMIN, ROUTE_SERVER_DETAILS, ROUTE_SERVER_STATISTICS, ROUTE_SERVICES, ROUTE_SERVICE_DETAILS, ROUTE_SERVICES_STATISTICS, ROUTE_SERVICE_VIRTUALMACHINES, ROUTE_PATCHGROUP_DETAILS, ROUTE_PATCHGROUPS, ROUTE_LBFARMS, ROUTE_LBFARMS_STATISTICS, ROUTE_ADMIN_LTMGTM } from './constants';
 import ServiceContainer from '../containers/ServiceContainer';
 import PatchgroupContainer from '../containers/PatchgroupContainer';
 import LoadBalancerFarmContainer from '../containers/LoadBalancerFarmContainer';
@@ -156,7 +156,7 @@ class Base extends React.Component {
                                     <PrivateRoute isAdmin={isAdmin(this.props.baseStore.currentUser)} exact path='/admin/activedirectory' component={ActiveDirectoryAdmin} />
                                     <PrivateRoute isAdmin={isAdmin(this.props.baseStore.currentUser)} exact path='/admin/agentlogs' component={AgentLogs} />
                                     <PrivateRoute isAdmin={isAdmin(this.props.baseStore.currentUser)} exact path={ROUTE_SERVERS_ADMIN} component={ServersContainer} />
-                                    <PrivateRoute isAdmin={isUser(this.props.baseStore.currentUser)} exact path={ROUTE_ADMIN_LTM} component={LTMGTMContainer} />
+                                    <PrivateRoute isAdmin={isUser(this.props.baseStore.currentUser)} exact path={ROUTE_ADMIN_LTMGTM} component={LTMGTMContainer} />
                                     <Route path='/versionstatus' component={VersionStatus} />
                                     <Route path='/healthchecks' component={HealthChecks} />
                                     <Route path={ROUTE_SERVICES_STATISTICS} component={ServiceContainer} />
