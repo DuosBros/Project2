@@ -50,6 +50,8 @@ class HealthContainer extends React.PureComponent {
         }
 
         if (pathname === ROUTE_HEALTH) {
+            let healths = this.props.healthStore.healths;
+            let versions = this.props.versionStore.versions;
             return (
                 <Health
                     serviceServers={this.props.serviceStore.serviceServers}
@@ -58,7 +60,9 @@ class HealthContainer extends React.PureComponent {
                     getServiceServersAction={this.props.getServiceServersAction}
                     deleteServiceServerAction={this.props.deleteServiceServerAction}
                     getVersionsAction={this.props.getVersionsAction}
-                    getHealthsAction={this.props.getHealthsAction} />
+                    getHealthsAction={this.props.getHealthsAction}
+                    healths={this.props.healthStore.healths}
+                    versions={this.props.versionStore.versions} />
             )
         }
 
@@ -71,7 +75,8 @@ function mapStateToProps(state) {
     return {
         healthStore: state.HealthReducer,
         headerStore: state.HeaderReducer,
-        serviceStore: state.ServiceReducer
+        serviceStore: state.ServiceReducer,
+        versionStore: state.VersionStatusReducer
     };
 }
 

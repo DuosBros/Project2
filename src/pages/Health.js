@@ -2,15 +2,15 @@ import React from 'react';
 import { APP_TITLE } from '../appConfig';
 import { Grid, Header, Segment, Label, Icon, Button, Popup, Image, Divider } from 'semantic-ui-react';
 import ServiceSearchDropdown from '../components/ServiceSearchDropdown';
-import { trimmedSearch, asyncForEach } from '../utils/HelperFunction';
-import { getServiceServers } from '../requests/ServiceAxios';
+import { trimmedSearch, asyncForEach, debounce, contains } from '../utils/HelperFunction';
+import { getServiceDetails } from '../requests/ServiceAxios';
 import GenericTable from '../components/GenericTable';
 import ServerStatus from '../components/ServerStatus';
 import DismeStatus from '../components/DismeStatus';
 import { Link } from 'react-router-dom';
 import Kibana from '../utils/Kibana';
 import { getVersionsByServiceId } from '../requests/VersionStatusAxios';
-import { getHealths } from '../requests/HealthAxios';
+import { getHealths, getHealthCheckContent } from '../requests/HealthAxios';
 
 class ServersTable extends React.PureComponent {
     columns = [
@@ -121,11 +121,14 @@ class ServersTable extends React.PureComponent {
 class Health extends React.PureComponent {
 
     state = {
-        selectedServices: []
+        selectedServices: [],
+        servicesFull: []
     }
 
     componentDidMount() {
         document.title = APP_TITLE + "Health";
+
+        this.props.getServiceServersAction({ success: true })
     }
 
     handleServiceChange = (e, { options, value }) => {
@@ -146,11 +149,13 @@ class Health extends React.PureComponent {
 
     handleFetchServers = async () => {
         let servers = []
+        let servicesFull = []
         await asyncForEach(this.state.selectedServices, async x => {
             try {
-                let res = await getServiceServers(x.text)
-                if (res.data) {
-                    servers.push(res.data)
+                let res = await getServiceDetails(x.value)
+                if (res.data && res.data.Servers) {
+                    servers.push(res.data.Servers)
+                    servicesFull.push(res.data)
                 }
             } catch (err) {
                 this.props.getServiceServersAction({ success: false, error: err })
@@ -158,20 +163,58 @@ class Health extends React.PureComponent {
         })
 
         this.props.getServiceServersAction({ success: true, data: servers.flat(1) })
+        this.setState({ servicesFull: servicesFull });
     }
 
     removeServerFromList = (id) => {
         this.props.deleteServiceServerAction(id)
     }
 
+
+    reflect = (promise) => {
+        return promise.then(function (v) { return { v: v, status: "resolved" } },
+            function (e) { return { e: e, status: "rejected" } });
+    }
+
+
     handleFetchHealthAndVersion = async () => {
+        debugger
+
+        let servers = this.props.serviceServers.data.slice();
+
         let getVersionsPayload = {
             Id: this.props.serviceServers.data.map(x => x.Id)
         }
 
-        let getHealthsPayload = {
-            Ip: this.props.serviceServers.data.map(x => x.Ip)
-        }
+        // let getHealthsPayload = {
+        //     Ip: this.props.serviceServers.data.map(x => x.IPs[0] && x.IPs[0].IpAddress)
+        // }
+
+        this.state.servicesFull.forEach(x => {
+            let healthcheck = x.HealthChecks.find(z => !contains(z.Url, "redirect-health"))
+            x.Servers.forEach(async y => {
+                let ip = y.IPs[0] && y.IPs[0].IpAddress
+
+                if (!ip) {
+                    return;
+                }
+
+                try {
+                    let res = await getHealthCheckContent(healthcheck.Url, ip, x.Service[0].Name)
+                    if (res.data) {
+                        y.healthContent = res.data
+                        y.doesContainCHECK_OK = contains(res.data, "CHECK_OK")
+                    }
+                }
+                catch (error) {
+                    y.healthContent = error;
+                    y.doesContainCHECK_OK = false;
+                }
+
+                return y;
+            })
+        })
+
         await asyncForEach(this.state.selectedServices, async x => {
             try {
                 let res = await getVersionsByServiceId(x.value, getVersionsPayload);
@@ -180,12 +223,12 @@ class Health extends React.PureComponent {
                 this.props.getVersionsAction({ error: err, success: false })
             }
 
-            try {
-                let res = await getHealths(x.value, getHealthsPayload);
-                this.props.getHealthsAction({ data: res.data, success: true })
-            } catch (err) {
-                this.props.getHealthsAction({ error: err, success: false })
-            }
+            // try {
+            //     let res = await getHealths(x.value, getHealthsPayload);
+            //     this.props.getHealthsAction({ data: res.data, success: true })
+            // } catch (err) {
+            //     this.props.getHealthsAction({ error: err, success: false })
+            // }
         })
     }
 
