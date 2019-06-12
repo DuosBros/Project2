@@ -102,7 +102,7 @@ class Sidebar extends React.Component {
                                     </>
                                 )
                             }
-                            <Menu.Item as={Link} to={ROUTE_ADMIN_LTM} >
+                            <Menu.Item as={Link} to={ROUTE_ADMIN_LTMGTM} >
                                 LTM & GTM
                             </Menu.Item>
                         </Menu.Menu>

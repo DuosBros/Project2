@@ -3,7 +3,7 @@ import { Grid, Header, Segment, List } from 'semantic-ui-react';
 import links from '../links';
 import { Link } from 'react-router-dom';
 import { APP_TITLE } from '../appConfig';
-import { ROUTE_ADMIN_LTM } from '../utils/constants';
+import { ROUTE_ADMIN_LTMGTM } from '../utils/constants';
 
 const Admin = (props) => {
     let locoUrl;
@@ -54,7 +54,7 @@ const Admin = (props) => {
             <List.Item>
                 <List.Icon name='cog' size='large' verticalAlign='middle' />
                 <List.Content>
-                    <List.Header as={Link} to={ROUTE_ADMIN_LTM}>LTM&GTM</List.Header>
+                    <List.Header as={Link} to={ROUTE_ADMIN_LTMGTM}>LTM&GTM</List.Header>
                     <List.Description>LTM&GTM config</List.Description>
                 </List.Content>
             </List.Item>

@@ -156,7 +156,7 @@ class Base extends React.Component {
                                     <PrivateRoute isAdmin={isAdmin(this.props.baseStore.currentUser)} exact path='/admin/activedirectory' component={ActiveDirectoryAdmin} />
                                     <PrivateRoute isAdmin={isAdmin(this.props.baseStore.currentUser)} exact path='/admin/agentlogs' component={AgentLogs} />
                                     <PrivateRoute isAdmin={isAdmin(this.props.baseStore.currentUser)} exact path={ROUTE_SERVERS_ADMIN} component={ServersContainer} />
-                                    <PrivateRoute isAdmin={isUser(this.props.baseStore.currentUser)} exact path={ROUTE_ADMIN_LTM} component={LTMGTMContainer} />
+                                    <PrivateRoute isAdmin={isUser(this.props.baseStore.currentUser)} exact path={ROUTE_ADMIN_LTMGTM} component={LTMGTMContainer} />
                                     <Route path='/versionstatus' component={VersionStatus} />
                                     <Route path={ROUTE_HEALTHCHECKS} component={HealthContainer} />
                                     <Route path={ROUTE_HEALTH} component={HealthContainer} />
