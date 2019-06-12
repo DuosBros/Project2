@@ -7,7 +7,7 @@ export function getAllLoadBalancerFarms() {
 }
 
 export function saveLoadBalancerFarmsChanges(serviceId, lbFarmsIds, loadBalancerId) {
-    return axios.post(LOCO_API + 'service/' + serviceId + "/lbfarm?lbFarmsIds=" + lbFarmsIds + "&loadBalancerId=" + loadBalancerId, { withCredentials: true })
+    return axios.post(LOCO_API + 'service/' + serviceId + "/lbfarm?lbFarmsIds=" + lbFarmsIds + "&loadBalancerId=" + loadBalancerId, null, { withCredentials: true })
 }
 
 export function getLoadBalancerPoolStatus(loadBalancerId, poolName) {

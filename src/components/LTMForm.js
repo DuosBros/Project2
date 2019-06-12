@@ -9,6 +9,8 @@ class LTMForm extends React.PureComponent {
         https: false,
         ext: false,
         redirect: false,
+        redirectRedirectWeb: true,
+        redirectIrule: false,
         url: "",
         monitorNamePostfix: "",
         monitorName: "",
@@ -25,6 +27,9 @@ class LTMForm extends React.PureComponent {
         this.setState({ [name]: checked })
         if (name === "ext" && checked === true) {
             this.setState({ https: true, redirect: true });
+        }
+        if (name === "redirectIrule") {
+            this.setState({ redirectRedirectWeb: !checked });
         }
     }
 
@@ -104,6 +109,7 @@ class LTMForm extends React.PureComponent {
                                         <Form.Input placeholder="Without http:// or https://" label="Url:" fluid name="url" onChange={this.handleOnchange} />
                                         <Form.Input label="Port:" value={this.state.port} fluid name="port" onChange={this.handleOnchange} />
                                         <Form.Input label="Http Profile:" value={this.state.httpProfile} fluid name="httpProfile" onChange={this.handleOnchange} />
+                                        <Form.Input placeholder="Certificate name" label="SSL Profile:" fluid name="sslProfile" onChange={this.handleOnchange} />
                                     </Form.Group>
                                 </Segment>
                                 <Segment>
@@ -152,9 +158,17 @@ class LTMForm extends React.PureComponent {
                                                     <>
                                                         <Form.Checkbox name="ext" label='Externally available' onChange={this.toggleCheckbox} checked={this.state.ext} />
                                                         <Form.Checkbox disabled={this.state.ext} name="redirect" label='Redirect' onChange={this.toggleCheckbox} checked={this.state.ext || this.state.redirect} />
+                                                        {
+                                                            this.state.redirect && (
+                                                                <>
+                                                                    <Form.Checkbox style={{ paddingLeft: '3em' }} name="redirectIrule" label={"Using irule: " + this.props.defaults.data.HttpToHttpsIrule} onChange={this.toggleCheckbox} checked={this.state.redirectIrule} />
+                                                                    <Form.Checkbox style={{ paddingLeft: '3em' }} name="redirectRedirectWeb" label={"Using default pool: " + this.props.defaults.data.RedirectPool} onChange={this.toggleCheckbox} checked={this.state.redirectRedirectWeb} />
+                                                                </>
+                                                            )
+                                                        }
                                                     </>
                                                 )}
-                                                <Form.Checkbox disabled={this.state.ext} name="https" label='HTTPS' onChange={this.toggleCheckbox} checked={this.state.ext || this.state.https} />
+                                                <Form.Checkbox disabled={this.state.ext || this.state.redirect} name="https" label='HTTPS' onChange={this.toggleCheckbox} checked={this.state.ext || this.state.https || this.state.redirect} />
                                                 <Form.Checkbox name="oneconnect" label='Oneconnect' onChange={this.toggleCheckbox} checked={this.state.oneconnect} />
                                             </Grid.Column>
                                         </Grid.Row>

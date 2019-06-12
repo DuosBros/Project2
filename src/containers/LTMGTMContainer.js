@@ -99,6 +99,8 @@ class LTMGTMContainer extends React.PureComponent {
                 payload.MonitorName = data.state.monitorName
             }
             payload.HTTP_Profile = data.state.httpProfile
+            payload.SSL_Profile = data.state.sslProfile
+            payload.RedirectRedirectWeb = data.state.redirectRedirectWeb
         }
 
         fetchLTMJson(payload)
