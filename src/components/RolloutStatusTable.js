@@ -21,6 +21,12 @@ export default class RolloutStatusTable extends React.PureComponent {
             width: 2,
         },
         {
+            name: "Group",
+            prop: "RGroup",
+            collapsing: true,
+            width: 2,
+        },
+        {
             name: "LbName",
             prop: "LbName",
             width: 1,
@@ -74,12 +80,6 @@ export default class RolloutStatusTable extends React.PureComponent {
         {
             name: "Port",
             prop: "Port",
-            collapsing: true,
-            visibleByDefault: false
-        },
-        {
-            name: "Group",
-            prop: "RGroup",
             collapsing: true,
             visibleByDefault: false
         }
