@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 
 import { toggleVerticalMenuAction } from '../utils/actions';
 import { isAdmin } from './HelperFunction';
-import { ROUTE_SERVERS, ROUTE_SERVERS_ADMIN, ROUTE_ADMIN_LTM, ROUTE_HEALTHCHECKS, ROUTE_HEALTH } from './constants';
+import { ROUTE_SERVERS, ROUTE_SERVERS_ADMIN, ROUTE_ADMIN_LTMGTM, ROUTE_HEALTHCHECKS, ROUTE_HEALTH } from './constants';
 
 
 class Sidebar extends React.Component {

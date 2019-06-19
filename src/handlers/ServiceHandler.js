@@ -1,8 +1,8 @@
-import { getServiceByShortcut, getServices } from "../requests/ServiceAxios";
+import { getServiceFullByShortcut, getServices } from "../requests/ServiceAxios";
 import { searchServiceShortcut } from "../requests/HeaderAxios";
 
 export const getServiceDetailsByShortcutHandler = (services, getServiceDetailsByShortcutsAction) => {
-    getServiceByShortcut(services)
+    getServiceFullByShortcut(services)
         .then(res => {
             if (res.data) {
                 getServiceDetailsByShortcutsAction({ success: true, data: res.data })

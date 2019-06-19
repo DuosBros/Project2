@@ -197,7 +197,9 @@ export default class GenericTable extends Component {
             }
 
             let columnDistinctValues = GenericTable.generateDistinctValues(state.columns, data, nextProps.distinctValues)
-            return { data, columnDistinctValues, propData: nextProps.data };
+            let columns = nextProps.columns.map(c => Object.assign({}, DEFAULT_COLUMN_PROPS, c));
+            let visibleColumnsList = columns.filter(c => c.visibleByDefault && !c.skipRendering).map(c => c.prop)
+            return { data, columnDistinctValues, propData: nextProps.data, visibleColumnsList, columns };
         } else if (state.distinctValues !== nextProps.distinctValues) { // else if, so we don't generate distinct values twice
             let columnDistinctValues = GenericTable.generateDistinctValues(state.columns, state.data, nextProps.distinctValues)
             return { columnDistinctValues };

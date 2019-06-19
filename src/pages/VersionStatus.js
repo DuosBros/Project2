@@ -5,7 +5,7 @@ import _ from 'lodash';
 import { Grid, Header, Segment, Table, Button, Dropdown, Message, Icon, TextArea, Form } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 
-import { getDismeApplications, getServiceByShortcut } from '../requests/ServiceAxios';
+import { getDismeApplications, getServiceFullByShortcut } from '../requests/ServiceAxios';
 import {
     getServiceDetailsByShortcutsAction, removeServiceDetailsAction, removeAllServiceDetailsAction,
     getStagesAction, getVersionsAction, removeAllVersionsAction, searchServiceShortcutAction,
@@ -235,7 +235,7 @@ class VersionStatus extends React.Component {
     }
 
     getServiceDetails(services) {
-        getServiceByShortcut(services)
+        getServiceFullByShortcut(services)
             .then(res => {
                 if (res.data) {
                     this.props.getServiceDetailsByShortcutsAction({ success: true, data: res.data })

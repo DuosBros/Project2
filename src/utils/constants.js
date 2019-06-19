@@ -78,7 +78,7 @@ export const ROUTE_PATCHGROUP_DETAILS = '/patchgroup/:id';
 export const ROUTE_LBFARMS = '/lbfarms';
 export const ROUTE_LBFARMS_STATISTICS = '/statistics/loadbalancerfarms';
 
-export const ROUTE_ADMIN_LTM = '/admin/ltm_gtm';
+export const ROUTE_ADMIN_LTMGTM = '/admin/ltm_gtm';
 
 export const ROUTE_HEALTH = '/health'
 export const ROUTE_HEALTHCHECKS = '/health/healthchecks';

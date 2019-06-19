@@ -263,6 +263,10 @@ div.generic.table {
     }
 }
 
+.labelOnClick {
+    cursor: pointer !important;
+}
+
 .pointerCursor:before {
     cursor: pointer;
     margin: 0 0 0 0.5em

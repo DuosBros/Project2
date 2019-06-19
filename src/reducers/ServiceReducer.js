@@ -101,6 +101,18 @@ const ServiceReducer = (state = serviceInitialState, action) => {
                 action.payload.data = action.payload.data.map(server => {
                     server.ServerState = getServerState(server.ServerStateID)
                     server.Disme = getDismeState(server.Disme)
+
+                    if (server.IPs) {
+                        server.IPs = server.IPs.map((ip) => {
+                            if (ip.hasOwnProperty("IpAddress")) {
+                                return ip.IpAddress
+                            }
+                            else {
+                                return ip;
+                            }
+                        });
+                    }
+
                     return server
                 })
             }

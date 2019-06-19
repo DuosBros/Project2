@@ -50,8 +50,6 @@ class HealthContainer extends React.PureComponent {
         }
 
         if (pathname === ROUTE_HEALTH) {
-            let healths = this.props.healthStore.healths;
-            let versions = this.props.versionStore.versions;
             return (
                 <Health
                     serviceServers={this.props.serviceStore.serviceServers}
@@ -62,7 +60,8 @@ class HealthContainer extends React.PureComponent {
                     getVersionsAction={this.props.getVersionsAction}
                     getHealthsAction={this.props.getHealthsAction}
                     healths={this.props.healthStore.healths}
-                    versions={this.props.versionStore.versions} />
+                    versions={this.props.versionStore.versions}
+                    {...this.props} />
             )
         }
 

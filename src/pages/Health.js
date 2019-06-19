@@ -1,16 +1,17 @@
 import React from 'react';
-import { APP_TITLE } from '../appConfig';
+import { APP_TITLE, LOCO_API } from '../appConfig';
 import { Grid, Header, Segment, Label, Icon, Button, Popup, Image, Divider } from 'semantic-ui-react';
 import ServiceSearchDropdown from '../components/ServiceSearchDropdown';
-import { trimmedSearch, asyncForEach, debounce, contains } from '../utils/HelperFunction';
-import { getServiceDetails } from '../requests/ServiceAxios';
+import { trimmedSearch, asyncForEach, contains } from '../utils/HelperFunction';
+import { getServiceDetails, getServiceByShortcut } from '../requests/ServiceAxios';
 import GenericTable from '../components/GenericTable';
 import ServerStatus from '../components/ServerStatus';
 import DismeStatus from '../components/DismeStatus';
 import { Link } from 'react-router-dom';
 import Kibana from '../utils/Kibana';
 import { getVersionsByServiceId } from '../requests/VersionStatusAxios';
-import { getHealths, getHealthCheckContent } from '../requests/HealthAxios';
+import { getHealthCheckContent } from '../requests/HealthAxios';
+import HealthLabel from '../components/HealthLabel';
 
 class ServersTable extends React.PureComponent {
     columns = [
@@ -40,6 +41,12 @@ class ServersTable extends React.PureComponent {
             collapsing: true
         },
         {
+            name: "IP",
+            prop: "IPs",
+            width: 3,
+            collapsing: true
+        },
+        {
             name: "Links",
             prop: "Links",
             width: 1,
@@ -54,6 +61,16 @@ class ServersTable extends React.PureComponent {
             sortable: false,
             searchable: false,
             exportByDefault: false
+        },
+        {
+            name: "Health",
+            prop: "health",
+            skipRendering: true
+        },
+        {
+            name: "Version",
+            prop: "version",
+            skipRendering: true
         }
     ];
 
@@ -104,10 +121,58 @@ class ServersTable extends React.PureComponent {
             data.IPs = data.IPs.join(",")
         }
 
+        if (data.health === "fetching") {
+            data.health = <Icon loading name="spinner" />
+        }
+        else if (data.health) {
+            data.health = <HealthLabel health={data.health} />
+        }
+
+        if (data.version === "fetching") {
+            data.version = <Icon loading name="spinner" />
+        }
+        else if (data.version) {
+            data.version = data.version.Version
+        }
+
         return data;
     }
 
     render() {
+        if (Array.isArray(this.props.data) && this.props.data[0].hasOwnProperty("health")) {
+            this.columns.map(x => {
+                if (x.prop === "health") {
+                    delete x.skipRendering
+                }
+                return x
+            })
+        }
+        else {
+            this.columns.map(x => {
+                if (x.prop === "health") {
+                    x.skipRendering = true
+                }
+                return x
+            })
+        }
+
+        if (Array.isArray(this.props.data) && this.props.data[0].hasOwnProperty("version")) {
+            this.columns.map(x => {
+                if (x.prop === "version") {
+                    delete x.skipRendering
+                }
+                return x
+            })
+        }
+        else {
+            this.columns.map(x => {
+                if (x.prop === "version") {
+                    x.skipRendering = true
+                }
+                return x
+            })
+        }
+
         return (
             <GenericTable
                 columns={this.columns}
@@ -127,13 +192,32 @@ class Health extends React.PureComponent {
 
     componentDidMount() {
         document.title = APP_TITLE + "Health";
-
+        this.changeInputBasedOnUrl();
         this.props.getServiceServersAction({ success: true })
+    }
+
+
+    changeInputBasedOnUrl = () => {
+        var params = new URLSearchParams(this.props.location.search).get('services');
+        if (params) {
+            let split = params.split(",")
+            split.forEach(async x => {
+                let service = await getServiceByShortcut(x.trim())
+                if (service.data) {
+                    let selectedService = { key: service.data[0].Id, text: x, value: service.data[0].Id }
+                    this.setState({ selectedServices: [...this.state.selectedServices, selectedService] })
+                }
+            })
+        }
+        else {
+            this.props.history.push("/health")
+        }
     }
 
     handleServiceChange = (e, { options, value }) => {
         let serviceToAdd = options.find(x => x.value === value)
         this.setState({ selectedServices: [...this.state.selectedServices, serviceToAdd] })
+        this.props.history.push("/health?services=" + this.state.selectedServices.map(x => x.text).join(","))
     }
 
     handleRemoveService = (server) => {
@@ -141,6 +225,12 @@ class Health extends React.PureComponent {
         let index = array.findIndex(x => x.value === server)
         array.splice(index, 1);
         this.setState({ selectedServices: array });
+        if (array.length === 0) {
+            this.props.history.push("/health")
+        }
+        else {
+            this.props.history.push("/health?services=" + array.map(x => x.text))
+        }
     }
 
     handleOnchange = (e, { name, value }) => {
@@ -171,65 +261,148 @@ class Health extends React.PureComponent {
     }
 
 
-    reflect = (promise) => {
-        return promise.then(function (v) { return { v: v, status: "resolved" } },
-            function (e) { return { e: e, status: "rejected" } });
+    reflect = (promisePayload) => {
+        return promisePayload.promise
+            .then(v => {
+                return {
+                    res: v.data,
+                    status: "resolved",
+                    server: promisePayload.server,
+                    url: promisePayload.url
+                }
+            })
+            .catch(e => {
+                return { e: e, status: "rejected", server: promisePayload.server }
+            })
     }
 
-
-    handleFetchHealthAndVersion = async () => {
-        debugger
-
-        let servers = this.props.serviceServers.data.slice();
-
+    handleFetchVersions = async () => {
         let getVersionsPayload = {
             Id: this.props.serviceServers.data.map(x => x.Id)
         }
 
-        // let getHealthsPayload = {
-        //     Ip: this.props.serviceServers.data.map(x => x.IPs[0] && x.IPs[0].IpAddress)
-        // }
+        let servers = this.props.serviceServers.data.slice()
+        await asyncForEach(this.state.selectedServices, async x => {
+            try {
+                let res = await getVersionsByServiceId(x.value, getVersionsPayload);
+                if (res.data) {
 
-        this.state.servicesFull.forEach(x => {
+                    servers.forEach(x => {
+                        let found = res.data.find(y => y.ServerName === x.ServerName)
+                        x.version = found;
+                    })
+
+                    this.props.getServiceServersAction({ success: true, data: servers })
+                }
+
+                this.props.getVersionsAction({ data: res.data, success: true })
+            } catch (err) {
+                servers.forEach(x => {
+                    x.version = "Failed - try again";
+                })
+
+                this.props.getServiceServersAction({ success: true, data: servers })
+
+                this.props.getVersionsAction({ error: err, success: false })
+            }
+        })
+    }
+
+    handleFetchHealth = () => {
+
+        let servicesFull = this.state.servicesFull.slice();
+
+        let promisePayloads = [];
+        // await asyncForEach(servicesFull, async x => {
+        servicesFull.forEach(x => {
             let healthcheck = x.HealthChecks.find(z => !contains(z.Url, "redirect-health"))
+            // await asyncForEach(x.Servers, async y => {
+            x.Servers = x.Servers.filter(y => {
+                return this.props.serviceServers.data.some(z => {
+                    return z.Id === y.Id;
+                });
+            })
             x.Servers.forEach(async y => {
-                let ip = y.IPs[0] && y.IPs[0].IpAddress
+                let ip = y.IPs[0]
 
                 if (!ip) {
                     return;
                 }
 
-                try {
-                    let res = await getHealthCheckContent(healthcheck.Url, ip, x.Service[0].Name)
-                    if (res.data) {
-                        y.healthContent = res.data
-                        y.doesContainCHECK_OK = contains(res.data, "CHECK_OK")
+                //#region nothing to see here
+                let url = healthcheck.Url;
+                if (contains(url, "prod.env.works")) {
+                    let toReplaceWith;
+                    if (contains(y.Stage, "dev")) {
+                        toReplaceWith = ".dev."
                     }
+
+                    if (contains(y.Stage, "test")) {
+                        toReplaceWith = ".test."
+                    }
+
+                    if (contains(y.Stage, "llt")) {
+                        toReplaceWith = ".load."
+                    }
+
+                    if (contains(y.Stage, "production")) {
+                        toReplaceWith = ".prod."
+                    }
+
+                    url = url.replace(".prod.", toReplaceWith)
                 }
-                catch (error) {
-                    y.healthContent = error;
-                    y.doesContainCHECK_OK = false;
+                //#endregion
+
+                let regex = /(\/\/)(.*?)(\/)/g
+                let regexRes = regex.exec(url)
+                let host;
+                if (regexRes[2]) {
+                    host = regexRes[2]
+                }
+                else {
+                    host = x.Service[0].Name
                 }
 
-                return y;
+                promisePayloads.push({
+                    promise: getHealthCheckContent(url, ip, host),
+                    server: y,
+                    url: LOCO_API + 'healthcheck/content?url=' + url + "&ip=" + ip + "&host=" + host
+                })
             })
         })
 
-        await asyncForEach(this.state.selectedServices, async x => {
-            try {
-                let res = await getVersionsByServiceId(x.value, getVersionsPayload);
-                this.props.getVersionsAction({ data: res.data, success: true })
-            } catch (err) {
-                this.props.getVersionsAction({ error: err, success: false })
-            }
+        Promise.all(promisePayloads.map(this.reflect))
+            .then((res) => {
+                let servers = this.props.serviceServers.data.slice()
 
-            // try {
-            //     let res = await getHealths(x.value, getHealthsPayload);
-            //     this.props.getHealthsAction({ data: res.data, success: true })
-            // } catch (err) {
-            //     this.props.getHealthsAction({ error: err, success: false })
-            // }
+                servers.forEach(x => {
+                    let found = res.find(y => y.server.Id === x.Id)
+                    x.health = found;
+                })
+
+                this.props.getServiceServersAction({ success: true, data: servers })
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+
+        this.setState({ servicesFull });
+    }
+
+    fetchHealthsAndVersions = () => {
+        let servers = this.props.serviceServers.data.slice()
+
+        servers.map(x => {
+            x.health = "fetching";
+            x.version = "fetching";
+
+            return x;
         })
+
+        this.props.getServiceServersAction({ success: true, data: servers })
+
+        this.handleFetchVersions()
+        this.handleFetchHealth()
     }
 
     render() {
@@ -293,7 +466,7 @@ class Health extends React.PureComponent {
                                         serversTable && (
                                             <Grid.Column width={3} textAlign="right" verticalAlign="bottom">
                                                 <Button
-                                                    onClick={this.handleFetchHealthAndVersion}
+                                                    onClick={() => this.fetchHealthsAndVersions()}
                                                     primary
                                                     disabled={this.state.selectedServices.length <= 0}
                                                     content="Fetch health & version" />
