@@ -65,11 +65,14 @@ class ServersTable extends React.PureComponent {
         {
             name: "Health",
             prop: "health",
+            sortable: false,
+            exportByDefault: false,
             skipRendering: true
         },
         {
             name: "Version",
             prop: "version",
+            sortable: false,
             skipRendering: true
         }
     ];
