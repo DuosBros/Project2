@@ -6,6 +6,7 @@ import EnabledStatus from '../components/EnabledStatus';
 import VanillaHealthStatus from './VanillaHealthStatus';
 import { Icon } from 'semantic-ui-react';
 import { LBNAME_SUFFIX_WITH_IS, LBNAME_SUFFIX, LOCO_API } from '../appConfig';
+import { getAvailabiltyAndEnabledState } from '../utils/HelperFunction';
 
 export default class RolloutStatusTable extends React.PureComponent {
 
@@ -85,6 +86,18 @@ export default class RolloutStatusTable extends React.PureComponent {
         }
     ]
 
+    rowClassGetter(row) {
+        var aggState = getAvailabiltyAndEnabledState(row.Availability, row.Enabled);
+        switch(aggState) {
+            case "green":
+                return "positive";
+            case "red":
+                return "negative";
+            default:
+                return "warning";
+        }
+    }
+
     transformDataRow(data) {
         data.ServerLink = (<Link to={'/server/' + data.Serverid}>{data.Server}</Link>);
         data.AvailabilityLabel = (<AvailabilityStatus status={data.Availability} size='small' />);
@@ -154,6 +167,7 @@ export default class RolloutStatusTable extends React.PureComponent {
                 grouping={this.grouping}
                 transformDataRow={this.transformDataRow}
                 getDataKey={this.getDataKey}
+                rowClassGetter={this.rowClassGetter}
                 {...this.props}
             />
         );

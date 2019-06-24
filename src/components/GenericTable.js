@@ -50,6 +50,7 @@ export default class GenericTable extends Component {
             PropTypes.oneOf(["hidden"])
         ]),
         transformDataRow: PropTypes.func,
+        rowClassGetter: PropTypes.func,
     }
 
     static defaultProps = {
@@ -933,11 +934,17 @@ export default class GenericTable extends Component {
                 ));
             }
 
+            let rowClassName = {};
+            if(this.props.rowClassGetter) {
+                rowClassName = { className: this.props.rowClassGetter(data) };
+            }
+
             // build row from cells
             tableBody.push((
                 <Table.Row positive={isEdit && isAdd === true && toAdd.map(x => x.Id).indexOf(data.Id) > -1}
                     negative={isEdit && isAdd === false && toRemove.map(x => x.Id).indexOf(data.Id) > -1}
-                    key={'data' + rowKey}>
+                    key={'data' + rowKey}
+                    {...rowClassName}>
                     {cells}
                 </Table.Row>
             ));
