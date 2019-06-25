@@ -338,7 +338,36 @@ class Health extends React.PureComponent {
 
                 //#region nothing to see here
                 let healthcheck = x.HealthChecks.find(z => z.ServerName === y.ServerName && !contains(z.Url, "redirect-health"))
-                let url = healthcheck.Url;
+
+                let url, hostToReplace, host;
+                if (healthcheck) {
+                    url = healthcheck.Url;
+                }
+                else {
+                    let healthchecks = x.HealthChecks.filter(z => !contains(z.Url, "redirect-health"))
+                    healthcheck = healthchecks[healthchecks.length - 1]
+                    url = healthcheck.Url;
+
+                    let website = x.Websites.find(z => z.ServerName === y.ServerName)
+                    if (website.Bindings) {
+                        hostToReplace = website.Bindings[website.Bindings.length - 1].Binding
+                    }
+                }
+
+                let regex = /(\/\/)(.*?)(\/)/g
+                let regexRes = regex.exec(url)
+
+                if (regexRes[2]) {
+                    host = regexRes[2]
+                    if (hostToReplace) {
+                        url = url.replace(host, hostToReplace)
+                        host = hostToReplace
+                    }
+                }
+                else {
+                    host = x.Service[0].Name
+                }
+
 
                 if (contains(url, "prod.env.works")) {
                     let toReplaceWith;
@@ -361,16 +390,6 @@ class Health extends React.PureComponent {
                     url = url.replace(".prod.", toReplaceWith)
                 }
                 //#endregion
-
-                let regex = /(\/\/)(.*?)(\/)/g
-                let regexRes = regex.exec(url)
-                let host;
-                if (regexRes[2]) {
-                    host = regexRes[2]
-                }
-                else {
-                    host = x.Service[0].Name
-                }
 
                 promisePayloads.push({
                     promise: getHealthCheckContent(url, ip, host),
