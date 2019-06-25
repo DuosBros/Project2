@@ -284,12 +284,12 @@ class Health extends React.PureComponent {
             })
     }
 
-    handleFetchVersions = async () => {
+    handleFetchVersions = async (servers) => {
         let getVersionsPayload = {
-            Id: this.props.serviceServers.data.map(x => x.Id)
+            Id: servers.map(x => x.Id)
         }
 
-        let servers = this.props.serviceServers.data.slice()
+        servers = servers.slice()
         await asyncForEach(this.state.selectedServices, async x => {
             try {
                 let res = await getVersionsByServiceId(x.value, getVersionsPayload);
@@ -316,17 +316,16 @@ class Health extends React.PureComponent {
         })
     }
 
-    handleFetchHealth = () => {
+    handleFetchHealth = (servers) => {
 
         let servicesFull = this.state.servicesFull.slice();
 
         let promisePayloads = [];
         // await asyncForEach(servicesFull, async x => {
         servicesFull.forEach(x => {
-            let healthcheck = x.HealthChecks.find(z => !contains(z.Url, "redirect-health"))
             // await asyncForEach(x.Servers, async y => {
             x.Servers = x.Servers.filter(y => {
-                return this.props.serviceServers.data.some(z => {
+                return servers.some(z => {
                     return z.Id === y.Id;
                 });
             })
@@ -338,7 +337,9 @@ class Health extends React.PureComponent {
                 }
 
                 //#region nothing to see here
+                let healthcheck = x.HealthChecks.find(z => z.ServerName === y.ServerName && !contains(z.Url, "redirect-health"))
                 let url = healthcheck.Url;
+
                 if (contains(url, "prod.env.works")) {
                     let toReplaceWith;
                     if (contains(y.Stage, "dev")) {
@@ -400,6 +401,14 @@ class Health extends React.PureComponent {
     fetchHealthsAndVersions = () => {
         let servers = this.props.serviceServers.data.slice()
 
+        if (this.state.selectedEnvironments.length > 0) {
+            servers = servers.filter(x => {
+                return this.state.selectedEnvironments.some(env => {
+                    return env === x.Environment;
+                });
+            });
+        }
+
         servers.map(x => {
             x.health = "fetching";
             x.version = "fetching";
@@ -409,8 +418,8 @@ class Health extends React.PureComponent {
 
         this.props.getServiceServersAction({ success: true, data: servers })
 
-        this.handleFetchVersions()
-        this.handleFetchHealth()
+        this.handleFetchVersions(servers)
+        this.handleFetchHealth(servers)
     }
 
     render() {
