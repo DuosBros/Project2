@@ -83,6 +83,7 @@ class RolloutStatus extends React.Component {
 
     componentWillUnmount() {
         this.props.removeAllServiceDetailsAction();
+        this.props.searchServiceShortcutAction([])
     }
 
     changeInputBasedOnUrl = () => {

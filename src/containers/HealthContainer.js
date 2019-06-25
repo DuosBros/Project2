@@ -33,6 +33,10 @@ class HealthContainer extends React.PureComponent {
             })
     }
 
+    componentWillUnmount() {
+        this.props.searchServiceShortcutAction([])
+    }
+
     handleServiceShortcutSearchChange = (e) => {
         handleServiceShortcutSearch(e, this.props.searchServiceShortcutAction)
     }
