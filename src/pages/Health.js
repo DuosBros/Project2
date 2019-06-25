@@ -1,8 +1,8 @@
 import React from 'react';
 import { APP_TITLE, LOCO_API } from '../appConfig';
-import { Grid, Header, Segment, Label, Icon, Button, Popup, Image, Divider } from 'semantic-ui-react';
+import { Grid, Header, Segment, Label, Icon, Button, Popup, Image, Divider, Dropdown } from 'semantic-ui-react';
 import ServiceSearchDropdown from '../components/ServiceSearchDropdown';
-import { trimmedSearch, asyncForEach, contains } from '../utils/HelperFunction';
+import { trimmedSearch, asyncForEach, contains, groupBy, mapArrayForDropdown } from '../utils/HelperFunction';
 import { getServiceDetails, getServiceByShortcut } from '../requests/ServiceAxios';
 import GenericTable from '../components/GenericTable';
 import ServerStatus from '../components/ServerStatus';
@@ -190,7 +190,8 @@ class Health extends React.PureComponent {
 
     state = {
         selectedServices: [],
-        servicesFull: []
+        servicesFull: [],
+        selectedEnvironments: []
     }
 
     componentDidMount() {
@@ -215,6 +216,10 @@ class Health extends React.PureComponent {
         else {
             this.props.history.push("/health")
         }
+    }
+
+    handleEnvironmentDropdownOnChange = (e, { value }) => {
+        this.setState({ selectedEnvironments: value });
     }
 
     handleServiceChange = (e, { options, value }) => {
@@ -410,7 +415,7 @@ class Health extends React.PureComponent {
 
     render() {
 
-        let serversTable, servicesLabels;
+        let serversTable, servicesLabels, envDropdownFilter;
 
         servicesLabels = this.state.selectedServices.map(x => {
             return (
@@ -422,12 +427,43 @@ class Health extends React.PureComponent {
         })
 
         if (this.state.selectedServices.length > 0 && this.props.serviceServers.data) {
+            let envs = groupBy(this.props.serviceServers.data, "Environment");
+            envs = Object.keys(envs);
+
+            envDropdownFilter = (
+                <>
+                    <label>Environments:</label>
+                    <Dropdown
+                        additionPosition="bottom"
+                        // error={this.state.alertNoEnvironmentsSelected}
+                        multiple
+                        selection
+                        onChange={this.handleEnvironmentDropdownOnChange}
+                        options={mapArrayForDropdown(envs)}
+                        fluid
+                        placeholder='Select one or more environments'
+                        search
+                        value={this.state.selectedEnvironments === "" ? "" : this.state.selectedEnvironments}
+                    />
+                </>
+            )
+
+            let servers = this.props.serviceServers.data.slice();
+
+            if (this.state.selectedEnvironments.length > 0) {
+                servers = servers.filter(x => {
+                    return this.state.selectedEnvironments.some(env => {
+                        return env === x.Environment;
+                    });
+                });
+            }
+
             serversTable = (
                 <>
                     <Divider />
                     <Grid.Row>
                         <Grid.Column>
-                            <ServersTable removeServerFromList={this.removeServerFromList} tableHeader={false} rowsPerPage={0} compact="very" data={this.props.serviceServers.data} />
+                            <ServersTable removeServerFromList={this.removeServerFromList} tableHeader={false} rowsPerPage={0} compact="very" data={servers} />
                         </Grid.Column>
                     </Grid.Row>
                     <Divider />
@@ -476,6 +512,11 @@ class Health extends React.PureComponent {
                                             </Grid.Column>
                                         )
                                     }
+                                </Grid.Row>
+                                <Grid.Row>
+                                    <Grid.Column>
+                                        {envDropdownFilter}
+                                    </Grid.Column>
                                 </Grid.Row>
                                 {serversTable}
                             </Grid>

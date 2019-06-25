@@ -7,7 +7,7 @@ const HealthLabel = (props) => {
     let color, label;
 
     if (props.health.status === "rejected") {
-        color = 'gray'
+        color = 'grey'
         label = (
             <Popup trigger={
                 <Label content="Failed" color={color} horizontal />

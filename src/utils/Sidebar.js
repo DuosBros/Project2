@@ -43,10 +43,17 @@ class Sidebar extends React.Component {
                             <Menu.Item as={Link} to='/rolloutstatus' >
                                 Rollout Status
                             </Menu.Item>
-                            <Menu.Item as={Link} to='/versionstatus' >
+                            {/* <Menu.Item as={Link} to='/versionstatus' >
                                 Version Status
+                            </Menu.Item> */}
+                        </Menu.Menu>
+                    </Menu.Item>
+                    <Menu.Item>
+                        <Menu.Header as={Link} to={ROUTE_HEALTH}>Healths & Versions</Menu.Header>
+                        <Menu.Menu>
+                            <Menu.Item as={Link} to={ROUTE_HEALTHCHECKS} >
+                                Health Checks
                             </Menu.Item>
-
                         </Menu.Menu>
                     </Menu.Item>
                     <Menu.Item>
@@ -55,14 +62,7 @@ class Sidebar extends React.Component {
                     <Menu.Item>
                         <Menu.Header as={Link} to='/ipaddresses'>IP Addresses</Menu.Header>
                     </Menu.Item>
-                    <Menu.Item>
-                        <Menu.Header as={Link} to={ROUTE_HEALTH}>Health</Menu.Header>
-                        <Menu.Menu>
-                            <Menu.Item as={Link} to={ROUTE_HEALTHCHECKS} >
-                                Health Checks
-                            </Menu.Item>
-                        </Menu.Menu>
-                    </Menu.Item>
+
                     <Menu.Item>
                         <Menu.Header as={Link} to='/statistics'>Statistics</Menu.Header>
                         <Menu.Menu>
