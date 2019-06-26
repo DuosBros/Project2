@@ -249,7 +249,7 @@ export default {
                         "icon": "sharepoint.png"
                     },
                     {
-                        "title": "Logfetecher Server",
+                        "title": "Logfetcher Server",
                         "url": "http://moss.bwin.com/itoperations/doc/_layouts/WordViewer.aspx?id=/itoperations/doc/IT%20POS/LogFetchers%20SubSets%20logging.bwin.com.docx&Source=http%3A%2F%2Fmoss%2Ebwin%2Ecom%2Fitoperations%2Fdoc%2FIT%2520POS%2FForms%2FAllItems%2Easpx&DefaultItemOpen=1",
                         "icon": "sharepoint.png"
                     },
