@@ -12,6 +12,7 @@ import Kibana from '../utils/Kibana';
 import { getVersionsByServiceId } from '../requests/VersionStatusAxios';
 import { getHealthCheckContent } from '../requests/HealthAxios';
 import HealthLabel from '../components/HealthLabel';
+import _ from 'lodash';
 
 class ServersTable extends React.PureComponent {
     columns = [
@@ -142,7 +143,7 @@ class ServersTable extends React.PureComponent {
     }
 
     render() {
-        if (Array.isArray(this.props.data) && this.props.data[0].hasOwnProperty("health")) {
+        if (Array.isArray(this.props.data) && this.props.data.length > 0 && this.props.data[0].hasOwnProperty("health")) {
             this.columns.map(x => {
                 if (x.prop === "health") {
                     delete x.skipRendering
@@ -159,7 +160,7 @@ class ServersTable extends React.PureComponent {
             })
         }
 
-        if (Array.isArray(this.props.data) && this.props.data[0].hasOwnProperty("version")) {
+        if (Array.isArray(this.props.data) && this.props.data.length > 0 && this.props.data[0].hasOwnProperty("version")) {
             this.columns.map(x => {
                 if (x.prop === "version") {
                     delete x.skipRendering
@@ -191,7 +192,9 @@ class Health extends React.PureComponent {
     state = {
         selectedServices: [],
         servicesFull: [],
-        selectedEnvironments: []
+        selectedEnvironments: [],
+        envs: [],
+        serviceServers: { success: true }
     }
 
     componentDidMount() {
@@ -228,12 +231,14 @@ class Health extends React.PureComponent {
         this.props.history.push("/health?services=" + this.state.selectedServices.map(x => x.text).join(","))
     }
 
-    handleRemoveService = (server) => {
+    handleRemoveService = (service) => {
         var array = this.state.selectedServices.slice();
-        let index = array.findIndex(x => x.value === server)
+        let index = array.findIndex(x => x.value === service)
         array.splice(index, 1);
         this.setState({ selectedServices: array });
         if (array.length === 0) {
+            this.props.getServiceServersAction({ success: true, data: [] })
+            this.setState({ serviceServers: { success: true, data: [] } });
             this.props.history.push("/health")
         }
         else {
@@ -260,12 +265,21 @@ class Health extends React.PureComponent {
             }
         })
 
-        this.props.getServiceServersAction({ success: true, data: servers.flat(1) })
-        this.setState({ servicesFull: servicesFull });
+        servers = servers.flat(1);
+        servers = _.sortBy(servers, 'ServerName')
+
+        let envs = groupBy(servers, "Environment");
+        envs = Object.keys(envs);
+
+        this.props.getServiceServersAction({ success: true, data: servers })
+        this.setState({ servicesFull: servicesFull, envs: envs, serviceServers: { success: true, data: servers } });
     }
 
     removeServerFromList = (id) => {
-        this.props.deleteServiceServerAction(id)
+        let servers = this.state.serviceServers.data.slice();
+        servers = servers.filter(x => x.Id !== id)
+        this.setState({ serviceServers: { success: true, data: servers } });
+        // this.props.deleteServiceServerAction(id)
     }
 
 
@@ -348,8 +362,9 @@ class Health extends React.PureComponent {
                     healthcheck = healthchecks[healthchecks.length - 1]
                     url = healthcheck.Url;
 
-                    let website = x.Websites.find(z => z.ServerName === y.ServerName)
-                    if (website.Bindings) {
+                    let website = x.Websites.find(z => z.ServerName === y.ServerName && z.Bindings.length > 0)
+
+                    if (website.Bindings && website.Bindings[website.Bindings.length - 1]) {
                         hostToReplace = website.Bindings[website.Bindings.length - 1].Binding
                     }
                 }
@@ -367,7 +382,6 @@ class Health extends React.PureComponent {
                 else {
                     host = x.Service[0].Name
                 }
-
 
                 if (contains(url, "prod.env.works")) {
                     let toReplaceWith;
@@ -401,11 +415,18 @@ class Health extends React.PureComponent {
 
         Promise.all(promisePayloads.map(this.reflect))
             .then((res) => {
-                let servers = this.props.serviceServers.data.slice()
+                let servers = this.state.serviceServers.data.slice()
 
                 servers.forEach(x => {
                     let found = res.find(y => y.server.Id === x.Id)
-                    x.health = found;
+                    if (found) {
+                        x.health = found;
+                    }
+                    else {
+                        x.health = {
+                            status: "failed"
+                        }
+                    }
                 })
 
                 this.props.getServiceServersAction({ success: true, data: servers })
@@ -418,7 +439,7 @@ class Health extends React.PureComponent {
     }
 
     fetchHealthsAndVersions = () => {
-        let servers = this.props.serviceServers.data.slice()
+        let servers = this.state.serviceServers.data.slice()
 
         if (this.state.selectedEnvironments.length > 0) {
             servers = servers.filter(x => {
@@ -454,20 +475,18 @@ class Health extends React.PureComponent {
             )
         })
 
-        if (this.state.selectedServices.length > 0 && this.props.serviceServers.data) {
-            let envs = groupBy(this.props.serviceServers.data, "Environment");
-            envs = Object.keys(envs);
+        if (this.state.selectedServices.length > 0 && this.state.serviceServers.data && this.state.serviceServers.data.length > 0) {
 
             envDropdownFilter = (
                 <>
                     <label>Environments:</label>
                     <Dropdown
+                        closeOnChange
                         additionPosition="bottom"
-                        // error={this.state.alertNoEnvironmentsSelected}
                         multiple
                         selection
                         onChange={this.handleEnvironmentDropdownOnChange}
-                        options={mapArrayForDropdown(envs)}
+                        options={mapArrayForDropdown(this.state.envs)}
                         fluid
                         placeholder='Select one or more environments'
                         search
@@ -476,7 +495,18 @@ class Health extends React.PureComponent {
                 </>
             )
 
-            let servers = this.props.serviceServers.data.slice();
+            let servers;
+            if (this.state.selectedEnvironments.length > 0) {
+                servers = this.props.serviceServers.data.slice();
+            }
+            else {
+                if (this.props.serviceServers.data === this.state.serviceServers.data) {
+                    servers = this.props.serviceServers.data.slice();
+                }
+                else {
+                    servers = this.state.serviceServers.data.slice();
+                }
+            }
 
             if (this.state.selectedEnvironments.length > 0) {
                 servers = servers.filter(x => {

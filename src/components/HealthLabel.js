@@ -6,6 +6,15 @@ const HealthLabel = (props) => {
 
     let color, label;
 
+    if (props.health.status === "failed") {
+        color = 'black'
+        label = (
+            <Popup trigger={
+                <Label content="No data" color={color} horizontal />
+            } content="Missing one of the data to build a request: [No SCOM healthcheck url or missing binding in DB]" inverted />
+        )
+    }
+
     if (props.health.status === "rejected") {
         color = 'grey'
         label = (
