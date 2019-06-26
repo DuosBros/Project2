@@ -231,7 +231,7 @@ export default {
             },
             {
                 "SectionTitle": "Docs",
-                "url": "moss.bwin.com/itoperations/doc/default.aspx",
+                "url": "http://moss.bwin.com/itoperations/doc/default.aspx",
                 "items": [
                     {
                         "title": "bwin.party Wiki",
