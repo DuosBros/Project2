@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Switch, BrowserRouter } from 'react-router-dom';
+import { Route, Switch, BrowserRouter, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Icon, Message } from 'semantic-ui-react';
@@ -163,6 +163,7 @@ class Base extends React.Component {
                                     <Route path={ROUTE_SERVER_STATISTICS} component={ServersContainer} />
                                     <Route path={ROUTE_LBFARMS_STATISTICS} component={LoadBalancerFarmContainer} />
                                     <Route path={ROUTE_SERVICE_VIRTUALMACHINES} component={ServiceContainer} />
+                                    <Route path="/health" component={() => <Redirect to={ROUTE_HEALTH} />} />
                                     <Route component={NotFound} />
                                 </Switch>
                             </ErrorBoundary>
