@@ -281,21 +281,6 @@ class Health extends React.PureComponent {
         // this.props.deleteServiceServerAction(id)
     }
 
-    reflect = (promisePayload) => {
-        return promisePayload.promise
-            .then(v => {
-                return {
-                    res: v.data,
-                    status: "resolved",
-                    server: promisePayload.server,
-                    url: promisePayload.url
-                }
-            })
-            .catch(e => {
-                return { e: e, status: "rejected", server: promisePayload.server }
-            })
-    }
-
     handleFetchVersions = async (servers) => {
 
         servers = servers.slice()
@@ -310,23 +295,26 @@ class Health extends React.PureComponent {
                 }
 
                 let index = servers.findIndex(z => z.Id === ser.Id);
+                let resTemp;
                 try {
                     let res = await getVersionsByServiceId(x.value, getVersionsPayload);
                     if (res.data) {
-                        ser.version = res.data[0]
-                        servers[index] = ser;
-
-                        this.props.getServiceServersAction({ success: true, data: servers })
+                        resTemp = res.data[0]
                     }
 
                     this.props.getVersionsAction({ data: res.data, success: true })
                 } catch (err) {
-                    ser.version = "Failed - try again";
+                    resTemp = "Failed - try again";
+
+                    this.props.getVersionsAction({ error: err, success: false })
+                }
+                finally {
+                    servers = this.props.serviceServers.data.slice();
+                    
+                    ser.version = resTemp;
                     servers[index] = ser;
 
                     this.props.getServiceServersAction({ success: true, data: servers })
-
-                    this.props.getVersionsAction({ error: err, success: false })
                 }
             })
         })
@@ -338,19 +326,13 @@ class Health extends React.PureComponent {
 
         let servicesFull = this.state.servicesFull.slice();
 
-        let promisePayloads = [];
         await asyncForEach(servicesFull, async x => {
-            // servicesFull.forEach(x => {
-            // await asyncForEach(x.Servers, async y => {
             x.Servers = x.Servers.filter(y => {
                 return servers.some(z => {
                     return z.Id === y.Id;
                 });
             })
 
-
-
-            // await asyncForEach(x.Servers, async y => {
             x.Servers.forEach(async y => {
                 let index = servers.findIndex(z => z.Id === y.Id);
 
@@ -442,38 +424,8 @@ class Health extends React.PureComponent {
                 }
 
                 this.props.getServiceServersAction({ success: true, data: servers })
-                // promisePayloads.push({
-                //     promise: getHealthCheckContent(url, ip, host),
-                //     server: y,
-                //     url: LOCO_API + 'healthcheck/content?url=' + url + "&ip=" + ip + "&host=" + host
-                // })
             })
-
-
-
         })
-
-        // Promise.all(promisePayloads.map(this.reflect))
-        //     .then((res) => {
-        //         let servers = this.state.serviceServers.data.slice()
-
-        //         servers.forEach(x => {
-        //             let found = res.find(y => y.server.Id === x.Id)
-        //             if (found) {
-        //                 x.health = found;
-        //             }
-        //             else {
-        //                 x.health = {
-        //                     status: "failed"
-        //                 }
-        //             }
-        //         })
-
-        //         this.props.getServiceServersAction({ success: true, data: servers })
-        //     })
-        //     .catch((err) => {
-        //         console.log(err);
-        //     })
 
         this.setState({ servicesFull });
     }
