@@ -224,7 +224,7 @@ export const getAvailabiltyAndEnabledState = (availabilityState, enabledState) =
         case "available":
             switch (enabledState) {
                 case "disabled":
-                    return "red";
+                    return "orange";
                 case "disabled-by-parent":
                     return "red";
                 case "enabled":
@@ -239,7 +239,7 @@ export const getAvailabiltyAndEnabledState = (availabilityState, enabledState) =
                 case "disabled-by-parent":
                     return "red";
                 case "enabled":
-                    return "orange"
+                    return "red"
                 default:
                     return "grey"
             }

@@ -203,7 +203,6 @@ class Health extends React.PureComponent {
         this.props.getServiceServersAction({ success: true })
     }
 
-
     changeInputBasedOnUrl = () => {
         var params = new URLSearchParams(this.props.location.search).get('services');
         if (params) {
@@ -282,7 +281,6 @@ class Health extends React.PureComponent {
         // this.props.deleteServiceServerAction(id)
     }
 
-
     reflect = (promisePayload) => {
         return promisePayload.promise
             .then(v => {
@@ -299,34 +297,38 @@ class Health extends React.PureComponent {
     }
 
     handleFetchVersions = async (servers) => {
-        let getVersionsPayload = {
-            Id: servers.map(x => x.Id)
-        }
 
         servers = servers.slice()
         await asyncForEach(this.state.selectedServices, async x => {
-            try {
-                let res = await getVersionsByServiceId(x.value, getVersionsPayload);
-                if (res.data) {
 
-                    servers.forEach(x => {
-                        let found = res.data.find(y => y.ServerName === x.ServerName)
-                        x.version = found;
-                    })
-
-                    this.props.getServiceServersAction({ success: true, data: servers })
+            let filteredServers = servers.filter(z => z.Services.some(y => y === x.key))
+            filteredServers.forEach(async ser => {
+                let array = [];
+                array.push(ser.Id);
+                let getVersionsPayload = {
+                    Id: array
                 }
 
-                this.props.getVersionsAction({ data: res.data, success: true })
-            } catch (err) {
-                servers.forEach(x => {
-                    x.version = "Failed - try again";
-                })
+                let index = servers.findIndex(z => z.Id === ser.Id);
+                try {
+                    let res = await getVersionsByServiceId(x.value, getVersionsPayload);
+                    if (res.data) {
+                        ser.version = res.data[0]
+                        servers[index] = ser;
 
-                this.props.getServiceServersAction({ success: true, data: servers })
+                        this.props.getServiceServersAction({ success: true, data: servers })
+                    }
 
-                this.props.getVersionsAction({ error: err, success: false })
-            }
+                    this.props.getVersionsAction({ data: res.data, success: true })
+                } catch (err) {
+                    ser.version = "Failed - try again";
+                    servers[index] = ser;
+
+                    this.props.getServiceServersAction({ success: true, data: servers })
+
+                    this.props.getVersionsAction({ error: err, success: false })
+                }
+            })
         })
     }
 
@@ -364,7 +366,7 @@ class Health extends React.PureComponent {
 
                     let website = x.Websites.find(z => z.ServerName === y.ServerName && z.Bindings.length > 0)
 
-                    if (website.Bindings && website.Bindings[website.Bindings.length - 1]) {
+                    if (website && website.Bindings && website.Bindings.length > 0 && website.Bindings[website.Bindings.length - 1]) {
                         hostToReplace = website.Bindings[website.Bindings.length - 1].Binding
                     }
                 }
@@ -372,15 +374,16 @@ class Health extends React.PureComponent {
                 let regex = /(\/\/)(.*?)(\/)/g
                 let regexRes = regex.exec(url)
 
-                if (regexRes[2]) {
+                if (regexRes && regexRes[2]) {
                     host = regexRes[2]
-                    if (hostToReplace) {
-                        url = url.replace(host, hostToReplace)
-                        host = hostToReplace
-                    }
                 }
                 else {
                     host = x.Service[0].Name
+                }
+
+                if (hostToReplace) {
+                    url = url.replace(host, hostToReplace)
+                    host = hostToReplace
                 }
 
                 if (contains(url, "prod.env.works")) {
@@ -402,7 +405,10 @@ class Health extends React.PureComponent {
                     }
 
                     url = url.replace(".prod.", toReplaceWith)
+                    host = host.replace(".prod.", toReplaceWith)
                 }
+
+
                 //#endregion
 
                 promisePayloads.push({

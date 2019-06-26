@@ -23,7 +23,8 @@ const HealthLabel = (props) => {
             } content={props.health.e.message} inverted />
         )
     }
-    else {
+    
+    if(props.health.status === "resolved") {
         if (contains(props.health.res, "CHECK_OK")) {
             color = 'green';
         }
