@@ -16,6 +16,10 @@ export default class AppRoutes extends React.Component {
     }
 
     render() {
+        if(window.location.pathname === "/site/check") {
+            return "CHECK_OK"
+        }
+        
         return (
             <Provider store={this.store}>
                 <Base />

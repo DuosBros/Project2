@@ -13,6 +13,7 @@ import { getVersionsByServiceId } from '../requests/VersionStatusAxios';
 import { getHealthCheckContent } from '../requests/HealthAxios';
 import HealthLabel from '../components/HealthLabel';
 import _ from 'lodash';
+import { ROUTE_HEALTH } from '../utils/constants';
 
 class ServersTable extends React.PureComponent {
     columns = [
@@ -198,7 +199,7 @@ class Health extends React.PureComponent {
     }
 
     componentDidMount() {
-        document.title = APP_TITLE + "Health";
+        document.title = APP_TITLE + "Health And Versions";
         this.changeInputBasedOnUrl();
         this.props.getServiceServersAction({ success: true })
     }
@@ -216,7 +217,7 @@ class Health extends React.PureComponent {
             })
         }
         else {
-            this.props.history.push("/health")
+            this.props.history.push(ROUTE_HEALTH)
         }
     }
 
@@ -227,7 +228,7 @@ class Health extends React.PureComponent {
     handleServiceChange = (e, { options, value }) => {
         let serviceToAdd = options.find(x => x.value === value)
         this.setState({ selectedServices: [...this.state.selectedServices, serviceToAdd] })
-        this.props.history.push("/health?services=" + this.state.selectedServices.map(x => x.text).join(","))
+        this.props.history.push(ROUTE_HEALTH + "?services=" + this.state.selectedServices.map(x => x.text).join(","))
     }
 
     handleRemoveService = (service) => {
@@ -238,10 +239,10 @@ class Health extends React.PureComponent {
         if (array.length === 0) {
             this.props.getServiceServersAction({ success: true, data: [] })
             this.setState({ serviceServers: { success: true, data: [] } });
-            this.props.history.push("/health")
+            this.props.history.push(ROUTE_HEALTH)
         }
         else {
-            this.props.history.push("/health?services=" + array.map(x => x.text))
+            this.props.history.push(ROUTE_HEALTH + "?services=" + array.map(x => x.text))
         }
     }
 
@@ -278,7 +279,6 @@ class Health extends React.PureComponent {
         let servers = this.state.serviceServers.data.slice();
         servers = servers.filter(x => x.Id !== id)
         this.setState({ serviceServers: { success: true, data: servers } });
-        // this.props.deleteServiceServerAction(id)
     }
 
     handleFetchVersions = async (servers) => {
@@ -310,7 +310,7 @@ class Health extends React.PureComponent {
                 }
                 finally {
                     servers = this.props.serviceServers.data.slice();
-                    
+
                     ser.version = resTemp;
                     servers[index] = ser;
 

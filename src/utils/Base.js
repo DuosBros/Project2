@@ -137,7 +137,6 @@ class Base extends React.Component {
                         <div id="bodyWrapper" {...wideClass}>
                             <ErrorBoundary>
                                 <Switch>
-                                    <Route exact path='/site/check' render={() => <div>CHECK_OK</div>} />
                                     <Route exact path='/' component={Home} />
                                     <Route exact path='/login' component={Login} />
                                     <Route path={ROUTE_SERVER_DETAILS} component={ServersContainer} />
