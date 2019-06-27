@@ -266,6 +266,15 @@ class Health extends React.PureComponent {
         })
 
         servers = servers.flat(1);
+        servers = servers.reduce((acc, current) => {
+            const x = acc.find(item => item.Id === current.Id);
+            if (!x) {
+                return acc.concat([current]);
+            } else {
+                return acc;
+            }
+        }, []);
+
         servers = _.sortBy(servers, 'ServerName')
 
         let envs = groupBy(servers, "Environment");
@@ -286,7 +295,7 @@ class Health extends React.PureComponent {
         servers = servers.slice()
         await asyncForEach(this.state.selectedServices, async x => {
 
-            let filteredServers = servers.filter(z => z.Services.some(y => y === x.key))
+            let filteredServers = servers.filter(z => z.Services.some(y => y === x.value))
             filteredServers.forEach(async ser => {
                 let array = [];
                 array.push(ser.Id);
