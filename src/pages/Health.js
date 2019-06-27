@@ -266,17 +266,8 @@ class Health extends React.PureComponent {
         })
 
         servers = servers.flat(1);
-        servers = servers.reduce((acc, current) => {
-            const x = acc.find(item => item.Id === current.Id);
-            if (!x) {
-                return acc.concat([current]);
-            } else {
-                return acc;
-            }
-        }, []);
 
         servers = _.sortBy(servers, 'ServerName')
-
         let envs = groupBy(servers, "Environment");
         envs = Object.keys(envs);
 
@@ -530,6 +521,7 @@ class Health extends React.PureComponent {
             )
         }
 
+        let disableDropdown = this.state.selectedServices.length > 0
         return (
             <Grid stackable>
                 <Grid.Row>
@@ -542,23 +534,32 @@ class Health extends React.PureComponent {
                                 <Grid.Row>
                                     <Grid.Column width={3}>
                                         <strong>Search services:</strong>
-                                        <ServiceSearchDropdown
-                                            placeholder='Type to search a service'
-                                            handleServiceChange={this.handleServiceChange}
-                                            options={this.props.options}
-                                            handleServiceShortcutSearchChange={this.props.handleServiceShortcutSearchChange}
-                                            search={trimmedSearch} />
+                                        <Popup inverted trigger={
+                                            <div>
+                                                <ServiceSearchDropdown
+                                                    disabled={disableDropdown}
+                                                    placeholder='Type to search a service'
+                                                    handleServiceChange={this.handleServiceChange}
+                                                    options={this.props.options}
+                                                    handleServiceShortcutSearchChange={this.props.handleServiceShortcutSearchChange}
+                                                    search={trimmedSearch} />
+                                            </div>
+                                        } content="You can not enter more than one service. Duplicate this tab and enter a different service. Sorry, this is  an infrastructure issue and can not be solved programmatically." />
                                     </Grid.Column>
                                     <Grid.Column width={8}>
-                                        <strong>Selected services:</strong> <br />
+                                        <strong>Selected service:</strong> <br />
                                         {servicesLabels}
                                     </Grid.Column>
-                                    <Grid.Column width={2} textAlign="right" verticalAlign="bottom">
-                                        <Button
-                                            onClick={this.handleFetchServers}
-                                            primary
-                                            disabled={this.state.selectedServices.length <= 0}
-                                            content="Fetch servers" />
+                                    <Grid.Column width={2} verticalAlign="bottom">
+                                        <Popup inverted trigger={
+                                            <div>
+                                                <Button
+                                                    onClick={this.handleFetchServers}
+                                                    primary
+                                                    disabled={this.state.selectedServices.length === 0 || this.state.selectedServices.length > 1}
+                                                    content="Fetch servers" />
+                                            </div>
+                                        } content="You can not enter more than one service. Duplicate this tab and enter a different service. Sorry, this is  an infrastructure issue and can not be solved programmatically." />
                                     </Grid.Column>
                                     {
                                         serversTable && (

@@ -4,6 +4,7 @@ import React from 'react';
 const ServiceSearchDropdown = (props) => {
     return (
         <Dropdown
+            disabled={props.disabled}
             id="serviceSearchDropdown"
             className={props.className && props.className}
             icon='search'
