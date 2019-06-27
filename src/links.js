@@ -107,21 +107,27 @@ export default {
         },
         {
             "country": "us",
-            "title": "NJ01",
-            "tooltip": "PANJLB01",
+            "title": "NJ EXT",
+            "tooltip": "nj3-lb-ext",
+            "url": "https://10.188.128.10"
+        },
+        {
+            "country": "us",
+            "title": "NJ INT",
+            "tooltip": "nj3-lb-int",
+            "url": "https://10.188.0.10"
+        },
+        {
+            "country": "us",
+            "title": "NJ01 - OLD",
+            "tooltip": "disabled",
             "url": "https://10.92.12.4/"
         },
         {
             "country": "us",
-            "title": "NJ02",
-            "tooltip": "PANJLB02",
+            "title": "NJ02 - OLD",
+            "tooltip": "disabled",
             "url": "https://10.92.12.5/"
-        },
-        {
-            "country": "us",
-            "title": "NJ03",
-            "tooltip": "nj3-lb",
-            "url": "https://10.188.128.10"
         }
     ],
     "list": [

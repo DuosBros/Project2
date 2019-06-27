@@ -64,6 +64,7 @@ export const GET_HEALTHS = 'GET_HEALTHS'
 
 export const ROUTE_SERVERS = '/servers';
 export const ROUTE_SERVERS_ADMIN = '/admin/servers';
+export const ROUTE_JOBS = '/admin/jobs';
 export const ROUTE_SERVER_DETAILS = '/server/:id';
 export const ROUTE_SERVER_STATISTICS = '/statistics/servers';
 

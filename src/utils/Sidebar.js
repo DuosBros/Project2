@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 
 import { toggleVerticalMenuAction } from '../utils/actions';
 import { isAdmin } from './HelperFunction';
-import { ROUTE_SERVERS, ROUTE_SERVERS_ADMIN, ROUTE_ADMIN_LTMGTM, ROUTE_HEALTHCHECKS, ROUTE_HEALTH } from './constants';
+import { ROUTE_SERVERS, ROUTE_SERVERS_ADMIN, ROUTE_ADMIN_LTMGTM, ROUTE_HEALTHCHECKS, ROUTE_HEALTH, ROUTE_JOBS } from './constants';
 
 
 class Sidebar extends React.Component {
@@ -62,7 +62,6 @@ class Sidebar extends React.Component {
                     <Menu.Item>
                         <Menu.Header as={Link} to='/ipaddresses'>IP Addresses</Menu.Header>
                     </Menu.Item>
-
                     <Menu.Item>
                         <Menu.Header as={Link} to='/statistics'>Statistics</Menu.Header>
                         <Menu.Menu>
@@ -80,7 +79,6 @@ class Sidebar extends React.Component {
                             </Menu.Item>
                         </Menu.Menu>
                     </Menu.Item>
-
                     <Menu.Item>
                         <Menu.Header as={Link} to='/admin'>Admin</Menu.Header>
                         <Menu.Menu>
@@ -89,16 +87,19 @@ class Sidebar extends React.Component {
                                     <>
                                         <Menu.Item as={Link} to='/admin/loadbalancer' >
                                             Loadbalancer
-                                    </Menu.Item>
+                                        </Menu.Item>
                                         <Menu.Item as={Link} to='/admin/activedirectory' >
                                             ActiveDirectory
-                                    </Menu.Item>
+                                        </Menu.Item>
                                         <Menu.Item as={Link} to='/admin/agentlogs' >
                                             Agent logs
-                                    </Menu.Item>
+                                        </Menu.Item>
                                         <Menu.Item as={Link} to={ROUTE_SERVERS_ADMIN} >
                                             Manage Servers
-                                    </Menu.Item>
+                                        </Menu.Item>
+                                        <Menu.Item as={Link} to={ROUTE_JOBS} >
+                                            Jobs
+                                        </Menu.Item>
                                     </>
                                 )
                             }

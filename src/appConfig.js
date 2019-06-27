@@ -76,3 +76,20 @@ export const DETAULT_STAGES = [
     { key: 1, text: "TEST", value: "TEST" },
     { key: 2, text: "PRODUCTION", value: "PRODUCTION" },
 ]
+
+export const JOBS = [
+    {
+        type: "LB",
+        jobs: [
+            { text: "Run Get LB Stats Job (ALL)", name: "all" },
+            { text: "Run Get LB Stats Job (VIE)", name: "vie" },
+            { text: "Run Get LB Stats Job (USNJ)", name: "usnj" },
+        ]
+    },
+    {
+        type: "SCOM",
+        jobs: [
+            { text: "Run SCOM Alerts Job", name: "scom" },
+        ]
+    }
+]
