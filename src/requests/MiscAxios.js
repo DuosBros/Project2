@@ -21,7 +21,7 @@ export function executeJob(type, job) {
     }
 
     if (type === JOBS[1].type) {
-        url = LOCO_API + job + "/job" + "/start"
+        url = (LOCO_API + job + "/job/start")
     }
 
     return axios.get(url, { withCredentials: true });

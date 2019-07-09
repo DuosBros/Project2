@@ -14,6 +14,7 @@ import { getHealthCheckContent } from '../requests/HealthAxios';
 import HealthLabel from '../components/HealthLabel';
 import _ from 'lodash';
 import { ROUTE_HEALTH } from '../utils/constants';
+import ReactJson from 'react-json-view';
 
 class ServersTable extends React.PureComponent {
     columns = [
@@ -65,16 +66,16 @@ class ServersTable extends React.PureComponent {
             exportByDefault: false
         },
         {
+            name: "Version",
+            prop: "version",
+            sortable: false,
+            skipRendering: true
+        },
+        {
             name: "Health",
             prop: "health",
             sortable: false,
             exportByDefault: false,
-            skipRendering: true
-        },
-        {
-            name: "Version",
-            prop: "version",
-            sortable: false,
             skipRendering: true
         }
     ];
@@ -137,7 +138,32 @@ class ServersTable extends React.PureComponent {
             data.version = <Icon loading name="spinner" />
         }
         else if (data.version) {
-            data.version = data.version.Version
+            data.version = (
+                <div>
+                    <Popup size="large" position="bottom left" closeOnPortalMouseLeave={true} trigger={
+                        <div>
+                            {data.version.Version}
+                            <Icon size='small' name='question' />
+                        </div>
+                    }>
+                        <Popup.Content>
+                            <ReactJson
+                                style={{ padding: '1em' }}
+                                name={false}
+                                theme="solarized"
+                                collapseStringsAfterLength={false}
+                                src={data.version.VersionFile}
+                                collapsed={false}
+                                indentWidth={4}
+                                displayObjectSize={false}
+                                displayDataTypes={false}
+                                enableClipboard={true}
+                                iconStyle="square"
+                            />
+                        </Popup.Content>
+                    </Popup>
+                </div>
+            )
         }
 
         return data;
